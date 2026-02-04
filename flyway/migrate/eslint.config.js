@@ -15,6 +15,7 @@ export default tseslint.config(
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+      'func-style': ['error', 'expression', { allowArrowFunctions: true }],
     },
   }
 );

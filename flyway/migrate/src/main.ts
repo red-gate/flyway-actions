@@ -8,7 +8,7 @@ import {
   setOutputs,
 } from './flyway-runner.js';
 
-async function run(): Promise<void> {
+const run = async (): Promise<void> => {
   try {
     // Check if Flyway is installed
     const flywayInstalled = await checkFlywayInstalled();
@@ -66,6 +66,6 @@ async function run(): Promise<void> {
       core.setFailed('An unexpected error occurred');
     }
   }
-}
+};
 
 run();
