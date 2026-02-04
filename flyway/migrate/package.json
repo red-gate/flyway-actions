@@ -6,7 +6,7 @@
   "description": "GitHub Action to run Flyway migrate command",
   "main": "dist/index.js",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/index.cjs",
+    "build": "esbuild src/main.ts --bundle --platform=node --target=node24 --format=cjs --outfile=dist/index.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.0.0",
     "esbuild": "^0.20.0",
     "eslint": "^9.0.0",
     "prettier": "^3.0.0",
