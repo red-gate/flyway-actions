@@ -6,7 +6,7 @@
   "description": "GitHub Action to run Flyway migrate command",
   "main": "dist/index.js",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --platform=node --target=node20 --outfile=dist/index.js",
+    "build": "esbuild src/main.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/index.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
