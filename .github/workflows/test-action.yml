@@ -100,7 +100,7 @@ jobs:
       - name: Run migrate action
         uses: ./flyway/migrate
         with:
-          url: jdbc:mysql://localhost:3306/testdb
+          url: jdbc:mysql://localhost:3306/testdb?allowPublicKeyRetrieval=true
           user: test
           password: test
           locations: filesystem:sql
