@@ -274,5 +274,5 @@ outputs:
     description: 'Schema version after migration'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.cjs'

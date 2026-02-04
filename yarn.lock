@@ -465,7 +465,7 @@ __metadata:
     "@actions/core": "npm:^1.10.1"
     "@actions/exec": "npm:^1.1.1"
     "@eslint/js": "npm:^9.0.0"
-    "@types/node": "npm:^20.0.0"
+    "@types/node": "npm:^24.0.0"
     esbuild: "npm:^0.20.0"
     eslint: "npm:^9.0.0"
     prettier: "npm:^3.0.0"
@@ -749,12 +749,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.0.0":
-  version: 20.19.31
-  resolution: "@types/node@npm:20.19.31"
+"@types/node@npm:^24.0.0":
+  version: 24.10.10
+  resolution: "@types/node@npm:24.10.10"
   dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 10c0/b12edafb4c41fabe46028b3e142e650210d868e6de7a98bd558d178730b83cecb9f59e929ec11d2095f0b9ea7e23f2437abfad1d75269b9add7fabf3f41a843d
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/ae6871069373cf9ea2f9f9c6d42af6d0a66a213f8688c1b4ced6466cbcdd0f926e4603480a454b1df330feb1243d2ac50749895eddf5667e25e6873d3f8b9488
   languageName: node
   linkType: hard
 
@@ -2546,10 +2546,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.21.0":
-  version: 6.21.0
-  resolution: "undici-types@npm:6.21.0"
-  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
   languageName: node
   linkType: hard
 
