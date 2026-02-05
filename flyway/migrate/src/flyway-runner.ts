@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './types.js';
 import { INPUT_DEFINITIONS } from './inputs.js';
-import { toCamelCase } from './utils.js';
+import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
 /**
  * Build the Flyway command arguments from inputs
@@ -99,17 +99,14 @@ export const checkFlywayInstalled = async (): Promise<boolean> => {
  * Get Flyway version
  */
 export const getFlywayVersion = async (): Promise<string> => {
-  let stdout = '';
+  const { listener, getOutput } = createStdoutListener();
 
   await exec.exec('flyway', ['--version'], {
     silent: true,
-    listeners: {
-      stdout: (data: Buffer) => {
-        stdout += data.toString();
-      },
-    },
+    listeners: { stdout: listener },
   });
 
+  const stdout = getOutput();
   // Example: "Flyway Community Edition 10.0.0"
   const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
   return match ? match[1] : 'unknown';
@@ -120,22 +117,13 @@ export const getFlywayVersion = async (): Promise<string> => {
  */
 export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
   const args = buildFlywayArgs(inputs);
-
-  let stdout = '';
-  let stderr = '';
+  const { listeners, getOutput } = createStdoutStderrListeners();
 
   core.info(`Running: flyway ${maskArgsForLog(args).join(' ')}`);
 
   const options: exec.ExecOptions = {
     ignoreReturnCode: true,
-    listeners: {
-      stdout: (data: Buffer) => {
-        stdout += data.toString();
-      },
-      stderr: (data: Buffer) => {
-        stderr += data.toString();
-      },
-    },
+    listeners,
   };
 
   if (inputs.workingDirectory) {
@@ -143,6 +131,7 @@ export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunR
   }
 
   const exitCode = await exec.exec('flyway', args, options);
+  const { stdout, stderr } = getOutput();
 
   return { exitCode, stdout, stderr };
 };
