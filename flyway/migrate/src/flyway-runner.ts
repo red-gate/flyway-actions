@@ -149,12 +149,16 @@ export const parseFlywayOutput = (
     migrationsApplied = parseInt(migrationsMatch[1], 10);
   }
 
-  const versionMatch = stdout.match(
-    // Example: "Schema version: 2.0" or "Current version of schema "public": 2.0"
-    /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*(\S+)/i
-  );
-  if (versionMatch) {
-    schemaVersion = versionMatch[1];
+  const finalVersionMatch = stdout.match(/now\s+at\s+version\s+v?(\d+(?:\.\d+)?)/i);
+  if (finalVersionMatch) {
+    schemaVersion = finalVersionMatch[1];
+  } else {
+    const versionMatch = stdout.match(
+      /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*v?(\d+(?:\.\d+)?)/i
+    );
+    if (versionMatch) {
+      schemaVersion = versionMatch[1];
+    }
   }
 
   try {
