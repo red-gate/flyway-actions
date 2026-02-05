@@ -10,7 +10,6 @@ import {
 
 const run = async (): Promise<void> => {
   try {
-    // Check if Flyway is installed
     const flywayInstalled = await checkFlywayInstalled();
     if (!flywayInstalled) {
       throw new Error(
@@ -18,20 +17,15 @@ const run = async (): Promise<void> => {
       );
     }
 
-    // Get Flyway version
     const flywayVersion = await getFlywayVersion();
     core.info(`Using Flyway version: ${flywayVersion}`);
 
-    // Parse inputs
     const inputs = getInputs();
 
-    // Mask sensitive values
     maskSecrets(inputs);
 
-    // Run Flyway migrate
     const result = await runFlyway(inputs);
 
-    // Log output
     if (result.stdout) {
       core.info(result.stdout);
     }
@@ -39,10 +33,8 @@ const run = async (): Promise<void> => {
       core.warning(result.stderr);
     }
 
-    // Parse output for migration info
     const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
 
-    // Set outputs
     setOutputs({
       exitCode: result.exitCode,
       flywayVersion,
@@ -50,7 +42,6 @@ const run = async (): Promise<void> => {
       schemaVersion,
     });
 
-    // Check exit code
     if (result.exitCode !== 0) {
       throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
     }

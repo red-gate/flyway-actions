@@ -2,7 +2,6 @@
  * Flyway migrate action inputs
  */
 export interface FlywayMigrateInputs {
-  // Connection
   url: string;
   user?: string;
   password?: string;
@@ -11,7 +10,6 @@ export interface FlywayMigrateInputs {
   connectRetriesInterval?: number;
   initSql?: string;
 
-  // General
   locations?: string;
   schemas?: string;
   defaultSchema?: string;
@@ -19,7 +17,6 @@ export interface FlywayMigrateInputs {
   tablespace?: string;
   target?: string;
 
-  // Behavior
   baselineOnMigrate?: boolean;
   baselineVersion?: string;
   baselineDescription?: string;
@@ -31,7 +28,6 @@ export interface FlywayMigrateInputs {
   installedBy?: string;
   skipExecutingMigrations?: boolean;
 
-  // Teams/Enterprise
   cherryPick?: string;
   dryRunOutput?: string;
   batch?: boolean;
@@ -39,7 +35,6 @@ export interface FlywayMigrateInputs {
   errorOverrides?: string;
   failOnMissingTarget?: boolean;
 
-  // Placeholders
   placeholderReplacement?: boolean;
   placeholderPrefix?: string;
   placeholderSuffix?: string;
@@ -48,39 +43,31 @@ export interface FlywayMigrateInputs {
   scriptPlaceholderPrefix?: string;
   scriptPlaceholderSuffix?: string;
 
-  // Migration naming
   sqlMigrationPrefix?: string;
   sqlMigrationSeparator?: string;
   sqlMigrationSuffixes?: string;
   repeatableSqlMigrationPrefix?: string;
   undoSqlMigrationPrefix?: string;
 
-  // Secrets - Vault
   vaultUrl?: string;
   vaultToken?: string;
   vaultSecrets?: string;
 
-  // Secrets - GCSM
   gcsmProject?: string;
   gcsmSecrets?: string;
 
-  // Secrets - Dapr
   daprUrl?: string;
   daprSecrets?: string;
 
-  // Database-specific - Oracle
   oracleSqlplus?: boolean;
   oracleSqlplusWarn?: boolean;
   oracleWalletLocation?: string;
   oracleKerberosCacheFile?: string;
 
-  // Database-specific - PostgreSQL
   postgresqlTransactionalLock?: boolean;
 
-  // Database-specific - SQL Server
   sqlserverKerberosLoginFile?: string;
 
-  // Advanced
   configFiles?: string;
   workingDirectory?: string;
   jarDirs?: string;
@@ -103,7 +90,6 @@ export interface FlywayMigrateInputs {
   cleanOnValidationError?: boolean;
   communityDbSupportEnabled?: boolean;
 
-  // Extra arguments
   extraArgs?: string;
 }
 

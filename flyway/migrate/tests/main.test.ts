@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Mock modules before importing
 vi.mock('@actions/core', () => ({
   getInput: vi.fn(),
   setOutput: vi.fn(),
@@ -27,11 +26,9 @@ describe('main', () => {
   });
 
   it('should check if flyway is installed', async () => {
-    // Mock flyway not installed
     vi.mocked(exec.exec).mockRejectedValue(new Error('Command not found'));
     vi.mocked(core.getInput).mockReturnValue('jdbc:postgresql://localhost/db');
 
-    // Import and run
     const { checkFlywayInstalled } = await import('../src/flyway-runner.js');
     const result = await checkFlywayInstalled();
 
@@ -39,7 +36,6 @@ describe('main', () => {
   });
 
   it('should detect when flyway is installed', async () => {
-    // Mock flyway installed
     vi.mocked(exec.exec).mockResolvedValue(0);
 
     const { checkFlywayInstalled } = await import('../src/flyway-runner.js');

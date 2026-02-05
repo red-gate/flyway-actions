@@ -5,7 +5,6 @@ import { FlywayMigrateInputs, InputDefinition } from './types.js';
  * Map of input names to Flyway argument names and types
  */
 export const INPUT_DEFINITIONS: InputDefinition[] = [
-  // Connection
   { inputName: 'url', flywayArg: 'url', type: 'string', isSecret: false },
   { inputName: 'user', flywayArg: 'user', type: 'string', isSecret: false },
   { inputName: 'password', flywayArg: 'password', type: 'string', isSecret: true },
@@ -14,7 +13,6 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'connect-retries-interval', flywayArg: 'connectRetriesInterval', type: 'number' },
   { inputName: 'init-sql', flywayArg: 'initSql', type: 'string' },
 
-  // General
   { inputName: 'locations', flywayArg: 'locations', type: 'string' },
   { inputName: 'schemas', flywayArg: 'schemas', type: 'string' },
   { inputName: 'default-schema', flywayArg: 'defaultSchema', type: 'string' },
@@ -22,7 +20,6 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'tablespace', flywayArg: 'tablespace', type: 'string' },
   { inputName: 'target', flywayArg: 'target', type: 'string' },
 
-  // Behavior
   { inputName: 'baseline-on-migrate', flywayArg: 'baselineOnMigrate', type: 'boolean' },
   { inputName: 'baseline-version', flywayArg: 'baselineVersion', type: 'string' },
   { inputName: 'baseline-description', flywayArg: 'baselineDescription', type: 'string' },
@@ -34,7 +31,6 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'installed-by', flywayArg: 'installedBy', type: 'string' },
   { inputName: 'skip-executing-migrations', flywayArg: 'skipExecutingMigrations', type: 'boolean' },
 
-  // Teams/Enterprise
   { inputName: 'cherry-pick', flywayArg: 'cherryPick', type: 'string' },
   { inputName: 'dry-run-output', flywayArg: 'dryRunOutput', type: 'string' },
   { inputName: 'batch', flywayArg: 'batch', type: 'boolean' },
@@ -42,7 +38,6 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'error-overrides', flywayArg: 'errorOverrides', type: 'string' },
   { inputName: 'fail-on-missing-target', flywayArg: 'failOnMissingTarget', type: 'boolean' },
 
-  // Placeholders
   { inputName: 'placeholder-replacement', flywayArg: 'placeholderReplacement', type: 'boolean' },
   { inputName: 'placeholder-prefix', flywayArg: 'placeholderPrefix', type: 'string' },
   { inputName: 'placeholder-suffix', flywayArg: 'placeholderSuffix', type: 'string' },
@@ -51,7 +46,6 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'script-placeholder-prefix', flywayArg: 'scriptPlaceholderPrefix', type: 'string' },
   { inputName: 'script-placeholder-suffix', flywayArg: 'scriptPlaceholderSuffix', type: 'string' },
 
-  // Migration naming
   { inputName: 'sql-migration-prefix', flywayArg: 'sqlMigrationPrefix', type: 'string' },
   { inputName: 'sql-migration-separator', flywayArg: 'sqlMigrationSeparator', type: 'string' },
   { inputName: 'sql-migration-suffixes', flywayArg: 'sqlMigrationSuffixes', type: 'string' },
@@ -62,20 +56,16 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   },
   { inputName: 'undo-sql-migration-prefix', flywayArg: 'undoSqlMigrationPrefix', type: 'string' },
 
-  // Secrets - Vault
   { inputName: 'vault-url', flywayArg: 'vault.url', type: 'string' },
   { inputName: 'vault-token', flywayArg: 'vault.token', type: 'string', isSecret: true },
   { inputName: 'vault-secrets', flywayArg: 'vault.secrets', type: 'string' },
 
-  // Secrets - GCSM
   { inputName: 'gcsm-project', flywayArg: 'gcsm.project', type: 'string' },
   { inputName: 'gcsm-secrets', flywayArg: 'gcsm.secrets', type: 'string' },
 
-  // Secrets - Dapr
   { inputName: 'dapr-url', flywayArg: 'dapr.url', type: 'string' },
   { inputName: 'dapr-secrets', flywayArg: 'dapr.secrets', type: 'string' },
 
-  // Database-specific - Oracle
   { inputName: 'oracle-sqlplus', flywayArg: 'oracle.sqlplus', type: 'boolean' },
   { inputName: 'oracle-sqlplus-warn', flywayArg: 'oracle.sqlplusWarn', type: 'boolean' },
   { inputName: 'oracle-wallet-location', flywayArg: 'oracle.walletLocation', type: 'string' },
@@ -85,21 +75,18 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
     type: 'string',
   },
 
-  // Database-specific - PostgreSQL
   {
     inputName: 'postgresql-transactional-lock',
     flywayArg: 'postgresql.transactional.lock',
     type: 'boolean',
   },
 
-  // Database-specific - SQL Server
   {
     inputName: 'sqlserver-kerberos-login-file',
     flywayArg: 'sqlserver.kerberosLoginFile',
     type: 'string',
   },
 
-  // Advanced
   { inputName: 'config-files', flywayArg: 'configFiles', type: 'string' },
   { inputName: 'jar-dirs', flywayArg: 'jarDirs', type: 'string' },
   { inputName: 'encoding', flywayArg: 'encoding', type: 'string' },
@@ -201,9 +188,8 @@ export const getInputs = (): FlywayMigrateInputs => {
 
   const inputs: FlywayMigrateInputs = { url };
 
-  // Process all defined inputs
   for (const def of INPUT_DEFINITIONS) {
-    if (def.inputName === 'url') continue; // Already handled
+    if (def.inputName === 'url') continue;
 
     const rawValue = core.getInput(def.inputName);
     if (!rawValue) continue;
@@ -225,13 +211,11 @@ export const getInputs = (): FlywayMigrateInputs => {
     }
   }
 
-  // Handle working directory separately
   const workingDirectory = core.getInput('working-directory');
   if (workingDirectory) {
     inputs.workingDirectory = workingDirectory;
   }
 
-  // Handle extra args separately
   const extraArgs = core.getInput('extra-args');
   if (extraArgs) {
     inputs.extraArgs = extraArgs;
