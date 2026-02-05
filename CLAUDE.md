@@ -28,6 +28,17 @@ When implemented, this will likely be a GitHub Action with:
 - Avoid comments unless absolutely necessary for complex logic that cannot be clarified through refactoring.
 - Do NOT use JSDoc comments (`/** ... */`). The code should be self-explanatory without documentation comments.
 
+## Committing Changes
+
+Before creating any commit, ALWAYS run `yarn format` to ensure code formatting is consistent across the codebase. This should be done for every commit without exception.
+
+Example workflow:
+1. Make code changes
+2. Run `yarn format` to apply Prettier formatting
+3. Run `yarn lint` to verify ESLint rules
+4. Run `yarn test` to verify tests pass
+5. Stage and commit the changes
+
 ## Pull Request Workflow
 
 When raising a PR, follow these steps to ensure the "check dist is up to date" build step passes:
