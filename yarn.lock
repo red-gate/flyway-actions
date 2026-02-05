@@ -24,6 +24,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@actions/http-client@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@actions/http-client@npm:4.0.0"
+  dependencies:
+    tunnel: "npm:^0.0.6"
+    undici: "npm:^6.23.0"
+  checksum: 10c0/83a2bcfa50b584584e9ec9f6bcc3872aa0b325214e06dc828b17a853e25c23fec77f3262403fd14a1e4365be5d2e266638f945a5459e3a39425e7c2f1789b31e
+  languageName: node
+  linkType: hard
+
 "@actions/http-client@npm:^3.0.2":
   version: 3.0.2
   resolution: "@actions/http-client@npm:3.0.2"
@@ -31,6 +41,13 @@ __metadata:
     tunnel: "npm:^0.0.6"
     undici: "npm:^6.23.0"
   checksum: 10c0/b58eedef5a76d4341edf66cba5df3acb338e420ea1ab5223c3f5d0bf7f5cfaa56d5a5578f8a0b7a9ce50ccc06a0d2bb74aad4abf8bd7b5606b032bbe0b623c92
+  languageName: node
+  linkType: hard
+
+"@actions/io@npm:3.0.2":
+  version: 3.0.2
+  resolution: "@actions/io@npm:3.0.2"
+  checksum: 10c0/25fae323886544f965e90ab9655e3fb60816eb379c78418c4b06a5dc9da27810eb5b0bd0629146dbd5482a03e3c60a5b8713223e4f789abede23df643ddcae8c
   languageName: node
   linkType: hard
 
@@ -499,6 +516,8 @@ __metadata:
   dependencies:
     "@actions/core": "npm:2.0.3"
     "@actions/exec": "npm:2.0.0"
+    "@actions/http-client": "npm:4.0.0"
+    "@actions/io": "npm:3.0.2"
     "@eslint/js": "npm:9.39.2"
     "@types/node": "npm:24.10.10"
     esbuild: "npm:0.25.12"

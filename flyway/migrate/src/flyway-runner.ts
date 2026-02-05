@@ -135,6 +135,22 @@ export const maskArgsForLog = (args: string[]): string[] => {
   });
 };
 
+const extractSchemaVersion = (stdout: string): string => {
+  const finalVersionMatch = stdout.match(/now\s+at\s+version\s+v?(\d+(?:\.\d+)*)/i);
+  if (finalVersionMatch) {
+    return finalVersionMatch[1];
+  }
+
+  const versionMatch = stdout.match(
+    /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*v?(\d+(?:\.\d+)*)/i
+  );
+  if (versionMatch) {
+    return versionMatch[1];
+  }
+
+  return 'unknown';
+};
+
 export const parseFlywayOutput = (
   stdout: string
 ): {
@@ -142,19 +158,11 @@ export const parseFlywayOutput = (
   schemaVersion: string;
 } => {
   let migrationsApplied = 0;
-  let schemaVersion = 'unknown';
+  let schemaVersion = extractSchemaVersion(stdout);
 
   const migrationsMatch = stdout.match(/Successfully\s+(?:applied|validated)\s+(\d+)\s+migration/i);
   if (migrationsMatch) {
     migrationsApplied = parseInt(migrationsMatch[1], 10);
-  }
-
-  const versionMatch = stdout.match(
-    // Example: "Schema version: 2.0" or "Current version of schema "public": 2.0"
-    /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*(\S+)/i
-  );
-  if (versionMatch) {
-    schemaVersion = versionMatch[1];
   }
 
   try {
