@@ -1,6 +1,3 @@
-/**
- * Flyway migrate action inputs
- */
 export interface FlywayMigrateInputs {
   url: string;
   user?: string;
@@ -93,9 +90,6 @@ export interface FlywayMigrateInputs {
   extraArgs?: string;
 }
 
-/**
- * Flyway migrate action outputs
- */
 export interface FlywayMigrateOutputs {
   exitCode: number;
   flywayVersion: string;
@@ -103,9 +97,6 @@ export interface FlywayMigrateOutputs {
   schemaVersion: string;
 }
 
-/**
- * Input parameter definition for mapping
- */
 export interface InputDefinition {
   inputName: string;
   flywayArg: string;
@@ -113,9 +104,6 @@ export interface InputDefinition {
   isSecret?: boolean;
 }
 
-/**
- * Result from running Flyway
- */
 export interface FlywayRunResult {
   exitCode: number;
   stdout: string;

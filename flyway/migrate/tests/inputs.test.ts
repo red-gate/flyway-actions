@@ -3,7 +3,6 @@ import {
   parseBoolean,
   parseNumber,
   parsePlaceholders,
-  toCamelCase,
   getInputs,
   maskSecrets,
 } from '../src/inputs.js';
@@ -139,24 +138,6 @@ describe('parsePlaceholders', () => {
 
   it('should throw for empty key', () => {
     expect(() => parsePlaceholders('=value')).toThrow('Empty placeholder key in: =value');
-  });
-});
-
-describe('toCamelCase', () => {
-  it('should convert kebab-case to camelCase', () => {
-    expect(toCamelCase('baseline-on-migrate')).toBe('baselineOnMigrate');
-  });
-
-  it('should handle single word', () => {
-    expect(toCamelCase('url')).toBe('url');
-  });
-
-  it('should handle multiple dashes', () => {
-    expect(toCamelCase('validate-migration-naming')).toBe('validateMigrationNaming');
-  });
-
-  it('should handle already camelCase', () => {
-    expect(toCamelCase('alreadyCamel')).toBe('alreadyCamel');
   });
 });
 
