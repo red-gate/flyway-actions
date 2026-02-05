@@ -42,6 +42,7 @@ When implemented, this will likely be a GitHub Action with:
 
 ## Committing Changes
 
+Commit messages should be as terse as possible. No need for long descriptions or a commit signature.
 Before creating any commit, ALWAYS run `yarn format` to ensure code formatting is consistent across the codebase. This should be done for every commit without exception.
 
 Example workflow:
