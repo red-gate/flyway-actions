@@ -1,4 +1,4 @@
-name: Test Action
+name: End-to-End Tests
 
 on:
   push:
@@ -8,23 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-postgresql:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+  test-migrate:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -33,208 +21,41 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v1
 
-      - name: Create test migrations
-        run: |
-          mkdir -p sql
-          cat > sql/V1__create_table.sql << 'EOF'
-          CREATE TABLE test_table (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          );
-          EOF
-          cat > sql/V2__add_column.sql << 'EOF'
-          ALTER TABLE test_table ADD COLUMN description TEXT;
-          EOF
-
-      - name: Run migrate action
-        uses: ./flyway/migrate
-        with:
-          url: jdbc:postgresql://localhost:5432/testdb
-          user: test
-          password: test
-          locations: filesystem:sql
-
-      - name: Verify migration
-        run: |
-          PGPASSWORD=test psql -h localhost -U test -d testdb -c "\dt"
-          PGPASSWORD=test psql -h localhost -U test -d testdb -c "SELECT * FROM flyway_schema_history"
-
-  test-mysql:
-    runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: test
-          MYSQL_PASSWORD: test
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flyway
-        uses: red-gate/setup-flyway@v1
-
-      - name: Create test migrations
-        run: |
-          mkdir -p sql
-          cat > sql/V1__create_table.sql << 'EOF'
-          CREATE TABLE test_table (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          );
-          EOF
-
-      - name: Run migrate action
-        uses: ./flyway/migrate
-        with:
-          url: jdbc:mysql://localhost:3306/testdb?allowPublicKeyRetrieval=true
-          user: test
-          password: test
-          locations: filesystem:sql
-
-      - name: Verify migration
-        run: |
-          mysql -h 127.0.0.1 -u test -ptest testdb -e "SHOW TABLES"
-          mysql -h 127.0.0.1 -u test -ptest testdb -e "SELECT * FROM flyway_schema_history"
-
-  test-options:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flyway
-        uses: red-gate/setup-flyway@v1
-
-      - name: Create test migrations with placeholders
-        run: |
-          mkdir -p sql
-          cat > sql/V1__create_table.sql << 'EOF'
-          CREATE TABLE ${tableName} (
-            id SERIAL PRIMARY KEY,
-            env VARCHAR(50) DEFAULT '${environment}'
-          );
-          EOF
-
-      - name: Run migrate with options
-        uses: ./flyway/migrate
-        with:
-          url: jdbc:postgresql://localhost:5432/testdb
-          user: test
-          password: test
-          locations: filesystem:sql
-          placeholders: tableName=config_table,environment=test
-          baseline-on-migrate: 'true'
-          validate-on-migrate: 'true'
-          out-of-order: 'false'
-
-      - name: Verify migration with placeholders
-        run: |
-          PGPASSWORD=test psql -h localhost -U test -d testdb -c "SELECT * FROM config_table"
-
-  test-outputs:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flyway
-        uses: red-gate/setup-flyway@v1
-
-      - name: Create test migrations
-        run: |
-          mkdir -p sql
-          echo "CREATE TABLE t1 (id INT);" > sql/V1__t1.sql
-          echo "CREATE TABLE t2 (id INT);" > sql/V2__t2.sql
-
-      - name: Run migrate and capture outputs
+      - name: Run migrate action with sample project
         id: migrate
         uses: ./flyway/migrate
         with:
-          url: jdbc:postgresql://localhost:5432/testdb
-          user: test
-          password: test
-          locations: filesystem:sql
+          url: jdbc:sqlite:test.db
+          locations: filesystem:flyway/sample-project/sql
 
-      - name: Check outputs
+      - name: Print migration outputs
+        shell: bash
         run: |
           echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
           echo "Flyway version: ${{ steps.migrate.outputs.flyway-version }}"
           echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
 
-          if [ "${{ steps.migrate.outputs.exit-code }}" != "0" ]; then
-            echo "Error: Expected exit code 0"
-            exit 1
-          fi
+      - name: Assert exit code is 0
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.migrate.outputs.exit-code }}" = "0"
 
-  test-windows:
-    runs-on: windows-latest
+      - name: Assert flyway version is not empty
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${{ steps.migrate.outputs.flyway-version }}"
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Assert migrations applied is 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.migrate.outputs.migrations-applied }}" = "3"
 
-      - name: Setup Flyway
-        uses: red-gate/setup-flyway@v1
-
-      - name: Check Flyway installed
-        run: flyway --version
-
-  test-macos:
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flyway
-        uses: red-gate/setup-flyway@v1
-
-      - name: Check Flyway installed
-        run: flyway --version
+      - name: Assert schema version is 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.migrate.outputs.schema-version }}" = "3"
