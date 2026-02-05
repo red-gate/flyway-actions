@@ -83,7 +83,6 @@ describe('parseNumber', () => {
   });
 
   it('should throw for float when expecting integer', () => {
-    // parseInt will truncate, but we should test behavior
     expect(parseNumber('3.14')).toBe(3);
   });
 });

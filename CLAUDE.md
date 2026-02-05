@@ -21,6 +21,13 @@ When implemented, this will likely be a GitHub Action with:
 - Documentation in `README.md` files
 - Linting with ESLint and Prettier
 
+## Code Style Guidelines
+
+### Comments and Documentation
+- Write self-documenting code. Variable names, function names, and structure should make the code's intent clear.
+- Avoid comments unless absolutely necessary for complex logic that cannot be clarified through refactoring.
+- JSDoc comments (`/** ... */`) are acceptable for public APIs and exported functions where documentation is valuable.
+
 ## Pull Request Workflow
 
 When raising a PR, follow these steps to ensure the "check dist is up to date" build step passes:

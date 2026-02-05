@@ -9,7 +9,6 @@ import { INPUT_DEFINITIONS } from './inputs.js';
 export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
 
-  // Process all standard inputs
   for (const def of INPUT_DEFINITIONS) {
     const propName = toCamelCase(def.inputName);
     const value = (inputs as Record<string, unknown>)[propName];
@@ -26,7 +25,6 @@ export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
         args.push(`-${def.flywayArg}=${value}`);
         break;
       case 'placeholders':
-        // Placeholders are handled specially as multiple args
         if (typeof value === 'object') {
           for (const [key, val] of Object.entries(value as Record<string, string>)) {
             args.push(`-placeholders.${key}=${val}`);
@@ -38,7 +36,6 @@ export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
     }
   }
 
-  // Add extra args if provided
   if (inputs.extraArgs) {
     const extraArgsArray = parseExtraArgs(inputs.extraArgs);
     args.push(...extraArgsArray);
@@ -112,7 +109,7 @@ export const getFlywayVersion = async (): Promise<string> => {
     },
   });
 
-  // Parse version from output like "Flyway Community Edition 10.0.0"
+  // Example: "Flyway Community Edition 10.0.0"
   const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
   return match ? match[1] : 'unknown';
 };
@@ -126,7 +123,6 @@ export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunR
   let stdout = '';
   let stderr = '';
 
-  // Log the command (with secrets masked)
   core.info(`Running: flyway ${maskArgsForLog(args).join(' ')}`);
 
   const options: exec.ExecOptions = {
@@ -179,23 +175,19 @@ export const parseFlywayOutput = (
   let migrationsApplied = 0;
   let schemaVersion = 'unknown';
 
-  // Look for migration count patterns
-  // Example: "Successfully applied 3 migrations"
   const migrationsMatch = stdout.match(/Successfully\s+(?:applied|validated)\s+(\d+)\s+migration/i);
   if (migrationsMatch) {
     migrationsApplied = parseInt(migrationsMatch[1], 10);
   }
 
-  // Look for schema version
-  // Example: "Schema version: 2.0" or "Current version of schema "public": 2.0"
   const versionMatch = stdout.match(
+    // Example: "Schema version: 2.0" or "Current version of schema "public": 2.0"
     /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*(\S+)/i
   );
   if (versionMatch) {
     schemaVersion = versionMatch[1];
   }
 
-  // Try to parse JSON output if present
   try {
     const jsonMatch = stdout.match(/\{[\s\S]*"schemaVersion"[\s\S]*\}/);
     if (jsonMatch) {
