@@ -129,7 +129,7 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
 /**
  * Parse boolean input from string
  */
-export function parseBoolean(value: string | undefined): boolean | undefined {
+export const parseBoolean = (value: string | undefined): boolean | undefined => {
   if (value === undefined || value === '') {
     return undefined;
   }
@@ -141,12 +141,12 @@ export function parseBoolean(value: string | undefined): boolean | undefined {
     return false;
   }
   throw new Error(`Invalid boolean value: ${value}`);
-}
+};
 
 /**
  * Parse number input from string
  */
-export function parseNumber(value: string | undefined): number | undefined {
+export const parseNumber = (value: string | undefined): number | undefined => {
   if (value === undefined || value === '') {
     return undefined;
   }
@@ -155,13 +155,15 @@ export function parseNumber(value: string | undefined): number | undefined {
     throw new Error(`Invalid number value: ${value}`);
   }
   return num;
-}
+};
 
 /**
  * Parse placeholders from comma-separated key=value pairs
  * Format: "key1=value1,key2=value2"
  */
-export function parsePlaceholders(value: string | undefined): Record<string, string> | undefined {
+export const parsePlaceholders = (
+  value: string | undefined
+): Record<string, string> | undefined => {
   if (value === undefined || value === '') {
     return undefined;
   }
@@ -189,12 +191,12 @@ export function parsePlaceholders(value: string | undefined): Record<string, str
   }
 
   return Object.keys(placeholders).length > 0 ? placeholders : undefined;
-}
+};
 
 /**
  * Get all inputs from the GitHub Action context
  */
-export function getInputs(): FlywayMigrateInputs {
+export const getInputs = (): FlywayMigrateInputs => {
   const url = core.getInput('url', { required: true });
 
   const inputs: FlywayMigrateInputs = { url };
@@ -236,23 +238,23 @@ export function getInputs(): FlywayMigrateInputs {
   }
 
   return inputs;
-}
+};
 
 /**
  * Convert kebab-case to camelCase
  */
-export function toCamelCase(str: string): string {
+export const toCamelCase = (str: string): string => {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-}
+};
 
 /**
  * Mask secret inputs in the log
  */
-export function maskSecrets(inputs: FlywayMigrateInputs): void {
+export const maskSecrets = (inputs: FlywayMigrateInputs): void => {
   if (inputs.password) {
     core.setSecret(inputs.password);
   }
   if (inputs.vaultToken) {
     core.setSecret(inputs.vaultToken);
   }
-}
+};

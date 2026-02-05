@@ -6,7 +6,7 @@ import { INPUT_DEFINITIONS } from './inputs.js';
 /**
  * Build the Flyway command arguments from inputs
  */
-export function buildFlywayArgs(inputs: FlywayMigrateInputs): string[] {
+export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
 
   // Process all standard inputs
@@ -45,12 +45,12 @@ export function buildFlywayArgs(inputs: FlywayMigrateInputs): string[] {
   }
 
   return args;
-}
+};
 
 /**
  * Parse extra args string into array, handling quoted strings
  */
-export function parseExtraArgs(extraArgs: string): string[] {
+export const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];
   let current = '';
   let inQuotes = false;
@@ -80,12 +80,12 @@ export function parseExtraArgs(extraArgs: string): string[] {
   }
 
   return args;
-}
+};
 
 /**
  * Check if Flyway is available in PATH
  */
-export async function checkFlywayInstalled(): Promise<boolean> {
+export const checkFlywayInstalled = async (): Promise<boolean> => {
   try {
     await exec.exec('flyway', ['--version'], {
       silent: true,
@@ -95,12 +95,12 @@ export async function checkFlywayInstalled(): Promise<boolean> {
   } catch {
     return false;
   }
-}
+};
 
 /**
  * Get Flyway version
  */
-export async function getFlywayVersion(): Promise<string> {
+export const getFlywayVersion = async (): Promise<string> => {
   let stdout = '';
 
   await exec.exec('flyway', ['--version'], {
@@ -115,12 +115,12 @@ export async function getFlywayVersion(): Promise<string> {
   // Parse version from output like "Flyway Community Edition 10.0.0"
   const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
   return match ? match[1] : 'unknown';
-}
+};
 
 /**
  * Run the Flyway migrate command
  */
-export async function runFlyway(inputs: FlywayMigrateInputs): Promise<FlywayRunResult> {
+export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
   const args = buildFlywayArgs(inputs);
 
   let stdout = '';
@@ -148,12 +148,12 @@ export async function runFlyway(inputs: FlywayMigrateInputs): Promise<FlywayRunR
   const exitCode = await exec.exec('flyway', args, options);
 
   return { exitCode, stdout, stderr };
-}
+};
 
 /**
  * Mask sensitive values in args for logging
  */
-export function maskArgsForLog(args: string[]): string[] {
+export const maskArgsForLog = (args: string[]): string[] => {
   const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-vault\.token=/i, /^-url=.*password=/i];
 
   return args.map((arg) => {
@@ -165,15 +165,17 @@ export function maskArgsForLog(args: string[]): string[] {
     }
     return arg;
   });
-}
+};
 
 /**
  * Parse Flyway output to extract migration information
  */
-export function parseFlywayOutput(stdout: string): {
+export const parseFlywayOutput = (
+  stdout: string
+): {
   migrationsApplied: number;
   schemaVersion: string;
-} {
+} => {
   let migrationsApplied = 0;
   let schemaVersion = 'unknown';
 
@@ -210,21 +212,21 @@ export function parseFlywayOutput(stdout: string): {
   }
 
   return { migrationsApplied, schemaVersion };
-}
+};
 
 /**
  * Set action outputs
  */
-export function setOutputs(outputs: FlywayMigrateOutputs): void {
+export const setOutputs = (outputs: FlywayMigrateOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
   core.setOutput('flyway-version', outputs.flywayVersion);
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);
-}
+};
 
 /**
  * Convert kebab-case to camelCase
  */
-function toCamelCase(str: string): string {
+const toCamelCase = (str: string): string => {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-}
+};
