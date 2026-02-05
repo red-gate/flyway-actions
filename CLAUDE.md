@@ -20,3 +20,16 @@ When implemented, this will likely be a GitHub Action with:
 - CI/CD workflows in `.github/workflows/`
 - Documentation in `README.md` files
 - Linting with ESLint and Prettier
+
+## Pull Request Workflow
+
+When raising a PR, follow these steps to ensure the "check dist is up to date" build step passes:
+
+1. Fetch latest changes: `git fetch`
+2. Rebase on main: `git rebase origin/main`
+3. Install dependencies: `yarn install`
+4. Build the distribution: `yarn build`
+5. Commit the changes to `dist/` if any files were updated
+6. Push the branch and create the PR
+
+This ensures the built distribution files in `dist/` are always up to date with the source code.
