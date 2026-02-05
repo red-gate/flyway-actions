@@ -4,7 +4,7 @@ import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './ty
 import { INPUT_DEFINITIONS } from './inputs.js';
 import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
-export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
+const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
 
   for (const def of INPUT_DEFINITIONS) {
@@ -42,7 +42,7 @@ export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   return args;
 };
 
-export const parseExtraArgs = (extraArgs: string): string[] => {
+const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];
   let current = '';
   let inQuotes = false;
@@ -74,7 +74,7 @@ export const parseExtraArgs = (extraArgs: string): string[] => {
   return args;
 };
 
-export const checkFlywayInstalled = async (): Promise<boolean> => {
+const checkFlywayInstalled = async (): Promise<boolean> => {
   try {
     await exec.exec('flyway', ['--version'], {
       silent: true,
@@ -86,7 +86,7 @@ export const checkFlywayInstalled = async (): Promise<boolean> => {
   }
 };
 
-export const getFlywayVersion = async (): Promise<string> => {
+const getFlywayVersion = async (): Promise<string> => {
   const { listener, getOutput } = createStdoutListener();
 
   await exec.exec('flyway', ['--version'], {
@@ -100,7 +100,7 @@ export const getFlywayVersion = async (): Promise<string> => {
   return match ? match[1] : 'unknown';
 };
 
-export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
+const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
   const args = buildFlywayArgs(inputs);
   const { listeners, getOutput } = createStdoutStderrListeners();
 
@@ -121,7 +121,7 @@ export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunR
   return { exitCode, stdout, stderr };
 };
 
-export const maskArgsForLog = (args: string[]): string[] => {
+const maskArgsForLog = (args: string[]): string[] => {
   const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-vault\.token=/i, /^-url=.*password=/i];
 
   return args.map((arg) => {
@@ -151,7 +151,7 @@ const extractSchemaVersion = (stdout: string): string => {
   return 'unknown';
 };
 
-export const parseFlywayOutput = (
+const parseFlywayOutput = (
   stdout: string
 ): {
   migrationsApplied: number;
@@ -183,9 +183,20 @@ export const parseFlywayOutput = (
   return { migrationsApplied, schemaVersion };
 };
 
-export const setOutputs = (outputs: FlywayMigrateOutputs): void => {
+const setOutputs = (outputs: FlywayMigrateOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
   core.setOutput('flyway-version', outputs.flywayVersion);
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);
+};
+
+export {
+  buildFlywayArgs,
+  parseExtraArgs,
+  checkFlywayInstalled,
+  getFlywayVersion,
+  runFlyway,
+  maskArgsForLog,
+  parseFlywayOutput,
+  setOutputs,
 };

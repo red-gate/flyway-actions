@@ -1,4 +1,4 @@
-export interface FlywayMigrateInputs {
+interface FlywayMigrateInputs {
   url: string;
   user?: string;
   password?: string;
@@ -90,22 +90,24 @@ export interface FlywayMigrateInputs {
   extraArgs?: string;
 }
 
-export interface FlywayMigrateOutputs {
+interface FlywayMigrateOutputs {
   exitCode: number;
   flywayVersion: string;
   migrationsApplied: number;
   schemaVersion: string;
 }
 
-export interface InputDefinition {
+interface InputDefinition {
   inputName: string;
   flywayArg: string;
   type: 'string' | 'boolean' | 'number' | 'placeholders';
   isSecret?: boolean;
 }
 
-export interface FlywayRunResult {
+interface FlywayRunResult {
   exitCode: number;
   stdout: string;
   stderr: string;
 }
+
+export { FlywayMigrateInputs, FlywayMigrateOutputs, InputDefinition, FlywayRunResult };

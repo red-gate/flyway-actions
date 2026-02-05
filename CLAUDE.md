@@ -6,6 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repository is for GitHub Actions that integrate Flyway (a database migration tool) with GitHub workflows. It is a Redgate project.
 
+## Git Safety Rules
+
+**CRITICAL: NEVER PUSH TO MAIN**
+
+- NEVER run `git push` when on the main branch
+- NEVER run `git push origin main` under any circumstances
+- ALWAYS work on a feature branch
+- ALWAYS create a pull request for code review before merging to main
+- If you accidentally switch to main, immediately switch back to a feature branch
+
+This rule is absolute and must be followed without exception.
+
 ## Expected Structure
 
 This is a mono repo for many GitHub Actions related to Redgate products. Each action will have its own directory under the product name it supports e.g. `flyway/`.
@@ -27,6 +39,17 @@ When implemented, this will likely be a GitHub Action with:
 - Write self-documenting code. Variable names, function names, and structure should make the code's intent clear.
 - Avoid comments unless absolutely necessary for complex logic that cannot be clarified through refactoring.
 - Do NOT use JSDoc comments (`/** ... */`). The code should be self-explanatory without documentation comments.
+
+## Committing Changes
+
+Before creating any commit, ALWAYS run `yarn format` to ensure code formatting is consistent across the codebase. This should be done for every commit without exception.
+
+Example workflow:
+1. Make code changes
+2. Run `yarn format` to apply Prettier formatting
+3. Run `yarn lint` to verify ESLint rules
+4. Run `yarn test` to verify tests pass
+5. Stage and commit the changes
 
 ## Pull Request Workflow
 

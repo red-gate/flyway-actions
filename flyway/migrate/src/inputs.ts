@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import { FlywayMigrateInputs, InputDefinition } from './types.js';
 import { toCamelCase } from './utils.js';
 
-export const INPUT_DEFINITIONS: InputDefinition[] = [
+const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'url', flywayArg: 'url', type: 'string', isSecret: false },
   { inputName: 'user', flywayArg: 'user', type: 'string', isSecret: false },
   { inputName: 'password', flywayArg: 'password', type: 'string', isSecret: true },
@@ -111,7 +111,7 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   },
 ];
 
-export const parseBoolean = (value: string | undefined): boolean | undefined => {
+const parseBoolean = (value: string | undefined): boolean | undefined => {
   if (value === undefined || value === '') {
     return undefined;
   }
@@ -125,7 +125,7 @@ export const parseBoolean = (value: string | undefined): boolean | undefined => 
   throw new Error(`Invalid boolean value: ${value}`);
 };
 
-export const parseNumber = (value: string | undefined): number | undefined => {
+const parseNumber = (value: string | undefined): number | undefined => {
   if (value === undefined || value === '') {
     return undefined;
   }
@@ -136,9 +136,7 @@ export const parseNumber = (value: string | undefined): number | undefined => {
   return num;
 };
 
-export const parsePlaceholders = (
-  value: string | undefined
-): Record<string, string> | undefined => {
+const parsePlaceholders = (value: string | undefined): Record<string, string> | undefined => {
   if (value === undefined || value === '') {
     return undefined;
   }
@@ -168,7 +166,7 @@ export const parsePlaceholders = (
   return Object.keys(placeholders).length > 0 ? placeholders : undefined;
 };
 
-export const getInputs = (): FlywayMigrateInputs => {
+const getInputs = (): FlywayMigrateInputs => {
   const url = core.getInput('url', { required: true });
 
   const inputs: FlywayMigrateInputs = { url };
@@ -209,7 +207,7 @@ export const getInputs = (): FlywayMigrateInputs => {
   return inputs;
 };
 
-export const maskSecrets = (inputs: FlywayMigrateInputs): void => {
+const maskSecrets = (inputs: FlywayMigrateInputs): void => {
   if (inputs.password) {
     core.setSecret(inputs.password);
   }
@@ -217,3 +215,5 @@ export const maskSecrets = (inputs: FlywayMigrateInputs): void => {
     core.setSecret(inputs.vaultToken);
   }
 };
+
+export { INPUT_DEFINITIONS, parseBoolean, parseNumber, parsePlaceholders, getInputs, maskSecrets };
