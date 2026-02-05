@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import { FlywayMigrateInputs, InputDefinition } from './types.js';
+import { toCamelCase } from './utils.js';
 
 /**
  * Map of input names to Flyway argument names and types
@@ -222,13 +223,6 @@ export const getInputs = (): FlywayMigrateInputs => {
   }
 
   return inputs;
-};
-
-/**
- * Convert kebab-case to camelCase
- */
-export const toCamelCase = (str: string): string => {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 };
 
 /**

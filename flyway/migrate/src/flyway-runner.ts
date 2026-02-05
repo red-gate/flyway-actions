@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './types.js';
 import { INPUT_DEFINITIONS } from './inputs.js';
+import { toCamelCase } from './utils.js';
 
 /**
  * Build the Flyway command arguments from inputs
@@ -214,11 +215,4 @@ export const setOutputs = (outputs: FlywayMigrateOutputs): void => {
   core.setOutput('flyway-version', outputs.flywayVersion);
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);
-};
-
-/**
- * Convert kebab-case to camelCase
- */
-const toCamelCase = (str: string): string => {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 };
