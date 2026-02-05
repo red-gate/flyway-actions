@@ -54,6 +54,7 @@ Example workflow:
 
 ## Pull Request Workflow
 
+PR descriptions should be terse. No long explanations or verbose checklists.
 When raising a PR, follow these steps to ensure the "check dist is up to date" build step passes:
 
 1. Fetch latest changes: `git fetch`
