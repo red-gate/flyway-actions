@@ -4,9 +4,6 @@ import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './ty
 import { INPUT_DEFINITIONS } from './inputs.js';
 import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
-/**
- * Build the Flyway command arguments from inputs
- */
 export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
 
@@ -45,9 +42,6 @@ export const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   return args;
 };
 
-/**
- * Parse extra args string into array, handling quoted strings
- */
 export const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];
   let current = '';
@@ -80,9 +74,6 @@ export const parseExtraArgs = (extraArgs: string): string[] => {
   return args;
 };
 
-/**
- * Check if Flyway is available in PATH
- */
 export const checkFlywayInstalled = async (): Promise<boolean> => {
   try {
     await exec.exec('flyway', ['--version'], {
@@ -95,9 +86,6 @@ export const checkFlywayInstalled = async (): Promise<boolean> => {
   }
 };
 
-/**
- * Get Flyway version
- */
 export const getFlywayVersion = async (): Promise<string> => {
   const { listener, getOutput } = createStdoutListener();
 
@@ -112,9 +100,6 @@ export const getFlywayVersion = async (): Promise<string> => {
   return match ? match[1] : 'unknown';
 };
 
-/**
- * Run the Flyway migrate command
- */
 export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
   const args = buildFlywayArgs(inputs);
   const { listeners, getOutput } = createStdoutStderrListeners();
@@ -136,9 +121,6 @@ export const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunR
   return { exitCode, stdout, stderr };
 };
 
-/**
- * Mask sensitive values in args for logging
- */
 export const maskArgsForLog = (args: string[]): string[] => {
   const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-vault\.token=/i, /^-url=.*password=/i];
 
@@ -153,9 +135,6 @@ export const maskArgsForLog = (args: string[]): string[] => {
   });
 };
 
-/**
- * Parse Flyway output to extract migration information
- */
 export const parseFlywayOutput = (
   stdout: string
 ): {
@@ -196,9 +175,6 @@ export const parseFlywayOutput = (
   return { migrationsApplied, schemaVersion };
 };
 
-/**
- * Set action outputs
- */
 export const setOutputs = (outputs: FlywayMigrateOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
   core.setOutput('flyway-version', outputs.flywayVersion);

@@ -26,7 +26,7 @@ When implemented, this will likely be a GitHub Action with:
 ### Comments and Documentation
 - Write self-documenting code. Variable names, function names, and structure should make the code's intent clear.
 - Avoid comments unless absolutely necessary for complex logic that cannot be clarified through refactoring.
-- JSDoc comments (`/** ... */`) are acceptable for public APIs and exported functions where documentation is valuable.
+- Do NOT use JSDoc comments (`/** ... */`). The code should be self-explanatory without documentation comments.
 
 ## Pull Request Workflow
 

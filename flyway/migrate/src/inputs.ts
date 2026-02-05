@@ -2,9 +2,6 @@ import * as core from '@actions/core';
 import { FlywayMigrateInputs, InputDefinition } from './types.js';
 import { toCamelCase } from './utils.js';
 
-/**
- * Map of input names to Flyway argument names and types
- */
 export const INPUT_DEFINITIONS: InputDefinition[] = [
   { inputName: 'url', flywayArg: 'url', type: 'string', isSecret: false },
   { inputName: 'user', flywayArg: 'user', type: 'string', isSecret: false },
@@ -114,9 +111,6 @@ export const INPUT_DEFINITIONS: InputDefinition[] = [
   },
 ];
 
-/**
- * Parse boolean input from string
- */
 export const parseBoolean = (value: string | undefined): boolean | undefined => {
   if (value === undefined || value === '') {
     return undefined;
@@ -131,9 +125,6 @@ export const parseBoolean = (value: string | undefined): boolean | undefined => 
   throw new Error(`Invalid boolean value: ${value}`);
 };
 
-/**
- * Parse number input from string
- */
 export const parseNumber = (value: string | undefined): number | undefined => {
   if (value === undefined || value === '') {
     return undefined;
@@ -145,10 +136,6 @@ export const parseNumber = (value: string | undefined): number | undefined => {
   return num;
 };
 
-/**
- * Parse placeholders from comma-separated key=value pairs
- * Format: "key1=value1,key2=value2"
- */
 export const parsePlaceholders = (
   value: string | undefined
 ): Record<string, string> | undefined => {
@@ -181,9 +168,6 @@ export const parsePlaceholders = (
   return Object.keys(placeholders).length > 0 ? placeholders : undefined;
 };
 
-/**
- * Get all inputs from the GitHub Action context
- */
 export const getInputs = (): FlywayMigrateInputs => {
   const url = core.getInput('url', { required: true });
 
@@ -225,9 +209,6 @@ export const getInputs = (): FlywayMigrateInputs => {
   return inputs;
 };
 
-/**
- * Mask secret inputs in the log
- */
 export const maskSecrets = (inputs: FlywayMigrateInputs): void => {
   if (inputs.password) {
     core.setSecret(inputs.password);
