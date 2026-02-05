@@ -5,7 +5,7 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@actions/core@npm:^2.0.0":
+"@actions/core@npm:2.0.3":
   version: 2.0.3
   resolution: "@actions/core@npm:2.0.3"
   dependencies:
@@ -15,7 +15,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/exec@npm:^2.0.0":
+"@actions/exec@npm:2.0.0, @actions/exec@npm:^2.0.0":
   version: 2.0.0
   resolution: "@actions/exec@npm:2.0.0"
   dependencies:
@@ -469,7 +469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.39.2, @eslint/js@npm:^9.0.0":
+"@eslint/js@npm:9.39.2":
   version: 9.39.2
   resolution: "@eslint/js@npm:9.39.2"
   checksum: 10c0/00f51c52b04ac79faebfaa65a9652b2093b9c924e945479f1f3945473f78aee83cbc76c8d70bbffbf06f7024626575b16d97b66eab16182e1d0d39daff2f26f5
@@ -497,16 +497,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@flyway-github-actions/migrate@workspace:flyway/migrate"
   dependencies:
-    "@actions/core": "npm:^2.0.0"
-    "@actions/exec": "npm:^2.0.0"
-    "@eslint/js": "npm:^9.0.0"
-    "@types/node": "npm:^24.0.0"
-    esbuild: "npm:^0.25.0"
-    eslint: "npm:^9.0.0"
-    prettier: "npm:^3.0.0"
-    typescript: "npm:^5.0.0"
-    typescript-eslint: "npm:^8.0.0"
-    vitest: "npm:^4.0.0"
+    "@actions/core": "npm:2.0.3"
+    "@actions/exec": "npm:2.0.0"
+    "@eslint/js": "npm:9.39.2"
+    "@types/node": "npm:24.10.10"
+    esbuild: "npm:0.25.12"
+    eslint: "npm:9.39.2"
+    prettier: "npm:3.8.1"
+    typescript: "npm:5.9.3"
+    typescript-eslint: "npm:8.54.0"
+    vitest: "npm:4.0.18"
   languageName: unknown
   linkType: soft
 
@@ -808,7 +808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.0.0":
+"@types/node@npm:24.10.10":
   version: 24.10.10
   resolution: "@types/node@npm:24.10.10"
   dependencies:
@@ -817,7 +817,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:8.54.0, @typescript-eslint/eslint-plugin@npm:^8.0.0":
+"@typescript-eslint/eslint-plugin@npm:8.54.0":
   version: 8.54.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.54.0"
   dependencies:
@@ -837,7 +837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:8.54.0, @typescript-eslint/parser@npm:^8.0.0":
+"@typescript-eslint/parser@npm:8.54.0":
   version: 8.54.0
   resolution: "@typescript-eslint/parser@npm:8.54.0"
   dependencies:
@@ -1258,7 +1258,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.25.0":
+"esbuild@npm:0.25.12":
   version: 0.25.12
   resolution: "esbuild@npm:0.25.12"
   dependencies:
@@ -1467,7 +1467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.0.0":
+"eslint@npm:9.39.2":
   version: 9.39.2
   resolution: "eslint@npm:9.39.2"
   dependencies:
@@ -1655,11 +1655,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "flyway-github-actions@workspace:."
   dependencies:
-    "@typescript-eslint/eslint-plugin": "npm:^8.0.0"
-    "@typescript-eslint/parser": "npm:^8.0.0"
-    eslint: "npm:^9.0.0"
-    prettier: "npm:^3.0.0"
-    typescript: "npm:^5.0.0"
+    "@typescript-eslint/eslint-plugin": "npm:8.54.0"
+    "@typescript-eslint/parser": "npm:8.54.0"
+    eslint: "npm:9.39.2"
+    prettier: "npm:3.8.1"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -2220,7 +2220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.0.0":
+"prettier@npm:3.8.1":
   version: 3.8.1
   resolution: "prettier@npm:3.8.1"
   bin:
@@ -2539,7 +2539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-eslint@npm:^8.0.0":
+"typescript-eslint@npm:8.54.0":
   version: 8.54.0
   resolution: "typescript-eslint@npm:8.54.0"
   dependencies:
@@ -2554,7 +2554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.0":
+"typescript@npm:5.9.3":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -2564,7 +2564,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.0.0#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
@@ -2670,7 +2670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.0.0":
+"vitest@npm:4.0.18":
   version: 4.0.18
   resolution: "vitest@npm:4.0.18"
   dependencies:
