@@ -1,12 +1,6 @@
 import * as core from '@actions/core';
 import { getInputs, maskSecrets } from './inputs.js';
-import {
-  checkFlywayInstalled,
-  getFlywayVersion,
-  runFlyway,
-  parseFlywayOutput,
-  setOutputs,
-} from './flyway-runner.js';
+import { checkFlywayInstalled, runFlyway, parseFlywayOutput, setOutputs } from './flyway-runner.js';
 
 const run = async (): Promise<void> => {
   try {
@@ -16,9 +10,6 @@ const run = async (): Promise<void> => {
         'Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.'
       );
     }
-
-    const flywayVersion = await getFlywayVersion();
-    core.info(`Using Flyway version: ${flywayVersion}`);
 
     const inputs = getInputs();
 
@@ -37,7 +28,6 @@ const run = async (): Promise<void> => {
 
     setOutputs({
       exitCode: result.exitCode,
-      flywayVersion,
       migrationsApplied,
       schemaVersion,
     });

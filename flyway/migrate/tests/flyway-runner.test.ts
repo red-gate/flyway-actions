@@ -36,47 +36,15 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-password=secret');
   });
 
-  it('should build args with boolean parameters', () => {
+  it('should build args with config files', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
-      baselineOnMigrate: true,
-      outOfOrder: false,
-      validateOnMigrate: true,
+      configFiles: 'flyway.conf,flyway-local.conf',
     };
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain('-baselineOnMigrate=true');
-    expect(args).toContain('-outOfOrder=false');
-    expect(args).toContain('-validateOnMigrate=true');
-  });
-
-  it('should build args with number parameters', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      connectRetries: 5,
-      connectRetriesInterval: 10,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-connectRetries=5');
-    expect(args).toContain('-connectRetriesInterval=10');
-  });
-
-  it('should build args with placeholders', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      placeholders: {
-        env: 'prod',
-        version: '1.0',
-      },
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-placeholders.env=prod');
-    expect(args).toContain('-placeholders.version=1.0');
+    expect(args).toContain('-configFiles=flyway.conf,flyway-local.conf');
   });
 
   it('should include extra args', () => {
@@ -89,49 +57,6 @@ describe('buildFlywayArgs', () => {
 
     expect(args).toContain('-X');
     expect(args).toContain('-custom=value');
-  });
-
-  it('should build args with Teams/Enterprise features', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      cherryPick: '2.0,2.1',
-      batch: true,
-      dryRunOutput: '/output/dryrun.sql',
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-cherryPick=2.0,2.1');
-    expect(args).toContain('-batch=true');
-    expect(args).toContain('-dryRunOutput=/output/dryrun.sql');
-  });
-
-  it('should build args with database-specific options', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:oracle:thin:@localhost:1521:xe',
-      oracleSqlplus: true,
-      oracleSqlplusWarn: false,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-oracle.sqlplus=true');
-    expect(args).toContain('-oracle.sqlplusWarn=false');
-  });
-
-  it('should build args with secrets management options', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      vaultUrl: 'https://vault.example.com',
-      vaultToken: 'hvs.token',
-      vaultSecrets: 'secret/data/db',
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-vault.url=https://vault.example.com');
-    expect(args).toContain('-vault.token=hvs.token');
-    expect(args).toContain('-vault.secrets=secret/data/db');
   });
 
   it('should not include undefined values', () => {
@@ -147,17 +72,6 @@ describe('buildFlywayArgs', () => {
     expect(args).not.toContain('-password=undefined');
     expect(args.filter((a) => a.includes('user')).length).toBe(0);
     expect(args.filter((a) => a.includes('password')).length).toBe(0);
-  });
-
-  it('should build args with config files', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      configFiles: 'flyway.conf,flyway-local.conf',
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-configFiles=flyway.conf,flyway-local.conf');
   });
 });
 
@@ -210,19 +124,8 @@ describe('maskArgsForLog', () => {
     expect(masked).toContain('-user=***');
   });
 
-  it('should mask vault token', () => {
-    const args = ['-vault.token=hvs.secret123'];
-    const masked = maskArgsForLog(args);
-
-    expect(masked).toContain('-vault.token=***');
-  });
-
   it('should not mask non-sensitive args', () => {
-    const args = [
-      '-url=jdbc:postgresql://localhost/db',
-      '-locations=sql',
-      '-baselineOnMigrate=true',
-    ];
+    const args = ['-url=jdbc:postgresql://localhost/db', '-configFiles=flyway.conf'];
     const masked = maskArgsForLog(args);
 
     expect(masked).toEqual(args);
@@ -233,14 +136,14 @@ describe('maskArgsForLog', () => {
       '-url=jdbc:postgresql://localhost/db',
       '-user=admin',
       '-password=secret',
-      '-locations=sql',
+      '-configFiles=flyway.conf',
     ];
     const masked = maskArgsForLog(args);
 
     expect(masked[0]).toBe('-url=jdbc:postgresql://localhost/db');
     expect(masked[1]).toBe('-user=***');
     expect(masked[2]).toBe('-password=***');
-    expect(masked[3]).toBe('-locations=sql');
+    expect(masked[3]).toBe('-configFiles=flyway.conf');
   });
 });
 

@@ -2,19 +2,6 @@ const toCamelCase = (str: string): string => {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 };
 
-const createStdoutListener = (): {
-  listener: (data: Buffer) => void;
-  getOutput: () => string;
-} => {
-  let output = '';
-  return {
-    listener: (data: Buffer) => {
-      output += data.toString();
-    },
-    getOutput: () => output,
-  };
-};
-
 const createStdoutStderrListeners = (): {
   listeners: {
     stdout: (data: Buffer) => void;
@@ -37,4 +24,4 @@ const createStdoutStderrListeners = (): {
   };
 };
 
-export { toCamelCase, createStdoutListener, createStdoutStderrListeners };
+export { toCamelCase, createStdoutStderrListeners };

@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './types.js';
 import { INPUT_DEFINITIONS } from './inputs.js';
-import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from './utils.js';
+import { toCamelCase, createStdoutStderrListeners } from './utils.js';
 
 const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
@@ -18,16 +18,6 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
     switch (def.type) {
       case 'boolean':
         args.push(`-${def.flywayArg}=${value ? 'true' : 'false'}`);
-        break;
-      case 'number':
-        args.push(`-${def.flywayArg}=${value}`);
-        break;
-      case 'placeholders':
-        if (typeof value === 'object') {
-          for (const [key, val] of Object.entries(value as Record<string, string>)) {
-            args.push(`-placeholders.${key}=${val}`);
-          }
-        }
         break;
       default:
         args.push(`-${def.flywayArg}=${value}`);
@@ -84,20 +74,6 @@ const checkFlywayInstalled = async (): Promise<boolean> => {
   } catch {
     return false;
   }
-};
-
-const getFlywayVersion = async (): Promise<string> => {
-  const { listener, getOutput } = createStdoutListener();
-
-  await exec.exec('flyway', ['--version'], {
-    silent: true,
-    listeners: { stdout: listener },
-  });
-
-  const stdout = getOutput();
-  // Example: "Flyway Community Edition 10.0.0"
-  const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
-  return match ? match[1] : 'unknown';
 };
 
 const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
@@ -185,7 +161,6 @@ const parseFlywayOutput = (
 
 const setOutputs = (outputs: FlywayMigrateOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
-  core.setOutput('flyway-version', outputs.flywayVersion);
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);
 };
@@ -194,7 +169,6 @@ export {
   buildFlywayArgs,
   parseExtraArgs,
   checkFlywayInstalled,
-  getFlywayVersion,
   runFlyway,
   maskArgsForLog,
   parseFlywayOutput,
