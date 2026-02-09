@@ -7,258 +7,35 @@ branding:
   color: 'blue'
 
 inputs:
-  # Connection
   url:
     description: 'JDBC URL for the database connection'
-    required: true
+    required: false
   user:
     description: 'Database user for the connection'
     required: false
   password:
     description: 'Database password for the connection'
     required: false
-  driver:
-    description: 'Fully qualified class name of the JDBC driver'
-    required: false
-  connect-retries:
-    description: 'Maximum number of retries when attempting to connect'
-    required: false
-  connect-retries-interval:
-    description: 'Maximum time between retries in seconds'
-    required: false
-  init-sql:
-    description: 'SQL statements to run after opening connection'
-    required: false
-
-  # General
-  locations:
-    description: 'Comma-separated list of migration locations'
-    required: false
-  schemas:
-    description: 'Comma-separated list of schemas managed by Flyway'
-    required: false
-  default-schema:
-    description: 'Default schema managed by Flyway'
-    required: false
-  table:
-    description: 'Name of Flyway schema history table'
-    required: false
-  tablespace:
-    description: 'Tablespace for Flyway schema history table'
+  environment:
+    description: 'Flyway TOML environment name'
     required: false
   target:
-    description: 'Target version up to which migrations should be run'
+    description: 'Migrate up to this version'
     required: false
-
-  # Behavior
-  baseline-on-migrate:
-    description: 'Automatically call baseline when non-empty schema'
-    required: false
-  baseline-version:
-    description: 'Version to tag an existing schema with when executing baseline'
-    required: false
-  baseline-description:
-    description: 'Description to tag an existing schema with when executing baseline'
-    required: false
-  out-of-order:
-    description: 'Allow migrations to be run out of order'
-    required: false
-  validate-on-migrate:
-    description: 'Validate when running migrate'
-    required: false
-  validate-migration-naming:
-    description: 'Validate migration naming conventions'
-    required: false
-  mixed:
-    description: 'Allow mixing transactional and non-transactional statements'
-    required: false
-  group:
-    description: 'Group all pending migrations in a single transaction'
-    required: false
-  installed-by:
-    description: 'Username recorded in schema history table'
-    required: false
-  skip-executing-migrations:
-    description: 'Skip execution of migrations, only update schema history'
-    required: false
-
-  # Teams/Enterprise Features
   cherry-pick:
-    description: 'Comma-separated list of migrations to apply (Teams/Enterprise)'
+    description: 'Comma-separated list of migration versions to apply'
     required: false
-  dry-run-output:
-    description: 'File to output dry run SQL statements (Teams/Enterprise)'
+  baseline-on-migrate:
+    description: 'Automatically baseline on first deploy'
     required: false
-  batch:
-    description: 'Batch SQL statements together (Teams/Enterprise)'
+    default: 'true'
+  save-snapshot:
+    description: 'Embed snapshot for drift checks'
     required: false
-  stream:
-    description: 'Stream SQL statements (Teams/Enterprise)'
-    required: false
-  error-overrides:
-    description: 'Rules to override specific SQL error handling (Teams/Enterprise)'
-    required: false
-  fail-on-missing-target:
-    description: 'Fail if target version is missing (Teams/Enterprise)'
-    required: false
-
-  # Placeholders
-  placeholder-replacement:
-    description: 'Enable placeholder replacement'
-    required: false
-  placeholder-prefix:
-    description: 'Prefix for placeholders'
-    required: false
-  placeholder-suffix:
-    description: 'Suffix for placeholders'
-    required: false
-  placeholder-separator:
-    description: 'Separator for default placeholders'
-    required: false
-  placeholders:
-    description: 'Placeholders as key=value pairs, comma-separated'
-    required: false
-  script-placeholder-prefix:
-    description: 'Prefix for script placeholders'
-    required: false
-  script-placeholder-suffix:
-    description: 'Suffix for script placeholders'
-    required: false
-
-  # Migration Naming
-  sql-migration-prefix:
-    description: 'File name prefix for SQL migrations'
-    required: false
-  sql-migration-separator:
-    description: 'File name separator for SQL migrations'
-    required: false
-  sql-migration-suffixes:
-    description: 'Comma-separated file name suffixes for SQL migrations'
-    required: false
-  repeatable-sql-migration-prefix:
-    description: 'File name prefix for repeatable SQL migrations'
-    required: false
-  undo-sql-migration-prefix:
-    description: 'File name prefix for undo SQL migrations'
-    required: false
-
-  # Secrets Management - Vault
-  vault-url:
-    description: 'HashiCorp Vault REST API URL'
-    required: false
-  vault-token:
-    description: 'HashiCorp Vault token'
-    required: false
-  vault-secrets:
-    description: 'Comma-separated vault secret paths'
-    required: false
-
-  # Secrets Management - Google Cloud Secret Manager
-  gcsm-project:
-    description: 'Google Cloud project ID for Secret Manager'
-    required: false
-  gcsm-secrets:
-    description: 'Comma-separated Google Cloud Secret Manager secrets'
-    required: false
-
-  # Secrets Management - Dapr
-  dapr-url:
-    description: 'Dapr sidecar URL'
-    required: false
-  dapr-secrets:
-    description: 'Comma-separated Dapr secrets'
-    required: false
-
-  # Database-Specific - Oracle
-  oracle-sqlplus:
-    description: 'Enable Oracle SQL*Plus compatibility'
-    required: false
-  oracle-sqlplus-warn:
-    description: 'Log SQL*Plus warnings'
-    required: false
-  oracle-wallet-location:
-    description: 'Location of Oracle Wallet'
-    required: false
-  oracle-kerberos-cache-file:
-    description: 'Path to Oracle Kerberos cache file'
-    required: false
-
-  # Database-Specific - PostgreSQL
-  postgresql-transactional-lock:
-    description: 'Use transactional lock for PostgreSQL'
-    required: false
-
-  # Database-Specific - SQL Server
-  sqlserver-kerberos-login-file:
-    description: 'Path to SQL Server Kerberos login file'
-    required: false
-
-  # Advanced
-  config-files:
-    description: 'Comma-separated paths to Flyway configuration files'
-    required: false
+    default: 'true'
   working-directory:
     description: 'Working directory for Flyway execution'
     required: false
-  jar-dirs:
-    description: 'Comma-separated directories containing JDBC drivers'
-    required: false
-  encoding:
-    description: 'Encoding of SQL migrations'
-    required: false
-  callbacks:
-    description: 'Comma-separated fully qualified callback class names'
-    required: false
-  loggers:
-    description: 'Comma-separated loggers'
-    required: false
-  output-type:
-    description: 'Output type (json for machine-readable output)'
-    required: false
-  color:
-    description: 'Enable/disable colorized output'
-    required: false
-  edition:
-    description: 'Flyway edition to use'
-    required: false
-  environment:
-    description: 'Flyway environment to use'
-    required: false
-  detect-encoding:
-    description: 'Detect SQL migration encoding automatically'
-    required: false
-  execute-in-transaction:
-    description: 'Execute migrations in a transaction'
-    required: false
-  lock-retry-count:
-    description: 'Number of times to retry when unable to get lock'
-    required: false
-  fail-on-missing-locations:
-    description: 'Fail if a location does not exist'
-    required: false
-  report-filename:
-    description: 'Filename for HTML report'
-    required: false
-  report-enabled:
-    description: 'Enable HTML report generation'
-    required: false
-  skip-default-callbacks:
-    description: 'Skip default callbacks'
-    required: false
-  skip-default-resolvers:
-    description: 'Skip default resolvers'
-    required: false
-  clean-disabled:
-    description: 'Disable clean command'
-    required: false
-  clean-on-validation-error:
-    description: 'Clean database on validation error'
-    required: false
-  community-db-support-enabled:
-    description: 'Enable community database support'
-    required: false
-
-  # Escape hatch
   extra-args:
     description: 'Additional arguments to pass to Flyway'
     required: false

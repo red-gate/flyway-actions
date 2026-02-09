@@ -1,42 +1,35 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './types.js';
-import { INPUT_DEFINITIONS } from './inputs.js';
-import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from './utils.js';
+import { createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
 const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
 
-  for (const def of INPUT_DEFINITIONS) {
-    const propName = toCamelCase(def.inputName);
-    const value = (inputs as Record<string, unknown>)[propName];
-
-    if (value === undefined || value === null) {
-      continue;
-    }
-
-    switch (def.type) {
-      case 'boolean':
-        args.push(`-${def.flywayArg}=${value ? 'true' : 'false'}`);
-        break;
-      case 'number':
-        args.push(`-${def.flywayArg}=${value}`);
-        break;
-      case 'placeholders':
-        if (typeof value === 'object') {
-          for (const [key, val] of Object.entries(value as Record<string, string>)) {
-            args.push(`-placeholders.${key}=${val}`);
-          }
-        }
-        break;
-      default:
-        args.push(`-${def.flywayArg}=${value}`);
-    }
+  if (inputs.url) {
+    args.push(`-url=${inputs.url}`);
+  }
+  if (inputs.user) {
+    args.push(`-user=${inputs.user}`);
+  }
+  if (inputs.password) {
+    args.push(`-password=${inputs.password}`);
+  }
+  if (inputs.environment) {
+    args.push(`-environment=${inputs.environment}`);
+  }
+  if (inputs.target) {
+    args.push(`-target=${inputs.target}`);
+  }
+  if (inputs.cherryPick) {
+    args.push(`-cherryPick=${inputs.cherryPick}`);
   }
 
+  args.push(`-baselineOnMigrate=${inputs.baselineOnMigrate}`);
+  args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
+
   if (inputs.extraArgs) {
-    const extraArgsArray = parseExtraArgs(inputs.extraArgs);
-    args.push(...extraArgsArray);
+    args.push(...parseExtraArgs(inputs.extraArgs));
   }
 
   return args;
@@ -95,7 +88,6 @@ const getFlywayVersion = async (): Promise<string> => {
   });
 
   const stdout = getOutput();
-  // Example: "Flyway Community Edition 10.0.0"
   const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
   return match ? match[1] : 'unknown';
 };
@@ -122,7 +114,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
 };
 
 const maskArgsForLog = (args: string[]): string[] => {
-  const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-vault\.token=/i, /^-url=.*password=/i];
+  const sensitivePatterns = [/^-password=/i, /^-user=/i];
 
   return args.map((arg) => {
     for (const pattern of sensitivePatterns) {
