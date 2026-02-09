@@ -9,7 +9,13 @@ describe('getInputs', () => {
     vi.resetAllMocks();
   });
 
+  const mockDefaults = () => {
+    vi.mocked(core.getInput).mockReturnValue('');
+    vi.mocked(core.getBooleanInput).mockReturnValue(true);
+  };
+
   it('should return url when provided', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:postgresql://localhost/db';
       return '';
@@ -20,13 +26,14 @@ describe('getInputs', () => {
   });
 
   it('should return undefined for url when not provided', () => {
-    vi.mocked(core.getInput).mockReturnValue('');
+    mockDefaults();
 
     const inputs = getInputs();
     expect(inputs.url).toBeUndefined();
   });
 
   it('should get connection inputs', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       const values: Record<string, string> = {
         url: 'jdbc:postgresql://localhost/db',
@@ -43,6 +50,7 @@ describe('getInputs', () => {
   });
 
   it('should get environment input', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       if (name === 'environment') return 'production';
       return '';
@@ -53,6 +61,7 @@ describe('getInputs', () => {
   });
 
   it('should get target and cherry-pick inputs', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       const values: Record<string, string> = {
         target: '5.0',
@@ -67,16 +76,17 @@ describe('getInputs', () => {
   });
 
   it('should default baselineOnMigrate to true', () => {
-    vi.mocked(core.getInput).mockReturnValue('');
+    mockDefaults();
 
     const inputs = getInputs();
     expect(inputs.baselineOnMigrate).toBe(true);
   });
 
   it('should set baselineOnMigrate to false when explicitly set', () => {
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
-      if (name === 'baseline-on-migrate') return 'false';
-      return '';
+    mockDefaults();
+    vi.mocked(core.getBooleanInput).mockImplementation((name: string) => {
+      if (name === 'baseline-on-migrate') return false;
+      return true;
     });
 
     const inputs = getInputs();
@@ -84,16 +94,17 @@ describe('getInputs', () => {
   });
 
   it('should default saveSnapshot to true', () => {
-    vi.mocked(core.getInput).mockReturnValue('');
+    mockDefaults();
 
     const inputs = getInputs();
     expect(inputs.saveSnapshot).toBe(true);
   });
 
   it('should set saveSnapshot to false when explicitly set', () => {
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
-      if (name === 'save-snapshot') return 'false';
-      return '';
+    mockDefaults();
+    vi.mocked(core.getBooleanInput).mockImplementation((name: string) => {
+      if (name === 'save-snapshot') return false;
+      return true;
     });
 
     const inputs = getInputs();
@@ -101,6 +112,7 @@ describe('getInputs', () => {
   });
 
   it('should get working directory and extra args', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       const values: Record<string, string> = {
         'working-directory': '/app/db',
@@ -115,7 +127,7 @@ describe('getInputs', () => {
   });
 
   it('should return undefined for optional inputs not provided', () => {
-    vi.mocked(core.getInput).mockReturnValue('');
+    mockDefaults();
 
     const inputs = getInputs();
     expect(inputs.url).toBeUndefined();

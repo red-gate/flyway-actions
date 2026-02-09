@@ -22,6 +22,12 @@ const run = async (): Promise<void> => {
 
     const inputs = getInputs();
 
+    if (!inputs.url && !inputs.environment) {
+      throw new Error(
+        'Either "url" or "environment" must be provided for Flyway to connect to a database.'
+      );
+    }
+
     if (flywayInfo.edition === 'community') {
       inputs.saveSnapshot = undefined;
     }

@@ -199,27 +199,30 @@ describe('parseExtraArgs', () => {
 
 describe('maskArgsForLog', () => {
   it('should mask password argument', () => {
-    const args = ['-url=jdbc:postgresql://localhost/db', '-password=secret123'];
+    const args = ['-password=secret123'];
     const masked = maskArgsForLog(args);
 
-    expect(masked).toContain('-url=jdbc:postgresql://localhost/db');
     expect(masked).toContain('-password=***');
     expect(masked).not.toContain('-password=secret123');
   });
 
   it('should mask user argument', () => {
-    const args = ['-url=jdbc:postgresql://localhost/db', '-user=admin'];
+    const args = ['-user=admin'];
     const masked = maskArgsForLog(args);
 
     expect(masked).toContain('-user=***');
   });
 
+  it('should mask url argument', () => {
+    const args = ['-url=jdbc:postgresql://user:pass@localhost/db'];
+    const masked = maskArgsForLog(args);
+
+    expect(masked).toContain('-url=***');
+    expect(masked).not.toContain('pass');
+  });
+
   it('should not mask non-sensitive args', () => {
-    const args = [
-      '-url=jdbc:postgresql://localhost/db',
-      '-baselineOnMigrate=true',
-      '-saveSnapshot=true',
-    ];
+    const args = ['-baselineOnMigrate=true', '-saveSnapshot=true'];
     const masked = maskArgsForLog(args);
 
     expect(masked).toEqual(args);
@@ -234,7 +237,7 @@ describe('maskArgsForLog', () => {
     ];
     const masked = maskArgsForLog(args);
 
-    expect(masked[0]).toBe('-url=jdbc:postgresql://localhost/db');
+    expect(masked[0]).toBe('-url=***');
     expect(masked[1]).toBe('-user=***');
     expect(masked[2]).toBe('-password=***');
     expect(masked[3]).toBe('-baselineOnMigrate=true');

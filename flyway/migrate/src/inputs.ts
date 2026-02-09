@@ -8,8 +8,8 @@ const getInputs = (): FlywayMigrateInputs => {
   const environment = core.getInput('environment') || undefined;
   const target = core.getInput('target') || undefined;
   const cherryPick = core.getInput('cherry-pick') || undefined;
-  const baselineOnMigrate = core.getInput('baseline-on-migrate') !== 'false';
-  const saveSnapshot = core.getInput('save-snapshot') !== 'false';
+  const baselineOnMigrate = core.getBooleanInput('baseline-on-migrate');
+  const saveSnapshot = core.getBooleanInput('save-snapshot');
   const workingDirectory = core.getInput('working-directory') || undefined;
   const extraArgs = core.getInput('extra-args') || undefined;
 

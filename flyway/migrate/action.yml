@@ -8,7 +8,7 @@ branding:
 
 inputs:
   url:
-    description: 'JDBC URL for the database connection'
+    description: 'JDBC URL for the database connection. Required if "environment" is not set.'
     required: false
   user:
     description: 'Database user for the connection'
@@ -17,7 +17,7 @@ inputs:
     description: 'Database password for the connection'
     required: false
   environment:
-    description: 'Flyway TOML environment name'
+    description: 'Flyway TOML environment name. Required if "url" is not set.'
     required: false
   target:
     description: 'Migrate up to this version'
