@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { describe, it, expect, vi } from 'vitest';
 import {
   buildFlywayArgs,
@@ -132,7 +133,7 @@ describe('buildFlywayArgs', () => {
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain('-workingDirectory=/app/db');
+    expect(args).toContain(`-workingDirectory=${path.resolve('/app/db')}`);
   });
 
   it('should include extra args', () => {

@@ -70,8 +70,8 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayInfo } = await import('../src/flyway-runner.js');
-    const info = await getFlywayInfo();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
     expect(info.version).toBe('10.0.0');
     expect(info.edition).toBe('community');
@@ -87,8 +87,8 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayInfo } = await import('../src/flyway-runner.js');
-    const info = await getFlywayInfo();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
     expect(info.version).toBe('10.5.0');
     expect(info.edition).toBe('teams');
@@ -104,8 +104,8 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayInfo } = await import('../src/flyway-runner.js');
-    const info = await getFlywayInfo();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
     expect(info.version).toBe('11.0.0');
     expect(info.edition).toBe('enterprise');
@@ -121,8 +121,8 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayInfo } = await import('../src/flyway-runner.js');
-    const info = await getFlywayInfo();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
     expect(info.version).toBe('unknown');
     expect(info.edition).toBe('community');

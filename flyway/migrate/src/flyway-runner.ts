@@ -1,8 +1,9 @@
+import * as path from 'path';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import {
   FlywayEdition,
-  FlywayInfo,
+  FlywayVersionDetails,
   FlywayMigrateInputs,
   FlywayRunResult,
   FlywayMigrateOutputs,
@@ -37,7 +38,7 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   }
 
   if (inputs.workingDirectory) {
-    args.push(`-workingDirectory=${inputs.workingDirectory}`);
+    args.push(`-workingDirectory=${path.resolve(inputs.workingDirectory)}`);
   }
 
   if (inputs.extraArgs) {
@@ -91,7 +92,7 @@ const checkFlywayInstalled = async (): Promise<boolean> => {
   }
 };
 
-const getFlywayInfo = async (): Promise<FlywayInfo> => {
+const getFlywayVersionDetails = async (): Promise<FlywayVersionDetails> => {
   const { listener, getOutput } = createStdoutListener();
 
   await exec.exec('flyway', ['--version'], {
@@ -117,6 +118,10 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
     ignoreReturnCode: true,
     listeners,
   };
+
+  if (inputs.workingDirectory) {
+    options.cwd = path.resolve(inputs.workingDirectory);
+  }
 
   const exitCode = await exec.exec('flyway', args, options);
   const { stdout, stderr } = getOutput();
@@ -197,7 +202,7 @@ export {
   buildFlywayArgs,
   parseExtraArgs,
   checkFlywayInstalled,
-  getFlywayInfo,
+  getFlywayVersionDetails,
   runFlyway,
   maskArgsForLog,
   parseFlywayOutput,
