@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import { getInputs, maskSecrets } from './inputs.js';
 import {
   checkFlywayInstalled,
-  getFlywayVersion,
+  getFlywayInfo,
   runFlyway,
   parseFlywayOutput,
   setOutputs,
@@ -17,10 +17,14 @@ const run = async (): Promise<void> => {
       );
     }
 
-    const flywayVersion = await getFlywayVersion();
-    core.info(`Using Flyway version: ${flywayVersion}`);
+    const flywayInfo = await getFlywayInfo();
+    core.info(`Using Flyway ${flywayInfo.edition} edition ${flywayInfo.version}`);
 
     const inputs = getInputs();
+
+    if (flywayInfo.edition === 'community') {
+      inputs.saveSnapshot = undefined;
+    }
 
     maskSecrets(inputs);
 
@@ -37,7 +41,7 @@ const run = async (): Promise<void> => {
 
     setOutputs({
       exitCode: result.exitCode,
-      flywayVersion,
+      flywayVersion: flywayInfo.version,
       migrationsApplied,
       schemaVersion,
     });

@@ -30,7 +30,7 @@ inputs:
     required: false
     default: 'true'
   save-snapshot:
-    description: 'Embed snapshot for drift checks'
+    description: 'Embed snapshot for drift checks (Teams/Enterprise). Auto-disabled for Community edition.'
     required: false
     default: 'true'
   working-directory:

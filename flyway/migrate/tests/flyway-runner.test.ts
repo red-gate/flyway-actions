@@ -14,14 +14,13 @@ describe('buildFlywayArgs', () => {
   it('should build args with defaults only', () => {
     const inputs: FlywayMigrateInputs = {
       baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
 
     expect(args).toContain('migrate');
     expect(args).toContain('-baselineOnMigrate=true');
-    expect(args).toContain('-saveSnapshot=true');
+    expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
   });
 
   it('should build args with url connection', () => {
@@ -90,7 +89,19 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-baselineOnMigrate=false');
   });
 
-  it('should respect saveSnapshot=false', () => {
+  it('should include -saveSnapshot=true when set', () => {
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:postgresql://localhost/db',
+      baselineOnMigrate: true,
+      saveSnapshot: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain('-saveSnapshot=true');
+  });
+
+  it('should include -saveSnapshot=false when explicitly false', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       baselineOnMigrate: true,
@@ -100,6 +111,17 @@ describe('buildFlywayArgs', () => {
     const args = buildFlywayArgs(inputs);
 
     expect(args).toContain('-saveSnapshot=false');
+  });
+
+  it('should omit -saveSnapshot when undefined', () => {
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:postgresql://localhost/db',
+      baselineOnMigrate: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
   });
 
   it('should include extra args', () => {
@@ -119,7 +141,6 @@ describe('buildFlywayArgs', () => {
   it('should not include undefined optional values', () => {
     const inputs: FlywayMigrateInputs = {
       baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);

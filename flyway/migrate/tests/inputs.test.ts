@@ -138,7 +138,6 @@ describe('maskSecrets', () => {
     const inputs = {
       password: 'secret123',
       baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     maskSecrets(inputs);
@@ -151,7 +150,6 @@ describe('maskSecrets', () => {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
       baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     maskSecrets(inputs);

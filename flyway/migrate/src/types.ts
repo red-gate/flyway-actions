@@ -1,3 +1,10 @@
+type FlywayEdition = 'community' | 'teams' | 'enterprise';
+
+interface FlywayInfo {
+  version: string;
+  edition: FlywayEdition;
+}
+
 interface FlywayMigrateInputs {
   url?: string;
   user?: string;
@@ -6,7 +13,7 @@ interface FlywayMigrateInputs {
   target?: string;
   cherryPick?: string;
   baselineOnMigrate: boolean;
-  saveSnapshot: boolean;
+  saveSnapshot?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
 }
@@ -24,4 +31,4 @@ interface FlywayRunResult {
   stderr: string;
 }
 
-export { FlywayMigrateInputs, FlywayMigrateOutputs, FlywayRunResult };
+export { FlywayEdition, FlywayInfo, FlywayMigrateInputs, FlywayMigrateOutputs, FlywayRunResult };

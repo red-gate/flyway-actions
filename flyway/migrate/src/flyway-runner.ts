@@ -1,6 +1,12 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './types.js';
+import {
+  FlywayEdition,
+  FlywayInfo,
+  FlywayMigrateInputs,
+  FlywayRunResult,
+  FlywayMigrateOutputs,
+} from './types.js';
 import { createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
 const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
@@ -26,7 +32,9 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   }
 
   args.push(`-baselineOnMigrate=${inputs.baselineOnMigrate}`);
-  args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
+  if (inputs.saveSnapshot !== undefined) {
+    args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
+  }
 
   if (inputs.extraArgs) {
     args.push(...parseExtraArgs(inputs.extraArgs));
@@ -79,7 +87,7 @@ const checkFlywayInstalled = async (): Promise<boolean> => {
   }
 };
 
-const getFlywayVersion = async (): Promise<string> => {
+const getFlywayInfo = async (): Promise<FlywayInfo> => {
   const { listener, getOutput } = createStdoutListener();
 
   await exec.exec('flyway', ['--version'], {
@@ -88,8 +96,11 @@ const getFlywayVersion = async (): Promise<string> => {
   });
 
   const stdout = getOutput();
-  const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
-  return match ? match[1] : 'unknown';
+  const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
+  return {
+    edition: (match ? match[1].toLowerCase() : 'community') as FlywayEdition,
+    version: match ? match[2] : 'unknown',
+  };
 };
 
 const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
@@ -186,7 +197,7 @@ export {
   buildFlywayArgs,
   parseExtraArgs,
   checkFlywayInstalled,
-  getFlywayVersion,
+  getFlywayInfo,
   runFlyway,
   maskArgsForLog,
   parseFlywayOutput,
