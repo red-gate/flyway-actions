@@ -36,6 +36,10 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
     args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
   }
 
+  if (inputs.workingDirectory) {
+    args.push(`-workingDirectory=${inputs.workingDirectory}`);
+  }
+
   if (inputs.extraArgs) {
     args.push(...parseExtraArgs(inputs.extraArgs));
   }
@@ -113,10 +117,6 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
     ignoreReturnCode: true,
     listeners,
   };
-
-  if (inputs.workingDirectory) {
-    options.cwd = inputs.workingDirectory;
-  }
 
   const exitCode = await exec.exec('flyway', args, options);
   const { stdout, stderr } = getOutput();

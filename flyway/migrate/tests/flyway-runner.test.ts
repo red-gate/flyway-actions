@@ -124,6 +124,17 @@ describe('buildFlywayArgs', () => {
     expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
   });
 
+  it('should include working directory', () => {
+    const inputs: FlywayMigrateInputs = {
+      workingDirectory: '/app/db',
+      baselineOnMigrate: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain('-workingDirectory=/app/db');
+  });
+
   it('should include extra args', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
