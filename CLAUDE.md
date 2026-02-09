@@ -42,8 +42,8 @@ When implemented, this will likely be a GitHub Action with:
 
 ## Committing Changes
 
-Commit messages should be as terse as possible. No need for long descriptions or a commit signature.
-Before creating any commit, ALWAYS run `yarn format` to ensure code formatting is consistent across the codebase. This should be done for every commit without exception.
+- Commit messages should be as terse as possible. No need for long descriptions or a commit signature.
+- Before creating any commit, ALWAYS run `yarn format` to ensure code formatting is consistent across the codebase. This should be done for every commit without exception.
 
 Example workflow:
 1. Make code changes
@@ -54,8 +54,8 @@ Example workflow:
 
 ## Pull Request Workflow
 
-PR descriptions should be terse. No long explanations or verbose checklists.
-When raising a PR, follow these steps to ensure the "check dist is up to date" build step passes:
+- PR descriptions should be terse. No long explanations or verbose checklists.
+- When raising a PR, follow these steps to ensure the "check dist is up to date" build step passes:
 
 1. Fetch latest changes: `git fetch`
 2. Rebase on main: `git rebase origin/main`
@@ -64,4 +64,4 @@ When raising a PR, follow these steps to ensure the "check dist is up to date" b
 5. Commit the changes to `dist/` if any files were updated
 6. Push the branch and create the PR
 
-This ensures the built distribution files in `dist/` are always up to date with the source code.
+This ensures the built distribution files in `dist/` are always up to date with the source code. There only ever needs to be one commit per PR that updates build distribution files, typically at the end.
