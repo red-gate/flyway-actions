@@ -1,6 +1,12 @@
 import * as core from '@actions/core';
 import { getInputs, maskSecrets } from './inputs.js';
-import { getFlywayDetails, runFlyway, parseFlywayOutput, setOutputs } from './flyway-runner.js';
+import {
+  getFlywayDetails,
+  buildFlywayMigrateArgs,
+  runFlyway,
+  parseFlywayOutput,
+  setOutputs,
+} from './flyway-runner.js';
 
 const run = async (): Promise<void> => {
   try {
@@ -24,7 +30,8 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    const result = await runFlyway(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
+    const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.stdout) {
       core.info(result.stdout);

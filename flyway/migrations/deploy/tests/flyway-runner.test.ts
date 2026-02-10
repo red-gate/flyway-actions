@@ -15,7 +15,7 @@ vi.doMock('@actions/exec', () => ({
 }));
 
 const {
-  buildFlywayArgs,
+  buildFlywayMigrateArgs,
   parseExtraArgs,
   maskArgsForLog,
   parseFlywayOutput,
@@ -24,11 +24,11 @@ const {
   getFlywayDetails,
 } = await import('../src/flyway-runner.js');
 
-describe('buildFlywayArgs', () => {
+describe('buildFlywayMigrateArgs', () => {
   it('should build args with defaults only', () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('migrate');
     expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
@@ -41,7 +41,7 @@ describe('buildFlywayArgs', () => {
       password: 'secret',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-url=jdbc:postgresql://localhost/db');
     expect(args).toContain('-user=admin');
@@ -53,7 +53,7 @@ describe('buildFlywayArgs', () => {
       environment: 'production',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-environment=production');
   });
@@ -64,7 +64,7 @@ describe('buildFlywayArgs', () => {
       target: '5.0',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-target=5.0');
   });
@@ -75,7 +75,7 @@ describe('buildFlywayArgs', () => {
       cherryPick: '2.0,2.1',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-cherryPick=2.0,2.1');
   });
@@ -86,7 +86,7 @@ describe('buildFlywayArgs', () => {
       saveSnapshot: true,
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-saveSnapshot=true');
   });
@@ -96,7 +96,7 @@ describe('buildFlywayArgs', () => {
       url: 'jdbc:postgresql://localhost/db',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
   });
@@ -106,7 +106,7 @@ describe('buildFlywayArgs', () => {
       workingDirectory: '/app/db',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-workingDirectory=/app/db');
   });
@@ -117,7 +117,7 @@ describe('buildFlywayArgs', () => {
       extraArgs: '-X -custom=value',
     };
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args).toContain('-X');
     expect(args).toContain('-custom=value');
@@ -126,7 +126,7 @@ describe('buildFlywayArgs', () => {
   it('should not include undefined optional values', () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
-    const args = buildFlywayArgs(inputs);
+    const args = buildFlywayMigrateArgs(inputs);
 
     expect(args.filter((a) => a.includes('url')).length).toBe(0);
     expect(args.filter((a) => a.includes('user')).length).toBe(0);
@@ -341,17 +341,14 @@ Schema version: 4.0
 });
 
 describe('runFlyway', () => {
-  it('should execute flyway with correct arguments', async () => {
+  it('should execute flyway with provided arguments', async () => {
     exec.mockResolvedValue(0);
-    const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:sqlite:test.db',
-    };
 
-    await runFlyway(inputs);
+    await runFlyway(['migrate', '-url=jdbc:sqlite:test.db']);
 
     expect(exec).toHaveBeenCalledWith(
       'flyway',
-      expect.arrayContaining(['migrate', '-url=jdbc:sqlite:test.db']),
+      ['migrate', '-url=jdbc:sqlite:test.db'],
       expect.any(Object)
     );
   });
@@ -363,7 +360,7 @@ describe('runFlyway', () => {
       return 0;
     });
 
-    const result = await runFlyway({ url: 'jdbc:sqlite:test.db' });
+    const result = await runFlyway(['migrate']);
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toBe('success output');
@@ -373,19 +370,15 @@ describe('runFlyway', () => {
   it('should return non-zero exit code on failure', async () => {
     exec.mockResolvedValue(1);
 
-    const result = await runFlyway({ url: 'jdbc:sqlite:test.db' });
+    const result = await runFlyway(['migrate']);
 
     expect(result.exitCode).toBe(1);
   });
 
-  it('should set cwd when working directory is provided', async () => {
+  it('should set cwd when provided', async () => {
     exec.mockResolvedValue(0);
-    const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:sqlite:test.db',
-      workingDirectory: '/app/db',
-    };
 
-    await runFlyway(inputs);
+    await runFlyway(['migrate', '-url=jdbc:sqlite:test.db'], '/app/db');
 
     expect(exec).toHaveBeenCalledWith(
       'flyway',
@@ -394,10 +387,10 @@ describe('runFlyway', () => {
     );
   });
 
-  it('should not set cwd when no working directory', async () => {
+  it('should not set cwd when not provided', async () => {
     exec.mockResolvedValue(0);
 
-    await runFlyway({ url: 'jdbc:sqlite:test.db' });
+    await runFlyway(['migrate']);
 
     expect(exec).toHaveBeenCalledWith(
       'flyway',
@@ -409,10 +402,7 @@ describe('runFlyway', () => {
   it('should log masked command', async () => {
     exec.mockResolvedValue(0);
 
-    await runFlyway({
-      url: 'jdbc:sqlite:test.db',
-      password: 'secret',
-    });
+    await runFlyway(['migrate', '-url=jdbc:sqlite:test.db', '-password=secret']);
 
     expect(info).toHaveBeenCalledWith(expect.stringContaining('-password=***'));
     expect(info).toHaveBeenCalledWith(expect.not.stringContaining('secret'));
