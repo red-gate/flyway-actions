@@ -80,31 +80,24 @@ const parseExtraArgs = (extraArgs: string): string[] => {
   return args;
 };
 
-const checkFlywayInstalled = async (): Promise<boolean> => {
+const getFlywayDetails = async (): Promise<FlywayDetails> => {
   try {
+    const { listener, getOutput } = createStdoutListener();
+
     await exec.exec('flyway', ['--version'], {
       silent: true,
-      ignoreReturnCode: true,
+      listeners: { stdout: listener },
     });
-    return true;
+
+    const stdout = getOutput();
+    const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition/);
+    return {
+      installed: true,
+      edition: (match ? match[1].toLowerCase() : 'community') as FlywayEdition,
+    };
   } catch {
-    return false;
+    return { installed: false };
   }
-};
-
-const getFlywayDetails = async (): Promise<FlywayDetails> => {
-  const { listener, getOutput } = createStdoutListener();
-
-  await exec.exec('flyway', ['--version'], {
-    silent: true,
-    listeners: { stdout: listener },
-  });
-
-  const stdout = getOutput();
-  const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition/);
-  return {
-    edition: (match ? match[1].toLowerCase() : 'community') as FlywayEdition,
-  };
 };
 
 const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
@@ -199,7 +192,6 @@ const setOutputs = (outputs: FlywayMigrateOutputs): void => {
 export {
   buildFlywayArgs,
   parseExtraArgs,
-  checkFlywayInstalled,
   getFlywayDetails,
   runFlyway,
   maskArgsForLog,

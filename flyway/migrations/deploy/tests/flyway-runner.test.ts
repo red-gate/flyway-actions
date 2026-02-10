@@ -21,7 +21,6 @@ const {
   maskArgsForLog,
   parseFlywayOutput,
   runFlyway,
-  checkFlywayInstalled,
   setOutputs,
   getFlywayDetails,
 } = await import('../src/flyway-runner.js');
@@ -456,24 +455,6 @@ describe('runFlyway', () => {
   });
 });
 
-describe('checkFlywayInstalled', () => {
-  it('should return false when flyway is not found', async () => {
-    exec.mockRejectedValue(new Error('Command not found'));
-
-    const result = await checkFlywayInstalled();
-
-    expect(result).toBe(false);
-  });
-
-  it('should return true when flyway is found', async () => {
-    exec.mockResolvedValue(0);
-
-    const result = await checkFlywayInstalled();
-
-    expect(result).toBe(true);
-  });
-});
-
 describe('setOutputs', () => {
   it('should set all outputs correctly', () => {
     setOutputs({
@@ -489,15 +470,23 @@ describe('setOutputs', () => {
 });
 
 describe('getFlywayDetails', () => {
+  it('should return installed false when flyway is not found', async () => {
+    exec.mockRejectedValue(new Error('Command not found'));
+
+    const result = await getFlywayDetails();
+
+    expect(result).toEqual({ installed: false });
+  });
+
   it('should detect Community edition', async () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from('Flyway Community Edition 10.0.0 by Redgate\n'));
       return 0;
     });
 
-    const info = await getFlywayDetails();
+    const result = await getFlywayDetails();
 
-    expect(info.edition).toBe('community');
+    expect(result).toEqual({ installed: true, edition: 'community' });
   });
 
   it('should detect Teams edition', async () => {
@@ -506,9 +495,9 @@ describe('getFlywayDetails', () => {
       return 0;
     });
 
-    const info = await getFlywayDetails();
+    const result = await getFlywayDetails();
 
-    expect(info.edition).toBe('teams');
+    expect(result).toEqual({ installed: true, edition: 'teams' });
   });
 
   it('should detect Enterprise edition', async () => {
@@ -517,9 +506,9 @@ describe('getFlywayDetails', () => {
       return 0;
     });
 
-    const info = await getFlywayDetails();
+    const result = await getFlywayDetails();
 
-    expect(info.edition).toBe('enterprise');
+    expect(result).toEqual({ installed: true, edition: 'enterprise' });
   });
 
   it('should default to community for unparseable output', async () => {
@@ -528,8 +517,8 @@ describe('getFlywayDetails', () => {
       return 0;
     });
 
-    const info = await getFlywayDetails();
+    const result = await getFlywayDetails();
 
-    expect(info.edition).toBe('community');
+    expect(result).toEqual({ installed: true, edition: 'community' });
   });
 });

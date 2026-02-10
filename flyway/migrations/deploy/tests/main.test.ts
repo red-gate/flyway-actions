@@ -35,8 +35,7 @@ describe('run', () => {
     let callCount = 0;
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
-      // First two exec calls are checkFlywayInstalled and getFlywayDetails
-      if (callCount <= 2) {
+      if (callCount === 1) {
         options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
         return 0;
       }
@@ -104,7 +103,7 @@ describe('run', () => {
     let callCount = 0;
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
-      if (callCount <= 2) {
+      if (callCount === 1) {
         options?.listeners?.stdout?.(Buffer.from('Flyway Community Edition 10.0.0 by Redgate\n'));
         return 0;
       }
