@@ -1,4 +1,3 @@
-import * as path from 'path';
 import type { ExecOptions } from '@actions/exec';
 import type { FlywayMigrateInputs } from '../src/types.js';
 
@@ -109,7 +108,7 @@ describe('buildFlywayArgs', () => {
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain(`-workingDirectory=${path.resolve('/app/db')}`);
+    expect(args).toContain('-workingDirectory=/app/db');
   });
 
   it('should include extra args', () => {
@@ -381,7 +380,7 @@ describe('runFlyway', () => {
     expect(exec).toHaveBeenCalledWith(
       'flyway',
       expect.any(Array),
-      expect.objectContaining({ cwd: path.resolve('/app/db') })
+      expect.objectContaining({ cwd: '/app/db' })
     );
   });
 

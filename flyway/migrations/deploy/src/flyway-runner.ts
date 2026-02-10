@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import {
@@ -37,7 +36,7 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   }
 
   if (inputs.workingDirectory) {
-    args.push(`-workingDirectory=${path.resolve(inputs.workingDirectory)}`);
+    args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }
 
   if (inputs.extraArgs) {
@@ -111,7 +110,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
   };
 
   if (inputs.workingDirectory) {
-    options.cwd = path.resolve(inputs.workingDirectory);
+    options.cwd = inputs.workingDirectory;
   }
 
   const exitCode = await exec.exec('flyway', args, options);

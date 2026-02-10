@@ -1,3 +1,4 @@
+import * as path from 'path';
 import type { FlywayMigrateInputs } from '../src/types.js';
 
 const getInput = vi.fn();
@@ -80,7 +81,7 @@ describe('getInputs', () => {
     });
 
     const inputs = getInputs();
-    expect(inputs.workingDirectory).toBe('/app/db');
+    expect(inputs.workingDirectory).toBe(path.resolve('/app/db'));
     expect(inputs.extraArgs).toBe('-X -someFlag=value');
   });
 
