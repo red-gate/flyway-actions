@@ -67,7 +67,24 @@ describe('run', () => {
     );
   });
 
-  it('should clear saveSnapshot for community edition', async () => {
+  it('should include saveSnapshot for enterprise edition', async () => {
+    setupFlywayMock('Enterprise', 0, 'Successfully applied 1 migrations\n');
+    getInput.mockImplementation((name: string) => {
+      if (name === 'url') return 'jdbc:sqlite:test.db';
+      return '';
+    });
+
+    await import('../src/main.js');
+    await vi.dynamicImportSettled();
+
+    expect(exec).toHaveBeenCalledWith(
+      'flyway',
+      expect.arrayContaining(['-saveSnapshot=true']),
+      expect.any(Object)
+    );
+  });
+
+  it('should not include saveSnapshot for community edition', async () => {
     setupFlywayMock('Community', 0, 'Successfully applied 1 migrations\n');
     getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:sqlite:test.db';

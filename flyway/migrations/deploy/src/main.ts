@@ -18,8 +18,8 @@ const run = async (): Promise<void> => {
       );
     }
 
-    if (flyway.edition === 'community') {
-      inputs.saveSnapshot = undefined;
+    if (flyway.edition === 'enterprise') {
+      inputs.saveSnapshot = true;
     }
 
     maskSecrets(inputs);

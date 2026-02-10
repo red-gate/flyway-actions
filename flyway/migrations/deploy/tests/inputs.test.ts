@@ -1,12 +1,10 @@
 import type { FlywayMigrateInputs } from '../src/types.js';
 
 const getInput = vi.fn();
-const getBooleanInput = vi.fn();
 const setSecret = vi.fn();
 
 vi.doMock('@actions/core', () => ({
   getInput,
-  getBooleanInput,
   setSecret,
 }));
 
@@ -15,7 +13,6 @@ const { getInputs, maskSecrets } = await import('../src/inputs.js');
 describe('getInputs', () => {
   beforeEach(() => {
     getInput.mockReturnValue('');
-    getBooleanInput.mockReturnValue(true);
   });
 
   it('should return url when provided', () => {
@@ -71,21 +68,6 @@ describe('getInputs', () => {
     const inputs = getInputs();
     expect(inputs.target).toBe('5.0');
     expect(inputs.cherryPick).toBe('3.0,4.0');
-  });
-
-  it('should default saveSnapshot to true', () => {
-    const inputs = getInputs();
-    expect(inputs.saveSnapshot).toBe(true);
-  });
-
-  it('should set saveSnapshot to false when explicitly set', () => {
-    getBooleanInput.mockImplementation((name: string) => {
-      if (name === 'save-snapshot') return false;
-      return true;
-    });
-
-    const inputs = getInputs();
-    expect(inputs.saveSnapshot).toBe(false);
   });
 
   it('should get working directory and extra args', () => {

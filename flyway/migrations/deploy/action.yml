@@ -25,10 +25,6 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to apply'
     required: false
-  save-snapshot:
-    description: 'Embed snapshot for drift checks (Teams/Enterprise). Auto-disabled for Community edition.'
-    required: false
-    default: 'true'
   working-directory:
     description: 'Working directory for Flyway execution'
     required: false

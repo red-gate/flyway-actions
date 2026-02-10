@@ -40,8 +40,6 @@ describe('buildFlywayArgs', () => {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
       password: 'secret',
-
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -54,8 +52,6 @@ describe('buildFlywayArgs', () => {
   it('should build args with environment', () => {
     const inputs: FlywayMigrateInputs = {
       environment: 'production',
-
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -67,8 +63,6 @@ describe('buildFlywayArgs', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       target: '5.0',
-
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -80,8 +74,6 @@ describe('buildFlywayArgs', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       cherryPick: '2.0,2.1',
-
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -89,10 +81,9 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-cherryPick=2.0,2.1');
   });
 
-  it('should include -saveSnapshot=true when set', () => {
+  it('should include -saveSnapshot=true when saveSnapshot is true', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
-
       saveSnapshot: true,
     };
 
@@ -101,19 +92,7 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-saveSnapshot=true');
   });
 
-  it('should include -saveSnapshot=false when explicitly false', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-
-      saveSnapshot: false,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-saveSnapshot=false');
-  });
-
-  it('should omit -saveSnapshot when undefined', () => {
+  it('should omit -saveSnapshot when saveSnapshot is not set', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
     };
@@ -137,8 +116,6 @@ describe('buildFlywayArgs', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       extraArgs: '-X -custom=value',
-
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -396,7 +373,6 @@ describe('runFlyway', () => {
     exec.mockResolvedValue(0);
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:sqlite:test.db',
-
       workingDirectory: '/app/db',
     };
 
