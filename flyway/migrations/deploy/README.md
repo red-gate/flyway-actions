@@ -179,7 +179,6 @@ See [action.yml](./action.yml) for the complete list of inputs.
 | Output | Description |
 |--------|-------------|
 | `exit-code` | Flyway command exit code |
-| `flyway-version` | Version of Flyway used |
 | `migrations-applied` | Number of migrations applied |
 | `schema-version` | Schema version after migration |
 

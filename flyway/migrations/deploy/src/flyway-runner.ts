@@ -3,7 +3,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import {
   FlywayEdition,
-  FlywayVersionDetails,
+  FlywayDetails,
   FlywayMigrateInputs,
   FlywayRunResult,
   FlywayMigrateOutputs,
@@ -92,7 +92,7 @@ const checkFlywayInstalled = async (): Promise<boolean> => {
   }
 };
 
-const getFlywayVersionDetails = async (): Promise<FlywayVersionDetails> => {
+const getFlywayDetails = async (): Promise<FlywayDetails> => {
   const { listener, getOutput } = createStdoutListener();
 
   await exec.exec('flyway', ['--version'], {
@@ -101,10 +101,9 @@ const getFlywayVersionDetails = async (): Promise<FlywayVersionDetails> => {
   });
 
   const stdout = getOutput();
-  const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
+  const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition/);
   return {
     edition: (match ? match[1].toLowerCase() : 'community') as FlywayEdition,
-    version: match ? match[2] : 'unknown',
   };
 };
 
@@ -193,7 +192,6 @@ const parseFlywayOutput = (
 
 const setOutputs = (outputs: FlywayMigrateOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
-  core.setOutput('flyway-version', outputs.flywayVersion);
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);
 };
@@ -202,7 +200,7 @@ export {
   buildFlywayArgs,
   parseExtraArgs,
   checkFlywayInstalled,
-  getFlywayVersionDetails,
+  getFlywayDetails,
   runFlyway,
   maskArgsForLog,
   parseFlywayOutput,
