@@ -233,6 +233,16 @@ describe('maskArgsForLog', () => {
     expect(masked[2]).toBe('-password=***');
     expect(masked[3]).toBe('-saveSnapshot=true');
   });
+
+  it('should mask args containing password', () => {
+    const masked = maskArgsForLog(['-jdbcPassword=secret']);
+    expect(masked).toEqual(['-jdbcPassword=***']);
+  });
+
+  it('should mask args containing token', () => {
+    const masked = maskArgsForLog(['-licenseKeyToken=abc123']);
+    expect(masked).toEqual(['-licenseKeyToken=***']);
+  });
 });
 
 describe('parseFlywayOutput', () => {

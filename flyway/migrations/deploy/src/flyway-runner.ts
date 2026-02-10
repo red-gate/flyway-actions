@@ -120,7 +120,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
 };
 
 const maskArgsForLog = (args: string[]): string[] => {
-  const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-url=/i];
+  const sensitivePatterns = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
 
   return args.map((arg) => {
     for (const pattern of sensitivePatterns) {
