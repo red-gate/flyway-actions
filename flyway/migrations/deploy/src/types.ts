@@ -1,4 +1,4 @@
-type FlywayEdition = 'community' | 'teams' | 'enterprise';
+type FlywayEdition = "community" | "teams" | "enterprise";
 
 type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition };
 

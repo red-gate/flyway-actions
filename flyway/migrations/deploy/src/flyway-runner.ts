@@ -1,16 +1,16 @@
-import * as core from '@actions/core';
-import * as exec from '@actions/exec';
+import * as core from "@actions/core";
+import * as exec from "@actions/exec";
 import {
   FlywayEdition,
   FlywayDetails,
   FlywayMigrationsDeploymentInputs,
   FlywayRunResult,
   FlywayMigrationsDeploymentOutputs,
-} from './types.js';
-import { createStdoutListener, createStdoutStderrListeners } from './utils.js';
+} from "./types.js";
+import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
 
 const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = ['migrate'];
+  const args: string[] = ["migrate"];
 
   if (inputs.url) {
     args.push(`-url=${inputs.url}`);
@@ -32,7 +32,7 @@ const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): strin
   }
 
   if (inputs.saveSnapshot) {
-    args.push('-saveSnapshot=true');
+    args.push("-saveSnapshot=true");
   }
 
   if (inputs.workingDirectory) {
@@ -48,9 +48,9 @@ const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): strin
 
 const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];
-  let current = '';
+  let current = "";
   let inQuotes = false;
-  let quoteChar = '';
+  let quoteChar = "";
 
   for (let i = 0; i < extraArgs.length; i++) {
     const char = extraArgs[i];
@@ -60,12 +60,12 @@ const parseExtraArgs = (extraArgs: string): string[] => {
       quoteChar = char;
     } else if (char === quoteChar && inQuotes) {
       inQuotes = false;
-      quoteChar = '';
-    } else if (char === ' ' && !inQuotes) {
+      quoteChar = "";
+    } else if (char === " " && !inQuotes) {
       if (current.trim()) {
         args.push(current.trim());
       }
-      current = '';
+      current = "";
     } else {
       current += char;
     }
@@ -82,7 +82,7 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
   try {
     const { listener, getOutput } = createStdoutListener();
 
-    await exec.exec('flyway', ['--version'], {
+    await exec.exec("flyway", ["--version"], {
       silent: true,
       listeners: { stdout: listener },
     });
@@ -91,7 +91,7 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
     const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition/);
     return {
       installed: true,
-      edition: (match ? match[1].toLowerCase() : 'community') as FlywayEdition,
+      edition: (match ? match[1].toLowerCase() : "community") as FlywayEdition,
     };
   } catch {
     return { installed: false };
@@ -101,7 +101,7 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
 const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
   const { listeners, getOutput } = createStdoutStderrListeners();
 
-  core.info(`Running: flyway ${maskArgsForLog(args).join(' ')}`);
+  core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
 
   const options: exec.ExecOptions = {
     ignoreReturnCode: true,
@@ -112,7 +112,7 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
     options.cwd = cwd;
   }
 
-  const exitCode = await exec.exec('flyway', args, options);
+  const exitCode = await exec.exec("flyway", args, options);
   const { stdout, stderr } = getOutput();
 
   return { exitCode, stdout, stderr };
@@ -124,8 +124,8 @@ const maskArgsForLog = (args: string[]): string[] => {
   return args.map((arg) => {
     for (const pattern of sensitivePatterns) {
       if (pattern.test(arg)) {
-        const eqIndex = arg.indexOf('=');
-        return arg.substring(0, eqIndex + 1) + '***';
+        const eqIndex = arg.indexOf("=");
+        return arg.substring(0, eqIndex + 1) + "***";
       }
     }
     return arg;
@@ -139,17 +139,17 @@ const extractSchemaVersion = (stdout: string): string => {
   }
 
   const versionMatch = stdout.match(
-    /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*v?(\d+(?:\.\d+)*)/i
+    /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*v?(\d+(?:\.\d+)*)/i,
   );
   if (versionMatch) {
     return versionMatch[1];
   }
 
-  return 'unknown';
+  return "unknown";
 };
 
 const parseFlywayOutput = (
-  stdout: string
+  stdout: string,
 ): {
   migrationsApplied: number;
   schemaVersion: string;
@@ -181,9 +181,9 @@ const parseFlywayOutput = (
 };
 
 const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
-  core.setOutput('exit-code', outputs.exitCode.toString());
-  core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
-  core.setOutput('schema-version', outputs.schemaVersion);
+  core.setOutput("exit-code", outputs.exitCode.toString());
+  core.setOutput("migrations-applied", outputs.migrationsApplied.toString());
+  core.setOutput("schema-version", outputs.schemaVersion);
 };
 
 export {

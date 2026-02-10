@@ -1,16 +1,16 @@
-import type { ExecOptions } from '@actions/exec';
-import type { FlywayMigrationsDeploymentInputs } from '../src/types.js';
+import type { ExecOptions } from "@actions/exec";
+import type { FlywayMigrationsDeploymentInputs } from "../src/types.js";
 
 const info = vi.fn();
 const setOutput = vi.fn();
 const exec = vi.fn();
 
-vi.doMock('@actions/core', () => ({
+vi.doMock("@actions/core", () => ({
   info,
   setOutput,
 }));
 
-vi.doMock('@actions/exec', () => ({
+vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
@@ -22,231 +22,226 @@ const {
   runFlyway,
   setOutputs,
   getFlywayDetails,
-} = await import('../src/flyway-runner.js');
+} = await import("../src/flyway-runner.js");
 
-describe('buildFlywayMigrateArgs', () => {
-  it('should build args with defaults only', () => {
+describe("buildFlywayMigrateArgs", () => {
+  it("should build args with defaults only", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('migrate');
-    expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
+    expect(args).toContain("migrate");
+    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
   });
 
-  it('should build args with url connection', () => {
+  it("should build args with url connection", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      user: 'admin',
-      password: 'secret',
+      url: "jdbc:postgresql://localhost/db",
+      user: "admin",
+      password: "secret",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-url=jdbc:postgresql://localhost/db');
-    expect(args).toContain('-user=admin');
-    expect(args).toContain('-password=secret');
+    expect(args).toContain("-url=jdbc:postgresql://localhost/db");
+    expect(args).toContain("-user=admin");
+    expect(args).toContain("-password=secret");
   });
 
-  it('should build args with environment', () => {
+  it("should build args with environment", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      environment: 'production',
+      environment: "production",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-environment=production');
+    expect(args).toContain("-environment=production");
   });
 
-  it('should build args with target', () => {
+  it("should build args with target", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      target: '5.0',
+      url: "jdbc:postgresql://localhost/db",
+      target: "5.0",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-target=5.0');
+    expect(args).toContain("-target=5.0");
   });
 
-  it('should build args with cherry-pick', () => {
+  it("should build args with cherry-pick", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      cherryPick: '2.0,2.1',
+      url: "jdbc:postgresql://localhost/db",
+      cherryPick: "2.0,2.1",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-cherryPick=2.0,2.1');
+    expect(args).toContain("-cherryPick=2.0,2.1");
   });
 
-  it('should include -saveSnapshot=true when saveSnapshot is true', () => {
+  it("should include -saveSnapshot=true when saveSnapshot is true", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:postgresql://localhost/db',
+      url: "jdbc:postgresql://localhost/db",
       saveSnapshot: true,
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-saveSnapshot=true');
+    expect(args).toContain("-saveSnapshot=true");
   });
 
-  it('should omit -saveSnapshot when saveSnapshot is not set', () => {
+  it("should omit -saveSnapshot when saveSnapshot is not set", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:postgresql://localhost/db',
+      url: "jdbc:postgresql://localhost/db",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
+    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
   });
 
-  it('should include working directory', () => {
+  it("should include working directory", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      workingDirectory: '/app/db',
+      workingDirectory: "/app/db",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-workingDirectory=/app/db');
+    expect(args).toContain("-workingDirectory=/app/db");
   });
 
-  it('should include extra args', () => {
+  it("should include extra args", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      extraArgs: '-X -custom=value',
+      url: "jdbc:postgresql://localhost/db",
+      extraArgs: "-X -custom=value",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args).toContain('-X');
-    expect(args).toContain('-custom=value');
+    expect(args).toContain("-X");
+    expect(args).toContain("-custom=value");
   });
 
-  it('should not include undefined optional values', () => {
+  it("should not include undefined optional values", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
     const args = buildFlywayMigrateArgs(inputs);
 
-    expect(args.filter((a) => a.includes('url')).length).toBe(0);
-    expect(args.filter((a) => a.includes('user')).length).toBe(0);
-    expect(args.filter((a) => a.includes('password')).length).toBe(0);
-    expect(args.filter((a) => a.includes('environment')).length).toBe(0);
-    expect(args.filter((a) => a.includes('target')).length).toBe(0);
-    expect(args.filter((a) => a.includes('cherryPick')).length).toBe(0);
+    expect(args.filter((a) => a.includes("url")).length).toBe(0);
+    expect(args.filter((a) => a.includes("user")).length).toBe(0);
+    expect(args.filter((a) => a.includes("password")).length).toBe(0);
+    expect(args.filter((a) => a.includes("environment")).length).toBe(0);
+    expect(args.filter((a) => a.includes("target")).length).toBe(0);
+    expect(args.filter((a) => a.includes("cherryPick")).length).toBe(0);
   });
 });
 
-describe('parseExtraArgs', () => {
-  it('should parse simple space-separated args', () => {
-    const result = parseExtraArgs('-X -Y -Z');
-    expect(result).toEqual(['-X', '-Y', '-Z']);
+describe("parseExtraArgs", () => {
+  it("should parse simple space-separated args", () => {
+    const result = parseExtraArgs("-X -Y -Z");
+    expect(result).toEqual(["-X", "-Y", "-Z"]);
   });
 
-  it('should handle quoted strings with spaces', () => {
+  it("should handle quoted strings with spaces", () => {
     const result = parseExtraArgs('-message="Hello World" -flag');
-    expect(result).toEqual(['-message=Hello World', '-flag']);
+    expect(result).toEqual(["-message=Hello World", "-flag"]);
   });
 
-  it('should handle single-quoted strings', () => {
+  it("should handle single-quoted strings", () => {
     const result = parseExtraArgs("-message='Hello World' -flag");
-    expect(result).toEqual(['-message=Hello World', '-flag']);
+    expect(result).toEqual(["-message=Hello World", "-flag"]);
   });
 
-  it('should handle empty string', () => {
-    const result = parseExtraArgs('');
+  it("should handle empty string", () => {
+    const result = parseExtraArgs("");
     expect(result).toEqual([]);
   });
 
-  it('should handle multiple spaces', () => {
-    const result = parseExtraArgs('-X    -Y     -Z');
-    expect(result).toEqual(['-X', '-Y', '-Z']);
+  it("should handle multiple spaces", () => {
+    const result = parseExtraArgs("-X    -Y     -Z");
+    expect(result).toEqual(["-X", "-Y", "-Z"]);
   });
 
-  it('should handle args with equals signs', () => {
-    const result = parseExtraArgs('-key=value -another=test');
-    expect(result).toEqual(['-key=value', '-another=test']);
+  it("should handle args with equals signs", () => {
+    const result = parseExtraArgs("-key=value -another=test");
+    expect(result).toEqual(["-key=value", "-another=test"]);
   });
 
-  it('should handle unclosed quotes', () => {
+  it("should handle unclosed quotes", () => {
     const result = parseExtraArgs('-message="hello world');
-    expect(result).toEqual(['-message=hello world']);
+    expect(result).toEqual(["-message=hello world"]);
   });
 
-  it('should handle mixed quote types', () => {
+  it("should handle mixed quote types", () => {
     const result = parseExtraArgs(`-a="double" -b='single'`);
-    expect(result).toEqual(['-a=double', '-b=single']);
+    expect(result).toEqual(["-a=double", "-b=single"]);
   });
 });
 
-describe('maskArgsForLog', () => {
-  it('should mask password argument', () => {
-    const args = ['-password=secret123'];
+describe("maskArgsForLog", () => {
+  it("should mask password argument", () => {
+    const args = ["-password=secret123"];
     const masked = maskArgsForLog(args);
 
-    expect(masked).toContain('-password=***');
-    expect(masked).not.toContain('-password=secret123');
+    expect(masked).toContain("-password=***");
+    expect(masked).not.toContain("-password=secret123");
   });
 
-  it('should mask user argument', () => {
-    const args = ['-user=admin'];
+  it("should mask user argument", () => {
+    const args = ["-user=admin"];
     const masked = maskArgsForLog(args);
 
-    expect(masked).toContain('-user=***');
+    expect(masked).toContain("-user=***");
   });
 
-  it('should mask url argument', () => {
-    const args = ['-url=jdbc:postgresql://user:pass@localhost/db'];
+  it("should mask url argument", () => {
+    const args = ["-url=jdbc:postgresql://user:pass@localhost/db"];
     const masked = maskArgsForLog(args);
 
-    expect(masked).toContain('-url=***');
-    expect(masked).not.toContain('pass');
+    expect(masked).toContain("-url=***");
+    expect(masked).not.toContain("pass");
   });
 
-  it('should handle empty array', () => {
+  it("should handle empty array", () => {
     expect(maskArgsForLog([])).toEqual([]);
   });
 
-  it('should mask case-insensitively', () => {
-    const masked = maskArgsForLog(['-Password=secret', '-USER=admin', '-URL=jdbc:test']);
-    expect(masked).toEqual(['-Password=***', '-USER=***', '-URL=***']);
+  it("should mask case-insensitively", () => {
+    const masked = maskArgsForLog(["-Password=secret", "-USER=admin", "-URL=jdbc:test"]);
+    expect(masked).toEqual(["-Password=***", "-USER=***", "-URL=***"]);
   });
 
-  it('should not mask non-sensitive args', () => {
-    const args = ['-saveSnapshot=true', '-target=5.0'];
+  it("should not mask non-sensitive args", () => {
+    const args = ["-saveSnapshot=true", "-target=5.0"];
     const masked = maskArgsForLog(args);
 
     expect(masked).toEqual(args);
   });
 
-  it('should handle mixed sensitive and non-sensitive args', () => {
-    const args = [
-      '-url=jdbc:postgresql://localhost/db',
-      '-user=admin',
-      '-password=secret',
-      '-saveSnapshot=true',
-    ];
+  it("should handle mixed sensitive and non-sensitive args", () => {
+    const args = ["-url=jdbc:postgresql://localhost/db", "-user=admin", "-password=secret", "-saveSnapshot=true"];
     const masked = maskArgsForLog(args);
 
-    expect(masked[0]).toBe('-url=***');
-    expect(masked[1]).toBe('-user=***');
-    expect(masked[2]).toBe('-password=***');
-    expect(masked[3]).toBe('-saveSnapshot=true');
+    expect(masked[0]).toBe("-url=***");
+    expect(masked[1]).toBe("-user=***");
+    expect(masked[2]).toBe("-password=***");
+    expect(masked[3]).toBe("-saveSnapshot=true");
   });
 
-  it('should mask args containing password', () => {
-    const masked = maskArgsForLog(['-jdbcPassword=secret']);
-    expect(masked).toEqual(['-jdbcPassword=***']);
+  it("should mask args containing password", () => {
+    const masked = maskArgsForLog(["-jdbcPassword=secret"]);
+    expect(masked).toEqual(["-jdbcPassword=***"]);
   });
 
-  it('should mask args containing token', () => {
-    const masked = maskArgsForLog(['-licenseKeyToken=abc123']);
-    expect(masked).toEqual(['-licenseKeyToken=***']);
+  it("should mask args containing token", () => {
+    const masked = maskArgsForLog(["-licenseKeyToken=abc123"]);
+    expect(masked).toEqual(["-licenseKeyToken=***"]);
   });
 });
 
-describe('parseFlywayOutput', () => {
-  it('should parse migration count from success message', () => {
+describe("parseFlywayOutput", () => {
+  it("should parse migration count from success message", () => {
     const stdout = `
 Flyway Community Edition 10.0.0 by Redgate
 Database: jdbc:postgresql://localhost/test
@@ -258,7 +253,7 @@ Successfully applied 3 migrations to schema "public" (execution time 00:00.150s)
     expect(result.migrationsApplied).toBe(3);
   });
 
-  it('should parse schema version', () => {
+  it("should parse schema version", () => {
     const stdout = `
 Flyway Community Edition 10.0.0 by Redgate
 Database: jdbc:postgresql://localhost/test
@@ -267,29 +262,29 @@ Schema version: 2.0.1
 
     const result = parseFlywayOutput(stdout);
 
-    expect(result.schemaVersion).toBe('2.0.1');
+    expect(result.schemaVersion).toBe("2.0.1");
   });
 
-  it('should parse current version of schema format', () => {
+  it("should parse current version of schema format", () => {
     const stdout = `
 Current version of schema "public": 1.5
     `;
 
     const result = parseFlywayOutput(stdout);
 
-    expect(result.schemaVersion).toBe('1.5');
+    expect(result.schemaVersion).toBe("1.5");
   });
 
-  it('should return defaults when no patterns match', () => {
-    const stdout = 'Some unrelated output';
+  it("should return defaults when no patterns match", () => {
+    const stdout = "Some unrelated output";
 
     const result = parseFlywayOutput(stdout);
 
     expect(result.migrationsApplied).toBe(0);
-    expect(result.schemaVersion).toBe('unknown');
+    expect(result.schemaVersion).toBe("unknown");
   });
 
-  it('should parse JSON output if present', () => {
+  it("should parse JSON output if present", () => {
     const stdout = `
 {"schemaVersion": "3.0", "migrationsExecuted": 5}
     `;
@@ -297,10 +292,10 @@ Current version of schema "public": 1.5
     const result = parseFlywayOutput(stdout);
 
     expect(result.migrationsApplied).toBe(5);
-    expect(result.schemaVersion).toBe('3.0');
+    expect(result.schemaVersion).toBe("3.0");
   });
 
-  it('should handle validated migrations message', () => {
+  it("should handle validated migrations message", () => {
     const stdout = `
 Successfully validated 10 migrations
     `;
@@ -310,7 +305,7 @@ Successfully validated 10 migrations
     expect(result.migrationsApplied).toBe(10);
   });
 
-  it('should handle zero migrations', () => {
+  it("should handle zero migrations", () => {
     const stdout = `
 Schema "public" is up to date. No migration necessary.
     `;
@@ -320,13 +315,13 @@ Schema "public" is up to date. No migration necessary.
     expect(result.migrationsApplied).toBe(0);
   });
 
-  it('should handle empty string', () => {
-    const result = parseFlywayOutput('');
+  it("should handle empty string", () => {
+    const result = parseFlywayOutput("");
     expect(result.migrationsApplied).toBe(0);
-    expect(result.schemaVersion).toBe('unknown');
+    expect(result.schemaVersion).toBe("unknown");
   });
 
-  it('should fall back to regex when JSON is malformed', () => {
+  it("should fall back to regex when JSON is malformed", () => {
     const stdout = `
 Successfully applied 2 migrations
 Schema version: 4.0
@@ -336,143 +331,135 @@ Schema version: 4.0
     const result = parseFlywayOutput(stdout);
 
     expect(result.migrationsApplied).toBe(2);
-    expect(result.schemaVersion).toBe('4.0');
+    expect(result.schemaVersion).toBe("4.0");
   });
 });
 
-describe('runFlyway', () => {
-  it('should execute flyway with provided arguments', async () => {
+describe("runFlyway", () => {
+  it("should execute flyway with provided arguments", async () => {
     exec.mockResolvedValue(0);
 
-    await runFlyway(['migrate', '-url=jdbc:sqlite:test.db']);
+    await runFlyway(["migrate", "-url=jdbc:sqlite:test.db"]);
 
-    expect(exec).toHaveBeenCalledWith(
-      'flyway',
-      ['migrate', '-url=jdbc:sqlite:test.db'],
-      expect.any(Object)
-    );
+    expect(exec).toHaveBeenCalledWith("flyway", ["migrate", "-url=jdbc:sqlite:test.db"], expect.any(Object));
   });
 
-  it('should return exit code, stdout, and stderr', async () => {
+  it("should return exit code, stdout, and stderr", async () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from('success output'));
-      options?.listeners?.stderr?.(Buffer.from('warning output'));
+      options?.listeners?.stdout?.(Buffer.from("success output"));
+      options?.listeners?.stderr?.(Buffer.from("warning output"));
       return 0;
     });
 
-    const result = await runFlyway(['migrate']);
+    const result = await runFlyway(["migrate"]);
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toBe('success output');
-    expect(result.stderr).toBe('warning output');
+    expect(result.stdout).toBe("success output");
+    expect(result.stderr).toBe("warning output");
   });
 
-  it('should return non-zero exit code on failure', async () => {
+  it("should return non-zero exit code on failure", async () => {
     exec.mockResolvedValue(1);
 
-    const result = await runFlyway(['migrate']);
+    const result = await runFlyway(["migrate"]);
 
     expect(result.exitCode).toBe(1);
   });
 
-  it('should set cwd when provided', async () => {
+  it("should set cwd when provided", async () => {
     exec.mockResolvedValue(0);
 
-    await runFlyway(['migrate', '-url=jdbc:sqlite:test.db'], '/app/db');
+    await runFlyway(["migrate", "-url=jdbc:sqlite:test.db"], "/app/db");
+
+    expect(exec).toHaveBeenCalledWith("flyway", expect.any(Array), expect.objectContaining({ cwd: "/app/db" }));
+  });
+
+  it("should not set cwd when not provided", async () => {
+    exec.mockResolvedValue(0);
+
+    await runFlyway(["migrate"]);
 
     expect(exec).toHaveBeenCalledWith(
-      'flyway',
+      "flyway",
       expect.any(Array),
-      expect.objectContaining({ cwd: '/app/db' })
+      expect.not.objectContaining({ cwd: expect.anything() }),
     );
   });
 
-  it('should not set cwd when not provided', async () => {
+  it("should log masked command", async () => {
     exec.mockResolvedValue(0);
 
-    await runFlyway(['migrate']);
+    await runFlyway(["migrate", "-url=jdbc:sqlite:test.db", "-password=secret"]);
 
-    expect(exec).toHaveBeenCalledWith(
-      'flyway',
-      expect.any(Array),
-      expect.not.objectContaining({ cwd: expect.anything() })
-    );
-  });
-
-  it('should log masked command', async () => {
-    exec.mockResolvedValue(0);
-
-    await runFlyway(['migrate', '-url=jdbc:sqlite:test.db', '-password=secret']);
-
-    expect(info).toHaveBeenCalledWith(expect.stringContaining('-password=***'));
-    expect(info).toHaveBeenCalledWith(expect.not.stringContaining('secret'));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("-password=***"));
+    expect(info).toHaveBeenCalledWith(expect.not.stringContaining("secret"));
   });
 });
 
-describe('setOutputs', () => {
-  it('should set all outputs correctly', () => {
+describe("setOutputs", () => {
+  it("should set all outputs correctly", () => {
     setOutputs({
       exitCode: 0,
       migrationsApplied: 3,
-      schemaVersion: '2.0',
+      schemaVersion: "2.0",
     });
 
-    expect(setOutput).toHaveBeenCalledWith('exit-code', '0');
-    expect(setOutput).toHaveBeenCalledWith('migrations-applied', '3');
-    expect(setOutput).toHaveBeenCalledWith('schema-version', '2.0');
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+    expect(setOutput).toHaveBeenCalledWith("migrations-applied", "3");
+    expect(setOutput).toHaveBeenCalledWith("schema-version", "2.0");
   });
 });
 
-describe('getFlywayDetails', () => {
-  it('should return installed false when flyway is not found', async () => {
-    exec.mockRejectedValue(new Error('Command not found'));
+describe("getFlywayDetails", () => {
+  it("should return installed false when flyway is not found", async () => {
+    exec.mockRejectedValue(new Error("Command not found"));
 
     const result = await getFlywayDetails();
 
     expect(result).toEqual({ installed: false });
   });
 
-  it('should detect Community edition', async () => {
+  it("should detect Community edition", async () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from('Flyway Community Edition 10.0.0 by Redgate\n'));
+      options?.listeners?.stdout?.(Buffer.from("Flyway Community Edition 10.0.0 by Redgate\n"));
       return 0;
     });
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: 'community' });
+    expect(result).toEqual({ installed: true, edition: "community" });
   });
 
-  it('should detect Teams edition', async () => {
+  it("should detect Teams edition", async () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from('Flyway Teams Edition 10.5.0 by Redgate\n'));
+      options?.listeners?.stdout?.(Buffer.from("Flyway Teams Edition 10.5.0 by Redgate\n"));
       return 0;
     });
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: 'teams' });
+    expect(result).toEqual({ installed: true, edition: "teams" });
   });
 
-  it('should detect Enterprise edition', async () => {
+  it("should detect Enterprise edition", async () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from('Flyway Enterprise Edition 11.0.0 by Redgate\n'));
+      options?.listeners?.stdout?.(Buffer.from("Flyway Enterprise Edition 11.0.0 by Redgate\n"));
       return 0;
     });
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: 'enterprise' });
+    expect(result).toEqual({ installed: true, edition: "enterprise" });
   });
 
-  it('should default to community for unparseable output', async () => {
+  it("should default to community for unparseable output", async () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from('Something unexpected\n'));
+      options?.listeners?.stdout?.(Buffer.from("Something unexpected\n"));
       return 0;
     });
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: 'community' });
+    expect(result).toEqual({ installed: true, edition: "community" });
   });
 });

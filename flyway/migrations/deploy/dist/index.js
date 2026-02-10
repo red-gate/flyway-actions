@@ -13340,9 +13340,7 @@ const ra = () => {
       );
     const n = ra();
     if (!n.url && !n.environment)
-      throw new Error(
-        'Either "url" or "environment" must be provided for Flyway to connect to a database.'
-      );
+      throw new Error('Either "url" or "environment" must be provided for Flyway to connect to a database.');
     A.edition === "enterprise" && (n.saveSnapshot = !0), na(n);
     const t = oa(n), Q = await ga(t, n.workingDirectory);
     Q.stdout && He(Q.stdout), Q.stderr && ta(Q.stderr);
