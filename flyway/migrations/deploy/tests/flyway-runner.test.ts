@@ -1,15 +1,19 @@
 import * as path from 'path';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   buildFlywayArgs,
   parseExtraArgs,
   maskArgsForLog,
   parseFlywayOutput,
+  runFlyway,
 } from '../src/flyway-runner.js';
 import { FlywayMigrateInputs } from '../src/types.js';
 
 vi.mock('@actions/core');
 vi.mock('@actions/exec');
+
+import * as core from '@actions/core';
+import * as exec from '@actions/exec';
 
 describe('buildFlywayArgs', () => {
   it('should build args with defaults only', () => {
@@ -196,6 +200,16 @@ describe('parseExtraArgs', () => {
     const result = parseExtraArgs('-key=value -another=test');
     expect(result).toEqual(['-key=value', '-another=test']);
   });
+
+  it('should handle unclosed quotes', () => {
+    const result = parseExtraArgs('-message="hello world');
+    expect(result).toEqual(['-message=hello world']);
+  });
+
+  it('should handle mixed quote types', () => {
+    const result = parseExtraArgs(`-a="double" -b='single'`);
+    expect(result).toEqual(['-a=double', '-b=single']);
+  });
 });
 
 describe('maskArgsForLog', () => {
@@ -220,6 +234,15 @@ describe('maskArgsForLog', () => {
 
     expect(masked).toContain('-url=***');
     expect(masked).not.toContain('pass');
+  });
+
+  it('should handle empty array', () => {
+    expect(maskArgsForLog([])).toEqual([]);
+  });
+
+  it('should mask case-insensitively', () => {
+    const masked = maskArgsForLog(['-Password=secret', '-USER=admin', '-URL=jdbc:test']);
+    expect(masked).toEqual(['-Password=***', '-USER=***', '-URL=***']);
   });
 
   it('should not mask non-sensitive args', () => {
@@ -318,5 +341,109 @@ Schema "public" is up to date. No migration necessary.
     const result = parseFlywayOutput(stdout);
 
     expect(result.migrationsApplied).toBe(0);
+  });
+
+  it('should handle empty string', () => {
+    const result = parseFlywayOutput('');
+    expect(result.migrationsApplied).toBe(0);
+    expect(result.schemaVersion).toBe('unknown');
+  });
+
+  it('should fall back to regex when JSON is malformed', () => {
+    const stdout = `
+Successfully applied 2 migrations
+Schema version: 4.0
+{"schemaVersion": broken json}
+    `;
+
+    const result = parseFlywayOutput(stdout);
+
+    expect(result.migrationsApplied).toBe(2);
+    expect(result.schemaVersion).toBe('4.0');
+  });
+});
+
+describe('runFlyway', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('should execute flyway with correct arguments', async () => {
+    vi.mocked(exec.exec).mockResolvedValue(0);
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:sqlite:test.db',
+      baselineOnMigrate: true,
+    };
+
+    await runFlyway(inputs);
+
+    expect(exec.exec).toHaveBeenCalledWith(
+      'flyway',
+      expect.arrayContaining(['migrate', '-url=jdbc:sqlite:test.db']),
+      expect.any(Object)
+    );
+  });
+
+  it('should return exit code, stdout, and stderr', async () => {
+    vi.mocked(exec.exec).mockImplementation(
+      async (_cmd: string, _args?: string[], options?: exec.ExecOptions) => {
+        options?.listeners?.stdout?.(Buffer.from('success output'));
+        options?.listeners?.stderr?.(Buffer.from('warning output'));
+        return 0;
+      }
+    );
+
+    const result = await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toBe('success output');
+    expect(result.stderr).toBe('warning output');
+  });
+
+  it('should return non-zero exit code on failure', async () => {
+    vi.mocked(exec.exec).mockResolvedValue(1);
+
+    const result = await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
+
+    expect(result.exitCode).toBe(1);
+  });
+
+  it('should set cwd when working directory is provided', async () => {
+    vi.mocked(exec.exec).mockResolvedValue(0);
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:sqlite:test.db',
+      baselineOnMigrate: true,
+      workingDirectory: '/app/db',
+    };
+
+    await runFlyway(inputs);
+
+    expect(exec.exec).toHaveBeenCalledWith(
+      'flyway',
+      expect.any(Array),
+      expect.objectContaining({ cwd: path.resolve('/app/db') })
+    );
+  });
+
+  it('should not set cwd when no working directory', async () => {
+    vi.mocked(exec.exec).mockResolvedValue(0);
+
+    await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
+
+    const options = vi.mocked(exec.exec).mock.calls[0][2];
+    expect(options?.cwd).toBeUndefined();
+  });
+
+  it('should log masked command', async () => {
+    vi.mocked(exec.exec).mockResolvedValue(0);
+
+    await runFlyway({
+      url: 'jdbc:sqlite:test.db',
+      password: 'secret',
+      baselineOnMigrate: true,
+    });
+
+    expect(core.info).toHaveBeenCalledWith(expect.stringContaining('-password=***'));
+    expect(core.info).toHaveBeenCalledWith(expect.not.stringContaining('secret'));
   });
 });
