@@ -1,27 +1,27 @@
 import type { ExecOptions } from '@actions/exec';
 
-const mockGetInput = vi.fn();
-const mockGetBooleanInput = vi.fn();
-const mockSetOutput = vi.fn();
-const mockSetFailed = vi.fn();
-const mockSetSecret = vi.fn();
-const mockInfo = vi.fn();
-const mockWarning = vi.fn();
-const mockExec = vi.fn();
+const getInput = vi.fn();
+const getBooleanInput = vi.fn();
+const setOutput = vi.fn();
+const setFailed = vi.fn();
+const setSecret = vi.fn();
+const info = vi.fn();
+const warning = vi.fn();
+const exec = vi.fn();
 
 const setupMocks = () => {
   vi.doMock('@actions/core', () => ({
-    getInput: mockGetInput,
-    getBooleanInput: mockGetBooleanInput,
-    setOutput: mockSetOutput,
-    setFailed: mockSetFailed,
-    setSecret: mockSetSecret,
-    info: mockInfo,
-    warning: mockWarning,
+    getInput,
+    getBooleanInput,
+    setOutput,
+    setFailed,
+    setSecret,
+    info,
+    warning,
   }));
 
   vi.doMock('@actions/exec', () => ({
-    exec: mockExec,
+    exec,
   }));
 };
 
@@ -33,7 +33,7 @@ describe('run', () => {
 
   const setupFlywayMock = (edition: string, migrateExitCode: number, migrateOutput = '') => {
     let callCount = 0;
-    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       // First two exec calls are checkFlywayInstalled and getFlywayDetails
       if (callCount <= 2) {
@@ -48,29 +48,29 @@ describe('run', () => {
   };
 
   it('should fail when flyway is not installed', async () => {
-    mockExec.mockRejectedValue(new Error('Command not found'));
+    exec.mockRejectedValue(new Error('Command not found'));
 
     await import('../src/main.js');
     await vi.dynamicImportSettled();
 
-    expect(mockSetFailed).toHaveBeenCalledWith(expect.stringContaining('Flyway is not installed'));
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining('Flyway is not installed'));
   });
 
   it('should fail when neither url nor environment is provided', async () => {
     setupFlywayMock('Community', 0);
-    mockGetInput.mockReturnValue('');
+    getInput.mockReturnValue('');
 
     await import('../src/main.js');
     await vi.dynamicImportSettled();
 
-    expect(mockSetFailed).toHaveBeenCalledWith(
+    expect(setFailed).toHaveBeenCalledWith(
       expect.stringContaining('Either "url" or "environment" must be provided')
     );
   });
 
   it('should clear saveSnapshot for community edition', async () => {
     setupFlywayMock('Community', 0, 'Successfully applied 1 migrations\n');
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:sqlite:test.db';
       return '';
     });
@@ -78,7 +78,7 @@ describe('run', () => {
     await import('../src/main.js');
     await vi.dynamicImportSettled();
 
-    expect(mockExec).toHaveBeenCalledWith(
+    expect(exec).toHaveBeenCalledWith(
       'flyway',
       expect.not.arrayContaining([expect.stringContaining('saveSnapshot')]),
       expect.any(Object)
@@ -87,7 +87,7 @@ describe('run', () => {
 
   it('should fail when flyway returns non-zero exit code', async () => {
     setupFlywayMock('Community', 1);
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:sqlite:test.db';
       return '';
     });
@@ -95,14 +95,14 @@ describe('run', () => {
     await import('../src/main.js');
     await vi.dynamicImportSettled();
 
-    expect(mockSetFailed).toHaveBeenCalledWith(
+    expect(setFailed).toHaveBeenCalledWith(
       expect.stringContaining('Flyway migrate failed with exit code 1')
     );
   });
 
   it('should log stderr as warning', async () => {
     let callCount = 0;
-    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       if (callCount <= 2) {
         options?.listeners?.stdout?.(Buffer.from('Flyway Community Edition 10.0.0 by Redgate\n'));
@@ -112,7 +112,7 @@ describe('run', () => {
       options?.listeners?.stderr?.(Buffer.from('some warning'));
       return 0;
     });
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:sqlite:test.db';
       return '';
     });
@@ -120,12 +120,12 @@ describe('run', () => {
     await import('../src/main.js');
     await vi.dynamicImportSettled();
 
-    expect(mockWarning).toHaveBeenCalledWith('some warning');
+    expect(warning).toHaveBeenCalledWith('some warning');
   });
 
   it('should set outputs on successful execution', async () => {
     setupFlywayMock('Community', 0, 'Successfully applied 3 migrations\nSchema now at version 3\n');
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:sqlite:test.db';
       return '';
     });
@@ -133,8 +133,8 @@ describe('run', () => {
     await import('../src/main.js');
     await vi.dynamicImportSettled();
 
-    expect(mockSetOutput).toHaveBeenCalledWith('exit-code', '0');
-    expect(mockSetOutput).toHaveBeenCalledWith('migrations-applied', '3');
-    expect(mockSetOutput).toHaveBeenCalledWith('schema-version', '3');
+    expect(setOutput).toHaveBeenCalledWith('exit-code', '0');
+    expect(setOutput).toHaveBeenCalledWith('migrations-applied', '3');
+    expect(setOutput).toHaveBeenCalledWith('schema-version', '3');
   });
 });

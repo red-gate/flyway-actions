@@ -1,25 +1,25 @@
 import type { FlywayMigrateInputs } from '../src/types.js';
 
-const mockGetInput = vi.fn();
-const mockGetBooleanInput = vi.fn();
-const mockSetSecret = vi.fn();
+const getInput = vi.fn();
+const getBooleanInput = vi.fn();
+const setSecret = vi.fn();
 
 vi.doMock('@actions/core', () => ({
-  getInput: mockGetInput,
-  getBooleanInput: mockGetBooleanInput,
-  setSecret: mockSetSecret,
+  getInput,
+  getBooleanInput,
+  setSecret,
 }));
 
 const { getInputs, maskSecrets } = await import('../src/inputs.js');
 
 describe('getInputs', () => {
   beforeEach(() => {
-    mockGetInput.mockReturnValue('');
-    mockGetBooleanInput.mockReturnValue(true);
+    getInput.mockReturnValue('');
+    getBooleanInput.mockReturnValue(true);
   });
 
   it('should return url when provided', () => {
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:postgresql://localhost/db';
       return '';
     });
@@ -34,7 +34,7 @@ describe('getInputs', () => {
   });
 
   it('should get connection inputs', () => {
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         url: 'jdbc:postgresql://localhost/db',
         user: 'admin',
@@ -50,7 +50,7 @@ describe('getInputs', () => {
   });
 
   it('should get environment input', () => {
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'environment') return 'production';
       return '';
     });
@@ -60,7 +60,7 @@ describe('getInputs', () => {
   });
 
   it('should get target and cherry-pick inputs', () => {
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         target: '5.0',
         'cherry-pick': '3.0,4.0',
@@ -79,7 +79,7 @@ describe('getInputs', () => {
   });
 
   it('should set baselineOnMigrate to false when explicitly set', () => {
-    mockGetBooleanInput.mockImplementation((name: string) => {
+    getBooleanInput.mockImplementation((name: string) => {
       if (name === 'baseline-on-migrate') return false;
       return true;
     });
@@ -94,7 +94,7 @@ describe('getInputs', () => {
   });
 
   it('should set saveSnapshot to false when explicitly set', () => {
-    mockGetBooleanInput.mockImplementation((name: string) => {
+    getBooleanInput.mockImplementation((name: string) => {
       if (name === 'save-snapshot') return false;
       return true;
     });
@@ -104,7 +104,7 @@ describe('getInputs', () => {
   });
 
   it('should get working directory and extra args', () => {
-    mockGetInput.mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         'working-directory': '/app/db',
         'extra-args': '-X -someFlag=value',
@@ -139,7 +139,7 @@ describe('maskSecrets', () => {
 
     maskSecrets(inputs);
 
-    expect(mockSetSecret).toHaveBeenCalledWith('secret123');
+    expect(setSecret).toHaveBeenCalledWith('secret123');
   });
 
   it('should not call setSecret when no password present', () => {
@@ -151,6 +151,6 @@ describe('maskSecrets', () => {
 
     maskSecrets(inputs);
 
-    expect(mockSetSecret).not.toHaveBeenCalled();
+    expect(setSecret).not.toHaveBeenCalled();
   });
 });
