@@ -1,5 +1,5 @@
 import type { ExecOptions } from '@actions/exec';
-import type { FlywayMigrateInputs } from '../src/types.js';
+import type { FlywayMigrationsDeploymentInputs } from '../src/types.js';
 
 const info = vi.fn();
 const setOutput = vi.fn();
@@ -26,7 +26,7 @@ const {
 
 describe('buildFlywayArgs', () => {
   it('should build args with defaults only', () => {
-    const inputs: FlywayMigrateInputs = {};
+    const inputs: FlywayMigrationsDeploymentInputs = {};
 
     const args = buildFlywayArgs(inputs);
 
@@ -35,7 +35,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should build args with url connection', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
       password: 'secret',
@@ -49,7 +49,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should build args with environment', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       environment: 'production',
     };
 
@@ -59,7 +59,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should build args with target', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
       target: '5.0',
     };
@@ -70,7 +70,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should build args with cherry-pick', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
       cherryPick: '2.0,2.1',
     };
@@ -81,7 +81,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should include -saveSnapshot=true when saveSnapshot is true', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
       saveSnapshot: true,
     };
@@ -92,7 +92,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should omit -saveSnapshot when saveSnapshot is not set', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
     };
 
@@ -102,7 +102,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should include working directory', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       workingDirectory: '/app/db',
     };
 
@@ -112,7 +112,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should include extra args', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
       extraArgs: '-X -custom=value',
     };
@@ -124,7 +124,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should not include undefined optional values', () => {
-    const inputs: FlywayMigrateInputs = {};
+    const inputs: FlywayMigrationsDeploymentInputs = {};
 
     const args = buildFlywayArgs(inputs);
 
@@ -343,7 +343,7 @@ Schema version: 4.0
 describe('runFlyway', () => {
   it('should execute flyway with correct arguments', async () => {
     exec.mockResolvedValue(0);
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:sqlite:test.db',
     };
 
@@ -380,7 +380,7 @@ describe('runFlyway', () => {
 
   it('should set cwd when working directory is provided', async () => {
     exec.mockResolvedValue(0);
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:sqlite:test.db',
       workingDirectory: '/app/db',
     };

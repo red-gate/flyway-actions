@@ -3,13 +3,13 @@ import * as exec from '@actions/exec';
 import {
   FlywayEdition,
   FlywayDetails,
-  FlywayMigrateInputs,
+  FlywayMigrationsDeploymentInputs,
   FlywayRunResult,
-  FlywayMigrateOutputs,
+  FlywayMigrationsDeploymentOutputs,
 } from './types.js';
 import { createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
-const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
+const buildFlywayArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = ['migrate'];
 
   if (inputs.url) {
@@ -98,7 +98,7 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
   }
 };
 
-const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
+const runFlyway = async (inputs: FlywayMigrationsDeploymentInputs): Promise<FlywayRunResult> => {
   const args = buildFlywayArgs(inputs);
   const { listeners, getOutput } = createStdoutStderrListeners();
 
@@ -181,7 +181,7 @@ const parseFlywayOutput = (
   return { migrationsApplied, schemaVersion };
 };
 
-const setOutputs = (outputs: FlywayMigrateOutputs): void => {
+const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);

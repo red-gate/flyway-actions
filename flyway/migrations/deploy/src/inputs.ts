@@ -1,8 +1,8 @@
 import * as path from 'path';
 import * as core from '@actions/core';
-import { FlywayMigrateInputs } from './types.js';
+import { FlywayMigrationsDeploymentInputs } from './types.js';
 
-const getInputs = (): FlywayMigrateInputs => {
+const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const url = core.getInput('url') || undefined;
   const user = core.getInput('user') || undefined;
   const password = core.getInput('password') || undefined;
@@ -25,7 +25,7 @@ const getInputs = (): FlywayMigrateInputs => {
   };
 };
 
-const maskSecrets = (inputs: FlywayMigrateInputs): void => {
+const maskSecrets = (inputs: FlywayMigrationsDeploymentInputs): void => {
   if (inputs.password) {
     core.setSecret(inputs.password);
   }

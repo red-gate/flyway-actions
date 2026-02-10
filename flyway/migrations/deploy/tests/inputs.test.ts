@@ -1,5 +1,5 @@
 import * as path from 'path';
-import type { FlywayMigrateInputs } from '../src/types.js';
+import type { FlywayMigrationsDeploymentInputs } from '../src/types.js';
 
 const getInput = vi.fn();
 const setSecret = vi.fn();
@@ -100,7 +100,7 @@ describe('getInputs', () => {
 
 describe('maskSecrets', () => {
   it('should mask password', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       password: 'secret123',
     };
 
@@ -110,7 +110,7 @@ describe('maskSecrets', () => {
   });
 
   it('should not call setSecret when no password present', () => {
-    const inputs: FlywayMigrateInputs = {
+    const inputs: FlywayMigrationsDeploymentInputs = {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
     };
