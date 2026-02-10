@@ -2,7 +2,7 @@ type FlywayEdition = 'community' | 'teams' | 'enterprise';
 
 type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition };
 
-interface FlywayMigrateInputs {
+interface FlywayMigrationsDeploymentInputs {
   url?: string;
   user?: string;
   password?: string;
@@ -14,7 +14,7 @@ interface FlywayMigrateInputs {
   extraArgs?: string;
 }
 
-interface FlywayMigrateOutputs {
+interface FlywayMigrationsDeploymentOutputs {
   exitCode: number;
   migrationsApplied: number;
   schemaVersion: string;
@@ -26,4 +26,10 @@ interface FlywayRunResult {
   stderr: string;
 }
 
-export { FlywayEdition, FlywayDetails, FlywayMigrateInputs, FlywayMigrateOutputs, FlywayRunResult };
+export {
+  FlywayEdition,
+  FlywayDetails,
+  FlywayMigrationsDeploymentInputs,
+  FlywayMigrationsDeploymentOutputs,
+  FlywayRunResult,
+};

@@ -3,13 +3,13 @@ import * as exec from '@actions/exec';
 import {
   FlywayEdition,
   FlywayDetails,
-  FlywayMigrateInputs,
+  FlywayMigrationsDeploymentInputs,
   FlywayRunResult,
-  FlywayMigrateOutputs,
+  FlywayMigrationsDeploymentOutputs,
 } from './types.js';
 import { createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
-const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
+const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = ['migrate'];
 
   if (inputs.url) {
@@ -98,8 +98,7 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
   }
 };
 
-const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
-  const args = buildFlywayArgs(inputs);
+const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
   const { listeners, getOutput } = createStdoutStderrListeners();
 
   core.info(`Running: flyway ${maskArgsForLog(args).join(' ')}`);
@@ -109,8 +108,8 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
     listeners,
   };
 
-  if (inputs.workingDirectory) {
-    options.cwd = inputs.workingDirectory;
+  if (cwd) {
+    options.cwd = cwd;
   }
 
   const exitCode = await exec.exec('flyway', args, options);
@@ -181,14 +180,14 @@ const parseFlywayOutput = (
   return { migrationsApplied, schemaVersion };
 };
 
-const setOutputs = (outputs: FlywayMigrateOutputs): void => {
+const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
   core.setOutput('exit-code', outputs.exitCode.toString());
   core.setOutput('migrations-applied', outputs.migrationsApplied.toString());
   core.setOutput('schema-version', outputs.schemaVersion);
 };
 
 export {
-  buildFlywayArgs,
+  buildFlywayMigrateArgs,
   parseExtraArgs,
   getFlywayDetails,
   runFlyway,
