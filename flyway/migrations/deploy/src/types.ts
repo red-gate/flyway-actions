@@ -1,8 +1,6 @@
 type FlywayEdition = 'community' | 'teams' | 'enterprise';
 
-interface FlywayDetails {
-  edition: FlywayEdition;
-}
+type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition };
 
 interface FlywayMigrateInputs {
   url?: string;

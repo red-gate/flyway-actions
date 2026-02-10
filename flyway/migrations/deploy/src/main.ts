@@ -1,23 +1,15 @@
 import * as core from '@actions/core';
 import { getInputs, maskSecrets } from './inputs.js';
-import {
-  checkFlywayInstalled,
-  getFlywayDetails,
-  runFlyway,
-  parseFlywayOutput,
-  setOutputs,
-} from './flyway-runner.js';
+import { getFlywayDetails, runFlyway, parseFlywayOutput, setOutputs } from './flyway-runner.js';
 
 const run = async (): Promise<void> => {
   try {
-    const flywayInstalled = await checkFlywayInstalled();
-    if (!flywayInstalled) {
+    const flyway = await getFlywayDetails();
+    if (!flyway.installed) {
       throw new Error(
         'Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.'
       );
     }
-
-    const flyway = await getFlywayDetails();
     const inputs = getInputs();
 
     if (!inputs.url && !inputs.environment) {
