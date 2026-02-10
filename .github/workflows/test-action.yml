@@ -25,7 +25,7 @@ jobs:
         id: migrate
         uses: ./flyway/migrations/deploy
         with:
-          url: jdbc:sqlite:test.db
+          url: jdbc:sqlite:database/test.db
           working-directory: flyway/sample-project
 
       - name: Print migration outputs
