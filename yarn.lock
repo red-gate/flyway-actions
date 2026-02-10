@@ -490,7 +490,7 @@ __metadata:
     "@actions/http-client": "npm:4.0.0"
     "@actions/io": "npm:3.0.2"
     "@eslint/js": "npm:10.0.1"
-    "@types/node": "npm:24.10.10"
+    "@types/node": "npm:25.2.3"
     "@vitest/eslint-plugin": "npm:1.6.7"
     esbuild: "npm:0.27.3"
     eslint: "npm:10.0.0"
@@ -821,12 +821,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.10.10":
-  version: 24.10.10
-  resolution: "@types/node@npm:24.10.10"
+"@types/node@npm:25.2.3":
+  version: 25.2.3
+  resolution: "@types/node@npm:25.2.3"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10c0/ae6871069373cf9ea2f9f9c6d42af6d0a66a213f8688c1b4ced6466cbcdd0f926e4603480a454b1df330feb1243d2ac50749895eddf5667e25e6873d3f8b9488
+  checksum: 10c0/925833029ce0bb4a72c36f90b93287184d3511aeb0fa60a994ae94b5430c22f9be6693d67d210df79267cb54c6f6978caaefb149d99ab5f83af5827ba7cb9822
   languageName: node
   linkType: hard
 
