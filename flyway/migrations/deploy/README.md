@@ -8,7 +8,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v1`](ht
 
 ```yaml
 - uses: red-gate/setup-flyway@v1
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     url: jdbc:postgresql://localhost:5432/mydb
 ```
@@ -21,7 +21,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v1`](ht
 steps:
   - uses: actions/checkout@v4
   - uses: red-gate/setup-flyway@v1
-  - uses: red-gate/flyway-github-actions/flyway/migrate@v1
+  - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
     with:
       url: jdbc:postgresql://localhost:5432/mydb
       user: ${{ secrets.DB_USER }}
@@ -32,7 +32,7 @@ steps:
 ### With Baseline on Migrate
 
 ```yaml
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     url: ${{ secrets.DB_URL }}
     user: ${{ secrets.DB_USER }}
@@ -44,7 +44,7 @@ steps:
 ### With Placeholders
 
 ```yaml
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     url: ${{ secrets.DB_URL }}
     user: ${{ secrets.DB_USER }}
@@ -58,7 +58,7 @@ steps:
 - uses: red-gate/setup-flyway@v1
   with:
     license-key: ${{ secrets.FLYWAY_LICENSE_KEY }}
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     url: ${{ secrets.DB_URL }}
     user: ${{ secrets.DB_USER }}
@@ -69,7 +69,7 @@ steps:
 ### Using Config Files
 
 ```yaml
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     url: ${{ secrets.DB_URL }}
     config-files: 'flyway.conf,flyway-prod.conf'
@@ -80,7 +80,7 @@ steps:
 Flyway also reads configuration from environment variables. Any `FLYWAY_*` variable will be picked up:
 
 ```yaml
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   env:
     FLYWAY_URL: ${{ secrets.DB_URL }}
     FLYWAY_USER: ${{ secrets.DB_USER }}
@@ -186,7 +186,7 @@ See [action.yml](./action.yml) for the complete list of inputs.
 ### Using Outputs
 
 ```yaml
-- uses: red-gate/flyway-github-actions/flyway/migrate@v1
+- uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   id: migrate
   with:
     url: ${{ secrets.DB_URL }}

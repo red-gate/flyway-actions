@@ -23,7 +23,7 @@ jobs:
 
       - name: Run migrate action with sample project
         id: migrate
-        uses: ./flyway/migrate
+        uses: ./flyway/migrations/deploy
         with:
           url: jdbc:sqlite:test.db
           working-directory: flyway/sample-project

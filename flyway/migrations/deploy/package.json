@@ -1,5 +1,5 @@
 {
-  "name": "@flyway-github-actions/migrate",
+  "name": "@flyway-github-actions/migrations-deploy",
   "version": "1.0.0",
   "private": true,
   "type": "module",
