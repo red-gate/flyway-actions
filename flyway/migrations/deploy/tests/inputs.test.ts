@@ -1,22 +1,25 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getInputs, maskSecrets } from '../src/inputs.js';
-import * as core from '@actions/core';
+import type { FlywayMigrateInputs } from '../src/types.js';
 
-vi.mock('@actions/core');
+const getInput = vi.fn();
+const getBooleanInput = vi.fn();
+const setSecret = vi.fn();
+
+vi.doMock('@actions/core', () => ({
+  getInput,
+  getBooleanInput,
+  setSecret,
+}));
+
+const { getInputs, maskSecrets } = await import('../src/inputs.js');
 
 describe('getInputs', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    getInput.mockReturnValue('');
+    getBooleanInput.mockReturnValue(true);
   });
 
-  const mockDefaults = () => {
-    vi.mocked(core.getInput).mockReturnValue('');
-    vi.mocked(core.getBooleanInput).mockReturnValue(true);
-  };
-
   it('should return url when provided', () => {
-    mockDefaults();
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:postgresql://localhost/db';
       return '';
     });
@@ -26,15 +29,12 @@ describe('getInputs', () => {
   });
 
   it('should return undefined for url when not provided', () => {
-    mockDefaults();
-
     const inputs = getInputs();
     expect(inputs.url).toBeUndefined();
   });
 
   it('should get connection inputs', () => {
-    mockDefaults();
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         url: 'jdbc:postgresql://localhost/db',
         user: 'admin',
@@ -50,8 +50,7 @@ describe('getInputs', () => {
   });
 
   it('should get environment input', () => {
-    mockDefaults();
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       if (name === 'environment') return 'production';
       return '';
     });
@@ -61,8 +60,7 @@ describe('getInputs', () => {
   });
 
   it('should get target and cherry-pick inputs', () => {
-    mockDefaults();
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         target: '5.0',
         'cherry-pick': '3.0,4.0',
@@ -76,15 +74,12 @@ describe('getInputs', () => {
   });
 
   it('should default baselineOnMigrate to true', () => {
-    mockDefaults();
-
     const inputs = getInputs();
     expect(inputs.baselineOnMigrate).toBe(true);
   });
 
   it('should set baselineOnMigrate to false when explicitly set', () => {
-    mockDefaults();
-    vi.mocked(core.getBooleanInput).mockImplementation((name: string) => {
+    getBooleanInput.mockImplementation((name: string) => {
       if (name === 'baseline-on-migrate') return false;
       return true;
     });
@@ -94,15 +89,12 @@ describe('getInputs', () => {
   });
 
   it('should default saveSnapshot to true', () => {
-    mockDefaults();
-
     const inputs = getInputs();
     expect(inputs.saveSnapshot).toBe(true);
   });
 
   it('should set saveSnapshot to false when explicitly set', () => {
-    mockDefaults();
-    vi.mocked(core.getBooleanInput).mockImplementation((name: string) => {
+    getBooleanInput.mockImplementation((name: string) => {
       if (name === 'save-snapshot') return false;
       return true;
     });
@@ -112,8 +104,7 @@ describe('getInputs', () => {
   });
 
   it('should get working directory and extra args', () => {
-    mockDefaults();
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
+    getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         'working-directory': '/app/db',
         'extra-args': '-X -someFlag=value',
@@ -127,8 +118,6 @@ describe('getInputs', () => {
   });
 
   it('should return undefined for optional inputs not provided', () => {
-    mockDefaults();
-
     const inputs = getInputs();
     expect(inputs.url).toBeUndefined();
     expect(inputs.user).toBeUndefined();
@@ -142,23 +131,19 @@ describe('getInputs', () => {
 });
 
 describe('maskSecrets', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   it('should mask password', () => {
-    const inputs = {
+    const inputs: FlywayMigrateInputs = {
       password: 'secret123',
       baselineOnMigrate: true,
     };
 
     maskSecrets(inputs);
 
-    expect(core.setSecret).toHaveBeenCalledWith('secret123');
+    expect(setSecret).toHaveBeenCalledWith('secret123');
   });
 
   it('should not call setSecret when no password present', () => {
-    const inputs = {
+    const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
       baselineOnMigrate: true,
@@ -166,6 +151,6 @@ describe('maskSecrets', () => {
 
     maskSecrets(inputs);
 
-    expect(core.setSecret).not.toHaveBeenCalled();
+    expect(setSecret).not.toHaveBeenCalled();
   });
 });
