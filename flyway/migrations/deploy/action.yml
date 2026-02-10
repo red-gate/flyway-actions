@@ -1,32 +1,33 @@
-name: 'Flyway Migrate'
-description: 'Run Flyway migrate command to apply database migrations'
+name: 'Flyway Migrations Deployment Action'
+description: 'A GitHub Action to deploy your Flyway migrations to a target database'
 author: 'Redgate'
 
 branding:
   icon: 'database'
-  color: 'blue'
+  color: 'red'
 
 inputs:
+  environment:
+    description: 'Target database to deploy to'
+    required: false
+    default: 'default'
   url:
-    description: 'JDBC URL for the database connection. Required if "environment" is not set.'
+    description: 'JDBC URL for the target database to deploy to'
     required: false
   user:
-    description: 'Database user for the connection'
+    description: 'Database user for the target database to deploy to'
     required: false
   password:
-    description: 'Database password for the connection'
-    required: false
-  environment:
-    description: 'Flyway TOML environment name. Required if "url" is not set.'
+    description: 'Database password for the target database to deploy to'
     required: false
   target:
     description: 'Migrate up to this version'
     required: false
   cherry-pick:
-    description: 'Comma-separated list of migration versions to apply'
+    description: 'Comma-separated list of migration versions to deploy'
     required: false
   working-directory:
-    description: 'Working directory for Flyway execution'
+    description: 'Working directory for Flyway'
     required: false
   extra-args:
     description: 'Additional arguments to pass to Flyway'
@@ -34,11 +35,11 @@ inputs:
 
 outputs:
   exit-code:
-    description: 'Flyway command exit code'
+    description: 'Flyway exit code'
   migrations-applied:
     description: 'Number of migrations applied'
   schema-version:
-    description: 'Schema version after migration'
+    description: 'Schema version after deployment'
 
 runs:
   using: 'node24'
