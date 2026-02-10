@@ -1,4 +1,3 @@
-import * as path from 'path';
 import type { ExecOptions } from '@actions/exec';
 import type { FlywayMigrateInputs } from '../src/types.js';
 
@@ -27,14 +26,11 @@ const {
 
 describe('buildFlywayArgs', () => {
   it('should build args with defaults only', () => {
-    const inputs: FlywayMigrateInputs = {
-      baselineOnMigrate: true,
-    };
+    const inputs: FlywayMigrateInputs = {};
 
     const args = buildFlywayArgs(inputs);
 
     expect(args).toContain('migrate');
-    expect(args).toContain('-baselineOnMigrate=true');
     expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
   });
 
@@ -43,8 +39,6 @@ describe('buildFlywayArgs', () => {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
       password: 'secret',
-      baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -57,8 +51,6 @@ describe('buildFlywayArgs', () => {
   it('should build args with environment', () => {
     const inputs: FlywayMigrateInputs = {
       environment: 'production',
-      baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -70,8 +62,6 @@ describe('buildFlywayArgs', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       target: '5.0',
-      baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -83,8 +73,6 @@ describe('buildFlywayArgs', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       cherryPick: '2.0,2.1',
-      baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -92,22 +80,9 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-cherryPick=2.0,2.1');
   });
 
-  it('should respect baselineOnMigrate=false', () => {
+  it('should include -saveSnapshot=true when saveSnapshot is true', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
-      baselineOnMigrate: false,
-      saveSnapshot: true,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-baselineOnMigrate=false');
-  });
-
-  it('should include -saveSnapshot=true when set', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      baselineOnMigrate: true,
       saveSnapshot: true,
     };
 
@@ -116,22 +91,9 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-saveSnapshot=true');
   });
 
-  it('should include -saveSnapshot=false when explicitly false', () => {
+  it('should omit -saveSnapshot when saveSnapshot is not set', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
-      baselineOnMigrate: true,
-      saveSnapshot: false,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-saveSnapshot=false');
-  });
-
-  it('should omit -saveSnapshot when undefined', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      baselineOnMigrate: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -142,20 +104,17 @@ describe('buildFlywayArgs', () => {
   it('should include working directory', () => {
     const inputs: FlywayMigrateInputs = {
       workingDirectory: '/app/db',
-      baselineOnMigrate: true,
     };
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain(`-workingDirectory=${path.resolve('/app/db')}`);
+    expect(args).toContain('-workingDirectory=/app/db');
   });
 
   it('should include extra args', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       extraArgs: '-X -custom=value',
-      baselineOnMigrate: true,
-      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -165,9 +124,7 @@ describe('buildFlywayArgs', () => {
   });
 
   it('should not include undefined optional values', () => {
-    const inputs: FlywayMigrateInputs = {
-      baselineOnMigrate: true,
-    };
+    const inputs: FlywayMigrateInputs = {};
 
     const args = buildFlywayArgs(inputs);
 
@@ -256,7 +213,7 @@ describe('maskArgsForLog', () => {
   });
 
   it('should not mask non-sensitive args', () => {
-    const args = ['-baselineOnMigrate=true', '-saveSnapshot=true'];
+    const args = ['-saveSnapshot=true', '-target=5.0'];
     const masked = maskArgsForLog(args);
 
     expect(masked).toEqual(args);
@@ -267,14 +224,24 @@ describe('maskArgsForLog', () => {
       '-url=jdbc:postgresql://localhost/db',
       '-user=admin',
       '-password=secret',
-      '-baselineOnMigrate=true',
+      '-saveSnapshot=true',
     ];
     const masked = maskArgsForLog(args);
 
     expect(masked[0]).toBe('-url=***');
     expect(masked[1]).toBe('-user=***');
     expect(masked[2]).toBe('-password=***');
-    expect(masked[3]).toBe('-baselineOnMigrate=true');
+    expect(masked[3]).toBe('-saveSnapshot=true');
+  });
+
+  it('should mask args containing password', () => {
+    const masked = maskArgsForLog(['-jdbcPassword=secret']);
+    expect(masked).toEqual(['-jdbcPassword=***']);
+  });
+
+  it('should mask args containing token', () => {
+    const masked = maskArgsForLog(['-licenseKeyToken=abc123']);
+    expect(masked).toEqual(['-licenseKeyToken=***']);
   });
 });
 
@@ -378,7 +345,6 @@ describe('runFlyway', () => {
     exec.mockResolvedValue(0);
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:sqlite:test.db',
-      baselineOnMigrate: true,
     };
 
     await runFlyway(inputs);
@@ -397,7 +363,7 @@ describe('runFlyway', () => {
       return 0;
     });
 
-    const result = await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
+    const result = await runFlyway({ url: 'jdbc:sqlite:test.db' });
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toBe('success output');
@@ -407,7 +373,7 @@ describe('runFlyway', () => {
   it('should return non-zero exit code on failure', async () => {
     exec.mockResolvedValue(1);
 
-    const result = await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
+    const result = await runFlyway({ url: 'jdbc:sqlite:test.db' });
 
     expect(result.exitCode).toBe(1);
   });
@@ -416,7 +382,6 @@ describe('runFlyway', () => {
     exec.mockResolvedValue(0);
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:sqlite:test.db',
-      baselineOnMigrate: true,
       workingDirectory: '/app/db',
     };
 
@@ -425,14 +390,14 @@ describe('runFlyway', () => {
     expect(exec).toHaveBeenCalledWith(
       'flyway',
       expect.any(Array),
-      expect.objectContaining({ cwd: path.resolve('/app/db') })
+      expect.objectContaining({ cwd: '/app/db' })
     );
   });
 
   it('should not set cwd when no working directory', async () => {
     exec.mockResolvedValue(0);
 
-    await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
+    await runFlyway({ url: 'jdbc:sqlite:test.db' });
 
     expect(exec).toHaveBeenCalledWith(
       'flyway',
@@ -447,7 +412,6 @@ describe('runFlyway', () => {
     await runFlyway({
       url: 'jdbc:sqlite:test.db',
       password: 'secret',
-      baselineOnMigrate: true,
     });
 
     expect(info).toHaveBeenCalledWith(expect.stringContaining('-password=***'));

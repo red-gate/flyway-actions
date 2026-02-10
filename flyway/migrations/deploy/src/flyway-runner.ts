@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import {
@@ -32,13 +31,12 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
     args.push(`-cherryPick=${inputs.cherryPick}`);
   }
 
-  args.push(`-baselineOnMigrate=${inputs.baselineOnMigrate}`);
-  if (inputs.saveSnapshot !== undefined) {
-    args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
+  if (inputs.saveSnapshot) {
+    args.push('-saveSnapshot=true');
   }
 
   if (inputs.workingDirectory) {
-    args.push(`-workingDirectory=${path.resolve(inputs.workingDirectory)}`);
+    args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }
 
   if (inputs.extraArgs) {
@@ -112,7 +110,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
   };
 
   if (inputs.workingDirectory) {
-    options.cwd = path.resolve(inputs.workingDirectory);
+    options.cwd = inputs.workingDirectory;
   }
 
   const exitCode = await exec.exec('flyway', args, options);
@@ -122,7 +120,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
 };
 
 const maskArgsForLog = (args: string[]): string[] => {
-  const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-url=/i];
+  const sensitivePatterns = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
 
   return args.map((arg) => {
     for (const pattern of sensitivePatterns) {
