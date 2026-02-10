@@ -32,7 +32,6 @@ jobs:
         shell: bash
         run: |
           echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
-          echo "Flyway version: ${{ steps.migrate.outputs.flyway-version }}"
           echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
 
@@ -41,12 +40,6 @@ jobs:
         run: |
           set -euo pipefail
           test "${{ steps.migrate.outputs.exit-code }}" = "0"
-
-      - name: Assert flyway version is not empty
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -n "${{ steps.migrate.outputs.flyway-version }}"
 
       - name: Assert migrations applied is 3
         shell: bash

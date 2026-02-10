@@ -43,8 +43,6 @@ inputs:
 outputs:
   exit-code:
     description: 'Flyway command exit code'
-  flyway-version:
-    description: 'Version of Flyway that was used'
   migrations-applied:
     description: 'Number of migrations applied'
   schema-version:
