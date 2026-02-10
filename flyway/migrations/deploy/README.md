@@ -55,7 +55,6 @@ steps:
 | `password` | Database password | No |
 | `target` | Migrate up to this version | No |
 | `cherry-pick` | Comma-separated list of migration versions to apply | No |
-| `save-snapshot` | Embed snapshot for drift checks (Teams/Enterprise). Auto-disabled for Community edition. Default: `true` | No |
 | `working-directory` | Working directory for Flyway execution | No |
 | `extra-args` | Additional arguments to pass to Flyway | No |
 
