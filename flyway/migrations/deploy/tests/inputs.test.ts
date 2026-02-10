@@ -73,21 +73,6 @@ describe('getInputs', () => {
     expect(inputs.cherryPick).toBe('3.0,4.0');
   });
 
-  it('should default baselineOnMigrate to true', () => {
-    const inputs = getInputs();
-    expect(inputs.baselineOnMigrate).toBe(true);
-  });
-
-  it('should set baselineOnMigrate to false when explicitly set', () => {
-    getBooleanInput.mockImplementation((name: string) => {
-      if (name === 'baseline-on-migrate') return false;
-      return true;
-    });
-
-    const inputs = getInputs();
-    expect(inputs.baselineOnMigrate).toBe(false);
-  });
-
   it('should default saveSnapshot to true', () => {
     const inputs = getInputs();
     expect(inputs.saveSnapshot).toBe(true);
@@ -134,7 +119,6 @@ describe('maskSecrets', () => {
   it('should mask password', () => {
     const inputs: FlywayMigrateInputs = {
       password: 'secret123',
-      baselineOnMigrate: true,
     };
 
     maskSecrets(inputs);
@@ -146,7 +130,6 @@ describe('maskSecrets', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
-      baselineOnMigrate: true,
     };
 
     maskSecrets(inputs);

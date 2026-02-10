@@ -25,10 +25,6 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to apply'
     required: false
-  baseline-on-migrate:
-    description: 'Automatically baseline on first deploy'
-    required: false
-    default: 'true'
   save-snapshot:
     description: 'Embed snapshot for drift checks (Teams/Enterprise). Auto-disabled for Community edition.'
     required: false

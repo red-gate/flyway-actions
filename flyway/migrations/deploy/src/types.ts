@@ -9,7 +9,6 @@ interface FlywayMigrateInputs {
   environment?: string;
   target?: string;
   cherryPick?: string;
-  baselineOnMigrate: boolean;
   saveSnapshot?: boolean;
   workingDirectory?: string;
   extraArgs?: string;

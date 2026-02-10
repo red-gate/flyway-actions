@@ -32,7 +32,6 @@ const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
     args.push(`-cherryPick=${inputs.cherryPick}`);
   }
 
-  args.push(`-baselineOnMigrate=${inputs.baselineOnMigrate}`);
   if (inputs.saveSnapshot !== undefined) {
     args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
   }

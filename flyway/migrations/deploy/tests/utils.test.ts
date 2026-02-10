@@ -2,7 +2,7 @@ import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from '
 
 describe('toCamelCase', () => {
   it('should convert kebab-case to camelCase', () => {
-    expect(toCamelCase('baseline-on-migrate')).toBe('baselineOnMigrate');
+    expect(toCamelCase('cherry-pick')).toBe('cherryPick');
   });
 
   it('should handle single word', () => {
