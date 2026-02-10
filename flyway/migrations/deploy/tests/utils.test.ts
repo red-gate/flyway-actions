@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from '../src/utils.js';
 
 describe('toCamelCase', () => {

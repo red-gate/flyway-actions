@@ -1,19 +1,30 @@
 import * as path from 'path';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
+import type { ExecOptions } from '@actions/exec';
+import type { FlywayMigrateInputs } from '../src/types.js';
+
+const mockInfo = vi.fn();
+const mockSetOutput = vi.fn();
+const mockExec = vi.fn();
+
+vi.doMock('@actions/core', () => ({
+  info: mockInfo,
+  setOutput: mockSetOutput,
+}));
+
+vi.doMock('@actions/exec', () => ({
+  exec: mockExec,
+}));
+
+const {
   buildFlywayArgs,
   parseExtraArgs,
   maskArgsForLog,
   parseFlywayOutput,
   runFlyway,
-} from '../src/flyway-runner.js';
-import { FlywayMigrateInputs } from '../src/types.js';
-
-vi.mock('@actions/core');
-vi.mock('@actions/exec');
-
-import * as core from '@actions/core';
-import * as exec from '@actions/exec';
+  checkFlywayInstalled,
+  setOutputs,
+  getFlywayDetails,
+} = await import('../src/flyway-runner.js');
 
 describe('buildFlywayArgs', () => {
   it('should build args with defaults only', () => {
@@ -364,12 +375,8 @@ Schema version: 4.0
 });
 
 describe('runFlyway', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   it('should execute flyway with correct arguments', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(0);
+    mockExec.mockResolvedValue(0);
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:sqlite:test.db',
       baselineOnMigrate: true,
@@ -377,7 +384,7 @@ describe('runFlyway', () => {
 
     await runFlyway(inputs);
 
-    expect(exec.exec).toHaveBeenCalledWith(
+    expect(mockExec).toHaveBeenCalledWith(
       'flyway',
       expect.arrayContaining(['migrate', '-url=jdbc:sqlite:test.db']),
       expect.any(Object)
@@ -385,13 +392,11 @@ describe('runFlyway', () => {
   });
 
   it('should return exit code, stdout, and stderr', async () => {
-    vi.mocked(exec.exec).mockImplementation(
-      async (_cmd: string, _args?: string[], options?: exec.ExecOptions) => {
-        options?.listeners?.stdout?.(Buffer.from('success output'));
-        options?.listeners?.stderr?.(Buffer.from('warning output'));
-        return 0;
-      }
-    );
+    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from('success output'));
+      options?.listeners?.stderr?.(Buffer.from('warning output'));
+      return 0;
+    });
 
     const result = await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
 
@@ -401,7 +406,7 @@ describe('runFlyway', () => {
   });
 
   it('should return non-zero exit code on failure', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(1);
+    mockExec.mockResolvedValue(1);
 
     const result = await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
 
@@ -409,7 +414,7 @@ describe('runFlyway', () => {
   });
 
   it('should set cwd when working directory is provided', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(0);
+    mockExec.mockResolvedValue(0);
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:sqlite:test.db',
       baselineOnMigrate: true,
@@ -418,7 +423,7 @@ describe('runFlyway', () => {
 
     await runFlyway(inputs);
 
-    expect(exec.exec).toHaveBeenCalledWith(
+    expect(mockExec).toHaveBeenCalledWith(
       'flyway',
       expect.any(Array),
       expect.objectContaining({ cwd: path.resolve('/app/db') })
@@ -426,16 +431,19 @@ describe('runFlyway', () => {
   });
 
   it('should not set cwd when no working directory', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(0);
+    mockExec.mockResolvedValue(0);
 
     await runFlyway({ baselineOnMigrate: true, url: 'jdbc:sqlite:test.db' });
 
-    const options = vi.mocked(exec.exec).mock.calls[0][2];
-    expect(options?.cwd).toBeUndefined();
+    expect(mockExec).toHaveBeenCalledWith(
+      'flyway',
+      expect.any(Array),
+      expect.not.objectContaining({ cwd: expect.anything() })
+    );
   });
 
   it('should log masked command', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(0);
+    mockExec.mockResolvedValue(0);
 
     await runFlyway({
       url: 'jdbc:sqlite:test.db',
@@ -443,7 +451,85 @@ describe('runFlyway', () => {
       baselineOnMigrate: true,
     });
 
-    expect(core.info).toHaveBeenCalledWith(expect.stringContaining('-password=***'));
-    expect(core.info).toHaveBeenCalledWith(expect.not.stringContaining('secret'));
+    expect(mockInfo).toHaveBeenCalledWith(expect.stringContaining('-password=***'));
+    expect(mockInfo).toHaveBeenCalledWith(expect.not.stringContaining('secret'));
+  });
+});
+
+describe('checkFlywayInstalled', () => {
+  it('should return false when flyway is not found', async () => {
+    mockExec.mockRejectedValue(new Error('Command not found'));
+
+    const result = await checkFlywayInstalled();
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when flyway is found', async () => {
+    mockExec.mockResolvedValue(0);
+
+    const result = await checkFlywayInstalled();
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('setOutputs', () => {
+  it('should set all outputs correctly', () => {
+    setOutputs({
+      exitCode: 0,
+      migrationsApplied: 3,
+      schemaVersion: '2.0',
+    });
+
+    expect(mockSetOutput).toHaveBeenCalledWith('exit-code', '0');
+    expect(mockSetOutput).toHaveBeenCalledWith('migrations-applied', '3');
+    expect(mockSetOutput).toHaveBeenCalledWith('schema-version', '2.0');
+  });
+});
+
+describe('getFlywayDetails', () => {
+  it('should detect Community edition', async () => {
+    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from('Flyway Community Edition 10.0.0 by Redgate\n'));
+      return 0;
+    });
+
+    const info = await getFlywayDetails();
+
+    expect(info.edition).toBe('community');
+  });
+
+  it('should detect Teams edition', async () => {
+    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from('Flyway Teams Edition 10.5.0 by Redgate\n'));
+      return 0;
+    });
+
+    const info = await getFlywayDetails();
+
+    expect(info.edition).toBe('teams');
+  });
+
+  it('should detect Enterprise edition', async () => {
+    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from('Flyway Enterprise Edition 11.0.0 by Redgate\n'));
+      return 0;
+    });
+
+    const info = await getFlywayDetails();
+
+    expect(info.edition).toBe('enterprise');
+  });
+
+  it('should default to community for unparseable output', async () => {
+    mockExec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from('Something unexpected\n'));
+      return 0;
+    });
+
+    const info = await getFlywayDetails();
+
+    expect(info.edition).toBe('community');
   });
 });
