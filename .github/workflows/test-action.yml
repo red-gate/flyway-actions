@@ -26,7 +26,7 @@ jobs:
         uses: ./flyway/migrate
         with:
           url: jdbc:sqlite:test.db
-          locations: filesystem:flyway/sample-project/sql
+          working-directory: flyway/sample-project
 
       - name: Print migration outputs
         shell: bash

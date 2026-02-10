@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { describe, it, expect, vi } from 'vitest';
 import {
   buildFlywayArgs,
@@ -11,22 +12,25 @@ vi.mock('@actions/core');
 vi.mock('@actions/exec');
 
 describe('buildFlywayArgs', () => {
-  it('should build args with only required url', () => {
+  it('should build args with defaults only', () => {
     const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
+      baselineOnMigrate: true,
     };
 
     const args = buildFlywayArgs(inputs);
 
     expect(args).toContain('migrate');
-    expect(args).toContain('-url=jdbc:postgresql://localhost/db');
+    expect(args).toContain('-baselineOnMigrate=true');
+    expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
   });
 
-  it('should build args with connection parameters', () => {
+  it('should build args with url connection', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
       password: 'secret',
+      baselineOnMigrate: true,
+      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -36,53 +40,108 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-password=secret');
   });
 
-  it('should build args with boolean parameters', () => {
+  it('should build args with environment', () => {
+    const inputs: FlywayMigrateInputs = {
+      environment: 'production',
+      baselineOnMigrate: true,
+      saveSnapshot: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain('-environment=production');
+  });
+
+  it('should build args with target', () => {
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:postgresql://localhost/db',
+      target: '5.0',
+      baselineOnMigrate: true,
+      saveSnapshot: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain('-target=5.0');
+  });
+
+  it('should build args with cherry-pick', () => {
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:postgresql://localhost/db',
+      cherryPick: '2.0,2.1',
+      baselineOnMigrate: true,
+      saveSnapshot: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain('-cherryPick=2.0,2.1');
+  });
+
+  it('should respect baselineOnMigrate=false', () => {
+    const inputs: FlywayMigrateInputs = {
+      url: 'jdbc:postgresql://localhost/db',
+      baselineOnMigrate: false,
+      saveSnapshot: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain('-baselineOnMigrate=false');
+  });
+
+  it('should include -saveSnapshot=true when set', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       baselineOnMigrate: true,
-      outOfOrder: false,
-      validateOnMigrate: true,
+      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain('-baselineOnMigrate=true');
-    expect(args).toContain('-outOfOrder=false');
-    expect(args).toContain('-validateOnMigrate=true');
+    expect(args).toContain('-saveSnapshot=true');
   });
 
-  it('should build args with number parameters', () => {
+  it('should include -saveSnapshot=false when explicitly false', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
-      connectRetries: 5,
-      connectRetriesInterval: 10,
+      baselineOnMigrate: true,
+      saveSnapshot: false,
     };
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain('-connectRetries=5');
-    expect(args).toContain('-connectRetriesInterval=10');
+    expect(args).toContain('-saveSnapshot=false');
   });
 
-  it('should build args with placeholders', () => {
+  it('should omit -saveSnapshot when undefined', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
-      placeholders: {
-        env: 'prod',
-        version: '1.0',
-      },
+      baselineOnMigrate: true,
     };
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain('-placeholders.env=prod');
-    expect(args).toContain('-placeholders.version=1.0');
+    expect(args.some((a) => a.includes('saveSnapshot'))).toBe(false);
+  });
+
+  it('should include working directory', () => {
+    const inputs: FlywayMigrateInputs = {
+      workingDirectory: '/app/db',
+      baselineOnMigrate: true,
+    };
+
+    const args = buildFlywayArgs(inputs);
+
+    expect(args).toContain(`-workingDirectory=${path.resolve('/app/db')}`);
   });
 
   it('should include extra args', () => {
     const inputs: FlywayMigrateInputs = {
       url: 'jdbc:postgresql://localhost/db',
       extraArgs: '-X -custom=value',
+      baselineOnMigrate: true,
+      saveSnapshot: true,
     };
 
     const args = buildFlywayArgs(inputs);
@@ -91,73 +150,19 @@ describe('buildFlywayArgs', () => {
     expect(args).toContain('-custom=value');
   });
 
-  it('should build args with Teams/Enterprise features', () => {
+  it('should not include undefined optional values', () => {
     const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      cherryPick: '2.0,2.1',
-      batch: true,
-      dryRunOutput: '/output/dryrun.sql',
+      baselineOnMigrate: true,
     };
 
     const args = buildFlywayArgs(inputs);
 
-    expect(args).toContain('-cherryPick=2.0,2.1');
-    expect(args).toContain('-batch=true');
-    expect(args).toContain('-dryRunOutput=/output/dryrun.sql');
-  });
-
-  it('should build args with database-specific options', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:oracle:thin:@localhost:1521:xe',
-      oracleSqlplus: true,
-      oracleSqlplusWarn: false,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-oracle.sqlplus=true');
-    expect(args).toContain('-oracle.sqlplusWarn=false');
-  });
-
-  it('should build args with secrets management options', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      vaultUrl: 'https://vault.example.com',
-      vaultToken: 'hvs.token',
-      vaultSecrets: 'secret/data/db',
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-vault.url=https://vault.example.com');
-    expect(args).toContain('-vault.token=hvs.token');
-    expect(args).toContain('-vault.secrets=secret/data/db');
-  });
-
-  it('should not include undefined values', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      user: undefined,
-      password: undefined,
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).not.toContain('-user=undefined');
-    expect(args).not.toContain('-password=undefined');
+    expect(args.filter((a) => a.includes('url')).length).toBe(0);
     expect(args.filter((a) => a.includes('user')).length).toBe(0);
     expect(args.filter((a) => a.includes('password')).length).toBe(0);
-  });
-
-  it('should build args with config files', () => {
-    const inputs: FlywayMigrateInputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      configFiles: 'flyway.conf,flyway-local.conf',
-    };
-
-    const args = buildFlywayArgs(inputs);
-
-    expect(args).toContain('-configFiles=flyway.conf,flyway-local.conf');
+    expect(args.filter((a) => a.includes('environment')).length).toBe(0);
+    expect(args.filter((a) => a.includes('target')).length).toBe(0);
+    expect(args.filter((a) => a.includes('cherryPick')).length).toBe(0);
   });
 });
 
@@ -195,34 +200,30 @@ describe('parseExtraArgs', () => {
 
 describe('maskArgsForLog', () => {
   it('should mask password argument', () => {
-    const args = ['-url=jdbc:postgresql://localhost/db', '-password=secret123'];
+    const args = ['-password=secret123'];
     const masked = maskArgsForLog(args);
 
-    expect(masked).toContain('-url=jdbc:postgresql://localhost/db');
     expect(masked).toContain('-password=***');
     expect(masked).not.toContain('-password=secret123');
   });
 
   it('should mask user argument', () => {
-    const args = ['-url=jdbc:postgresql://localhost/db', '-user=admin'];
+    const args = ['-user=admin'];
     const masked = maskArgsForLog(args);
 
     expect(masked).toContain('-user=***');
   });
 
-  it('should mask vault token', () => {
-    const args = ['-vault.token=hvs.secret123'];
+  it('should mask url argument', () => {
+    const args = ['-url=jdbc:postgresql://user:pass@localhost/db'];
     const masked = maskArgsForLog(args);
 
-    expect(masked).toContain('-vault.token=***');
+    expect(masked).toContain('-url=***');
+    expect(masked).not.toContain('pass');
   });
 
   it('should not mask non-sensitive args', () => {
-    const args = [
-      '-url=jdbc:postgresql://localhost/db',
-      '-locations=sql',
-      '-baselineOnMigrate=true',
-    ];
+    const args = ['-baselineOnMigrate=true', '-saveSnapshot=true'];
     const masked = maskArgsForLog(args);
 
     expect(masked).toEqual(args);
@@ -233,14 +234,14 @@ describe('maskArgsForLog', () => {
       '-url=jdbc:postgresql://localhost/db',
       '-user=admin',
       '-password=secret',
-      '-locations=sql',
+      '-baselineOnMigrate=true',
     ];
     const masked = maskArgsForLog(args);
 
-    expect(masked[0]).toBe('-url=jdbc:postgresql://localhost/db');
+    expect(masked[0]).toBe('-url=***');
     expect(masked[1]).toBe('-user=***');
     expect(masked[2]).toBe('-password=***');
-    expect(masked[3]).toBe('-locations=sql');
+    expect(masked[3]).toBe('-baselineOnMigrate=true');
   });
 });
 

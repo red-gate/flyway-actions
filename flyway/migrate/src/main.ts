@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import { getInputs, maskSecrets } from './inputs.js';
 import {
   checkFlywayInstalled,
-  getFlywayVersion,
+  getFlywayVersionDetails,
   runFlyway,
   parseFlywayOutput,
   setOutputs,
@@ -17,10 +17,20 @@ const run = async (): Promise<void> => {
       );
     }
 
-    const flywayVersion = await getFlywayVersion();
-    core.info(`Using Flyway version: ${flywayVersion}`);
+    const flywayVersion = await getFlywayVersionDetails();
+    core.info(`Using Flyway ${flywayVersion.edition} edition ${flywayVersion.version}`);
 
     const inputs = getInputs();
+
+    if (!inputs.url && !inputs.environment) {
+      throw new Error(
+        'Either "url" or "environment" must be provided for Flyway to connect to a database.'
+      );
+    }
+
+    if (flywayVersion.edition === 'community') {
+      inputs.saveSnapshot = undefined;
+    }
 
     maskSecrets(inputs);
 
@@ -37,7 +47,7 @@ const run = async (): Promise<void> => {
 
     setOutputs({
       exitCode: result.exitCode,
-      flywayVersion,
+      flywayVersion: flywayVersion.version,
       migrationsApplied,
       schemaVersion,
     });

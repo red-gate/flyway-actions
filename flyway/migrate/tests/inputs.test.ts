@@ -1,156 +1,21 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  parseBoolean,
-  parseNumber,
-  parsePlaceholders,
-  getInputs,
-  maskSecrets,
-} from '../src/inputs.js';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getInputs, maskSecrets } from '../src/inputs.js';
 import * as core from '@actions/core';
 
 vi.mock('@actions/core');
-
-describe('parseBoolean', () => {
-  it('should return undefined for empty string', () => {
-    expect(parseBoolean('')).toBeUndefined();
-  });
-
-  it('should return undefined for undefined', () => {
-    expect(parseBoolean(undefined)).toBeUndefined();
-  });
-
-  it('should parse "true" as true', () => {
-    expect(parseBoolean('true')).toBe(true);
-  });
-
-  it('should parse "TRUE" as true (case insensitive)', () => {
-    expect(parseBoolean('TRUE')).toBe(true);
-  });
-
-  it('should parse "yes" as true', () => {
-    expect(parseBoolean('yes')).toBe(true);
-  });
-
-  it('should parse "1" as true', () => {
-    expect(parseBoolean('1')).toBe(true);
-  });
-
-  it('should parse "false" as false', () => {
-    expect(parseBoolean('false')).toBe(false);
-  });
-
-  it('should parse "FALSE" as false (case insensitive)', () => {
-    expect(parseBoolean('FALSE')).toBe(false);
-  });
-
-  it('should parse "no" as false', () => {
-    expect(parseBoolean('no')).toBe(false);
-  });
-
-  it('should parse "0" as false', () => {
-    expect(parseBoolean('0')).toBe(false);
-  });
-
-  it('should throw for invalid value', () => {
-    expect(() => parseBoolean('invalid')).toThrow('Invalid boolean value: invalid');
-  });
-});
-
-describe('parseNumber', () => {
-  it('should return undefined for empty string', () => {
-    expect(parseNumber('')).toBeUndefined();
-  });
-
-  it('should return undefined for undefined', () => {
-    expect(parseNumber(undefined)).toBeUndefined();
-  });
-
-  it('should parse valid number', () => {
-    expect(parseNumber('42')).toBe(42);
-  });
-
-  it('should parse zero', () => {
-    expect(parseNumber('0')).toBe(0);
-  });
-
-  it('should parse negative number', () => {
-    expect(parseNumber('-5')).toBe(-5);
-  });
-
-  it('should throw for non-numeric value', () => {
-    expect(() => parseNumber('abc')).toThrow('Invalid number value: abc');
-  });
-
-  it('should throw for float when expecting integer', () => {
-    expect(parseNumber('3.14')).toBe(3);
-  });
-});
-
-describe('parsePlaceholders', () => {
-  it('should return undefined for empty string', () => {
-    expect(parsePlaceholders('')).toBeUndefined();
-  });
-
-  it('should return undefined for undefined', () => {
-    expect(parsePlaceholders(undefined)).toBeUndefined();
-  });
-
-  it('should parse single placeholder', () => {
-    expect(parsePlaceholders('key=value')).toEqual({ key: 'value' });
-  });
-
-  it('should parse multiple placeholders', () => {
-    expect(parsePlaceholders('key1=value1,key2=value2')).toEqual({
-      key1: 'value1',
-      key2: 'value2',
-    });
-  });
-
-  it('should handle whitespace', () => {
-    expect(parsePlaceholders(' key1 = value1 , key2 = value2 ')).toEqual({
-      key1: 'value1',
-      key2: 'value2',
-    });
-  });
-
-  it('should handle values with equals sign', () => {
-    expect(parsePlaceholders('key=value=with=equals')).toEqual({
-      key: 'value=with=equals',
-    });
-  });
-
-  it('should handle empty values', () => {
-    expect(parsePlaceholders('key=')).toEqual({ key: '' });
-  });
-
-  it('should skip empty entries', () => {
-    expect(parsePlaceholders('key1=value1,,key2=value2')).toEqual({
-      key1: 'value1',
-      key2: 'value2',
-    });
-  });
-
-  it('should throw for invalid format (no equals)', () => {
-    expect(() => parsePlaceholders('invalidformat')).toThrow(
-      'Invalid placeholder format: invalidformat. Expected key=value'
-    );
-  });
-
-  it('should throw for empty key', () => {
-    expect(() => parsePlaceholders('=value')).toThrow('Empty placeholder key in: =value');
-  });
-});
 
 describe('getInputs', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
+  const mockDefaults = () => {
+    vi.mocked(core.getInput).mockReturnValue('');
+    vi.mocked(core.getBooleanInput).mockReturnValue(true);
+  };
 
-  it('should get required url input', () => {
+  it('should return url when provided', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       if (name === 'url') return 'jdbc:postgresql://localhost/db';
       return '';
@@ -160,13 +25,20 @@ describe('getInputs', () => {
     expect(inputs.url).toBe('jdbc:postgresql://localhost/db');
   });
 
-  it('should get optional string inputs', () => {
+  it('should return undefined for url when not provided', () => {
+    mockDefaults();
+
+    const inputs = getInputs();
+    expect(inputs.url).toBeUndefined();
+  });
+
+  it('should get connection inputs', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       const values: Record<string, string> = {
         url: 'jdbc:postgresql://localhost/db',
         user: 'admin',
         password: 'secret',
-        locations: 'filesystem:sql',
       };
       return values[name] || '';
     });
@@ -175,56 +47,74 @@ describe('getInputs', () => {
     expect(inputs.url).toBe('jdbc:postgresql://localhost/db');
     expect(inputs.user).toBe('admin');
     expect(inputs.password).toBe('secret');
-    expect(inputs.locations).toBe('filesystem:sql');
   });
 
-  it('should get boolean inputs', () => {
+  it('should get environment input', () => {
+    mockDefaults();
+    vi.mocked(core.getInput).mockImplementation((name: string) => {
+      if (name === 'environment') return 'production';
+      return '';
+    });
+
+    const inputs = getInputs();
+    expect(inputs.environment).toBe('production');
+  });
+
+  it('should get target and cherry-pick inputs', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       const values: Record<string, string> = {
-        url: 'jdbc:postgresql://localhost/db',
-        'baseline-on-migrate': 'true',
-        'out-of-order': 'false',
+        target: '5.0',
+        'cherry-pick': '3.0,4.0',
       };
       return values[name] || '';
     });
+
+    const inputs = getInputs();
+    expect(inputs.target).toBe('5.0');
+    expect(inputs.cherryPick).toBe('3.0,4.0');
+  });
+
+  it('should default baselineOnMigrate to true', () => {
+    mockDefaults();
 
     const inputs = getInputs();
     expect(inputs.baselineOnMigrate).toBe(true);
-    expect(inputs.outOfOrder).toBe(false);
   });
 
-  it('should get number inputs', () => {
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
-      const values: Record<string, string> = {
-        url: 'jdbc:postgresql://localhost/db',
-        'connect-retries': '5',
-        'connect-retries-interval': '10',
-      };
-      return values[name] || '';
+  it('should set baselineOnMigrate to false when explicitly set', () => {
+    mockDefaults();
+    vi.mocked(core.getBooleanInput).mockImplementation((name: string) => {
+      if (name === 'baseline-on-migrate') return false;
+      return true;
     });
 
     const inputs = getInputs();
-    expect(inputs.connectRetries).toBe(5);
-    expect(inputs.connectRetriesInterval).toBe(10);
+    expect(inputs.baselineOnMigrate).toBe(false);
   });
 
-  it('should get placeholder inputs', () => {
-    vi.mocked(core.getInput).mockImplementation((name: string) => {
-      const values: Record<string, string> = {
-        url: 'jdbc:postgresql://localhost/db',
-        placeholders: 'env=prod,version=1.0',
-      };
-      return values[name] || '';
+  it('should default saveSnapshot to true', () => {
+    mockDefaults();
+
+    const inputs = getInputs();
+    expect(inputs.saveSnapshot).toBe(true);
+  });
+
+  it('should set saveSnapshot to false when explicitly set', () => {
+    mockDefaults();
+    vi.mocked(core.getBooleanInput).mockImplementation((name: string) => {
+      if (name === 'save-snapshot') return false;
+      return true;
     });
 
     const inputs = getInputs();
-    expect(inputs.placeholders).toEqual({ env: 'prod', version: '1.0' });
+    expect(inputs.saveSnapshot).toBe(false);
   });
 
   it('should get working directory and extra args', () => {
+    mockDefaults();
     vi.mocked(core.getInput).mockImplementation((name: string) => {
       const values: Record<string, string> = {
-        url: 'jdbc:postgresql://localhost/db',
         'working-directory': '/app/db',
         'extra-args': '-X -someFlag=value',
       };
@@ -235,6 +125,20 @@ describe('getInputs', () => {
     expect(inputs.workingDirectory).toBe('/app/db');
     expect(inputs.extraArgs).toBe('-X -someFlag=value');
   });
+
+  it('should return undefined for optional inputs not provided', () => {
+    mockDefaults();
+
+    const inputs = getInputs();
+    expect(inputs.url).toBeUndefined();
+    expect(inputs.user).toBeUndefined();
+    expect(inputs.password).toBeUndefined();
+    expect(inputs.environment).toBeUndefined();
+    expect(inputs.target).toBeUndefined();
+    expect(inputs.cherryPick).toBeUndefined();
+    expect(inputs.workingDirectory).toBeUndefined();
+    expect(inputs.extraArgs).toBeUndefined();
+  });
 });
 
 describe('maskSecrets', () => {
@@ -244,8 +148,8 @@ describe('maskSecrets', () => {
 
   it('should mask password', () => {
     const inputs = {
-      url: 'jdbc:postgresql://localhost/db',
       password: 'secret123',
+      baselineOnMigrate: true,
     };
 
     maskSecrets(inputs);
@@ -253,35 +157,11 @@ describe('maskSecrets', () => {
     expect(core.setSecret).toHaveBeenCalledWith('secret123');
   });
 
-  it('should mask vault token', () => {
-    const inputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      vaultToken: 'hvs.token123',
-    };
-
-    maskSecrets(inputs);
-
-    expect(core.setSecret).toHaveBeenCalledWith('hvs.token123');
-  });
-
-  it('should mask multiple secrets', () => {
-    const inputs = {
-      url: 'jdbc:postgresql://localhost/db',
-      password: 'secret123',
-      vaultToken: 'hvs.token123',
-    };
-
-    maskSecrets(inputs);
-
-    expect(core.setSecret).toHaveBeenCalledTimes(2);
-    expect(core.setSecret).toHaveBeenCalledWith('secret123');
-    expect(core.setSecret).toHaveBeenCalledWith('hvs.token123');
-  });
-
-  it('should not call setSecret when no secrets present', () => {
+  it('should not call setSecret when no password present', () => {
     const inputs = {
       url: 'jdbc:postgresql://localhost/db',
       user: 'admin',
+      baselineOnMigrate: true,
     };
 
     maskSecrets(inputs);

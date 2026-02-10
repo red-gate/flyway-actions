@@ -1,42 +1,48 @@
+import * as path from 'path';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import { FlywayMigrateInputs, FlywayRunResult, FlywayMigrateOutputs } from './types.js';
-import { INPUT_DEFINITIONS } from './inputs.js';
-import { toCamelCase, createStdoutListener, createStdoutStderrListeners } from './utils.js';
+import {
+  FlywayEdition,
+  FlywayVersionDetails,
+  FlywayMigrateInputs,
+  FlywayRunResult,
+  FlywayMigrateOutputs,
+} from './types.js';
+import { createStdoutListener, createStdoutStderrListeners } from './utils.js';
 
 const buildFlywayArgs = (inputs: FlywayMigrateInputs): string[] => {
   const args: string[] = ['migrate'];
 
-  for (const def of INPUT_DEFINITIONS) {
-    const propName = toCamelCase(def.inputName);
-    const value = (inputs as Record<string, unknown>)[propName];
+  if (inputs.url) {
+    args.push(`-url=${inputs.url}`);
+  }
+  if (inputs.user) {
+    args.push(`-user=${inputs.user}`);
+  }
+  if (inputs.password) {
+    args.push(`-password=${inputs.password}`);
+  }
+  if (inputs.environment) {
+    args.push(`-environment=${inputs.environment}`);
+  }
+  if (inputs.target) {
+    args.push(`-target=${inputs.target}`);
+  }
+  if (inputs.cherryPick) {
+    args.push(`-cherryPick=${inputs.cherryPick}`);
+  }
 
-    if (value === undefined || value === null) {
-      continue;
-    }
+  args.push(`-baselineOnMigrate=${inputs.baselineOnMigrate}`);
+  if (inputs.saveSnapshot !== undefined) {
+    args.push(`-saveSnapshot=${inputs.saveSnapshot}`);
+  }
 
-    switch (def.type) {
-      case 'boolean':
-        args.push(`-${def.flywayArg}=${value ? 'true' : 'false'}`);
-        break;
-      case 'number':
-        args.push(`-${def.flywayArg}=${value}`);
-        break;
-      case 'placeholders':
-        if (typeof value === 'object') {
-          for (const [key, val] of Object.entries(value as Record<string, string>)) {
-            args.push(`-placeholders.${key}=${val}`);
-          }
-        }
-        break;
-      default:
-        args.push(`-${def.flywayArg}=${value}`);
-    }
+  if (inputs.workingDirectory) {
+    args.push(`-workingDirectory=${path.resolve(inputs.workingDirectory)}`);
   }
 
   if (inputs.extraArgs) {
-    const extraArgsArray = parseExtraArgs(inputs.extraArgs);
-    args.push(...extraArgsArray);
+    args.push(...parseExtraArgs(inputs.extraArgs));
   }
 
   return args;
@@ -86,7 +92,7 @@ const checkFlywayInstalled = async (): Promise<boolean> => {
   }
 };
 
-const getFlywayVersion = async (): Promise<string> => {
+const getFlywayVersionDetails = async (): Promise<FlywayVersionDetails> => {
   const { listener, getOutput } = createStdoutListener();
 
   await exec.exec('flyway', ['--version'], {
@@ -95,9 +101,11 @@ const getFlywayVersion = async (): Promise<string> => {
   });
 
   const stdout = getOutput();
-  // Example: "Flyway Community Edition 10.0.0"
-  const match = stdout.match(/Flyway\s+(?:Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
-  return match ? match[1] : 'unknown';
+  const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition\s+(\d+\.\d+\.\d+)/);
+  return {
+    edition: (match ? match[1].toLowerCase() : 'community') as FlywayEdition,
+    version: match ? match[2] : 'unknown',
+  };
 };
 
 const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> => {
@@ -112,7 +120,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
   };
 
   if (inputs.workingDirectory) {
-    options.cwd = inputs.workingDirectory;
+    options.cwd = path.resolve(inputs.workingDirectory);
   }
 
   const exitCode = await exec.exec('flyway', args, options);
@@ -122,7 +130,7 @@ const runFlyway = async (inputs: FlywayMigrateInputs): Promise<FlywayRunResult> 
 };
 
 const maskArgsForLog = (args: string[]): string[] => {
-  const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-vault\.token=/i, /^-url=.*password=/i];
+  const sensitivePatterns = [/^-password=/i, /^-user=/i, /^-url=/i];
 
   return args.map((arg) => {
     for (const pattern of sensitivePatterns) {
@@ -194,7 +202,7 @@ export {
   buildFlywayArgs,
   parseExtraArgs,
   checkFlywayInstalled,
-  getFlywayVersion,
+  getFlywayVersionDetails,
   runFlyway,
   maskArgsForLog,
   parseFlywayOutput,

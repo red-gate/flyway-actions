@@ -60,7 +60,7 @@ describe('main', () => {
     expect(core.setOutput).toHaveBeenCalledWith('schema-version', '2.0');
   });
 
-  it('should get flyway version from output', async () => {
+  it('should get flyway info for Community edition', async () => {
     vi.mocked(exec.exec).mockImplementation(
       async (_cmd: string, _args?: string[], options?: exec.ExecOptions) => {
         if (options?.listeners?.stdout) {
@@ -70,13 +70,14 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayVersion } = await import('../src/flyway-runner.js');
-    const version = await getFlywayVersion();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
-    expect(version).toBe('10.0.0');
+    expect(info.version).toBe('10.0.0');
+    expect(info.edition).toBe('community');
   });
 
-  it('should handle Teams edition version', async () => {
+  it('should get flyway info for Teams edition', async () => {
     vi.mocked(exec.exec).mockImplementation(
       async (_cmd: string, _args?: string[], options?: exec.ExecOptions) => {
         if (options?.listeners?.stdout) {
@@ -86,13 +87,14 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayVersion } = await import('../src/flyway-runner.js');
-    const version = await getFlywayVersion();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
-    expect(version).toBe('10.5.0');
+    expect(info.version).toBe('10.5.0');
+    expect(info.edition).toBe('teams');
   });
 
-  it('should handle Enterprise edition version', async () => {
+  it('should get flyway info for Enterprise edition', async () => {
     vi.mocked(exec.exec).mockImplementation(
       async (_cmd: string, _args?: string[], options?: exec.ExecOptions) => {
         if (options?.listeners?.stdout) {
@@ -102,13 +104,14 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayVersion } = await import('../src/flyway-runner.js');
-    const version = await getFlywayVersion();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
-    expect(version).toBe('11.0.0');
+    expect(info.version).toBe('11.0.0');
+    expect(info.edition).toBe('enterprise');
   });
 
-  it('should return unknown for unparseable version', async () => {
+  it('should default to community and unknown for unparseable version', async () => {
     vi.mocked(exec.exec).mockImplementation(
       async (_cmd: string, _args?: string[], options?: exec.ExecOptions) => {
         if (options?.listeners?.stdout) {
@@ -118,9 +121,10 @@ describe('main', () => {
       }
     );
 
-    const { getFlywayVersion } = await import('../src/flyway-runner.js');
-    const version = await getFlywayVersion();
+    const { getFlywayVersionDetails } = await import('../src/flyway-runner.js');
+    const info = await getFlywayVersionDetails();
 
-    expect(version).toBe('unknown');
+    expect(info.version).toBe('unknown');
+    expect(info.edition).toBe('community');
   });
 });
