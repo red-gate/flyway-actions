@@ -1,0 +1,49 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    groups:
+      actions-all:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+      prod-dependencies:
+        dependency-type: production
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: '/flyway/migrations/deploy'
+    schedule:
+      interval: weekly
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+      prod-dependencies:
+        dependency-type: production
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
