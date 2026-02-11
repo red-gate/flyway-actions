@@ -6,7 +6,7 @@ const createStdoutListener = (): {
   listener: (data: Buffer) => void;
   getOutput: () => string;
 } => {
-  let output = '';
+  let output = "";
   return {
     listener: (data: Buffer) => {
       output += data.toString();
@@ -22,8 +22,8 @@ const createStdoutStderrListeners = (): {
   };
   getOutput: () => { stdout: string; stderr: string };
 } => {
-  let stdout = '';
-  let stderr = '';
+  let stdout = "";
+  let stderr = "";
   return {
     listeners: {
       stdout: (data: Buffer) => {
