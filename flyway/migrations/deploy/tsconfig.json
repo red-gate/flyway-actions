@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDirs": ["src", "tests"],
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vite/client", "vitest/globals"]
   },
   "exclude": ["node_modules", "dist"]
 }
