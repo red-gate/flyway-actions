@@ -27,9 +27,8 @@ const run = async (): Promise<void> => {
         core.setFailed("Drift detected: the target database has diverged from the expected state. Aborting migration.");
         return;
       }
+      inputs.saveSnapshot = true;
     }
-
-    inputs.saveSnapshot = true;
     await migrate(inputs);
   } catch (error) {
     if (error instanceof Error) {

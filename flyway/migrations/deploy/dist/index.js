@@ -13360,11 +13360,14 @@ const Aa = () => {
       fe('Either "url" or "environment" must be provided for Flyway to connect to a database.');
       return;
     }
-    if (ea(r), A.edition === "enterprise" && await Ba(r)) {
-      fe("Drift detected: the target database has diverged from the expected state. Aborting migration.");
-      return;
+    if (ea(r), A.edition === "enterprise") {
+      if (await Ba(r)) {
+        fe("Drift detected: the target database has diverged from the expected state. Aborting migration.");
+        return;
+      }
+      r.saveSnapshot = !0;
     }
-    r.saveSnapshot = !0, await Ia(r);
+    await Ia(r);
   } catch (A) {
     A instanceof Error ? fe(A.message) : fe("An unexpected error occurred");
   }
