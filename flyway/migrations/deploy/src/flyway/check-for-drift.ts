@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
-import { buildCommonArgs, runFlyway, setDriftOutput } from "./flyway-runner.js";
+import { buildCommonArgs, runFlyway } from "./flyway-runner.js";
 
 const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   return ["check", "-drift", "-failOnDrift=true", ...buildCommonArgs(inputs)];
@@ -27,6 +27,10 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
   } finally {
     core.endGroup();
   }
+};
+
+const setDriftOutput = (driftDetected: boolean): void => {
+  core.setOutput("drift-detected", driftDetected.toString());
 };
 
 export { buildFlywayCheckDriftArgs, checkForDrift };

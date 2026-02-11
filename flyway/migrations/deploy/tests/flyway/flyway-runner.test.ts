@@ -13,20 +13,8 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { parseExtraArgs, maskArgsForLog, parseFlywayOutput, runFlyway, setDriftOutput, setOutputs, getFlywayDetails } =
+const { parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } =
   await import("../../src/flyway/flyway-runner.js");
-
-describe("setDriftOutput", () => {
-  it("should set drift-detected output to true", () => {
-    setDriftOutput(true);
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
-  });
-
-  it("should set drift-detected output to false", () => {
-    setDriftOutput(false);
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
-  });
-});
 
 describe("parseExtraArgs", () => {
   it("should parse simple space-separated args", () => {
@@ -131,101 +119,6 @@ describe("maskArgsForLog", () => {
   });
 });
 
-describe("parseFlywayOutput", () => {
-  it("should parse migration count from success message", () => {
-    const stdout = `
-Flyway Community Edition 10.0.0 by Redgate
-Database: jdbc:postgresql://localhost/test
-Successfully applied 3 migrations to schema "public" (execution time 00:00.150s)
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(3);
-  });
-
-  it("should parse schema version", () => {
-    const stdout = `
-Flyway Community Edition 10.0.0 by Redgate
-Database: jdbc:postgresql://localhost/test
-Schema version: 2.0.1
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.schemaVersion).toBe("2.0.1");
-  });
-
-  it("should parse current version of schema format", () => {
-    const stdout = `
-Current version of schema "public": 1.5
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.schemaVersion).toBe("1.5");
-  });
-
-  it("should return defaults when no patterns match", () => {
-    const stdout = "Some unrelated output";
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(0);
-    expect(result.schemaVersion).toBe("unknown");
-  });
-
-  it("should parse JSON output if present", () => {
-    const stdout = `
-{"schemaVersion": "3.0", "migrationsExecuted": 5}
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(5);
-    expect(result.schemaVersion).toBe("3.0");
-  });
-
-  it("should handle validated migrations message", () => {
-    const stdout = `
-Successfully validated 10 migrations
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(10);
-  });
-
-  it("should handle zero migrations", () => {
-    const stdout = `
-Schema "public" is up to date. No migration necessary.
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(0);
-  });
-
-  it("should handle empty string", () => {
-    const result = parseFlywayOutput("");
-    expect(result.migrationsApplied).toBe(0);
-    expect(result.schemaVersion).toBe("unknown");
-  });
-
-  it("should fall back to regex when JSON is malformed", () => {
-    const stdout = `
-Successfully applied 2 migrations
-Schema version: 4.0
-{"schemaVersion": broken json}
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(2);
-    expect(result.schemaVersion).toBe("4.0");
-  });
-});
-
 describe("runFlyway", () => {
   it("should execute flyway with provided arguments", async () => {
     exec.mockResolvedValue(0);
@@ -284,20 +177,6 @@ describe("runFlyway", () => {
 
     expect(info).toHaveBeenCalledWith(expect.stringContaining("-password=***"));
     expect(info).toHaveBeenCalledWith(expect.not.stringContaining("secret"));
-  });
-});
-
-describe("setOutputs", () => {
-  it("should set all outputs correctly", () => {
-    setOutputs({
-      exitCode: 0,
-      migrationsApplied: 3,
-      schemaVersion: "2.0",
-    });
-
-    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
-    expect(setOutput).toHaveBeenCalledWith("migrations-applied", "3");
-    expect(setOutput).toHaveBeenCalledWith("schema-version", "2.0");
   });
 });
 
