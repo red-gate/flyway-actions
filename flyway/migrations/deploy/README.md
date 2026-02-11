@@ -49,7 +49,7 @@ steps:
 
 | Input | Description | Required |
 |-------|-------------|----------|
-| `environment` | Flyway TOML environment name | Yes |
+| `environment` | Flyway TOML environment name | No |
 | `url` | JDBC URL for the database connection | No |
 | `user` | Database user | No |
 | `password` | Database password | No |

@@ -1,6 +1,24 @@
 import * as core from "@actions/core";
-import { FlywayMigrationsDeploymentInputs } from "./types.js";
-import { buildFlywayMigrateArgs, runFlyway, parseFlywayOutput, setOutputs } from "./flyway-runner.js";
+import type { FlywayMigrationsDeploymentInputs } from "../types.js";
+import { buildCommonArgs, runFlyway, parseFlywayOutput, setOutputs } from "./flyway-runner.js";
+
+const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  const args: string[] = ["migrate", ...buildCommonArgs(inputs)];
+
+  if (inputs.target) {
+    args.push(`-target=${inputs.target}`);
+  }
+
+  if (inputs.cherryPick) {
+    args.push(`-cherryPick=${inputs.cherryPick}`);
+  }
+
+  if (inputs.saveSnapshot) {
+    args.push("-saveSnapshot=true");
+  }
+
+  return args;
+};
 
 const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> => {
   const args = buildFlywayMigrateArgs(inputs);
@@ -24,11 +42,6 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
   if (result.exitCode !== 0) {
     throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
   }
-
-  core.info(`Migration completed successfully. Applied ${migrationsApplied} migration(s).`);
-  if (schemaVersion !== "unknown") {
-    core.info(`Schema version: ${schemaVersion}`);
-  }
 };
 
-export { migrate };
+export { buildFlywayMigrateArgs, migrate };

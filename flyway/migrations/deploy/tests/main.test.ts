@@ -25,12 +25,12 @@ const setupMocks = () => {
   }));
 };
 
-interface SetupFlywayMockOptions {
+type SetupFlywayMockOptions = {
   edition: string;
   migrateExitCode: number;
   migrateOutput?: string;
   driftExitCode?: number;
-}
+};
 
 describe("run", () => {
   beforeEach(() => {
