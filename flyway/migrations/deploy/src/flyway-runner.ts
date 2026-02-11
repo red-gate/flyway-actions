@@ -9,8 +9,8 @@ import {
 } from "./types.js";
 import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
 
-const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = ["migrate"];
+const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  const args: string[] = [];
 
   if (inputs.url) {
     args.push(`-url=${inputs.url}`);
@@ -24,6 +24,21 @@ const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): strin
   if (inputs.environment) {
     args.push(`-environment=${inputs.environment}`);
   }
+
+  if (inputs.workingDirectory) {
+    args.push(`-workingDirectory=${inputs.workingDirectory}`);
+  }
+
+  if (inputs.extraArgs) {
+    args.push(...parseExtraArgs(inputs.extraArgs));
+  }
+
+  return args;
+};
+
+const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  const args: string[] = ["migrate", ...buildCommonArgs(inputs)];
+
   if (inputs.target) {
     args.push(`-target=${inputs.target}`);
   }
@@ -33,14 +48,6 @@ const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): strin
 
   if (inputs.saveSnapshot) {
     args.push("-saveSnapshot=true");
-  }
-
-  if (inputs.workingDirectory) {
-    args.push(`-workingDirectory=${inputs.workingDirectory}`);
-  }
-
-  if (inputs.extraArgs) {
-    args.push(...parseExtraArgs(inputs.extraArgs));
   }
 
   return args;
@@ -180,6 +187,14 @@ const parseFlywayOutput = (
   return { migrationsApplied, schemaVersion };
 };
 
+const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  return ["check", "-drift", ...buildCommonArgs(inputs)];
+};
+
+const setDriftOutput = (driftDetected: boolean): void => {
+  core.setOutput("drift-detected", driftDetected.toString());
+};
+
 const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
   core.setOutput("exit-code", outputs.exitCode.toString());
   core.setOutput("migrations-applied", outputs.migrationsApplied.toString());
@@ -188,10 +203,12 @@ const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
 
 export {
   buildFlywayMigrateArgs,
+  buildFlywayCheckDriftArgs,
   parseExtraArgs,
   getFlywayDetails,
   runFlyway,
   maskArgsForLog,
   parseFlywayOutput,
+  setDriftOutput,
   setOutputs,
 };
