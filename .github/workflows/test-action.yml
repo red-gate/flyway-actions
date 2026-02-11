@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-migrate:
+  test-migrate-no-drift:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
