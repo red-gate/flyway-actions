@@ -37,7 +37,7 @@ outputs:
   exit-code:
     description: 'Flyway exit code'
   drift-detected:
-    description: 'Whether drift was detected'
+    description: 'Whether drift was detected (empty if skipped)'
   migrations-applied:
     description: 'Number of migrations applied'
   schema-version:
