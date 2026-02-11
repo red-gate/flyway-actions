@@ -51,27 +51,15 @@ jobs:
           path: flyway/sample-project/report.html
           retention-days: 1
 
-      - name: Print migration outputs
+      - name: Test outputs
         shell: bash
         run: |
+          set -euo pipefail
           echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.migrate.outputs.drift-detected }}"
           echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
-
-      - name: Assert exit code is 0
-        shell: bash
-        run: |
-          set -euo pipefail
           test "${{ steps.migrate.outputs.exit-code }}" = "0"
-
-      - name: Assert migrations applied is 3
-        shell: bash
-        run: |
-          set -euo pipefail
+          test "${{ steps.migrate.outputs.drift-detected }}" = "false"
           test "${{ steps.migrate.outputs.migrations-applied }}" = "3"
-
-      - name: Assert schema version is 3
-        shell: bash
-        run: |
-          set -euo pipefail
           test "${{ steps.migrate.outputs.schema-version }}" = "3"
