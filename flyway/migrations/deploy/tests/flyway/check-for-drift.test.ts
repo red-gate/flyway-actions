@@ -19,6 +19,7 @@ describe("buildFlywayCheckDriftArgs", () => {
 
     expect(args[0]).toBe("check");
     expect(args[1]).toBe("-drift");
+    expect(args[2]).toBe("-failOnDrift=true");
   });
 
   it("should include connection params", () => {

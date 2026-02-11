@@ -3,7 +3,7 @@ import type { FlywayMigrationsDeploymentInputs } from "../types.js";
 import { buildCommonArgs, runFlyway, setDriftOutput } from "./flyway-runner.js";
 
 const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  return ["check", "-drift", ...buildCommonArgs(inputs)];
+  return ["check", "-drift", "-failOnDrift=true", ...buildCommonArgs(inputs)];
 };
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
