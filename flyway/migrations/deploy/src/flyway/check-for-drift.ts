@@ -12,9 +12,6 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
   const driftArgs = buildFlywayCheckDriftArgs(inputs);
   const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-  if (result.stdout) {
-    core.info(result.stdout);
-  }
   if (result.stderr) {
     core.error(result.stderr);
   }

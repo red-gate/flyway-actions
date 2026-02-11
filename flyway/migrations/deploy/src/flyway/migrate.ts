@@ -24,9 +24,6 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
   const args = buildFlywayMigrateArgs(inputs);
   const result = await runFlyway(args, inputs.workingDirectory);
 
-  if (result.stdout) {
-    core.info(result.stdout);
-  }
   if (result.stderr) {
     core.error(result.stderr);
   }
