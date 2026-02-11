@@ -1,9 +1,14 @@
 import * as core from "@actions/core";
-import { FlywayMigrationsDeploymentInputs } from "./types.js";
-import { buildFlywayCheckDriftArgs, runFlyway, setDriftOutput } from "./flyway-runner.js";
+import type { FlywayMigrationsDeploymentInputs } from "../types.js";
+import { buildCommonArgs, runFlyway, setDriftOutput } from "./flyway-runner.js";
+
+const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  return ["check", "-drift", ...buildCommonArgs(inputs)];
+};
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
   core.info("Running drift check before migration...");
+
   const driftArgs = buildFlywayCheckDriftArgs(inputs);
   const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
@@ -24,4 +29,4 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
   return driftDetected;
 };
 
-export { checkForDrift };
+export { buildFlywayCheckDriftArgs, checkForDrift };

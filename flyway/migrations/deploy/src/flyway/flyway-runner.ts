@@ -1,28 +1,31 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import {
+import type {
   FlywayEdition,
   FlywayDetails,
   FlywayMigrationsDeploymentInputs,
   FlywayRunResult,
   FlywayMigrationsDeploymentOutputs,
-} from "./types.js";
-import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
+} from "../types.js";
+import { createStdoutListener, createStdoutStderrListeners } from "../utils.js";
 
 const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = [];
 
+  if (inputs.environment) {
+    args.push(`-environment=${inputs.environment}`);
+  }
+
   if (inputs.url) {
     args.push(`-url=${inputs.url}`);
   }
+
   if (inputs.user) {
     args.push(`-user=${inputs.user}`);
   }
+
   if (inputs.password) {
     args.push(`-password=${inputs.password}`);
-  }
-  if (inputs.environment) {
-    args.push(`-environment=${inputs.environment}`);
   }
 
   if (inputs.workingDirectory) {
@@ -31,23 +34,6 @@ const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => 
 
   if (inputs.extraArgs) {
     args.push(...parseExtraArgs(inputs.extraArgs));
-  }
-
-  return args;
-};
-
-const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = ["migrate", ...buildCommonArgs(inputs)];
-
-  if (inputs.target) {
-    args.push(`-target=${inputs.target}`);
-  }
-  if (inputs.cherryPick) {
-    args.push(`-cherryPick=${inputs.cherryPick}`);
-  }
-
-  if (inputs.saveSnapshot) {
-    args.push("-saveSnapshot=true");
   }
 
   return args;
@@ -170,7 +156,7 @@ const parseFlywayOutput = (
   }
 
   try {
-    const jsonMatch = stdout.match(/\{[\s\S]*"schemaVersion"[\s\S]*\}/);
+    const jsonMatch = stdout.match(/\{[\s\S]*"schemaVersion"[\s\S]*}/);
     if (jsonMatch) {
       const json = JSON.parse(jsonMatch[0]);
       if (json.migrationsExecuted !== undefined) {
@@ -187,10 +173,6 @@ const parseFlywayOutput = (
   return { migrationsApplied, schemaVersion };
 };
 
-const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  return ["check", "-drift", ...buildCommonArgs(inputs)];
-};
-
 const setDriftOutput = (driftDetected: boolean): void => {
   core.setOutput("drift-detected", driftDetected.toString());
 };
@@ -202,8 +184,7 @@ const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
 };
 
 export {
-  buildFlywayMigrateArgs,
-  buildFlywayCheckDriftArgs,
+  buildCommonArgs,
   parseExtraArgs,
   getFlywayDetails,
   runFlyway,
