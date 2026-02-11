@@ -1,21 +1,22 @@
 import * as core from "@actions/core";
 import { getInputs, maskSecrets } from "./inputs.js";
-import { getFlywayDetails } from "./flyway-runner.js";
-import { checkForDrift } from "./check-for-drift.js";
-import { migrate } from "./migrate.js";
+import { getFlywayDetails } from "./flyway/flyway-runner.js";
+import { checkForDrift } from "./flyway/check-for-drift.js";
+import { migrate } from "./flyway/migrate.js";
 
 const run = async (): Promise<void> => {
   try {
     const flyway = await getFlywayDetails();
     if (!flyway.installed) {
-      throw new Error(
-        "Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.",
-      );
+      core.setFailed("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.");
+      return;
     }
+
     const inputs = getInputs();
 
-    if (!inputs.url && !inputs.environment) {
-      throw new Error('Either "url" or "environment" must be provided for Flyway to connect to a database.');
+    if (!inputs.environment && !inputs.url) {
+      core.setFailed('Either "url" or "environment" must be provided for Flyway to connect to a database.');
+      return;
     }
 
     maskSecrets(inputs);
@@ -26,9 +27,9 @@ const run = async (): Promise<void> => {
         core.setFailed("Drift detected: the target database has diverged from the expected state. Aborting migration.");
         return;
       }
-      inputs.saveSnapshot = true;
     }
 
+    inputs.saveSnapshot = true;
     await migrate(inputs);
   } catch (error) {
     if (error instanceof Error) {
@@ -39,4 +40,4 @@ const run = async (): Promise<void> => {
   }
 };
 
-run();
+await run();
