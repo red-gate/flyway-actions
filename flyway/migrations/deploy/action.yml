@@ -40,6 +40,8 @@ outputs:
     description: 'Number of migrations applied'
   schema-version:
     description: 'Schema version after deployment'
+  drift-detected:
+    description: 'Whether drift was detected (true/false, empty if skipped)'
 
 runs:
   using: 'node24'

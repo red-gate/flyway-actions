@@ -25,19 +25,30 @@ const setupMocks = () => {
   }));
 };
 
+interface SetupFlywayMockOptions {
+  edition: string;
+  migrateExitCode: number;
+  migrateOutput?: string;
+  driftExitCode?: number;
+}
+
 describe("run", () => {
   beforeEach(() => {
     vi.resetModules();
     setupMocks();
   });
 
-  const setupFlywayMock = (edition: string, migrateExitCode: number, migrateOutput = "") => {
+  const setupFlywayMock = ({ edition, migrateExitCode, migrateOutput = "", driftExitCode }: SetupFlywayMockOptions) => {
     let callCount = 0;
+    const hasDriftCheck = driftExitCode !== undefined && edition.toLowerCase() === "enterprise";
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       if (callCount === 1) {
         options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
         return 0;
+      }
+      if (hasDriftCheck && callCount === 2) {
+        return driftExitCode;
       }
       if (migrateOutput) {
         options?.listeners?.stdout?.(Buffer.from(migrateOutput));
@@ -56,7 +67,7 @@ describe("run", () => {
   });
 
   it("should fail when neither url nor environment is provided", async () => {
-    setupFlywayMock("Community", 0);
+    setupFlywayMock({ edition: "Community", migrateExitCode: 0 });
     getInput.mockReturnValue("");
 
     await import("../src/main.js");
@@ -66,7 +77,12 @@ describe("run", () => {
   });
 
   it("should include saveSnapshot for enterprise edition", async () => {
-    setupFlywayMock("Enterprise", 0, "Successfully applied 1 migrations\n");
+    setupFlywayMock({
+      edition: "Enterprise",
+      migrateExitCode: 0,
+      migrateOutput: "Successfully applied 1 migrations\n",
+      driftExitCode: 0,
+    });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -79,7 +95,11 @@ describe("run", () => {
   });
 
   it("should not include saveSnapshot for community edition", async () => {
-    setupFlywayMock("Community", 0, "Successfully applied 1 migrations\n");
+    setupFlywayMock({
+      edition: "Community",
+      migrateExitCode: 0,
+      migrateOutput: "Successfully applied 1 migrations\n",
+    });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -96,7 +116,7 @@ describe("run", () => {
   });
 
   it("should fail when flyway returns non-zero exit code", async () => {
-    setupFlywayMock("Community", 1);
+    setupFlywayMock({ edition: "Community", migrateExitCode: 1 });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -132,7 +152,11 @@ describe("run", () => {
   });
 
   it("should set outputs on successful execution", async () => {
-    setupFlywayMock("Community", 0, "Successfully applied 3 migrations\nSchema now at version 3\n");
+    setupFlywayMock({
+      edition: "Community",
+      migrateExitCode: 0,
+      migrateOutput: "Successfully applied 3 migrations\nSchema now at version 3\n",
+    });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -144,5 +168,40 @@ describe("run", () => {
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("migrations-applied", "3");
     expect(setOutput).toHaveBeenCalledWith("schema-version", "3");
+  });
+
+  it("should fail and not migrate when drift is detected for enterprise edition", async () => {
+    setupFlywayMock({ edition: "Enterprise", migrateExitCode: 0, driftExitCode: 1 });
+    getInput.mockImplementation((name: string) => {
+      if (name === "url") return "jdbc:sqlite:test.db";
+      return "";
+    });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Drift detected"));
+    expect(exec).toHaveBeenCalledTimes(2);
+  });
+
+  it("should proceed with migration when no drift detected for enterprise edition", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      migrateExitCode: 0,
+      migrateOutput: "Successfully applied 1 migrations\n",
+      driftExitCode: 0,
+    });
+    getInput.mockImplementation((name: string) => {
+      if (name === "url") return "jdbc:sqlite:test.db";
+      return "";
+    });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
+    expect(setFailed).not.toHaveBeenCalled();
+    expect(exec).toHaveBeenCalledTimes(3);
   });
 });
