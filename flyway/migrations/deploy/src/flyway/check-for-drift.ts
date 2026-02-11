@@ -16,7 +16,7 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     core.info(result.stdout);
   }
   if (result.stderr) {
-    core.warning(result.stderr);
+    core.error(result.stderr);
   }
 
   const driftDetected = result.exitCode !== 0;

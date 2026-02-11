@@ -28,7 +28,7 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
     core.info(result.stdout);
   }
   if (result.stderr) {
-    core.warning(result.stderr);
+    core.error(result.stderr);
   }
 
   const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);

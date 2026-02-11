@@ -6,7 +6,7 @@ const setOutput = vi.fn();
 const setFailed = vi.fn();
 const setSecret = vi.fn();
 const info = vi.fn();
-const warning = vi.fn();
+const error = vi.fn();
 const exec = vi.fn();
 
 const setupMocks = () => {
@@ -17,7 +17,7 @@ const setupMocks = () => {
     setFailed,
     setSecret,
     info,
-    warning,
+    error,
   }));
 
   vi.doMock("@actions/exec", () => ({
@@ -128,7 +128,7 @@ describe("run", () => {
     expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway migrate failed with exit code 1"));
   });
 
-  it("should log stderr as warning", async () => {
+  it("should log stderr as error", async () => {
     let callCount = 0;
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
@@ -148,7 +148,7 @@ describe("run", () => {
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(warning).toHaveBeenCalledWith("some warning");
+    expect(error).toHaveBeenCalledWith("some warning");
   });
 
   it("should set outputs on successful execution", async () => {
