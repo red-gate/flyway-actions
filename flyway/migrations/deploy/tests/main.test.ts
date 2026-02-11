@@ -7,6 +7,8 @@ const setFailed = vi.fn();
 const setSecret = vi.fn();
 const info = vi.fn();
 const error = vi.fn();
+const startGroup = vi.fn();
+const endGroup = vi.fn();
 const exec = vi.fn();
 
 const setupMocks = () => {
@@ -18,6 +20,8 @@ const setupMocks = () => {
     setSecret,
     info,
     error,
+    startGroup,
+    endGroup,
   }));
 
   vi.doMock("@actions/exec", () => ({

@@ -7,23 +7,26 @@ const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): st
 };
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
-  core.info("Running drift check before migration...");
+  core.startGroup("Checking for drift");
+  try {
+    const driftArgs = buildFlywayCheckDriftArgs(inputs);
+    const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-  const driftArgs = buildFlywayCheckDriftArgs(inputs);
-  const result = await runFlyway(driftArgs, inputs.workingDirectory);
+    if (result.stderr) {
+      core.error(result.stderr);
+    }
 
-  if (result.stderr) {
-    core.error(result.stderr);
+    const driftDetected = result.exitCode !== 0;
+    setDriftOutput(driftDetected);
+
+    if (!driftDetected) {
+      core.info("No drift detected. Proceeding with migration.");
+    }
+
+    return driftDetected;
+  } finally {
+    core.endGroup();
   }
-
-  const driftDetected = result.exitCode !== 0;
-  setDriftOutput(driftDetected);
-
-  if (!driftDetected) {
-    core.info("No drift detected. Proceeding with migration.");
-  }
-
-  return driftDetected;
 };
 
 export { buildFlywayCheckDriftArgs, checkForDrift };

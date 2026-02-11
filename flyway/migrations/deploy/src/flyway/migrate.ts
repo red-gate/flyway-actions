@@ -21,23 +21,28 @@ const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): strin
 };
 
 const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> => {
-  const args = buildFlywayMigrateArgs(inputs);
-  const result = await runFlyway(args, inputs.workingDirectory);
+  core.startGroup("Running migrations");
+  try {
+    const args = buildFlywayMigrateArgs(inputs);
+    const result = await runFlyway(args, inputs.workingDirectory);
 
-  if (result.stderr) {
-    core.error(result.stderr);
-  }
+    if (result.stderr) {
+      core.error(result.stderr);
+    }
 
-  const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
+    const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
 
-  setOutputs({
-    exitCode: result.exitCode,
-    migrationsApplied,
-    schemaVersion,
-  });
+    setOutputs({
+      exitCode: result.exitCode,
+      migrationsApplied,
+      schemaVersion,
+    });
 
-  if (result.exitCode !== 0) {
-    throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
+    if (result.exitCode !== 0) {
+      throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
+    }
+  } finally {
+    core.endGroup();
   }
 };
 
