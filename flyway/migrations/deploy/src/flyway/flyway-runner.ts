@@ -150,7 +150,7 @@ const parseFlywayOutput = (
   let migrationsApplied = 0;
   let schemaVersion = extractSchemaVersion(stdout);
 
-  const migrationsMatch = stdout.match(/Successfully\s+(?:applied|validated)\s+(\d+)\s+migration/i);
+  const migrationsMatch = stdout.match(/Successfully\s+applied\s+(\d+)\s+migration/i);
   if (migrationsMatch) {
     migrationsApplied = parseInt(migrationsMatch[1], 10);
   }

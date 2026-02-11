@@ -1,6 +1,6 @@
 # Sample Project for End-to-End Tests
 
-This sample project contains SQLite migrations used for end-to-end testing of the Flyway GitHub Actions.
+This sample project contains SQLite migrations used for end-to-end testing of the Flyway GitHub Actions
 
 ## Migrations
 
@@ -11,3 +11,9 @@ This sample project contains SQLite migrations used for end-to-end testing of th
 ## Database
 
 These migrations are designed for SQLite and use SQLite-specific syntax (e.g., `INTEGER PRIMARY KEY AUTOINCREMENT`).
+
+### `no-drift.db`
+
+This database is empty, and contains:
+- A `flyway_schema_history` table baselined at version 0
+- An empty snapshot
