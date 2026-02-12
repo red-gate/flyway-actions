@@ -14,6 +14,10 @@ These migrations are designed for SQLite and use SQLite-specific syntax (e.g., `
 
 ### `no-drift.db`
 
-This database is empty, and contains:
+This database contains the following Flyway tables, and is otherwise empty:
 - A `flyway_schema_history` table baselined at version 0
-- An empty snapshot
+- A `snapshot_history_table` with an empty snapshot
+
+### `drift.db`
+
+This database is like `no-drift.db`, but contains a `drifted_table`
