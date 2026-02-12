@@ -5,9 +5,9 @@
 
 ## Actions
 
-| Action                                                 | Description                                             |
-|--------------------------------------------------------|---------------------------------------------------------|
-| [`flyway/migrations/deploy`](flyway/migrations/deploy) | Run Flyway migrate command to apply database migrations |
+| Action                                                 | Description                                       |
+|--------------------------------------------------------|---------------------------------------------------|
+| [`flyway/migrations/deploy`](flyway/migrations/deploy) | Deploy pending migrations against target database |
 
 ## Usage
 
