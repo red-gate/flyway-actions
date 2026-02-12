@@ -9,6 +9,11 @@
 [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 [![End-to-End Tests](../../actions/workflows/test-action.yml/badge.svg)](../../actions/workflows/test-action.yml)
 
+---
+
+These actions allow you to safely deploy database schema changes to your databases using [Redgate Flyway](https://www.red-gate.com/products/flyway/).
+Supports 50+ databases including PostgreSQL, MySQL, SQL Server, and Oracle.
+
 ## Actions
 
 | Action                                                 | Description                                       |
