@@ -81,7 +81,7 @@ describe("run", () => {
   });
 
   it("should fail when neither url nor environment is provided", async () => {
-    setupFlywayMock({ edition: "Enterprise", migrateExitCode: 0 });
+    setupFlywayMock({ edition: "Community", migrateExitCode: 0 });
     getInput.mockReturnValue("");
 
     await import("../src/main.js");
@@ -108,18 +108,25 @@ describe("run", () => {
     expect(exec).toHaveBeenCalledWith("flyway", expect.arrayContaining(["-saveSnapshot=true"]), expect.any(Object));
   });
 
-  it("should fail with license message for non-enterprise edition", async () => {
-    setupFlywayMock({ edition: "Community", migrateExitCode: 0 });
+  it("should not include saveSnapshot for community edition", async () => {
+    setupFlywayMock({
+      edition: "Community",
+      migrateExitCode: 0,
+      migrateOutput: "Successfully applied 1 migrations\n",
+    });
+    getInput.mockImplementation((name: string) => {
+      if (name === "url") return "jdbc:sqlite:test.db";
+      return "";
+    });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("requires Flyway Enterprise Edition"));
-    expect(exec).toHaveBeenCalledTimes(1);
+    expect(exec).not.toHaveBeenCalledWith("flyway", expect.arrayContaining(["-saveSnapshot=true"]), expect.any(Object));
   });
 
   it("should fail when flyway returns non-zero exit code", async () => {
-    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, migrateExitCode: 1 });
+    setupFlywayMock({ edition: "Community", migrateExitCode: 1 });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -133,8 +140,7 @@ describe("run", () => {
 
   it("should log stderr as error", async () => {
     setupFlywayMock({
-      edition: "Enterprise",
-      driftExitCode: 0,
+      edition: "Community",
       migrateExitCode: 0,
       migrateOutput: "Successfully applied 1 migrations\n",
       migrateStderr: "some warning",
@@ -152,8 +158,7 @@ describe("run", () => {
 
   it("should set outputs on successful execution", async () => {
     setupFlywayMock({
-      edition: "Enterprise",
-      driftExitCode: 0,
+      edition: "Community",
       migrateExitCode: 0,
       migrateOutput: "Successfully applied 3 migrations\nSchema now at version 3\n",
     });
