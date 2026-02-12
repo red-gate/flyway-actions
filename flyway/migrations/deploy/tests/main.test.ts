@@ -190,6 +190,26 @@ describe("run", () => {
     expect(exec).toHaveBeenCalledTimes(2);
   });
 
+  it("should skip drift check when skip-drift is enabled", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      migrateExitCode: 0,
+      migrateOutput: "Successfully applied 1 migrations\n",
+    });
+    getInput.mockImplementation((name: string) => {
+      if (name === "url") return "jdbc:sqlite:test.db";
+      return "";
+    });
+    getBooleanInput.mockReturnValue(true);
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping drift check"));
+    expect(setFailed).not.toHaveBeenCalled();
+    expect(exec).toHaveBeenCalledTimes(2);
+  });
+
   it("should proceed with migration when no drift detected for enterprise edition", async () => {
     setupFlywayMock({
       edition: "Enterprise",

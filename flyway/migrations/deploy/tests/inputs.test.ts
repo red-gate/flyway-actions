@@ -2,10 +2,12 @@ import * as path from "path";
 import type { FlywayMigrationsDeploymentInputs } from "../src/types.js";
 
 const getInput = vi.fn();
+const getBooleanInput = vi.fn();
 const setSecret = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   getInput,
+  getBooleanInput,
   setSecret,
 }));
 
@@ -69,6 +71,13 @@ describe("getInputs", () => {
     const inputs = getInputs();
     expect(inputs.target).toBe("5.0");
     expect(inputs.cherryPick).toBe("3.0,4.0");
+  });
+
+  it("should get skip-drift input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+    expect(inputs.skipDrift).toBe(true);
   });
 
   it("should get working directory and extra args", () => {

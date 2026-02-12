@@ -20,12 +20,18 @@ const run = async (): Promise<void> => {
     maskSecrets(inputs);
 
     if (flyway.edition === "enterprise") {
-      const driftDetected = await checkForDrift(inputs);
-      if (driftDetected) {
-        core.setFailed("Drift detected: the target database has diverged from the expected state. Aborting migration.");
-        return;
+      if (inputs.skipDrift) {
+        core.info("Skipping drift check.");
+      } else {
+        const driftDetected = await checkForDrift(inputs);
+        if (driftDetected) {
+          core.setFailed("Drift detected. Aborting deployment.");
+          return;
+        }
+        inputs.saveSnapshot = true;
       }
-      inputs.saveSnapshot = true;
+    } else {
+      core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flyway.edition}).`);
     }
 
     await migrate(inputs);
