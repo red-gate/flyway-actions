@@ -12,6 +12,11 @@ const run = async (): Promise<void> => {
       return;
     }
 
+    if (flyway.edition !== "enterprise") {
+      core.setFailed("This action requires Flyway Enterprise Edition. Please upgrade to use this action.");
+      return;
+    }
+
     const inputs = getInputs();
 
     if (!inputs.environment && !inputs.url) {
@@ -21,14 +26,13 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    if (flyway.edition === "enterprise") {
-      const driftDetected = await checkForDrift(inputs);
-      if (driftDetected) {
-        core.setFailed("Drift detected: the target database has diverged from the expected state. Aborting migration.");
-        return;
-      }
-      inputs.saveSnapshot = true;
+    const driftDetected = await checkForDrift(inputs);
+    if (driftDetected) {
+      core.setFailed("Drift detected: the target database has diverged from the expected state. Aborting migration.");
+      return;
     }
+
+    inputs.saveSnapshot = true;
     await migrate(inputs);
   } catch (error) {
     if (error instanceof Error) {
