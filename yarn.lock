@@ -352,9 +352,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@flyway-github-actions/migrations-deploy@workspace:flyway/migrations/deploy":
+"@flyway-github-actions/migrations-deploy@workspace:migrations/deploy":
   version: 0.0.0-use.local
-  resolution: "@flyway-github-actions/migrations-deploy@workspace:flyway/migrations/deploy"
+  resolution: "@flyway-github-actions/migrations-deploy@workspace:migrations/deploy"
   dependencies:
     "@actions/core": "npm:3.0.0"
     "@actions/exec": "npm:3.0.0"

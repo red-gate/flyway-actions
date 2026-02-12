@@ -18,7 +18,7 @@ Supports 50+ databases including PostgreSQL, MySQL, SQL Server, and Oracle.
 
 | Action                                                 | Description                                       |
 |--------------------------------------------------------|---------------------------------------------------|
-| [`flyway/migrations/deploy`](flyway/migrations/deploy) | Deploy pending migrations against target database |
+| [`migrations/deploy`](migrations/deploy) | Deploy pending migrations against target database |
 
 ## Usage
 
