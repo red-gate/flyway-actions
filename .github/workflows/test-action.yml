@@ -47,7 +47,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: flyway-report-${{ matrix.os }}
+          name: flyway-no-drift-report-${{ matrix.os }}
           path: flyway/sample-project/report.html
           retention-days: 1
 
@@ -63,3 +63,64 @@ jobs:
           test "${{ steps.migrate.outputs.drift-detected }}" = "false"
           test "${{ steps.migrate.outputs.migrations-applied }}" = "3"
           test "${{ steps.migrate.outputs.schema-version }}" = "3"
+
+  test-migrations-deployment-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-github-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-github-actions/flyway FLYWAY_ENTERPRISE_PERMIT | FLYWAY_ENTERPRISE_PERMIT;
+
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v2
+
+      - name: Run migrations deployment with sample project
+        id: migrate
+        uses: ./flyway/migrations/deploy
+        continue-on-error: true
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
+        with:
+          url: jdbc:sqlite:database/drift.db
+          working-directory: flyway/sample-project
+
+      - name: Verify deployment failed due to drift
+        shell: bash
+        run: test "${{ steps.migrate.outcome }}" != "success"
+
+      - name: Upload Flyway drift report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flyway-drift-report-${{ matrix.os }}
+          path: flyway/sample-project/report.html
+          retention-days: 1
+
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.migrate.outputs.drift-detected }}"
+          echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
+          echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
+          test "${{ steps.migrate.outputs.exit-code }}" = "1"
+          test "${{ steps.migrate.outputs.drift-detected }}" = "true"
+          test "${{ steps.migrate.outputs.migrations-applied }}" = ""
+          test "${{ steps.migrate.outputs.schema-version }}" = ""
