@@ -71,7 +71,7 @@ describe("run", () => {
   });
 
   it("should fail when neither url nor environment is provided", async () => {
-    setupFlywayMock({ edition: "Community", migrateExitCode: 0 });
+    setupFlywayMock({ edition: "Enterprise", migrateExitCode: 0 });
     getInput.mockReturnValue("");
 
     await import("../src/main.js");
@@ -98,29 +98,18 @@ describe("run", () => {
     expect(exec).toHaveBeenCalledWith("flyway", expect.arrayContaining(["-saveSnapshot=true"]), expect.any(Object));
   });
 
-  it("should not include saveSnapshot for community edition", async () => {
-    setupFlywayMock({
-      edition: "Community",
-      migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
-    });
-    getInput.mockImplementation((name: string) => {
-      if (name === "url") return "jdbc:sqlite:test.db";
-      return "";
-    });
+  it("should fail with license message for non-enterprise edition", async () => {
+    setupFlywayMock({ edition: "Community", migrateExitCode: 0 });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(exec).toHaveBeenCalledWith(
-      "flyway",
-      expect.not.arrayContaining([expect.stringContaining("saveSnapshot")]),
-      expect.any(Object),
-    );
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("requires Flyway Enterprise Edition"));
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
   it("should fail when flyway returns non-zero exit code", async () => {
-    setupFlywayMock({ edition: "Community", migrateExitCode: 1 });
+    setupFlywayMock({ edition: "Enterprise", migrateExitCode: 1, driftExitCode: 0 });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -137,7 +126,10 @@ describe("run", () => {
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       if (callCount === 1) {
-        options?.listeners?.stdout?.(Buffer.from("Flyway Community Edition 10.0.0 by Redgate\n"));
+        options?.listeners?.stdout?.(Buffer.from("Flyway Enterprise Edition 10.0.0 by Redgate\n"));
+        return 0;
+      }
+      if (callCount === 2) {
         return 0;
       }
       options?.listeners?.stdout?.(Buffer.from("Successfully applied 1 migrations\n"));
@@ -157,9 +149,10 @@ describe("run", () => {
 
   it("should set outputs on successful execution", async () => {
     setupFlywayMock({
-      edition: "Community",
+      edition: "Enterprise",
       migrateExitCode: 0,
       migrateOutput: "Successfully applied 3 migrations\nSchema now at version 3\n",
+      driftExitCode: 0,
     });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
