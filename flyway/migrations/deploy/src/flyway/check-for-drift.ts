@@ -17,7 +17,7 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     }
 
     const driftDetected = result.exitCode !== 0;
-    setDriftOutput(driftDetected);
+    setDriftOutput(result.exitCode, driftDetected);
 
     if (!driftDetected) {
       core.info("No drift detected. Proceeding with migration.");
@@ -29,7 +29,8 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
   }
 };
 
-const setDriftOutput = (driftDetected: boolean): void => {
+const setDriftOutput = (exitCode: number, driftDetected: boolean): void => {
+  core.setOutput("exit-code", exitCode.toString());
   core.setOutput("drift-detected", driftDetected.toString());
 };
 
