@@ -5,8 +5,8 @@
 
 ## Actions
 
-| Action | Description |
-|--------|-------------|
+| Action                                                 | Description                                             |
+|--------------------------------------------------------|---------------------------------------------------------|
 | [`flyway/migrations/deploy`](flyway/migrations/deploy) | Run Flyway migrate command to apply database migrations |
 
 ## License
