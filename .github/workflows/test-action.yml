@@ -45,7 +45,7 @@ jobs:
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
         with:
-          url: jdbc:sqlite:database/no-drift.db
+          target-url: jdbc:sqlite:database/no-drift.db
           working-directory: flyway/sample-project
 
       - name: Upload Flyway drift report
@@ -107,7 +107,7 @@ jobs:
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
         with:
-          url: jdbc:sqlite:database/drift.db
+          target-url: jdbc:sqlite:database/drift.db
           working-directory: flyway/sample-project
 
       - name: Verify deployment failed due to drift
