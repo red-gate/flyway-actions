@@ -33,6 +33,9 @@ jobs:
 
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
 
       - name: Run migrations deployment with sample project
         id: migrate
@@ -89,6 +92,9 @@ jobs:
 
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
 
       - name: Run migrations deployment with sample project
         id: migrate
