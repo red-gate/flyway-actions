@@ -4,6 +4,8 @@
   <img src="https://documentation.red-gate.com/download/attachments/138346876/FD?version=3&modificationDate=1633982869952&api=v2" alt="Flyway" height="80">
 </p>
 
+### Deploy database changes with confidence
+
 [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 [![End-to-End Tests](../../actions/workflows/test-action.yml/badge.svg)](../../actions/workflows/test-action.yml)
 
