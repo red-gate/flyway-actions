@@ -9,7 +9,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
 ```yaml
 - uses: red-gate/setup-flyway@v3
   with:
-    edition: enterprise
+    edition: community
     i-agree-to-the-eula: true
 - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
