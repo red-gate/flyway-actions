@@ -33,6 +33,8 @@ jobs:
 
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
@@ -92,6 +94,8 @@ jobs:
 
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
