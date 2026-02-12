@@ -56,26 +56,26 @@ steps:
 
 ## Inputs
 
-| Input | Description | Required |
-|-------|-------------|----------|
-| `target-environment` | Flyway TOML environment name | No |
-| `target-url` | JDBC URL for the database connection | No |
-| `target-user` | Database user | No |
-| `target-password` | Database password | No |
-| `target` | Migrate up to this version | No |
-| `cherry-pick` | Comma-separated list of migration versions to apply | No |
-| `skip-drift` | Skip the drift check | No |
-| `working-directory` | Working directory for Flyway execution | No |
-| `extra-args` | Additional arguments to pass to Flyway | No |
+| Input                | Description                                         | Required |
+|----------------------|-----------------------------------------------------|----------|
+| `target-environment` | Flyway TOML environment name                        | No       |
+| `target-url`         | JDBC URL for the database connection                | No       |
+| `target-user`        | Database user                                       | No       |
+| `target-password`    | Database password                                   | No       |
+| `target`             | Migrate up to this version                          | No       |
+| `cherry-pick`        | Comma-separated list of migration versions to apply | No       |
+| `skip-drift`         | Skip the drift check                                | No       |
+| `working-directory`  | Working directory for Flyway execution              | No       |
+| `extra-args`         | Additional arguments to pass to Flyway              | No       |
 
 ## Outputs
 
-| Output | Description |
-|--------|-------------|
-| `exit-code` | Flyway command exit code |
-| `drift-detected` | Whether drift was detected (empty if skipped) |
-| `migrations-applied` | Number of migrations applied |
-| `schema-version` | Schema version after migration |
+| Output               | Description                                   |
+|----------------------|-----------------------------------------------|
+| `exit-code`          | Flyway command exit code                      |
+| `drift-detected`     | Whether drift was detected (empty if skipped) |
+| `migrations-applied` | Number of migrations applied                  |
+| `schema-version`     | Schema version after migration                |
 
 ### Using Outputs
 
