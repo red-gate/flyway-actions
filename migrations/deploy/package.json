@@ -1,9 +1,10 @@
 {
-  "name": "@flyway-github-actions/migrations-deploy",
+  "name": "@flyway-actions/migrations-deploy",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
   "description": "GitHub Action to deploy Flyway migrations",
+  "author": "Redgate",
+  "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "vite build",

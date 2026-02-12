@@ -1,6 +1,7 @@
 {
-  "name": "flyway-github-actions",
-  "private": true,
+  "name": "flyway-actions",
+  "author": "Redgate",
+  "license": "MIT",
   "workspaces": [
     "migrations/**"
   ],
