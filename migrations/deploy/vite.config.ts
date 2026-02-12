@@ -4,6 +4,7 @@ import checker from 'vite-plugin-checker';
 
 const nodeBuiltins = builtinModules.flatMap(m => [m, `node:${m}`]);
 
+// noinspection JSUnusedGlobalSymbols
 export default defineConfig({
   build: {
     lib: {
