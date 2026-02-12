@@ -9,6 +9,7 @@ type FlywayMigrationsDeploymentInputs = {
   password?: string;
   target?: string;
   cherryPick?: string;
+  skipDrift?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
   saveSnapshot?: boolean;

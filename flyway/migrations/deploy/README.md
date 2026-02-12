@@ -55,6 +55,7 @@ steps:
 | `password` | Database password | No |
 | `target` | Migrate up to this version | No |
 | `cherry-pick` | Comma-separated list of migration versions to apply | No |
+| `skip-drift` | Skip the drift check | No |
 | `working-directory` | Working directory for Flyway execution | No |
 | `extra-args` | Additional arguments to pass to Flyway | No |
 

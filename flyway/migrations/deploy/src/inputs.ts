@@ -9,6 +9,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const password = core.getInput("password") || undefined;
   const target = core.getInput("target") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
+  const skipDrift = core.getBooleanInput("skip-drift");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
@@ -20,6 +21,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
     password,
     target,
     cherryPick,
+    skipDrift,
     workingDirectory,
     extraArgs,
   };
