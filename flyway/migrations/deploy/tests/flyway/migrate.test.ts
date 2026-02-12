@@ -27,7 +27,7 @@ describe("migrate", () => {
       return 0;
     });
 
-    await migrate({ url: "jdbc:sqlite:test.db" });
+    await migrate({ targetUrl: "jdbc:sqlite:test.db" });
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("migrations-applied", "3");
@@ -142,9 +142,9 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should build args with url connection", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
-      user: "admin",
-      password: "secret",
+      targetUrl: "jdbc:postgresql://localhost/db",
+      targetUser: "admin",
+      targetPassword: "secret",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
@@ -156,7 +156,7 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should build args with environment", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      environment: "production",
+      targetEnvironment: "production",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
@@ -166,7 +166,7 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should build args with target", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
+      targetUrl: "jdbc:postgresql://localhost/db",
       target: "5.0",
     };
 
@@ -177,7 +177,7 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should build args with cherry-pick", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
+      targetUrl: "jdbc:postgresql://localhost/db",
       cherryPick: "2.0,2.1",
     };
 
@@ -188,7 +188,7 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should include -saveSnapshot=true when saveSnapshot is true", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
+      targetUrl: "jdbc:postgresql://localhost/db",
       saveSnapshot: true,
     };
 
@@ -199,7 +199,7 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should omit -saveSnapshot when saveSnapshot is not set", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
+      targetUrl: "jdbc:postgresql://localhost/db",
     };
 
     const args = buildFlywayMigrateArgs(inputs);
@@ -219,7 +219,7 @@ describe("buildFlywayMigrateArgs", () => {
 
   it("should include extra args", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
+      targetUrl: "jdbc:postgresql://localhost/db",
       extraArgs: "-X -custom=value",
     };
 

@@ -12,8 +12,10 @@ const run = async (): Promise<void> => {
       return;
     }
     const inputs = getInputs();
-    if (!inputs.environment && !inputs.url) {
-      core.setFailed('Either "url" or "environment" must be provided for Flyway to connect to a database.');
+    if (!inputs.targetEnvironment && !inputs.targetUrl) {
+      core.setFailed(
+        'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.',
+      );
       return;
     }
 

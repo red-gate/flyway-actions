@@ -6,20 +6,20 @@ import { createStdoutListener, createStdoutStderrListeners } from "../utils.js";
 const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = [];
 
-  if (inputs.environment) {
-    args.push(`-environment=${inputs.environment}`);
+  if (inputs.targetEnvironment) {
+    args.push(`-environment=${inputs.targetEnvironment}`);
   }
 
-  if (inputs.url) {
-    args.push(`-url=${inputs.url}`);
+  if (inputs.targetUrl) {
+    args.push(`-url=${inputs.targetUrl}`);
   }
 
-  if (inputs.user) {
-    args.push(`-user=${inputs.user}`);
+  if (inputs.targetUser) {
+    args.push(`-user=${inputs.targetUser}`);
   }
 
-  if (inputs.password) {
-    args.push(`-password=${inputs.password}`);
+  if (inputs.targetPassword) {
+    args.push(`-password=${inputs.targetPassword}`);
   }
 
   if (inputs.workingDirectory) {

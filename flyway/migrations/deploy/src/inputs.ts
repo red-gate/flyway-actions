@@ -3,10 +3,10 @@ import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs } from "./types.js";
 
 const getInputs = (): FlywayMigrationsDeploymentInputs => {
-  const environment = core.getInput("environment") || undefined;
-  const url = core.getInput("url") || undefined;
-  const user = core.getInput("user") || undefined;
-  const password = core.getInput("password") || undefined;
+  const targetEnvironment = core.getInput("target-environment") || undefined;
+  const targetUrl = core.getInput("target-url") || undefined;
+  const targetUser = core.getInput("target-user") || undefined;
+  const targetPassword = core.getInput("target-password") || undefined;
   const target = core.getInput("target") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
   const skipDrift = core.getBooleanInput("skip-drift");
@@ -15,10 +15,10 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const extraArgs = core.getInput("extra-args") || undefined;
 
   return {
-    environment,
-    url,
-    user,
-    password,
+    targetEnvironment,
+    targetUrl,
+    targetUser,
+    targetPassword,
     target,
     cherryPick,
     skipDrift,
@@ -28,8 +28,8 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
 };
 
 const maskSecrets = (inputs: FlywayMigrationsDeploymentInputs): void => {
-  if (inputs.password) {
-    core.setSecret(inputs.password);
+  if (inputs.targetPassword) {
+    core.setSecret(inputs.targetPassword);
   }
 };
 

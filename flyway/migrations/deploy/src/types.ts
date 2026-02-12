@@ -3,10 +3,10 @@ type FlywayEdition = "community" | "teams" | "enterprise";
 type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition };
 
 type FlywayMigrationsDeploymentInputs = {
-  environment?: string;
-  url?: string;
-  user?: string;
-  password?: string;
+  targetEnvironment?: string;
+  targetUrl?: string;
+  targetUser?: string;
+  targetPassword?: string;
   target?: string;
   cherryPick?: string;
   skipDrift?: boolean;

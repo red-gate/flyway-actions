@@ -18,45 +18,45 @@ describe("getInputs", () => {
     getInput.mockReturnValue("");
   });
 
-  it("should return url when provided", () => {
+  it("should return target-url when provided", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "url") return "jdbc:postgresql://localhost/db";
+      if (name === "target-url") return "jdbc:postgresql://localhost/db";
       return "";
     });
 
     const inputs = getInputs();
-    expect(inputs.url).toBe("jdbc:postgresql://localhost/db");
+    expect(inputs.targetUrl).toBe("jdbc:postgresql://localhost/db");
   });
 
-  it("should return undefined for url when not provided", () => {
+  it("should return undefined for target-url when not provided", () => {
     const inputs = getInputs();
-    expect(inputs.url).toBeUndefined();
+    expect(inputs.targetUrl).toBeUndefined();
   });
 
   it("should get connection inputs", () => {
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
-        url: "jdbc:postgresql://localhost/db",
-        user: "admin",
-        password: "secret",
+        "target-url": "jdbc:postgresql://localhost/db",
+        "target-user": "admin",
+        "target-password": "secret",
       };
       return values[name] || "";
     });
 
     const inputs = getInputs();
-    expect(inputs.url).toBe("jdbc:postgresql://localhost/db");
-    expect(inputs.user).toBe("admin");
-    expect(inputs.password).toBe("secret");
+    expect(inputs.targetUrl).toBe("jdbc:postgresql://localhost/db");
+    expect(inputs.targetUser).toBe("admin");
+    expect(inputs.targetPassword).toBe("secret");
   });
 
-  it("should get environment input", () => {
+  it("should get target-environment input", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "environment") return "production";
+      if (name === "target-environment") return "production";
       return "";
     });
 
     const inputs = getInputs();
-    expect(inputs.environment).toBe("production");
+    expect(inputs.targetEnvironment).toBe("production");
   });
 
   it("should get target and cherry-pick inputs", () => {
@@ -96,10 +96,10 @@ describe("getInputs", () => {
 
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
-    expect(inputs.url).toBeUndefined();
-    expect(inputs.user).toBeUndefined();
-    expect(inputs.password).toBeUndefined();
-    expect(inputs.environment).toBeUndefined();
+    expect(inputs.targetUrl).toBeUndefined();
+    expect(inputs.targetUser).toBeUndefined();
+    expect(inputs.targetPassword).toBeUndefined();
+    expect(inputs.targetEnvironment).toBeUndefined();
     expect(inputs.target).toBeUndefined();
     expect(inputs.cherryPick).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
@@ -110,7 +110,7 @@ describe("getInputs", () => {
 describe("maskSecrets", () => {
   it("should mask password", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      password: "secret123",
+      targetPassword: "secret123",
     };
 
     maskSecrets(inputs);
@@ -120,8 +120,8 @@ describe("maskSecrets", () => {
 
   it("should not call setSecret when no password present", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
-      user: "admin",
+      targetUrl: "jdbc:postgresql://localhost/db",
+      targetUser: "admin",
     };
 
     maskSecrets(inputs);

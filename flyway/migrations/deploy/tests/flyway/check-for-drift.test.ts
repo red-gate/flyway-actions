@@ -21,7 +21,7 @@ describe("checkForDrift", () => {
   it("should set drift-detected output to false when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
-    await checkForDrift({ url: "jdbc:sqlite:test.db" });
+    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
@@ -29,7 +29,7 @@ describe("checkForDrift", () => {
   it("should set drift-detected output to true when exit code is non-zero", async () => {
     exec.mockResolvedValue(1);
 
-    await checkForDrift({ url: "jdbc:sqlite:test.db" });
+    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
@@ -48,10 +48,10 @@ describe("buildFlywayCheckDriftArgs", () => {
 
   it("should include connection params", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
-      user: "admin",
-      password: "secret",
-      environment: "production",
+      targetUrl: "jdbc:postgresql://localhost/db",
+      targetUser: "admin",
+      targetPassword: "secret",
+      targetEnvironment: "production",
     };
 
     const args = buildFlywayCheckDriftArgs(inputs);
@@ -77,7 +77,7 @@ describe("buildFlywayCheckDriftArgs", () => {
 
   it("should not include target, cherryPick, or saveSnapshot", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
-      url: "jdbc:postgresql://localhost/db",
+      targetUrl: "jdbc:postgresql://localhost/db",
       target: "5.0",
       cherryPick: "2.0,2.1",
       saveSnapshot: true,
