@@ -39,7 +39,7 @@ jobs:
 
       - name: Check dist is up to date
         run: |
-          git diff --exit-code flyway/migrations/deploy/dist/ || (
+          git diff --exit-code migrations/deploy/dist/ || (
             echo "Error: dist/ is out of date. Run 'yarn build' and commit the changes."
             exit 1
           )

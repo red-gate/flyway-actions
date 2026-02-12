@@ -31,7 +31,7 @@ updates:
           - patch
 
   - package-ecosystem: npm
-    directory: '/flyway/migrations/deploy'
+    directory: '/migrations/deploy'
     schedule:
       interval: weekly
     groups:

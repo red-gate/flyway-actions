@@ -41,19 +41,19 @@ jobs:
 
       - name: Run migrations deployment with sample project
         id: migrate
-        uses: ./flyway/migrations/deploy
+        uses: ./migrations/deploy
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          working-directory: flyway/sample-project
+          working-directory: sample-project
 
       - name: Upload Flyway drift report
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: flyway-no-drift-report-${{ matrix.os }}
-          path: flyway/sample-project/report.html
+          path: sample-project/report.html
           retention-days: 1
 
       - name: Test outputs
@@ -102,13 +102,13 @@ jobs:
 
       - name: Run migrations deployment with sample project
         id: migrate
-        uses: ./flyway/migrations/deploy
+        uses: ./migrations/deploy
         continue-on-error: true
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
         with:
           target-url: jdbc:sqlite:database/drift.db
-          working-directory: flyway/sample-project
+          working-directory: sample-project
 
       - name: Verify deployment failed due to drift
         shell: bash
@@ -119,7 +119,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: flyway-drift-report-${{ matrix.os }}
-          path: flyway/sample-project/report.html
+          path: sample-project/report.html
           retention-days: 1
 
       - name: Test outputs
