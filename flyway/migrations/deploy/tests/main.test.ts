@@ -31,10 +31,9 @@ const setupMocks = () => {
 
 type SetupFlywayMockOptions = {
   edition: string;
-  driftExitCode?: number;
   migrateExitCode: number;
   migrateOutput?: string;
-  migrateStderr?: string;
+  driftExitCode?: number;
 };
 
 describe("run", () => {
@@ -43,13 +42,7 @@ describe("run", () => {
     setupMocks();
   });
 
-  const setupFlywayMock = ({
-    edition,
-    driftExitCode,
-    migrateExitCode,
-    migrateOutput = "",
-    migrateStderr = "",
-  }: SetupFlywayMockOptions) => {
+  const setupFlywayMock = ({ edition, migrateExitCode, migrateOutput = "", driftExitCode }: SetupFlywayMockOptions) => {
     let callCount = 0;
     const hasDriftCheck = driftExitCode !== undefined && edition.toLowerCase() === "enterprise";
     exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
@@ -63,9 +56,6 @@ describe("run", () => {
       }
       if (migrateOutput) {
         options?.listeners?.stdout?.(Buffer.from(migrateOutput));
-      }
-      if (migrateStderr) {
-        options?.listeners?.stderr?.(Buffer.from(migrateStderr));
       }
       return migrateExitCode;
     });
@@ -93,9 +83,9 @@ describe("run", () => {
   it("should include saveSnapshot for enterprise edition", async () => {
     setupFlywayMock({
       edition: "Enterprise",
-      driftExitCode: 0,
       migrateExitCode: 0,
       migrateOutput: "Successfully applied 1 migrations\n",
+      driftExitCode: 0,
     });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
@@ -119,7 +109,7 @@ describe("run", () => {
   });
 
   it("should fail when flyway returns non-zero exit code", async () => {
-    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, migrateExitCode: 1 });
+    setupFlywayMock({ edition: "Enterprise", migrateExitCode: 1, driftExitCode: 0 });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -132,12 +122,19 @@ describe("run", () => {
   });
 
   it("should log stderr as error", async () => {
-    setupFlywayMock({
-      edition: "Enterprise",
-      driftExitCode: 0,
-      migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
-      migrateStderr: "some warning",
+    let callCount = 0;
+    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+      callCount++;
+      if (callCount === 1) {
+        options?.listeners?.stdout?.(Buffer.from("Flyway Enterprise Edition 10.0.0 by Redgate\n"));
+        return 0;
+      }
+      if (callCount === 2) {
+        return 0;
+      }
+      options?.listeners?.stdout?.(Buffer.from("Successfully applied 1 migrations\n"));
+      options?.listeners?.stderr?.(Buffer.from("some warning"));
+      return 0;
     });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
@@ -153,9 +150,9 @@ describe("run", () => {
   it("should set outputs on successful execution", async () => {
     setupFlywayMock({
       edition: "Enterprise",
-      driftExitCode: 0,
       migrateExitCode: 0,
       migrateOutput: "Successfully applied 3 migrations\nSchema now at version 3\n",
+      driftExitCode: 0,
     });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
@@ -171,7 +168,7 @@ describe("run", () => {
   });
 
   it("should fail and not migrate when drift is detected for enterprise edition", async () => {
-    setupFlywayMock({ edition: "Enterprise", driftExitCode: 1, migrateExitCode: 0 });
+    setupFlywayMock({ edition: "Enterprise", migrateExitCode: 0, driftExitCode: 1 });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
       return "";
@@ -188,9 +185,9 @@ describe("run", () => {
   it("should proceed with migration when no drift detected for enterprise edition", async () => {
     setupFlywayMock({
       edition: "Enterprise",
-      driftExitCode: 0,
       migrateExitCode: 0,
       migrateOutput: "Successfully applied 1 migrations\n",
+      driftExitCode: 0,
     });
     getInput.mockImplementation((name: string) => {
       if (name === "url") return "jdbc:sqlite:test.db";
