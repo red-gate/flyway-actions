@@ -7,17 +7,17 @@ branding:
   color: 'red'
 
 inputs:
-  environment:
+  target-environment:
     description: 'Target database to deploy to'
     required: false
     default: 'default'
-  url:
+  target-url:
     description: 'JDBC URL for the target database to deploy to'
     required: false
-  user:
+  target-user:
     description: 'Database user for the target database to deploy to'
     required: false
-  password:
+  target-password:
     description: 'Database password for the target database to deploy to'
     required: false
   target:

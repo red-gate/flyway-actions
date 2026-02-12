@@ -13,7 +13,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
     i-agree-to-the-eula: true
 - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
-    environment: production
+    target-environment: production
 ```
 
 ## Usage
@@ -29,10 +29,10 @@ steps:
       i-agree-to-the-eula: true
   - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
     with:
-      environment: qa
-      url: jdbc:postgresql://localhost:5432/mydb
-      user: ${{ secrets.DB_USER }}
-      password: ${{ secrets.DB_PASSWORD }}
+      target-environment: qa
+      target-url: jdbc:postgresql://localhost:5432/mydb
+      target-user: ${{ secrets.DB_USER }}
+      target-password: ${{ secrets.DB_PASSWORD }}
       working-directory: sql/migrations
 ```
 
@@ -47,10 +47,10 @@ steps:
     token: ${{ secrets.REDGATE_TOKEN }}
 - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
-    environment: production
-    url: ${{ secrets.DB_URL }}
-    user: ${{ secrets.DB_USER }}
-    password: ${{ secrets.DB_PASSWORD }}
+    target-environment: production
+    target-url: ${{ secrets.DB_URL }}
+    target-user: ${{ secrets.DB_USER }}
+    target-password: ${{ secrets.DB_PASSWORD }}
     cherry-pick: '2.0,2.1,3.0'
 ```
 
@@ -58,10 +58,10 @@ steps:
 
 | Input | Description | Required |
 |-------|-------------|----------|
-| `environment` | Flyway TOML environment name | No |
-| `url` | JDBC URL for the database connection | No |
-| `user` | Database user | No |
-| `password` | Database password | No |
+| `target-environment` | Flyway TOML environment name | No |
+| `target-url` | JDBC URL for the database connection | No |
+| `target-user` | Database user | No |
+| `target-password` | Database password | No |
 | `target` | Migrate up to this version | No |
 | `cherry-pick` | Comma-separated list of migration versions to apply | No |
 | `skip-drift` | Skip the drift check | No |
@@ -83,8 +83,8 @@ steps:
 - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   id: migrate
   with:
-    environment: production
-    url: ${{ secrets.DB_URL }}
+    target-environment: production
+    target-url: ${{ secrets.DB_URL }}
 
 - run: echo "Applied ${{ steps.migrate.outputs.migrations-applied }} migrations"
 - run: echo "Schema is now at version ${{ steps.migrate.outputs.schema-version }}"
