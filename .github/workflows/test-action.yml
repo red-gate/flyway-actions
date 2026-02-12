@@ -32,7 +32,7 @@ jobs:
             build-secrets/data/repos/red-gate/flyway-github-actions/flyway FLYWAY_ENTERPRISE_PERMIT | FLYWAY_ENTERPRISE_PERMIT;
 
       - name: Setup Flyway
-        uses: red-gate/setup-flyway@v2
+        uses: red-gate/setup-flyway@v3
 
       - name: Run migrations deployment with sample project
         id: migrate
@@ -88,7 +88,7 @@ jobs:
             build-secrets/data/repos/red-gate/flyway-github-actions/flyway FLYWAY_ENTERPRISE_PERMIT | FLYWAY_ENTERPRISE_PERMIT;
 
       - name: Setup Flyway
-        uses: red-gate/setup-flyway@v2
+        uses: red-gate/setup-flyway@v3
 
       - name: Run migrations deployment with sample project
         id: migrate

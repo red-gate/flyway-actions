@@ -13373,7 +13373,7 @@ const ra = () => {
   try {
     const A = await aa();
     if (!A.installed) {
-      de("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.");
+      de("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway before this action.");
       return;
     }
     const r = ra();

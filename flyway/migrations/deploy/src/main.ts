@@ -8,7 +8,7 @@ const run = async (): Promise<void> => {
   try {
     const flyway = await getFlywayDetails();
     if (!flyway.installed) {
-      core.setFailed("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.");
+      core.setFailed("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway before this action.");
       return;
     }
     const inputs = getInputs();
