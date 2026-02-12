@@ -4,10 +4,13 @@ A GitHub Action to deploy your Flyway migrations to a target database.
 
 ## Prerequisites
 
-This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v1`](https://github.com/red-gate/setup-flyway) before this action:
+This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](https://github.com/red-gate/setup-flyway) before this action:
 
 ```yaml
-- uses: red-gate/setup-flyway@v1
+- uses: red-gate/setup-flyway@v3
+  with:
+    edition: community
+    i-agree-to-the-eula: true
 - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     environment: production
@@ -20,7 +23,10 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v1`](ht
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: red-gate/setup-flyway@v1
+  - uses: red-gate/setup-flyway@v3
+    with:
+      edition: community
+      i-agree-to-the-eula: true
   - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
     with:
       environment: qa
@@ -33,9 +39,12 @@ steps:
 ### With Cherry-Pick (Teams/Enterprise)
 
 ```yaml
-- uses: red-gate/setup-flyway@v1
+- uses: red-gate/setup-flyway@v3
   with:
-    license-key: ${{ secrets.FLYWAY_LICENSE_KEY }}
+    edition: enterprise
+    i-agree-to-the-eula: true
+    email: ${{ secrets.REDGATE_EMAIL }}
+    token: ${{ secrets.REDGATE_TOKEN }}
 - uses: red-gate/flyway-github-actions/flyway/migrations/deploy@v1
   with:
     environment: production
