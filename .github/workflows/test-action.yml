@@ -45,7 +45,7 @@ jobs:
 
       - name: Upload Flyway drift report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: flyway-no-drift-report-${{ matrix.os }}
           path: flyway/sample-project/report.html
@@ -106,7 +106,7 @@ jobs:
 
       - name: Upload Flyway drift report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: flyway-drift-report-${{ matrix.os }}
           path: flyway/sample-project/report.html
