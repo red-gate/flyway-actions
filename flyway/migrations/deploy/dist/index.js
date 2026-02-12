@@ -2021,10 +2021,10 @@ function Pe() {
   }
   return It = B, It;
 }
-var Ct = {}, de = {}, un;
+var Ct = {}, fe = {}, un;
 function io() {
-  if (un) return de;
-  un = 1, Object.defineProperty(de, "__esModule", { value: !0 }), de.enumToMap = void 0;
+  if (un) return fe;
+  un = 1, Object.defineProperty(fe, "__esModule", { value: !0 }), fe.enumToMap = void 0;
   function A(r) {
     const t = {};
     return Object.keys(r).forEach((Q) => {
@@ -2032,7 +2032,7 @@ function io() {
       typeof e == "number" && (t[Q] = e);
     }), t;
   }
-  return de.enumToMap = A, de;
+  return fe.enumToMap = A, fe;
 }
 var dn;
 function oo() {
@@ -7921,7 +7921,7 @@ function No() {
   }, Qr;
 }
 var gr, us;
-function he() {
+function ue() {
   if (us) return gr;
   us = 1;
   const { kConstruct: A } = WA(), { kEnumerableProperty: r } = UA(), {
@@ -8250,7 +8250,7 @@ var cr, ds;
 function _e() {
   if (ds) return cr;
   ds = 1;
-  const { Headers: A, HeadersList: r, fill: t, getHeadersGuard: Q, setHeadersGuard: e, setHeadersList: n } = he(), { extractBody: a, cloneBody: g, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: s, bodyUnusable: i } = Fe(), C = UA(), I = jA, { kEnumerableProperty: c } = C, {
+  const { Headers: A, HeadersList: r, fill: t, getHeadersGuard: Q, setHeadersGuard: e, setHeadersList: n } = ue(), { extractBody: a, cloneBody: g, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: s, bodyUnusable: i } = Fe(), C = UA(), I = jA, { kEnumerableProperty: c } = C, {
     isValidReasonPhrase: u,
     isCancelled: p,
     isAborted: m,
@@ -8562,7 +8562,7 @@ var Er, ws;
 function Ue() {
   if (ws) return Er;
   ws = 1;
-  const { extractBody: A, mixinBody: r, cloneBody: t, bodyUnusable: Q } = Fe(), { Headers: e, fill: n, HeadersList: a, setHeadersGuard: g, getHeadersGuard: l, setHeadersList: B, getHeadersList: s } = he(), { FinalizationRegistry: i } = So()(), C = UA(), I = jA, {
+  const { extractBody: A, mixinBody: r, cloneBody: t, bodyUnusable: Q } = Fe(), { Headers: e, fill: n, HeadersList: a, setHeadersGuard: g, getHeadersGuard: l, setHeadersList: B, getHeadersList: s } = ue(), { FinalizationRegistry: i } = So()(), C = UA(), I = jA, {
     isValidHTTPToken: c,
     sameOrigin: u,
     environmentSettingsObject: p
@@ -9095,7 +9095,7 @@ function je() {
     filterResponse: t,
     makeResponse: Q,
     fromInnerResponse: e
-  } = _e(), { HeadersList: n } = he(), { Request: a, cloneRequest: g } = Ue(), l = Wr, {
+  } = _e(), { HeadersList: n } = ue(), { Request: a, cloneRequest: g } = Ue(), l = Wr, {
     bytesMatch: B,
     makePolicyContainer: s,
     clonePolicyContainer: i,
@@ -11041,7 +11041,7 @@ var Fr, Ts;
 function Ho() {
   if (Ts) return Fr;
   Ts = 1;
-  const { parseSetCookie: A } = vo(), { stringify: r } = di(), { webidl: t } = XA(), { Headers: Q } = he();
+  const { parseSetCookie: A } = vo(), { stringify: r } = di(), { webidl: t } = XA(), { Headers: Q } = ue();
   function e(l) {
     t.argumentLengthCheck(arguments, 1, "getCookies"), t.brandCheck(l, Q, { strict: !1 });
     const B = l.get("cookie"), s = {};
@@ -11355,7 +11355,7 @@ function Me() {
   }, mr;
 }
 var Nr, Gs;
-function ue() {
+function de() {
   if (Gs) return Nr;
   Gs = 1;
   const A = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", r = {
@@ -11418,7 +11418,7 @@ var br, vs;
 function At() {
   if (vs) return br;
   vs = 1;
-  const { kReadyState: A, kController: r, kResponse: t, kBinaryType: Q, kWebSocketURL: e } = $e(), { states: n, opcodes: a } = ue(), { ErrorEvent: g, createFastMessageEvent: l } = Me(), { isUtf8: B } = re, { collectASequenceOfCodePointsFast: s, removeHTTPWhitespace: i } = $A();
+  const { kReadyState: A, kController: r, kResponse: t, kBinaryType: Q, kWebSocketURL: e } = $e(), { states: n, opcodes: a } = de(), { ErrorEvent: g, createFastMessageEvent: l } = Me(), { isUtf8: B } = re, { collectASequenceOfCodePointsFast: s, removeHTTPWhitespace: i } = $A();
   function C(M) {
     return M[A] === n.CONNECTING;
   }
@@ -11553,7 +11553,7 @@ var Ur, Hs;
 function _r() {
   if (Hs) return Ur;
   Hs = 1;
-  const { maxUnsigned16Bit: A } = ue(), r = 16386;
+  const { maxUnsigned16Bit: A } = de(), r = 16386;
   let t, Q = null, e = r;
   try {
     t = require("node:crypto");
@@ -11597,13 +11597,13 @@ var Mr, Vs;
 function fi() {
   if (Vs) return Mr;
   Vs = 1;
-  const { uid: A, states: r, sentCloseFrameState: t, emptyBuffer: Q, opcodes: e } = ue(), {
+  const { uid: A, states: r, sentCloseFrameState: t, emptyBuffer: Q, opcodes: e } = de(), {
     kReadyState: n,
     kSentClose: a,
     kByteParser: g,
     kReceivedClose: l,
     kResponse: B
-  } = $e(), { fireEvent: s, failWebsocketConnection: i, isClosing: C, isClosed: I, isEstablished: c, parseExtensions: u } = At(), { channels: p } = Re(), { CloseEvent: m } = Me(), { makeRequest: S } = Ue(), { fetching: L } = je(), { Headers: U, getHeadersList: b } = he(), { getDecodeSplit: E } = te(), { WebsocketFrameSend: h } = _r();
+  } = $e(), { fireEvent: s, failWebsocketConnection: i, isClosing: C, isClosed: I, isEstablished: c, parseExtensions: u } = At(), { channels: p } = Re(), { CloseEvent: m } = Me(), { makeRequest: S } = Ue(), { fetching: L } = je(), { Headers: U, getHeadersList: b } = ue(), { getDecodeSplit: E } = te(), { WebsocketFrameSend: h } = _r();
   let D;
   try {
     D = require("node:crypto");
@@ -11753,7 +11753,7 @@ var Tr, Ws;
 function xo() {
   if (Ws) return Tr;
   Ws = 1;
-  const { Writable: A } = ee, r = HA, { parserStates: t, opcodes: Q, states: e, emptyBuffer: n, sentCloseFrameState: a } = ue(), { kReadyState: g, kSentClose: l, kResponse: B, kReceivedClose: s } = $e(), { channels: i } = Re(), {
+  const { Writable: A } = ee, r = HA, { parserStates: t, opcodes: Q, states: e, emptyBuffer: n, sentCloseFrameState: a } = de(), { kReadyState: g, kSentClose: l, kResponse: B, kReceivedClose: s } = $e(), { channels: i } = Re(), {
     isValidStatusCode: C,
     isValidOpcode: I,
     failWebsocketConnection: c,
@@ -11959,7 +11959,7 @@ var Yr, qs;
 function Wo() {
   if (qs) return Yr;
   qs = 1;
-  const { WebsocketFrameSend: A } = _r(), { opcodes: r, sendHints: t } = ue(), Q = Qi(), e = Buffer[Symbol.species];
+  const { WebsocketFrameSend: A } = _r(), { opcodes: r, sendHints: t } = de(), Q = Qi(), e = Buffer[Symbol.species];
   class n {
     /**
      * @type {FixedQueue}
@@ -12028,7 +12028,7 @@ var Gr, Os;
 function qo() {
   if (Os) return Gr;
   Os = 1;
-  const { webidl: A } = XA(), { URLSerializer: r } = $A(), { environmentSettingsObject: t } = te(), { staticPropertyDescriptors: Q, states: e, sentCloseFrameState: n, sendHints: a } = ue(), {
+  const { webidl: A } = XA(), { URLSerializer: r } = $A(), { environmentSettingsObject: t } = te(), { staticPropertyDescriptors: Q, states: e, sentCloseFrameState: n, sendHints: a } = de(), {
     kWebSocketURL: g,
     kReadyState: l,
     kController: B,
@@ -12699,7 +12699,7 @@ function Zo() {
     } catch (pA) {
       throw pA && typeof pA == "object" && Error.captureStackTrace(pA), pA;
     }
-  }, DA.Headers = he().Headers, DA.Response = _e().Response, DA.Request = Ue().Request, DA.FormData = Ke().FormData, DA.File = globalThis.File ?? re.File, DA.FileReader = Lo().FileReader;
+  }, DA.Headers = ue().Headers, DA.Response = _e().Response, DA.Request = Ue().Request, DA.FormData = Ke().FormData, DA.File = globalThis.File ?? re.File, DA.FileReader = Lo().FileReader;
   const { setGlobalOrigin: o, getGlobalOrigin: f } = oi();
   DA.setGlobalOrigin = o, DA.getGlobalOrigin = f;
   const { CacheStorage: w } = Go(), { kConstruct: d } = Xr();
@@ -12756,7 +12756,7 @@ var yi = function(A, r, t, Q) {
     B((Q = Q.apply(A, r || [])).next());
   });
 };
-const { chmod: tQ, copyFile: rQ, lstat: nQ, mkdir: sQ, open: iQ, readdir: Ko, rename: oQ, rm: aQ, rmdir: QQ, stat: Vr, symlink: gQ, unlink: cQ } = Ve.promises, le = process.platform === "win32";
+const { chmod: tQ, copyFile: rQ, lstat: nQ, mkdir: sQ, open: iQ, readdir: Ko, rename: oQ, rm: aQ, rmdir: QQ, stat: Vr, symlink: gQ, unlink: cQ } = Ve.promises, he = process.platform === "win32";
 Ve.constants.O_RDONLY;
 function zo(A) {
   return yi(this, void 0, void 0, function* () {
@@ -12773,7 +12773,7 @@ function zo(A) {
 function Di(A) {
   if (A = Xo(A), !A)
     throw new Error('isRooted() parameter "p" cannot be empty');
-  return le ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
+  return he ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
 }
 function js(A, r) {
   return yi(this, void 0, void 0, function* () {
@@ -12784,7 +12784,7 @@ function js(A, r) {
       e.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${e}`);
     }
     if (t && t.isFile()) {
-      if (le) {
+      if (he) {
         const e = ae.extname(A).toUpperCase();
         if (r.some((n) => n.toUpperCase() === e))
           return A;
@@ -12800,7 +12800,7 @@ function js(A, r) {
         n.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${n}`);
       }
       if (t && t.isFile()) {
-        if (le) {
+        if (he) {
           try {
             const n = ae.dirname(A), a = ae.basename(A).toUpperCase();
             for (const g of yield Ko(n))
@@ -12820,7 +12820,7 @@ function js(A, r) {
   });
 }
 function Xo(A) {
-  return A = A || "", le ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
+  return A = A || "", he ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
 }
 function $s(A) {
   return (A.mode & 1) > 0 || (A.mode & 8) > 0 && process.getgid !== void 0 && A.gid === process.getgid() || (A.mode & 64) > 0 && process.getuid !== void 0 && A.uid === process.getuid();
@@ -12859,7 +12859,7 @@ function Ri(A, r) {
     if (r) {
       const Q = yield Ri(A, !1);
       if (!Q)
-        throw le ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+        throw he ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
       return Q;
     }
     const t = yield _o(A);
@@ -12871,7 +12871,7 @@ function _o(A) {
     if (!A)
       throw new Error("parameter 'tool' is required");
     const r = [];
-    if (le && process.env.PATHEXT)
+    if (he && process.env.PATHEXT)
       for (const e of process.env.PATHEXT.split(ae.delimiter))
         e && r.push(e);
     if (Di(A)) {
@@ -13214,7 +13214,7 @@ function we(A, r) {
     return Ao("OUTPUT", eo(A, r));
   process.stdout.write(oe.EOL), qe("set-output", { name: A }, pe(r));
 }
-function fe(A) {
+function le(A) {
   process.exitCode = xr.Failure, $r(A);
 }
 function $r(A, r = {}) {
@@ -13363,24 +13363,25 @@ const ta = () => {
   try {
     const A = await oa();
     if (!A.installed) {
-      fe("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.");
+      le("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway@v1 before this action.");
+      return;
+    }
+    if (A.edition !== "enterprise") {
+      le("This action requires Flyway Enterprise Edition. Please upgrade to use this action.");
       return;
     }
     const r = ta();
     if (!r.environment && !r.url) {
-      fe('Either "url" or "environment" must be provided for Flyway to connect to a database.');
+      le('Either "url" or "environment" must be provided for Flyway to connect to a database.');
       return;
     }
-    if (ra(r), A.edition === "enterprise") {
-      if (await ga(r)) {
-        fe("Drift detected: the target database has diverged from the expected state. Aborting migration.");
-        return;
-      }
-      r.saveSnapshot = !0;
+    if (ra(r), await ga(r)) {
+      le("Drift detected: the target database has diverged from the expected state. Aborting migration.");
+      return;
     }
-    await Ea(r);
+    r.saveSnapshot = !0, await Ea(r);
   } catch (A) {
-    A instanceof Error ? fe(A.message) : fe("An unexpected error occurred");
+    A instanceof Error ? le(A.message) : le("An unexpected error occurred");
   }
 };
 await ha();
