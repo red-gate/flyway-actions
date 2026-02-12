@@ -63,6 +63,7 @@ steps:
 | Output | Description |
 |--------|-------------|
 | `exit-code` | Flyway command exit code |
+| `drift-detected` | Whether drift was detected (empty if skipped) |
 | `migrations-applied` | Number of migrations applied |
 | `schema-version` | Schema version after migration |
 

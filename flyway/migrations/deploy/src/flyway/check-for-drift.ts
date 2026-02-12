@@ -1,32 +1,36 @@
 import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
-import { buildCommonArgs, runFlyway, setDriftOutput } from "./flyway-runner.js";
+import { buildCommonArgs, runFlyway } from "./flyway-runner.js";
 
 const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  return ["check", "-drift", ...buildCommonArgs(inputs)];
+  return ["check", "-drift", "-failOnDrift=true", ...buildCommonArgs(inputs)];
 };
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
-  core.info("Running drift check before migration...");
+  core.startGroup("Checking for drift");
+  try {
+    const driftArgs = buildFlywayCheckDriftArgs(inputs);
+    const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-  const driftArgs = buildFlywayCheckDriftArgs(inputs);
-  const result = await runFlyway(driftArgs, inputs.workingDirectory);
+    if (result.stderr) {
+      core.error(result.stderr);
+    }
 
-  if (result.stdout) {
-    core.info(result.stdout);
+    const driftDetected = result.exitCode !== 0;
+    setDriftOutput(driftDetected);
+
+    if (!driftDetected) {
+      core.info("No drift detected. Proceeding with migration.");
+    }
+
+    return driftDetected;
+  } finally {
+    core.endGroup();
   }
-  if (result.stderr) {
-    core.warning(result.stderr);
-  }
+};
 
-  const driftDetected = result.exitCode !== 0;
-  setDriftOutput(driftDetected);
-
-  if (!driftDetected) {
-    core.info("No drift detected. Proceeding with migration.");
-  }
-
-  return driftDetected;
+const setDriftOutput = (driftDetected: boolean): void => {
+  core.setOutput("drift-detected", driftDetected.toString());
 };
 
 export { buildFlywayCheckDriftArgs, checkForDrift };
