@@ -9,6 +9,68 @@
 |--------------------------------------------------------|---------------------------------------------------------|
 | [`flyway/migrations/deploy`](flyway/migrations/deploy) | Run Flyway migrate command to apply database migrations |
 
+## Usage
+
+### Automated deployment using migrations (Flyway Enterprise)
+```yaml
+name: Deploy to production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  automated-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+          email: "${{ secrets.FLYWAY_EMAIL }}"
+          token: "${{ secrets.FLYWAY_TOKEN }}"
+      - name: Run migrations deployment
+        uses: red-gate/flyway-actions/migrations/deploy@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
+```
+
+### Flyway Community deployment
+```yaml
+name: Deploy to production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  automated-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: community
+          i-agree-to-the-eula: true
+      - name: Run migrations deployment
+        uses: red-gate/flyway-actions/migrations/deploy@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
+```
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE.md).
