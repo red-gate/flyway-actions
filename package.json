@@ -3,6 +3,7 @@
   "author": "Redgate",
   "license": "MIT",
   "workspaces": [
+    "list",
     "migrations/**"
   ],
   "scripts": {

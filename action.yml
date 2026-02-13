@@ -1,0 +1,15 @@
+name: 'Redgate Flyway GitHub Actions'
+description: 'Deploy database changes with confidence'
+author: 'Redgate'
+
+branding:
+  icon: 'database'
+  color: 'red'
+
+outputs:
+  actions:
+    description: 'JSON array of available actions'
+
+runs:
+  using: 'node24'
+  main: 'list/dist/index.js'

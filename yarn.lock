@@ -352,6 +352,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@flyway-actions/list@workspace:list":
+  version: 0.0.0-use.local
+  resolution: "@flyway-actions/list@workspace:list"
+  dependencies:
+    "@actions/core": "npm:3.0.0"
+    "@eslint/js": "npm:10.0.1"
+    "@types/node": "npm:25.2.3"
+    "@vitest/coverage-v8": "npm:4.0.18"
+    "@vitest/eslint-plugin": "npm:1.6.7"
+    eslint: "npm:10.0.0"
+    eslint-plugin-import: "npm:2.32.0"
+    prettier: "npm:3.8.1"
+    typescript: "npm:5.9.3"
+    typescript-eslint: "npm:8.55.0"
+    vite: "npm:7.3.1"
+    vite-plugin-checker: "npm:0.12.0"
+    vitest: "npm:4.0.18"
+  languageName: unknown
+  linkType: soft
+
 "@flyway-actions/migrations-deploy@workspace:migrations/deploy":
   version: 0.0.0-use.local
   resolution: "@flyway-actions/migrations-deploy@workspace:migrations/deploy"
@@ -3221,16 +3241,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.7.3":
-  version: 7.7.3
-  resolution: "semver@npm:7.7.3"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/4afe5c986567db82f44c8c6faef8fe9df2a9b1d98098fc1721f57c696c4c21cebd572f297fc21002f81889492345b8470473bc6f4aff5fb032a6ea59ea2bc45e
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.5.3":
+"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.7.3":
   version: 7.7.4
   resolution: "semver@npm:7.7.4"
   bin:
