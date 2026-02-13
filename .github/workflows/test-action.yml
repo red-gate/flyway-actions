@@ -8,6 +8,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  test-list:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run root action
+        id: list
+        uses: ./
+
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Actions: ${{ steps.list.outputs.actions }}"
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | length > 0'
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
+
   test-migrations-deployment-no-drift:
     strategy:
       matrix:
