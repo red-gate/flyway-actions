@@ -30,8 +30,8 @@ const run = async (): Promise<void> => {
           core.setFailed("Drift detected. Aborting deployment.");
           return;
         }
-        inputs.saveSnapshot = true;
       }
+      inputs.saveSnapshot = true;
     } else {
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flyway.edition}).`);
     }

@@ -11,7 +11,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
   with:
     edition: community
     i-agree-to-the-eula: true
-- uses: red-gate/flyway-github-actions/migrations/deploy@v1
+- uses: red-gate/flyway-actions/migrations/deploy@v1
   with:
     target-environment: production
 ```
@@ -27,7 +27,7 @@ steps:
     with:
       edition: community
       i-agree-to-the-eula: true
-  - uses: red-gate/flyway-github-actions/migrations/deploy@v1
+  - uses: red-gate/flyway-actions/migrations/deploy@v1
     with:
       target-environment: qa
       target-url: jdbc:postgresql://localhost:5432/mydb
@@ -45,7 +45,7 @@ steps:
     i-agree-to-the-eula: true
     email: ${{ secrets.REDGATE_EMAIL }}
     token: ${{ secrets.REDGATE_TOKEN }}
-- uses: red-gate/flyway-github-actions/migrations/deploy@v1
+- uses: red-gate/flyway-actions/migrations/deploy@v1
   with:
     target-environment: production
     target-url: ${{ secrets.DB_URL }}
@@ -80,7 +80,7 @@ steps:
 ### Using Outputs
 
 ```yaml
-- uses: red-gate/flyway-github-actions/migrations/deploy@v1
+- uses: red-gate/flyway-actions/migrations/deploy@v1
   id: migrate
   with:
     target-environment: production

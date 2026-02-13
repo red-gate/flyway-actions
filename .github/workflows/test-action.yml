@@ -27,14 +27,14 @@ jobs:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
           url: ${{ vars.VAULT_URL }}
-          role: "flyway-github-actions"
+          role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-github-actions/flyway FLYWAY_ENTERPRISE_PERMIT | FLYWAY_ENTERPRISE_PERMIT;
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
 
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
@@ -43,7 +43,7 @@ jobs:
         id: migrate
         uses: ./migrations/deploy
         env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
@@ -88,14 +88,14 @@ jobs:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
           url: ${{ vars.VAULT_URL }}
-          role: "flyway-github-actions"
+          role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-github-actions/flyway FLYWAY_ENTERPRISE_PERMIT | FLYWAY_ENTERPRISE_PERMIT;
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
 
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
@@ -105,7 +105,7 @@ jobs:
         uses: ./migrations/deploy
         continue-on-error: true
         env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_ENTERPRISE_PERMIT }}
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-project

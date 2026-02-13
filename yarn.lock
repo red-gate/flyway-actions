@@ -352,9 +352,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@flyway-github-actions/migrations-deploy@workspace:migrations/deploy":
+"@flyway-actions/migrations-deploy@workspace:migrations/deploy":
   version: 0.0.0-use.local
-  resolution: "@flyway-github-actions/migrations-deploy@workspace:migrations/deploy"
+  resolution: "@flyway-actions/migrations-deploy@workspace:migrations/deploy"
   dependencies:
     "@actions/core": "npm:3.0.0"
     "@actions/exec": "npm:3.0.0"
@@ -1872,9 +1872,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flyway-github-actions@workspace:.":
+"flyway-actions@workspace:.":
   version: 0.0.0-use.local
-  resolution: "flyway-github-actions@workspace:."
+  resolution: "flyway-actions@workspace:."
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:8.55.0"
     "@typescript-eslint/parser": "npm:8.55.0"

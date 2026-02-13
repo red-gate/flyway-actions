@@ -13383,17 +13383,15 @@ const ra = () => {
       );
       return;
     }
-    if (na(r), A.edition === "enterprise")
+    if (na(r), A.edition === "enterprise") {
       if (r.skipDrift)
         xe("Skipping drift check.");
-      else {
-        if (await ca(r)) {
-          de("Drift detected. Aborting deployment.");
-          return;
-        }
-        r.saveSnapshot = !0;
+      else if (await ca(r)) {
+        de("Drift detected. Aborting deployment.");
+        return;
       }
-    else
+      r.saveSnapshot = !0;
+    } else
       xe(`Skipping drift check as edition is not Enterprise (actual edition: ${A.edition}).`);
     await Ia(r);
   } catch (A) {

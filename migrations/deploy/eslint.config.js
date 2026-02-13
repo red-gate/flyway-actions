@@ -5,30 +5,23 @@ import vitestPlugin from '@vitest/eslint-plugin';
 
 export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  {
-    ignores: ['dist/**', 'node_modules/**', '*.js', '!eslint.config.js'],
-  },
+  tseslint.configs.recommended,
+  { ignores: ['dist/**', 'node_modules/**', '*.js', '!eslint.config.js'] },
   {
     plugins: {
       import: importPlugin,
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
+      'func-style': ['error', 'expression', { allowArrowFunctions: true }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
-      'func-style': ['error', 'expression', { allowArrowFunctions: true }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'import/group-exports': 'error',
     },
   },
   {
     files: ['tests/**/*.test.ts'],
-    plugins: {
-      vitest: vitestPlugin,
-    },
+    plugins: { vitest: vitestPlugin },
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -40,9 +33,7 @@ export default tseslint.config(
       ],
       'vitest/no-restricted-vi-methods': [
         'error',
-        {
-          mock: 'vi.mock is hoisted which can cause hard-to-debug errors. Prefer vi.doMock',
-        },
+        { mock: 'vi.mock is hoisted which can cause hard-to-debug errors. Prefer vi.doMock' },
       ],
     },
   }
