@@ -1,9 +1,9 @@
-import * as oe from "os";
+import * as ae from "os";
 import ti from "os";
 import * as Mi from "crypto";
 import * as Ve from "fs";
 import { promises as Li } from "fs";
-import * as ae from "path";
+import * as ge from "path";
 import Ti from "http";
 import Yi from "https";
 import "net";
@@ -48,7 +48,7 @@ function Xi(A) {
 }
 function Oe(A, r, t) {
   const g = new _i(A, r, t);
-  process.stdout.write(g.toString() + oe.EOL);
+  process.stdout.write(g.toString() + ae.EOL);
 }
 function ii(A, r = "") {
   Oe(A, {}, r);
@@ -84,7 +84,7 @@ function Ao(A, r) {
     throw new Error(`Unable to find environment variable for file command ${A}`);
   if (!Ve.existsSync(t))
     throw new Error(`Missing file at path: ${t}`);
-  Ve.appendFileSync(t, `${pe(r)}${oe.EOL}`, {
+  Ve.appendFileSync(t, `${pe(r)}${ae.EOL}`, {
     encoding: "utf8"
   });
 }
@@ -94,7 +94,7 @@ function eo(A, r) {
     throw new Error(`Unexpected input: name should not contain the delimiter "${t}"`);
   if (g.includes(t))
     throw new Error(`Unexpected input: value should not contain the delimiter "${t}"`);
-  return `${A}<<${t}${oe.EOL}${g}${oe.EOL}${t}`;
+  return `${A}<<${t}${ae.EOL}${g}${ae.EOL}${t}`;
 }
 var nn = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, Be = {}, sn;
 function to() {
@@ -9320,8 +9320,8 @@ function $e() {
           }
           const zA = eA.slice(ne, SA, YA), Ae = rA(zA);
           K.body = Ae[0];
-          const OA = Y(`${zA.size}`), ge = lA(ne, SA, gA);
-          K.status = 206, K.statusText = "Partial Content", K.headersList.set("content-length", OA, !0), K.headersList.set("content-type", YA, !0), K.headersList.set("content-range", ge, !0);
+          const OA = Y(`${zA.size}`), Qe = lA(ne, SA, gA);
+          K.status = 206, K.statusText = "Partial Content", K.headersList.set("content-length", OA, !0), K.headersList.set("content-type", YA, !0), K.headersList.set("content-range", Qe, !0);
         } else {
           const MA = rA(eA);
           K.statusText = "OK", K.body = MA[0], K.headersList.set("content-length", NA, !0), K.headersList.set("content-type", YA, !0);
@@ -9502,9 +9502,9 @@ function $e() {
       })();
     }
     try {
-      const { body: SA, status: zA, statusText: Ae, headersList: OA, socket: ge } = await ne({ body: gA });
-      if (ge)
-        eA = g({ status: zA, statusText: Ae, headersList: OA, socket: ge });
+      const { body: SA, status: zA, statusText: Ae, headersList: OA, socket: Qe } = await ne({ body: gA });
+      if (Qe)
+        eA = g({ status: zA, statusText: Ae, headersList: OA, socket: Qe });
       else {
         const ZA = SA[Symbol.asyncIterator]();
         F.controller.next = () => ZA.next(), eA = g({ status: zA, statusText: Ae, headersList: OA });
@@ -9534,10 +9534,10 @@ function $e() {
       for (; ; ) {
         let SA, zA;
         try {
-          const { done: OA, value: ge } = await F.controller.next();
+          const { done: OA, value: Qe } = await F.controller.next();
           if (y(F))
             break;
-          SA = OA ? void 0 : ge;
+          SA = OA ? void 0 : Qe;
         } catch (OA) {
           F.controller.ended && !K.encodedBodySize ? SA = void 0 : (SA = OA, zA = !0);
         }
@@ -9568,7 +9568,7 @@ function $e() {
     return eA;
     function ne({ body: SA }) {
       const zA = p(W), Ae = F.controller.dispatcher;
-      return new Promise((OA, ge) => Ae.dispatch(
+      return new Promise((OA, Qe) => Ae.dispatch(
         {
           path: zA.pathname + zA.search,
           origin: zA.origin,
@@ -9600,7 +9600,7 @@ function $e() {
             if (W.method !== "HEAD" && W.method !== "CONNECT" && !O.includes(ZA) && !Ui) {
               const se = Te.get("content-encoding", !0), Ye = se ? se.toLowerCase().split(",") : [], tn = 5;
               if (Ye.length > tn)
-                return ge(new Error(`too many content-encodings in response: ${Ye.length}, maximum allowed is ${tn}`)), !0;
+                return Qe(new Error(`too many content-encodings in response: ${Ye.length}, maximum allowed is ${tn}`)), !0;
               for (let rt = Ye.length - 1; rt >= 0; --rt) {
                 const Ge = Ye[rt].trim();
                 if (Ge === "x-gzip" || Ge === "gzip")
@@ -9648,7 +9648,7 @@ function $e() {
             this.abort && F.controller.off("terminated", this.abort), F.controller.onAborted && F.controller.off("terminated", F.controller.onAborted), F.controller.ended = !0, this.body.push(null);
           },
           onError(ZA) {
-            this.abort && F.controller.off("terminated", this.abort), this.body?.destroy(ZA), F.controller.terminate(ZA), ge(ZA);
+            this.abort && F.controller.off("terminated", this.abort), this.body?.destroy(ZA), F.controller.terminate(ZA), Qe(ZA);
           },
           onUpgrade(ZA, _A, tt) {
             if (ZA !== 101)
@@ -12714,10 +12714,10 @@ function Zo() {
   return DA.EventSource = aA, DA;
 }
 Zo();
-var ie;
+var oe;
 (function(A) {
   A[A.OK = 200] = "OK", A[A.MultipleChoices = 300] = "MultipleChoices", A[A.MovedPermanently = 301] = "MovedPermanently", A[A.ResourceMoved = 302] = "ResourceMoved", A[A.SeeOther = 303] = "SeeOther", A[A.NotModified = 304] = "NotModified", A[A.UseProxy = 305] = "UseProxy", A[A.SwitchProxy = 306] = "SwitchProxy", A[A.TemporaryRedirect = 307] = "TemporaryRedirect", A[A.PermanentRedirect = 308] = "PermanentRedirect", A[A.BadRequest = 400] = "BadRequest", A[A.Unauthorized = 401] = "Unauthorized", A[A.PaymentRequired = 402] = "PaymentRequired", A[A.Forbidden = 403] = "Forbidden", A[A.NotFound = 404] = "NotFound", A[A.MethodNotAllowed = 405] = "MethodNotAllowed", A[A.NotAcceptable = 406] = "NotAcceptable", A[A.ProxyAuthenticationRequired = 407] = "ProxyAuthenticationRequired", A[A.RequestTimeout = 408] = "RequestTimeout", A[A.Conflict = 409] = "Conflict", A[A.Gone = 410] = "Gone", A[A.TooManyRequests = 429] = "TooManyRequests", A[A.InternalServerError = 500] = "InternalServerError", A[A.NotImplemented = 501] = "NotImplemented", A[A.BadGateway = 502] = "BadGateway", A[A.ServiceUnavailable = 503] = "ServiceUnavailable", A[A.GatewayTimeout = 504] = "GatewayTimeout";
-})(ie || (ie = {}));
+})(oe || (oe = {}));
 var _s;
 (function(A) {
   A.Accept = "accept", A.ContentType = "content-type";
@@ -12726,8 +12726,8 @@ var js;
 (function(A) {
   A.ApplicationJson = "application/json";
 })(js || (js = {}));
-ie.MovedPermanently, ie.ResourceMoved, ie.SeeOther, ie.TemporaryRedirect, ie.PermanentRedirect;
-ie.BadGateway, ie.ServiceUnavailable, ie.GatewayTimeout;
+oe.MovedPermanently, oe.ResourceMoved, oe.SeeOther, oe.TemporaryRedirect, oe.PermanentRedirect;
+oe.BadGateway, oe.ServiceUnavailable, oe.GatewayTimeout;
 const { access: Ag, appendFile: eg, writeFile: tg } = Li;
 var Di = function(A, r, t, g) {
   function e(n) {
@@ -12785,7 +12785,7 @@ function $s(A, r) {
     }
     if (t && t.isFile()) {
       if (le) {
-        const e = ae.extname(A).toUpperCase();
+        const e = ge.extname(A).toUpperCase();
         if (r.some((n) => n.toUpperCase() === e))
           return A;
       } else if (Ai(t))
@@ -12802,10 +12802,10 @@ function $s(A, r) {
       if (t && t.isFile()) {
         if (le) {
           try {
-            const n = ae.dirname(A), a = ae.basename(A).toUpperCase();
+            const n = ge.dirname(A), a = ge.basename(A).toUpperCase();
             for (const Q of yield Ko(n))
               if (a === Q.toUpperCase()) {
-                A = ae.join(n, Q);
+                A = ge.join(n, Q);
                 break;
               }
           } catch (n) {
@@ -12872,21 +12872,21 @@ function _o(A) {
       throw new Error("parameter 'tool' is required");
     const r = [];
     if (le && process.env.PATHEXT)
-      for (const e of process.env.PATHEXT.split(ae.delimiter))
+      for (const e of process.env.PATHEXT.split(ge.delimiter))
         e && r.push(e);
     if (pi(A)) {
       const e = yield $s(A, r);
       return e ? [e] : [];
     }
-    if (A.includes(ae.sep))
+    if (A.includes(ge.sep))
       return [];
     const t = [];
     if (process.env.PATH)
-      for (const e of process.env.PATH.split(ae.delimiter))
+      for (const e of process.env.PATH.split(ge.delimiter))
         e && t.push(e);
     const g = [];
     for (const e of t) {
-      const n = yield $s(ae.join(e, A), r);
+      const n = yield $s(ge.join(e, A), r);
       n && g.push(n);
     }
     return g;
@@ -12955,10 +12955,10 @@ class jo extends ri.EventEmitter {
   }
   _processLineBuffer(r, t, g) {
     try {
-      let e = t + r.toString(), n = e.indexOf(oe.EOL);
+      let e = t + r.toString(), n = e.indexOf(ae.EOL);
       for (; n > -1; ) {
         const a = e.substring(0, n);
-        g(a), e = e.substring(n + oe.EOL.length), n = e.indexOf(oe.EOL);
+        g(a), e = e.substring(n + ae.EOL.length), n = e.indexOf(ae.EOL);
       }
       return e;
     } catch (e) {
@@ -13067,12 +13067,12 @@ class jo extends ri.EventEmitter {
    */
   exec() {
     return ei(this, void 0, void 0, function* () {
-      return !pi(this.toolPath) && (this.toolPath.includes("/") || He && this.toolPath.includes("\\")) && (this.toolPath = ae.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield ki(this.toolPath, !0), new Promise((r, t) => ei(this, void 0, void 0, function* () {
+      return !pi(this.toolPath) && (this.toolPath.includes("/") || He && this.toolPath.includes("\\")) && (this.toolPath = ge.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield ki(this.toolPath, !0), new Promise((r, t) => ei(this, void 0, void 0, function* () {
         this._debug(`exec tool: ${this.toolPath}`), this._debug("arguments:");
         for (const B of this.args)
           this._debug(`   ${B}`);
         const g = this._cloneExecOptions(this.options);
-        !g.silent && g.outStream && g.outStream.write(this._getCommandString(g) + oe.EOL);
+        !g.silent && g.outStream && g.outStream.write(this._getCommandString(g) + ae.EOL);
         const e = new $r(g, this.toolPath);
         if (e.on("debug", (B) => {
           this._debug(B);
@@ -13206,11 +13206,11 @@ var Wr;
 function ea(A) {
   Oe("add-mask", {}, A);
 }
-function Qe(A, r) {
+function ie(A, r) {
   return (process.env[`INPUT_${A.replace(/ /g, "_").toUpperCase()}`] || "").trim();
 }
 function ta(A, r) {
-  const t = ["true", "True", "TRUE"], g = ["false", "False", "FALSE"], e = Qe(A);
+  const t = ["true", "True", "TRUE"], g = ["false", "False", "FALSE"], e = ie(A);
   if (t.includes(e))
     return !0;
   if (g.includes(e))
@@ -13221,7 +13221,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 function we(A, r) {
   if (process.env.GITHUB_OUTPUT || "")
     return Ao("OUTPUT", eo(A, r));
-  process.stdout.write(oe.EOL), Oe("set-output", { name: A }, pe(r));
+  process.stdout.write(ae.EOL), Oe("set-output", { name: A }, pe(r));
 }
 function de(A) {
   process.exitCode = Wr.Failure, An(A);
@@ -13230,7 +13230,7 @@ function An(A, r = {}) {
   Oe("error", Xi(r), A instanceof Error ? A.toString() : A);
 }
 function xe(A) {
-  process.stdout.write(A + oe.EOL);
+  process.stdout.write(A + ae.EOL);
 }
 function mi(A) {
   ii("group", A);
@@ -13239,17 +13239,18 @@ function Ni() {
   ii("endgroup");
 }
 const ra = () => {
-  const A = Qe("target-environment") || void 0, r = Qe("target-url") || void 0, t = Qe("target-user") || void 0, g = Qe("target-password") || void 0, e = Qe("target") || void 0, n = Qe("cherry-pick") || void 0, a = ta("skip-drift"), Q = Qe("working-directory"), l = Q ? ae.resolve(Q) : void 0, B = Qe("extra-args") || void 0;
+  const A = ie("target-environment") || void 0, r = ie("target-url") || void 0, t = ie("target-user") || void 0, g = ie("target-password") || void 0, e = ie("target-schemas") || void 0, n = ie("target-migration-version") || void 0, a = ie("cherry-pick") || void 0, Q = ta("skip-drift-check"), l = ie("working-directory"), B = l ? ge.resolve(l) : void 0, s = ie("extra-args") || void 0;
   return {
     targetEnvironment: A,
     targetUrl: r,
     targetUser: t,
     targetPassword: g,
-    target: e,
-    cherryPick: n,
-    skipDrift: a,
-    workingDirectory: l,
-    extraArgs: B
+    targetSchemas: e,
+    targetMigrationVersion: n,
+    cherryPick: a,
+    skipDriftCheck: Q,
+    workingDirectory: B,
+    extraArgs: s
   };
 }, na = (A) => {
   A.targetPassword && ea(A.targetPassword);
@@ -13276,7 +13277,7 @@ const ra = () => {
   };
 }, Si = (A) => {
   const r = [];
-  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...oa(A.extraArgs)), r;
+  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.targetSchemas && r.push(`-schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...oa(A.extraArgs)), r;
 }, oa = (A) => {
   const r = [];
   let t = "", g = !1, e = "";
@@ -13334,7 +13335,7 @@ const ra = () => {
   we("exit-code", A.toString()), we("drift-detected", r.toString());
 }, Ea = (A) => {
   const r = ["migrate", ...Si(A)];
-  return A.target && r.push(`-target=${A.target}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-saveSnapshot=true"), r;
+  return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-saveSnapshot=true"), r;
 }, Ia = async (A) => {
   mi("Running migrations");
   try {
@@ -13384,7 +13385,7 @@ const ra = () => {
       return;
     }
     if (na(r), A.edition === "enterprise") {
-      if (r.skipDrift)
+      if (r.skipDriftCheck)
         xe("Skipping drift check.");
       else if (await ca(r)) {
         de("Drift detected. Aborting deployment.");
