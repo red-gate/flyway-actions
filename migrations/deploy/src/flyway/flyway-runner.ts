@@ -22,6 +22,10 @@ const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => 
     args.push(`-password=${inputs.targetPassword}`);
   }
 
+  if (inputs.targetSchemas) {
+    args.push(`-schemas=${inputs.targetSchemas}`);
+  }
+
   if (inputs.workingDirectory) {
     args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }

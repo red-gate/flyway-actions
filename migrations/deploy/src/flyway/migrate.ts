@@ -5,8 +5,8 @@ import { buildCommonArgs, runFlyway } from "./flyway-runner.js";
 const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = ["migrate", ...buildCommonArgs(inputs)];
 
-  if (inputs.target) {
-    args.push(`-target=${inputs.target}`);
+  if (inputs.targetMigrationVersion) {
+    args.push(`-target=${inputs.targetMigrationVersion}`);
   }
 
   if (inputs.cherryPick) {

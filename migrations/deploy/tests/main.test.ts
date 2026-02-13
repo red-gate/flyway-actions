@@ -192,7 +192,7 @@ describe("run", () => {
     expect(exec).toHaveBeenCalledTimes(2);
   });
 
-  it("should skip drift check when skip-drift is enabled", async () => {
+  it("should skip drift check when skip-drift-check is enabled", async () => {
     setupFlywayMock({
       edition: "Enterprise",
       migrateExitCode: 0,

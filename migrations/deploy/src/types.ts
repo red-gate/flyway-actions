@@ -7,9 +7,10 @@ type FlywayMigrationsDeploymentInputs = {
   targetUrl?: string;
   targetUser?: string;
   targetPassword?: string;
-  target?: string;
+  targetSchemas?: string;
+  targetMigrationVersion?: string;
   cherryPick?: string;
-  skipDrift?: boolean;
+  skipDriftCheck?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
   saveSnapshot?: boolean;
