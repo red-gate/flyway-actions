@@ -20,13 +20,13 @@ inputs:
   target-password:
     description: 'Database password for the target database to deploy to'
     required: false
-  target:
+  target-migration-version:
     description: 'Migrate up to this version'
     required: false
   cherry-pick:
     description: 'Comma-separated list of migration versions to deploy'
     required: false
-  skip-drift:
+  skip-drift-check:
     description: 'Skip the drift check'
     required: false
     default: 'false'

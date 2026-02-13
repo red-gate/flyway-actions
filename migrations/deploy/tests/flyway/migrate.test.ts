@@ -164,10 +164,10 @@ describe("buildFlywayMigrateArgs", () => {
     expect(args).toContain("-environment=production");
   });
 
-  it("should build args with target", () => {
+  it("should build args with target-migration-version", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
-      target: "5.0",
+      targetMigrationVersion: "5.0",
     };
 
     const args = buildFlywayMigrateArgs(inputs);

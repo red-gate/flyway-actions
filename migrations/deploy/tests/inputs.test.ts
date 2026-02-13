@@ -59,25 +59,25 @@ describe("getInputs", () => {
     expect(inputs.targetEnvironment).toBe("production");
   });
 
-  it("should get target and cherry-pick inputs", () => {
+  it("should get target-migration-version and cherry-pick inputs", () => {
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
-        target: "5.0",
+        "target-migration-version": "5.0",
         "cherry-pick": "3.0,4.0",
       };
       return values[name] || "";
     });
 
     const inputs = getInputs();
-    expect(inputs.target).toBe("5.0");
+    expect(inputs.targetMigrationVersion).toBe("5.0");
     expect(inputs.cherryPick).toBe("3.0,4.0");
   });
 
-  it("should get skip-drift input", () => {
+  it("should get skip-drift-check input", () => {
     getBooleanInput.mockReturnValue(true);
 
     const inputs = getInputs();
-    expect(inputs.skipDrift).toBe(true);
+    expect(inputs.skipDriftCheck).toBe(true);
   });
 
   it("should get working directory and extra args", () => {
@@ -100,7 +100,7 @@ describe("getInputs", () => {
     expect(inputs.targetUser).toBeUndefined();
     expect(inputs.targetPassword).toBeUndefined();
     expect(inputs.targetEnvironment).toBeUndefined();
-    expect(inputs.target).toBeUndefined();
+    expect(inputs.targetMigrationVersion).toBeUndefined();
     expect(inputs.cherryPick).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();

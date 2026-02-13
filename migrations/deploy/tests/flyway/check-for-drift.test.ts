@@ -78,7 +78,7 @@ describe("buildFlywayCheckDriftArgs", () => {
   it("should not include target, cherryPick, or saveSnapshot", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
-      target: "5.0",
+      targetMigrationVersion: "5.0",
       cherryPick: "2.0,2.1",
       saveSnapshot: true,
     };

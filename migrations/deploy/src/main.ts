@@ -22,7 +22,7 @@ const run = async (): Promise<void> => {
     maskSecrets(inputs);
 
     if (flyway.edition === "enterprise") {
-      if (inputs.skipDrift) {
+      if (inputs.skipDriftCheck) {
         core.info("Skipping drift check.");
       } else {
         const driftDetected = await checkForDrift(inputs);
