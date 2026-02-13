@@ -7,6 +7,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const targetUrl = core.getInput("target-url") || undefined;
   const targetUser = core.getInput("target-user") || undefined;
   const targetPassword = core.getInput("target-password") || undefined;
+  const targetSchemas = core.getInput("target-schemas") || undefined;
   const targetMigrationVersion = core.getInput("target-migration-version") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
@@ -19,6 +20,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
     targetUrl,
     targetUser,
     targetPassword,
+    targetSchemas,
     targetMigrationVersion,
     cherryPick,
     skipDriftCheck,

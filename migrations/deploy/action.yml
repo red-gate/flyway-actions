@@ -20,6 +20,9 @@ inputs:
   target-password:
     description: 'Database password for the target database to deploy to'
     required: false
+  target-schemas:
+    description: 'Comma-separated list of schemas'
+    required: false
   target-migration-version:
     description: 'Migrate up to this version'
     required: false

@@ -59,6 +59,16 @@ describe("getInputs", () => {
     expect(inputs.targetEnvironment).toBe("production");
   });
 
+  it("should get target-schemas input", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-schemas") return "public,audit";
+      return "";
+    });
+
+    const inputs = getInputs();
+    expect(inputs.targetSchemas).toBe("public,audit");
+  });
+
   it("should get target-migration-version and cherry-pick inputs", () => {
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {

@@ -52,6 +52,7 @@ describe("buildFlywayCheckDriftArgs", () => {
       targetUser: "admin",
       targetPassword: "secret",
       targetEnvironment: "production",
+      targetSchemas: "public,audit",
     };
 
     const args = buildFlywayCheckDriftArgs(inputs);
@@ -60,6 +61,7 @@ describe("buildFlywayCheckDriftArgs", () => {
     expect(args).toContain("-user=admin");
     expect(args).toContain("-password=secret");
     expect(args).toContain("-environment=production");
+    expect(args).toContain("-schemas=public,audit");
   });
 
   it("should include workingDirectory and extraArgs", () => {
