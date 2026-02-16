@@ -13275,9 +13275,6 @@ const ra = () => {
     },
     getOutput: () => ({ stdout: A, stderr: r })
   };
-}, Si = (A) => {
-  const r = [];
-  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.targetSchemas && r.push(`-schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...oa(A.extraArgs)), r;
 }, oa = (A) => {
   const r = [];
   let t = "", g = !1, e = "";
@@ -13301,7 +13298,7 @@ const ra = () => {
   } catch {
     return { installed: !1 };
   }
-}, bi = async (A, r) => {
+}, Si = async (A, r) => {
   const { listeners: t, getOutput: g } = ia();
   xe(`Running: flyway ${ga(A).join(" ")}`);
   const e = {
@@ -13321,10 +13318,13 @@ const ra = () => {
       }
     return t;
   });
-}, Qa = (A) => ["check", "-drift", "-failOnDrift=true", ...Si(A)], ca = async (A) => {
+}, bi = (A) => {
+  const r = [];
+  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.targetSchemas && r.push(`-schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...oa(A.extraArgs)), r;
+}, Qa = (A) => ["check", "-drift", "-failOnDrift=true", ...bi(A)], ca = async (A) => {
   mi("Checking for drift");
   try {
-    const r = Qa(A), t = await bi(r, A.workingDirectory);
+    const r = Qa(A), t = await Si(r, A.workingDirectory);
     t.stderr && An(t.stderr);
     const g = t.exitCode !== 0;
     return Ba(t.exitCode, g), g || xe("No drift detected. Proceeding with migration."), g;
@@ -13334,12 +13334,12 @@ const ra = () => {
 }, Ba = (A, r) => {
   we("exit-code", A.toString()), we("drift-detected", r.toString());
 }, Ea = (A) => {
-  const r = ["migrate", ...Si(A)];
+  const r = ["migrate", ...bi(A)];
   return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-saveSnapshot=true"), r;
 }, Ia = async (A) => {
   mi("Running migrations");
   try {
-    const r = Ea(A), t = await bi(r, A.workingDirectory);
+    const r = Ea(A), t = await Si(r, A.workingDirectory);
     t.stderr && An(t.stderr);
     const { migrationsApplied: g, schemaVersion: e } = ha(t.stdout);
     if (Ca({ exitCode: t.exitCode, migrationsApplied: g, schemaVersion: e }), t.exitCode !== 0)
