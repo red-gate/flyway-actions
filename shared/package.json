@@ -1,0 +1,27 @@
+{
+  "name": "@flyway-actions/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint src/ tests/",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "dependencies": {
+    "@actions/core": "3.0.0",
+    "@actions/exec": "3.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "25.2.3",
+    "@vitest/eslint-plugin": "1.6.7",
+    "eslint": "10.0.0",
+    "eslint-plugin-import": "2.32.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.55.0",
+    "vitest": "4.0.18"
+  }
+}
