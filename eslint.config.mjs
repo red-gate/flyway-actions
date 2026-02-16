@@ -6,7 +6,7 @@ import vitestPlugin from '@vitest/eslint-plugin';
 export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.recommended,
-  { ignores: ['dist/**', 'node_modules/**', '*.js', '!eslint.config.js'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', '**/*.js', '!eslint.config.mjs'] },
   {
     plugins: {
       import: importPlugin,
@@ -20,7 +20,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['tests/**/*.test.ts'],
+    files: ['**/tests/**/*.test.ts'],
     plugins: { vitest: vitestPlugin },
     rules: {
       'no-restricted-syntax': [
