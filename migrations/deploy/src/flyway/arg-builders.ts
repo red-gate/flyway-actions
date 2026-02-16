@@ -1,0 +1,38 @@
+import { parseExtraArgs } from "@flyway-actions/shared";
+import type { FlywayMigrationsDeploymentInputs } from "../types.js";
+
+const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  const args: string[] = [];
+
+  if (inputs.targetEnvironment) {
+    args.push(`-environment=${inputs.targetEnvironment}`);
+  }
+
+  if (inputs.targetUrl) {
+    args.push(`-url=${inputs.targetUrl}`);
+  }
+
+  if (inputs.targetUser) {
+    args.push(`-user=${inputs.targetUser}`);
+  }
+
+  if (inputs.targetPassword) {
+    args.push(`-password=${inputs.targetPassword}`);
+  }
+
+  if (inputs.targetSchemas) {
+    args.push(`-schemas=${inputs.targetSchemas}`);
+  }
+
+  if (inputs.workingDirectory) {
+    args.push(`-workingDirectory=${inputs.workingDirectory}`);
+  }
+
+  if (inputs.extraArgs) {
+    args.push(...parseExtraArgs(inputs.extraArgs));
+  }
+
+  return args;
+};
+
+export { buildCommonArgs };

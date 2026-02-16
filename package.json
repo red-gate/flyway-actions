@@ -4,6 +4,7 @@
   "license": "MIT",
   "workspaces": [
     "list",
+    "shared",
     "migrations/**"
   ],
   "scripts": {

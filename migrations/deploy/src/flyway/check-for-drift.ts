@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
-import { buildCommonArgs, runFlyway } from "./flyway-runner.js";
+import { runFlyway } from "@flyway-actions/shared";
+import { buildCommonArgs } from "./arg-builders.js";
 
 const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   return ["check", "-drift", "-failOnDrift=true", ...buildCommonArgs(inputs)];

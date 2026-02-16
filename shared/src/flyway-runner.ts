@@ -1,41 +1,7 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import type { FlywayEdition, FlywayDetails, FlywayMigrationsDeploymentInputs, FlywayRunResult } from "../types.js";
-import { createStdoutListener, createStdoutStderrListeners } from "../utils.js";
-
-const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = [];
-
-  if (inputs.targetEnvironment) {
-    args.push(`-environment=${inputs.targetEnvironment}`);
-  }
-
-  if (inputs.targetUrl) {
-    args.push(`-url=${inputs.targetUrl}`);
-  }
-
-  if (inputs.targetUser) {
-    args.push(`-user=${inputs.targetUser}`);
-  }
-
-  if (inputs.targetPassword) {
-    args.push(`-password=${inputs.targetPassword}`);
-  }
-
-  if (inputs.targetSchemas) {
-    args.push(`-schemas=${inputs.targetSchemas}`);
-  }
-
-  if (inputs.workingDirectory) {
-    args.push(`-workingDirectory=${inputs.workingDirectory}`);
-  }
-
-  if (inputs.extraArgs) {
-    args.push(...parseExtraArgs(inputs.extraArgs));
-  }
-
-  return args;
-};
+import type { FlywayEdition, FlywayDetails, FlywayRunResult } from "./types.js";
+import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
 
 const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];
@@ -123,4 +89,4 @@ const maskArgsForLog = (args: string[]): string[] => {
   });
 };
 
-export { buildCommonArgs, parseExtraArgs, getFlywayDetails, runFlyway, maskArgsForLog };
+export { parseExtraArgs, getFlywayDetails, runFlyway, maskArgsForLog };

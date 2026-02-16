@@ -1,20 +1,18 @@
 import type { ExecOptions } from "@actions/exec";
 
 const info = vi.fn();
-const setOutput = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
-  setOutput,
+  setOutput: vi.fn(),
 }));
 
 vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } =
-  await import("../../src/flyway/flyway-runner.js");
+const { parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } = await import("../src/flyway-runner.js");
 
 describe("parseExtraArgs", () => {
   it("should parse simple space-separated args", () => {
@@ -116,6 +114,11 @@ describe("maskArgsForLog", () => {
   it("should mask args containing token", () => {
     const masked = maskArgsForLog(["-licenseKeyToken=abc123"]);
     expect(masked).toEqual(["-licenseKeyToken=***"]);
+  });
+
+  it("should mask build env password args", () => {
+    const masked = maskArgsForLog(["-environments.build.password=secret"]);
+    expect(masked).toEqual(["-environments.build.password=***"]);
   });
 });
 
