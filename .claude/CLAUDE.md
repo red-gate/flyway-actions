@@ -8,8 +8,6 @@ This repository is for GitHub Actions that integrate Flyway (a database migratio
 
 ## Expected Structure
 
-This is a mono repo for many GitHub Actions related to Redgate products. Each action will have its own directory under the product name it supports e.g. `flyway/`.
-
 When implemented, this will likely be a GitHub Action with:
 - `action.yml` in the root directory (standard GitHub Actions metadata)
 - Source code in `src/` or `dist/`
