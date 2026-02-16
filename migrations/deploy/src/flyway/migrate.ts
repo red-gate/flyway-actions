@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs } from "../types.js";
-import { buildCommonArgs, runFlyway } from "./flyway-runner.js";
+import { runFlyway } from "@flyway-actions/shared";
+import { buildCommonArgs } from "./arg-builders.js";
 
 const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = ["migrate", ...buildCommonArgs(inputs)];

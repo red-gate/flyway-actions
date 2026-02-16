@@ -1,6 +1,4 @@
-type FlywayEdition = "community" | "teams" | "enterprise";
-
-type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition };
+import type { FlywayEdition, FlywayDetails, FlywayRunResult } from "@flyway-actions/shared";
 
 type FlywayMigrationsDeploymentInputs = {
   targetEnvironment?: string;
@@ -22,16 +20,10 @@ type FlywayMigrationsDeploymentOutputs = {
   schemaVersion: string;
 };
 
-type FlywayRunResult = {
-  exitCode: number;
-  stdout: string;
-  stderr: string;
-};
-
 export type {
   FlywayEdition,
   FlywayDetails,
+  FlywayRunResult,
   FlywayMigrationsDeploymentInputs,
   FlywayMigrationsDeploymentOutputs,
-  FlywayRunResult,
 };
