@@ -5,8 +5,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
     uses: ./.github/workflows/zz-build-and-test.yml
+    secrets: inherit
+
+  integration-test:
+    uses: ./.github/workflows/zz-integration-test.yml
     secrets: inherit
