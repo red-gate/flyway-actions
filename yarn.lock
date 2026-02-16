@@ -357,15 +357,8 @@ __metadata:
   resolution: "@flyway-actions/list@workspace:list"
   dependencies:
     "@actions/core": "npm:3.0.0"
-    "@eslint/js": "npm:10.0.1"
     "@types/node": "npm:25.2.3"
     "@vitest/coverage-v8": "npm:4.0.18"
-    "@vitest/eslint-plugin": "npm:1.6.7"
-    eslint: "npm:10.0.0"
-    eslint-plugin-import: "npm:2.32.0"
-    prettier: "npm:3.8.1"
-    typescript: "npm:5.9.3"
-    typescript-eslint: "npm:8.55.0"
     vite: "npm:7.3.1"
     vite-plugin-checker: "npm:0.12.0"
     vitest: "npm:4.0.18"
@@ -380,16 +373,9 @@ __metadata:
     "@actions/exec": "npm:3.0.0"
     "@actions/http-client": "npm:4.0.0"
     "@actions/io": "npm:3.0.2"
-    "@eslint/js": "npm:10.0.1"
     "@flyway-actions/shared": "workspace:*"
     "@types/node": "npm:25.2.3"
     "@vitest/coverage-v8": "npm:4.0.18"
-    "@vitest/eslint-plugin": "npm:1.6.7"
-    eslint: "npm:10.0.0"
-    eslint-plugin-import: "npm:2.32.0"
-    prettier: "npm:3.8.1"
-    typescript: "npm:5.9.3"
-    typescript-eslint: "npm:8.55.0"
     vite: "npm:7.3.1"
     vite-plugin-checker: "npm:0.12.0"
     vitest: "npm:4.0.18"
@@ -402,14 +388,7 @@ __metadata:
   dependencies:
     "@actions/core": "npm:3.0.0"
     "@actions/exec": "npm:3.0.0"
-    "@eslint/js": "npm:10.0.1"
     "@types/node": "npm:25.2.3"
-    "@vitest/eslint-plugin": "npm:1.6.7"
-    eslint: "npm:10.0.0"
-    eslint-plugin-import: "npm:2.32.0"
-    prettier: "npm:3.8.1"
-    typescript: "npm:5.9.3"
-    typescript-eslint: "npm:8.55.0"
     vitest: "npm:4.0.18"
   languageName: unknown
   linkType: soft
@@ -1915,12 +1894,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "flyway-actions@workspace:."
   dependencies:
-    "@typescript-eslint/eslint-plugin": "npm:8.55.0"
-    "@typescript-eslint/parser": "npm:8.55.0"
+    "@eslint/js": "npm:10.0.1"
+    "@vitest/eslint-plugin": "npm:1.6.7"
     eslint: "npm:10.0.0"
     eslint-plugin-import: "npm:2.32.0"
     prettier: "npm:3.8.1"
     typescript: "npm:5.9.3"
+    typescript-eslint: "npm:8.55.0"
   languageName: unknown
   linkType: soft
 
