@@ -13239,22 +13239,6 @@ function Ni() {
   ii("endgroup");
 }
 const ra = () => {
-  const A = ie("target-environment") || void 0, r = ie("target-url") || void 0, t = ie("target-user") || void 0, g = ie("target-password") || void 0, e = ie("target-schemas") || void 0, n = ie("target-migration-version") || void 0, a = ie("cherry-pick") || void 0, Q = ta("skip-drift-check"), l = ie("working-directory"), B = l ? ge.resolve(l) : void 0, s = ie("extra-args") || void 0;
-  return {
-    targetEnvironment: A,
-    targetUrl: r,
-    targetUser: t,
-    targetPassword: g,
-    targetSchemas: e,
-    targetMigrationVersion: n,
-    cherryPick: a,
-    skipDriftCheck: Q,
-    workingDirectory: B,
-    extraArgs: s
-  };
-}, na = (A) => {
-  A.targetPassword && ea(A.targetPassword);
-}, sa = () => {
   let A = "";
   return {
     listener: (r) => {
@@ -13262,7 +13246,7 @@ const ra = () => {
     },
     getOutput: () => A
   };
-}, ia = () => {
+}, na = () => {
   let A = "", r = "";
   return {
     listeners: {
@@ -13275,7 +13259,7 @@ const ra = () => {
     },
     getOutput: () => ({ stdout: A, stderr: r })
   };
-}, oa = (A) => {
+}, sa = (A) => {
   const r = [];
   let t = "", g = !1, e = "";
   for (let n = 0; n < A.length; n++) {
@@ -13283,9 +13267,9 @@ const ra = () => {
     (a === '"' || a === "'") && !g ? (g = !0, e = a) : a === e && g ? (g = !1, e = "") : a === " " && !g ? (t.trim() && r.push(t.trim()), t = "") : t += a;
   }
   return t.trim() && r.push(t.trim()), r;
-}, aa = async () => {
+}, ia = async () => {
   try {
-    const { listener: A, getOutput: r } = sa();
+    const { listener: A, getOutput: r } = ra();
     await Fi("flyway", ["--version"], {
       silent: !0,
       listeners: { stdout: A }
@@ -13299,8 +13283,8 @@ const ra = () => {
     return { installed: !1 };
   }
 }, Si = async (A, r) => {
-  const { listeners: t, getOutput: g } = ia();
-  xe(`Running: flyway ${ga(A).join(" ")}`);
+  const { listeners: t, getOutput: g } = na();
+  xe(`Running: flyway ${oa(A).join(" ")}`);
   const e = {
     ignoreReturnCode: !0,
     listeners: t
@@ -13308,48 +13292,53 @@ const ra = () => {
   r && (e.cwd = r);
   const n = await Fi("flyway", A, e), { stdout: a, stderr: Q } = g();
   return { exitCode: n, stdout: a, stderr: Q };
-}, ga = (A) => {
+}, oa = (A) => {
   const r = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
   return A.map((t) => {
     for (const g of r)
       if (g.test(t)) {
         const e = t.indexOf("=");
-        return t.substring(0, e + 1) + "***";
+        return `${t.substring(0, e + 1)}***`;
       }
     return t;
   });
 }, bi = (A) => {
   const r = [];
-  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.targetSchemas && r.push(`-schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...oa(A.extraArgs)), r;
-}, Qa = (A) => ["check", "-drift", "-failOnDrift=true", ...bi(A)], ca = async (A) => {
+  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.targetSchemas && r.push(`-schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...sa(A.extraArgs)), r;
+}, aa = (A) => [
+  "check",
+  "-drift",
+  "-failOnDrift=true",
+  ...bi(A)
+], ga = async (A) => {
   mi("Checking for drift");
   try {
-    const r = Qa(A), t = await Si(r, A.workingDirectory);
+    const r = aa(A), t = await Si(r, A.workingDirectory);
     t.stderr && An(t.stderr);
     const g = t.exitCode !== 0;
-    return Ba(t.exitCode, g), g || xe("No drift detected. Proceeding with migration."), g;
+    return Qa(t.exitCode, g), g || xe("No drift detected. Proceeding with migration."), g;
   } finally {
     Ni();
   }
-}, Ba = (A, r) => {
+}, Qa = (A, r) => {
   we("exit-code", A.toString()), we("drift-detected", r.toString());
-}, Ea = (A) => {
+}, ca = (A) => {
   const r = ["migrate", ...bi(A)];
   return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-saveSnapshot=true"), r;
-}, Ia = async (A) => {
+}, Ba = async (A) => {
   mi("Running migrations");
   try {
-    const r = Ea(A), t = await Si(r, A.workingDirectory);
+    const r = ca(A), t = await Si(r, A.workingDirectory);
     t.stderr && An(t.stderr);
-    const { migrationsApplied: g, schemaVersion: e } = ha(t.stdout);
-    if (Ca({ exitCode: t.exitCode, migrationsApplied: g, schemaVersion: e }), t.exitCode !== 0)
+    const { migrationsApplied: g, schemaVersion: e } = Ca(t.stdout);
+    if (Ea({ exitCode: t.exitCode, migrationsApplied: g, schemaVersion: e }), t.exitCode !== 0)
       throw new Error(`Flyway migrate failed with exit code ${t.exitCode}`);
   } finally {
     Ni();
   }
-}, Ca = (A) => {
+}, Ea = (A) => {
   we("exit-code", A.exitCode.toString()), we("migrations-applied", A.migrationsApplied.toString()), we("schema-version", A.schemaVersion);
-}, la = (A) => {
+}, Ia = (A) => {
   const r = A.match(/now\s+at\s+version\s+v?(\d+(?:\.\d+)*)/i);
   if (r)
     return r[1];
@@ -13357,8 +13346,8 @@ const ra = () => {
     /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*v?(\d+(?:\.\d+)*)/i
   );
   return t ? t[1] : "unknown";
-}, ha = (A) => {
-  let r = 0, t = la(A);
+}, Ca = (A) => {
+  let r = 0, t = Ia(A);
   const g = A.match(/Successfully\s+applied\s+(\d+)\s+migration/i);
   g && (r = parseInt(g[1], 10));
   try {
@@ -13370,31 +13359,47 @@ const ra = () => {
   } catch {
   }
   return { migrationsApplied: r, schemaVersion: t };
+}, la = () => {
+  const A = ie("target-environment") || void 0, r = ie("target-url") || void 0, t = ie("target-user") || void 0, g = ie("target-password") || void 0, e = ie("target-schemas") || void 0, n = ie("target-migration-version") || void 0, a = ie("cherry-pick") || void 0, Q = ta("skip-drift-check"), l = ie("working-directory"), B = l ? ge.resolve(l) : void 0, s = ie("extra-args") || void 0;
+  return {
+    targetEnvironment: A,
+    targetUrl: r,
+    targetUser: t,
+    targetPassword: g,
+    targetSchemas: e,
+    targetMigrationVersion: n,
+    cherryPick: a,
+    skipDriftCheck: Q,
+    workingDirectory: B,
+    extraArgs: s
+  };
+}, ha = (A) => {
+  A.targetPassword && ea(A.targetPassword);
 }, ua = async () => {
   try {
-    const A = await aa();
+    const A = await ia();
     if (!A.installed) {
-      de("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway before this action.");
+      de("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
-    const r = ra();
+    const r = la();
     if (!r.targetEnvironment && !r.targetUrl) {
       de(
         'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.'
       );
       return;
     }
-    if (na(r), A.edition === "enterprise") {
+    if (ha(r), A.edition === "enterprise") {
       if (r.skipDriftCheck)
         xe("Skipping drift check.");
-      else if (await ca(r)) {
+      else if (await ga(r)) {
         de("Drift detected. Aborting deployment.");
         return;
       }
       r.saveSnapshot = !0;
     } else
       xe(`Skipping drift check as edition is not Enterprise (actual edition: ${A.edition}).`);
-    await Ia(r);
+    await Ba(r);
   } catch (A) {
     A instanceof Error ? de(A.message) : de("An unexpected error occurred");
   }
