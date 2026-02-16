@@ -107,7 +107,7 @@ This action supports all databases supported by Flyway:
 - DB2
 - Snowflake
 - BigQuery
-- And many more
+- [And more](https://documentation.red-gate.com/flyway/getting-started-with-flyway/system-requirements/supported-databases-and-versions)
 
 ## License
 
