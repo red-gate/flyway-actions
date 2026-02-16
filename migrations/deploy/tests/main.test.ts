@@ -52,14 +52,14 @@ describe("run", () => {
   }: SetupFlywayMockOptions) => {
     let callCount = 0;
     const hasDriftCheck = driftExitCode !== undefined && edition.toLowerCase() === "enterprise";
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       if (callCount === 1) {
         options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
-        return 0;
+        return Promise.resolve(0);
       }
       if (hasDriftCheck && callCount === 2) {
-        return driftExitCode;
+        return Promise.resolve(driftExitCode);
       }
       if (migrateOutput) {
         options?.listeners?.stdout?.(Buffer.from(migrateOutput));
@@ -67,7 +67,7 @@ describe("run", () => {
       if (migrateStderr) {
         options?.listeners?.stderr?.(Buffer.from(migrateStderr));
       }
-      return migrateExitCode;
+      return Promise.resolve(migrateExitCode);
     });
   };
 
@@ -100,7 +100,9 @@ describe("run", () => {
       migrateOutput: "Successfully applied 1 migrations\n",
     });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 
@@ -117,7 +119,9 @@ describe("run", () => {
       migrateOutput: "Successfully applied 1 migrations\n",
     });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 
@@ -130,7 +134,9 @@ describe("run", () => {
   it("should fail when flyway returns non-zero exit code", async () => {
     setupFlywayMock({ edition: "Community", migrateExitCode: 1 });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 
@@ -148,7 +154,9 @@ describe("run", () => {
       migrateStderr: "some warning",
     });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 
@@ -165,7 +173,9 @@ describe("run", () => {
       migrateOutput: "Successfully applied 3 migrations\nSchema now at version 3\n",
     });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 
@@ -180,7 +190,9 @@ describe("run", () => {
   it("should fail and not migrate when drift is detected for enterprise edition", async () => {
     setupFlywayMock({ edition: "Enterprise", driftExitCode: 1, migrateExitCode: 0 });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 
@@ -199,7 +211,9 @@ describe("run", () => {
       migrateOutput: "Successfully applied 1 migrations\n",
     });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
     getBooleanInput.mockReturnValue(true);
@@ -220,7 +234,9 @@ describe("run", () => {
       migrateOutput: "Successfully applied 1 migrations\n",
     });
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:sqlite:test.db";
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
       return "";
     });
 

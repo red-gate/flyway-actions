@@ -1,6 +1,6 @@
+import type { FlywayDetails, FlywayEdition, FlywayRunResult } from "./types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import type { FlywayEdition, FlywayDetails, FlywayRunResult } from "./types.js";
 import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
 
 const parseExtraArgs = (extraArgs: string): string[] => {
@@ -82,11 +82,11 @@ const maskArgsForLog = (args: string[]): string[] => {
     for (const pattern of sensitivePatterns) {
       if (pattern.test(arg)) {
         const eqIndex = arg.indexOf("=");
-        return arg.substring(0, eqIndex + 1) + "***";
+        return `${arg.substring(0, eqIndex + 1)}***`;
       }
     }
     return arg;
   });
 };
 
-export { parseExtraArgs, getFlywayDetails, runFlyway, maskArgsForLog };
+export { getFlywayDetails, maskArgsForLog, parseExtraArgs, runFlyway };

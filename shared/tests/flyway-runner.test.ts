@@ -17,41 +17,49 @@ const { parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } = await im
 describe("parseExtraArgs", () => {
   it("should parse simple space-separated args", () => {
     const result = parseExtraArgs("-X -Y -Z");
+
     expect(result).toEqual(["-X", "-Y", "-Z"]);
   });
 
   it("should handle quoted strings with spaces", () => {
     const result = parseExtraArgs('-message="Hello World" -flag');
+
     expect(result).toEqual(["-message=Hello World", "-flag"]);
   });
 
   it("should handle single-quoted strings", () => {
     const result = parseExtraArgs("-message='Hello World' -flag");
+
     expect(result).toEqual(["-message=Hello World", "-flag"]);
   });
 
   it("should handle empty string", () => {
     const result = parseExtraArgs("");
+
     expect(result).toEqual([]);
   });
 
   it("should handle multiple spaces", () => {
     const result = parseExtraArgs("-X    -Y     -Z");
+
     expect(result).toEqual(["-X", "-Y", "-Z"]);
   });
 
   it("should handle args with equals signs", () => {
     const result = parseExtraArgs("-key=value -another=test");
+
     expect(result).toEqual(["-key=value", "-another=test"]);
   });
 
   it("should handle unclosed quotes", () => {
     const result = parseExtraArgs('-message="hello world');
+
     expect(result).toEqual(["-message=hello world"]);
   });
 
   it("should handle mixed quote types", () => {
     const result = parseExtraArgs(`-a="double" -b='single'`);
+
     expect(result).toEqual(["-a=double", "-b=single"]);
   });
 });
@@ -86,6 +94,7 @@ describe("maskArgsForLog", () => {
 
   it("should mask case-insensitively", () => {
     const masked = maskArgsForLog(["-Password=secret", "-USER=admin", "-URL=jdbc:test"]);
+
     expect(masked).toEqual(["-Password=***", "-USER=***", "-URL=***"]);
   });
 
@@ -108,16 +117,19 @@ describe("maskArgsForLog", () => {
 
   it("should mask args containing password", () => {
     const masked = maskArgsForLog(["-jdbcPassword=secret"]);
+
     expect(masked).toEqual(["-jdbcPassword=***"]);
   });
 
   it("should mask args containing token", () => {
     const masked = maskArgsForLog(["-licenseKeyToken=abc123"]);
+
     expect(masked).toEqual(["-licenseKeyToken=***"]);
   });
 
   it("should mask build env password args", () => {
     const masked = maskArgsForLog(["-environments.build.password=secret"]);
+
     expect(masked).toEqual(["-environments.build.password=***"]);
   });
 });
@@ -132,10 +144,10 @@ describe("runFlyway", () => {
   });
 
   it("should return exit code, stdout, and stderr", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("success output"));
       options?.listeners?.stderr?.(Buffer.from("warning output"));
-      return 0;
+      return Promise.resolve(0);
     });
 
     const result = await runFlyway(["migrate"]);
@@ -193,9 +205,9 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Community edition", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("Flyway Community Edition 10.0.0 by Redgate\n"));
-      return 0;
+      return Promise.resolve(0);
     });
 
     const result = await getFlywayDetails();
@@ -204,9 +216,9 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Teams edition", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("Flyway Teams Edition 10.5.0 by Redgate\n"));
-      return 0;
+      return Promise.resolve(0);
     });
 
     const result = await getFlywayDetails();
@@ -215,9 +227,9 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Enterprise edition", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("Flyway Enterprise Edition 11.0.0 by Redgate\n"));
-      return 0;
+      return Promise.resolve(0);
     });
 
     const result = await getFlywayDetails();
@@ -226,9 +238,9 @@ describe("getFlywayDetails", () => {
   });
 
   it("should default to community for unparseable output", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("Something unexpected\n"));
-      return 0;
+      return Promise.resolve(0);
     });
 
     const result = await getFlywayDetails();

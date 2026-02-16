@@ -1,5 +1,5 @@
-import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs } from "../types.js";
+import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { buildCommonArgs } from "./arg-builders.js";
 

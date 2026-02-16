@@ -1,6 +1,6 @@
-import * as core from "@actions/core";
 import { existsSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
+import * as core from "@actions/core";
 
 const EXCLUDED_DIRS = new Set(["node_modules", ".git", ".github", "dist"]);
 
@@ -25,7 +25,7 @@ export const findActions = (rootDir: string): string[] => {
   return actions.sort();
 };
 
-const run = async (): Promise<void> => {
+const run = (): void => {
   try {
     const actions = findActions(join(import.meta.dirname, "..", ".."));
     for (const action of actions) {
@@ -41,4 +41,4 @@ const run = async (): Promise<void> => {
   }
 };
 
-await run();
+run();

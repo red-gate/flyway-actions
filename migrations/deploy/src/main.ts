@@ -1,14 +1,14 @@
 import * as core from "@actions/core";
-import { getInputs, maskSecrets } from "./inputs.js";
 import { getFlywayDetails } from "@flyway-actions/shared";
 import { checkForDrift } from "./flyway/check-for-drift.js";
 import { migrate } from "./flyway/migrate.js";
+import { getInputs, maskSecrets } from "./inputs.js";
 
 const run = async (): Promise<void> => {
   try {
     const flyway = await getFlywayDetails();
     if (!flyway.installed) {
-      core.setFailed("Flyway is not installed or not in PATH. Please run red-gate/setup-flyway before this action.");
+      core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
     const inputs = getInputs();

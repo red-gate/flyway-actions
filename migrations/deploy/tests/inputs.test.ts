@@ -1,5 +1,5 @@
-import * as path from "path";
 import type { FlywayMigrationsDeploymentInputs } from "../src/types.js";
+import * as path from "path";
 
 const getInput = vi.fn();
 const getBooleanInput = vi.fn();
@@ -20,16 +20,20 @@ describe("getInputs", () => {
 
   it("should return target-url when provided", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "target-url") return "jdbc:postgresql://localhost/db";
+      if (name === "target-url") {
+        return "jdbc:postgresql://localhost/db";
+      }
       return "";
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetUrl).toBe("jdbc:postgresql://localhost/db");
   });
 
   it("should return undefined for target-url when not provided", () => {
     const inputs = getInputs();
+
     expect(inputs.targetUrl).toBeUndefined();
   });
 
@@ -44,6 +48,7 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetUrl).toBe("jdbc:postgresql://localhost/db");
     expect(inputs.targetUser).toBe("admin");
     expect(inputs.targetPassword).toBe("secret");
@@ -51,21 +56,27 @@ describe("getInputs", () => {
 
   it("should get target-environment input", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "target-environment") return "production";
+      if (name === "target-environment") {
+        return "production";
+      }
       return "";
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetEnvironment).toBe("production");
   });
 
   it("should get target-schemas input", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "target-schemas") return "public,audit";
+      if (name === "target-schemas") {
+        return "public,audit";
+      }
       return "";
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetSchemas).toBe("public,audit");
   });
 
@@ -79,6 +90,7 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetMigrationVersion).toBe("5.0");
     expect(inputs.cherryPick).toBe("3.0,4.0");
   });
@@ -87,6 +99,7 @@ describe("getInputs", () => {
     getBooleanInput.mockReturnValue(true);
 
     const inputs = getInputs();
+
     expect(inputs.skipDriftCheck).toBe(true);
   });
 
@@ -100,12 +113,14 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.workingDirectory).toBe(path.resolve("/app/db"));
     expect(inputs.extraArgs).toBe("-X -someFlag=value");
   });
 
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
+
     expect(inputs.targetUrl).toBeUndefined();
     expect(inputs.targetUser).toBeUndefined();
     expect(inputs.targetPassword).toBeUndefined();
