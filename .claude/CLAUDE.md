@@ -1,14 +1,12 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
-This repository is for GitHub Actions that integrate Flyway (a database migration tool) with GitHub workflows. It is a Redgate project.
+This repository is for GitHub Actions that integrate Flyway (a database migration tool) with GitHub workflows. It is a Redgate product.
 
-## Expected Structure
+## Structure
 
-When implemented, this will likely be a GitHub Action with:
+This is a GitHub Action with:
 - `action.yml` in the root directory (standard GitHub Actions metadata)
 - Source code in `src/` or `dist/`
 - `package.json` for dependencies and scripts
