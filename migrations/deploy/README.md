@@ -9,8 +9,10 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
 ```yaml
 - uses: red-gate/setup-flyway@v3
   with:
-    edition: community
+    edition: enterprise
     i-agree-to-the-eula: true
+    email: ${{ secrets.REDGATE_EMAIL }}
+    token: ${{ secrets.REDGATE_TOKEN }}
 - uses: red-gate/flyway-actions/migrations/deploy@v1
   with:
     target-environment: production
@@ -25,8 +27,10 @@ steps:
   - uses: actions/checkout@v4
   - uses: red-gate/setup-flyway@v3
     with:
-      edition: community
+      edition: enterprise
       i-agree-to-the-eula: true
+      email: ${{ secrets.REDGATE_EMAIL }}
+      token: ${{ secrets.REDGATE_TOKEN }}
   - uses: red-gate/flyway-actions/migrations/deploy@v1
     with:
       target-environment: qa
