@@ -13401,7 +13401,7 @@ const ra = () => {
       xe(`Skipping drift check as edition is not Enterprise (actual edition: ${A.edition}).`);
     await Ba(r);
   } catch (A) {
-    A instanceof Error ? de(A.message) : de("An unexpected error occurred");
+    A instanceof Error ? de(A.message) : de(String(A));
   }
 };
 await ua();

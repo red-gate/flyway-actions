@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-exports */
 import { defineConfig } from "vitest/config";
 
 // noinspection JSUnusedGlobalSymbols
