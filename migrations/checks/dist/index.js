@@ -3,7 +3,7 @@ import _s from "os";
 import "crypto";
 import * as js from "fs";
 import { promises as Fi } from "fs";
-import * as oe from "path";
+import * as ae from "path";
 import mi from "http";
 import Ni from "https";
 import "net";
@@ -9302,8 +9302,8 @@ function Ke() {
           }
           const zA = eA.slice(ne, SA, YA), Ae = rA(zA);
           K.body = Ae[0];
-          const OA = Y(`${zA.size}`), ae = lA(ne, SA, QA);
-          K.status = 206, K.statusText = "Partial Content", K.headersList.set("content-length", OA, !0), K.headersList.set("content-type", YA, !0), K.headersList.set("content-range", ae, !0);
+          const OA = Y(`${zA.size}`), Qe = lA(ne, SA, QA);
+          K.status = 206, K.statusText = "Partial Content", K.headersList.set("content-length", OA, !0), K.headersList.set("content-type", YA, !0), K.headersList.set("content-range", Qe, !0);
         } else {
           const MA = rA(eA);
           K.statusText = "OK", K.body = MA[0], K.headersList.set("content-length", NA, !0), K.headersList.set("content-type", YA, !0);
@@ -9484,9 +9484,9 @@ function Ke() {
       })();
     }
     try {
-      const { body: SA, status: zA, statusText: Ae, headersList: OA, socket: ae } = await ne({ body: QA });
-      if (ae)
-        eA = c({ status: zA, statusText: Ae, headersList: OA, socket: ae });
+      const { body: SA, status: zA, statusText: Ae, headersList: OA, socket: Qe } = await ne({ body: QA });
+      if (Qe)
+        eA = c({ status: zA, statusText: Ae, headersList: OA, socket: Qe });
       else {
         const ZA = SA[Symbol.asyncIterator]();
         F.controller.next = () => ZA.next(), eA = c({ status: zA, statusText: Ae, headersList: OA });
@@ -9516,10 +9516,10 @@ function Ke() {
       for (; ; ) {
         let SA, zA;
         try {
-          const { done: OA, value: ae } = await F.controller.next();
+          const { done: OA, value: Qe } = await F.controller.next();
           if (y(F))
             break;
-          SA = OA ? void 0 : ae;
+          SA = OA ? void 0 : Qe;
         } catch (OA) {
           F.controller.ended && !K.encodedBodySize ? SA = void 0 : (SA = OA, zA = !0);
         }
@@ -9550,7 +9550,7 @@ function Ke() {
     return eA;
     function ne({ body: SA }) {
       const zA = p(W), Ae = F.controller.dispatcher;
-      return new Promise((OA, ae) => Ae.dispatch(
+      return new Promise((OA, Qe) => Ae.dispatch(
         {
           path: zA.pathname + zA.search,
           origin: zA.origin,
@@ -9582,7 +9582,7 @@ function Ke() {
             if (W.method !== "HEAD" && W.method !== "CONNECT" && !O.includes(ZA) && !ki) {
               const se = Me.get("content-encoding", !0), Le = se ? se.toLowerCase().split(",") : [], _r = 5;
               if (Le.length > _r)
-                return ae(new Error(`too many content-encodings in response: ${Le.length}, maximum allowed is ${_r}`)), !0;
+                return Qe(new Error(`too many content-encodings in response: ${Le.length}, maximum allowed is ${_r}`)), !0;
               for (let je = Le.length - 1; je >= 0; --je) {
                 const Te = Le[je].trim();
                 if (Te === "x-gzip" || Te === "gzip")
@@ -9630,7 +9630,7 @@ function Ke() {
             this.abort && F.controller.off("terminated", this.abort), F.controller.onAborted && F.controller.off("terminated", F.controller.onAborted), F.controller.ended = !0, this.body.push(null);
           },
           onError(ZA) {
-            this.abort && F.controller.off("terminated", this.abort), this.body?.destroy(ZA), F.controller.terminate(ZA), ae(ZA);
+            this.abort && F.controller.off("terminated", this.abort), this.body?.destroy(ZA), F.controller.terminate(ZA), Qe(ZA);
           },
           onUpgrade(ZA, _A, _e) {
             if (ZA !== 101)
@@ -12696,10 +12696,10 @@ function Jo() {
   return DA.EventSource = aA, DA;
 }
 Jo();
-var ie;
+var oe;
 (function(A) {
   A[A.OK = 200] = "OK", A[A.MultipleChoices = 300] = "MultipleChoices", A[A.MovedPermanently = 301] = "MovedPermanently", A[A.ResourceMoved = 302] = "ResourceMoved", A[A.SeeOther = 303] = "SeeOther", A[A.NotModified = 304] = "NotModified", A[A.UseProxy = 305] = "UseProxy", A[A.SwitchProxy = 306] = "SwitchProxy", A[A.TemporaryRedirect = 307] = "TemporaryRedirect", A[A.PermanentRedirect = 308] = "PermanentRedirect", A[A.BadRequest = 400] = "BadRequest", A[A.Unauthorized = 401] = "Unauthorized", A[A.PaymentRequired = 402] = "PaymentRequired", A[A.Forbidden = 403] = "Forbidden", A[A.NotFound = 404] = "NotFound", A[A.MethodNotAllowed = 405] = "MethodNotAllowed", A[A.NotAcceptable = 406] = "NotAcceptable", A[A.ProxyAuthenticationRequired = 407] = "ProxyAuthenticationRequired", A[A.RequestTimeout = 408] = "RequestTimeout", A[A.Conflict = 409] = "Conflict", A[A.Gone = 410] = "Gone", A[A.TooManyRequests = 429] = "TooManyRequests", A[A.InternalServerError = 500] = "InternalServerError", A[A.NotImplemented = 501] = "NotImplemented", A[A.BadGateway = 502] = "BadGateway", A[A.ServiceUnavailable = 503] = "ServiceUnavailable", A[A.GatewayTimeout = 504] = "GatewayTimeout";
-})(ie || (ie = {}));
+})(oe || (oe = {}));
 var Ps;
 (function(A) {
   A.Accept = "accept", A.ContentType = "content-type";
@@ -12708,9 +12708,9 @@ var Zs;
 (function(A) {
   A.ApplicationJson = "application/json";
 })(Zs || (Zs = {}));
-ie.MovedPermanently, ie.ResourceMoved, ie.SeeOther, ie.TemporaryRedirect, ie.PermanentRedirect;
-ie.BadGateway, ie.ServiceUnavailable, ie.GatewayTimeout;
-const { access: Oa, appendFile: Pa, writeFile: Za } = Fi;
+oe.MovedPermanently, oe.ResourceMoved, oe.SeeOther, oe.TemporaryRedirect, oe.PermanentRedirect;
+oe.BadGateway, oe.ServiceUnavailable, oe.GatewayTimeout;
+const { access: Pa, appendFile: Za, writeFile: Ka } = Fi;
 var di = function(A, s, t, c) {
   function e(n) {
     return n instanceof t ? n : new t(function(a) {
@@ -12738,7 +12738,7 @@ var di = function(A, s, t, c) {
     B((c = c.apply(A, s || [])).next());
   });
 };
-const { chmod: Ka, copyFile: za, lstat: Xa, mkdir: _a, open: ja, readdir: vo, rename: $a, rm: AQ, rmdir: eQ, stat: Gr, symlink: tQ, unlink: rQ } = js.promises, le = process.platform === "win32";
+const { chmod: za, copyFile: Xa, lstat: _a, mkdir: ja, open: $a, readdir: vo, rename: AQ, rm: eQ, rmdir: tQ, stat: Gr, symlink: rQ, unlink: nQ } = js.promises, le = process.platform === "win32";
 js.constants.O_RDONLY;
 function Ho(A) {
   return di(this, void 0, void 0, function* () {
@@ -12767,7 +12767,7 @@ function Ks(A, s) {
     }
     if (t && t.isFile()) {
       if (le) {
-        const e = oe.extname(A).toUpperCase();
+        const e = ae.extname(A).toUpperCase();
         if (s.some((n) => n.toUpperCase() === e))
           return A;
       } else if (zs(t))
@@ -12784,10 +12784,10 @@ function Ks(A, s) {
       if (t && t.isFile()) {
         if (le) {
           try {
-            const n = oe.dirname(A), a = oe.basename(A).toUpperCase();
+            const n = ae.dirname(A), a = ae.basename(A).toUpperCase();
             for (const Q of yield vo(n))
               if (a === Q.toUpperCase()) {
-                A = oe.join(n, Q);
+                A = ae.join(n, Q);
                 break;
               }
           } catch (n) {
@@ -12854,21 +12854,21 @@ function xo(A) {
       throw new Error("parameter 'tool' is required");
     const s = [];
     if (le && process.env.PATHEXT)
-      for (const e of process.env.PATHEXT.split(oe.delimiter))
+      for (const e of process.env.PATHEXT.split(ae.delimiter))
         e && s.push(e);
     if (wi(A)) {
       const e = yield Ks(A, s);
       return e ? [e] : [];
     }
-    if (A.includes(oe.sep))
+    if (A.includes(ae.sep))
       return [];
     const t = [];
     if (process.env.PATH)
-      for (const e of process.env.PATH.split(oe.delimiter))
+      for (const e of process.env.PATH.split(ae.delimiter))
         e && t.push(e);
     const c = [];
     for (const e of t) {
-      const n = yield Ks(oe.join(e, A), s);
+      const n = yield Ks(ae.join(e, A), s);
       n && c.push(n);
     }
     return c;
@@ -13049,7 +13049,7 @@ class Wo extends $s.EventEmitter {
    */
   exec() {
     return Xs(this, void 0, void 0, function* () {
-      return !wi(this.toolPath) && (this.toolPath.includes("/") || Je && this.toolPath.includes("\\")) && (this.toolPath = oe.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield Di(this.toolPath, !0), new Promise((s, t) => Xs(this, void 0, void 0, function* () {
+      return !wi(this.toolPath) && (this.toolPath.includes("/") || Je && this.toolPath.includes("\\")) && (this.toolPath = ae.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield Di(this.toolPath, !0), new Promise((s, t) => Xs(this, void 0, void 0, function* () {
         this._debug(`exec tool: ${this.toolPath}`), this._debug("arguments:");
         for (const B of this.args)
           this._debug(`   ${B}`);
@@ -13188,8 +13188,17 @@ var Jr;
 function Po(A) {
   Hr("add-mask", {}, A);
 }
-function Qe(A, s) {
+function ie(A, s) {
   return (process.env[`INPUT_${A.replace(/ /g, "_").toUpperCase()}`] || "").trim();
+}
+function Zo(A, s) {
+  const t = ["true", "True", "TRUE"], c = ["false", "False", "FALSE"], e = ie(A);
+  if (t.includes(e))
+    return !0;
+  if (c.includes(e))
+    return !1;
+  throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${A}
+Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 }
 function de(A) {
   process.exitCode = Jr.Failure, Ri(A);
@@ -13197,16 +13206,16 @@ function de(A) {
 function Ri(A, s = {}) {
   Hr("error", Wi(s), A instanceof Error ? A.toString() : A);
 }
-function Zo(A) {
+function Ko(A) {
   process.stdout.write(A + Ce.EOL);
 }
-function Ko(A) {
+function zo(A) {
   ri("group", A);
 }
-function zo() {
+function Xo() {
   ri("endgroup");
 }
-const Xo = () => {
+const _o = () => {
   let A = "";
   return {
     listener: (s) => {
@@ -13214,7 +13223,7 @@ const Xo = () => {
     },
     getOutput: () => A
   };
-}, _o = () => {
+}, jo = () => {
   let A = "", s = "";
   return {
     listeners: {
@@ -13227,7 +13236,7 @@ const Xo = () => {
     },
     getOutput: () => ({ stdout: A, stderr: s })
   };
-}, jo = (A) => {
+}, $o = (A) => {
   const s = [];
   let t = "", c = !1, e = "";
   for (let n = 0; n < A.length; n++) {
@@ -13235,9 +13244,9 @@ const Xo = () => {
     (a === '"' || a === "'") && !c ? (c = !0, e = a) : a === e && c ? (c = !1, e = "") : a === " " && !c ? (t.trim() && s.push(t.trim()), t = "") : t += a;
   }
   return t.trim() && s.push(t.trim()), s;
-}, $o = async () => {
+}, Aa = async () => {
   try {
-    const { listener: A, getOutput: s } = Xo();
+    const { listener: A, getOutput: s } = _o();
     await pi("flyway", ["--version"], {
       silent: !0,
       listeners: { stdout: A }
@@ -13250,9 +13259,9 @@ const Xo = () => {
   } catch {
     return { installed: !1 };
   }
-}, Aa = async (A, s) => {
-  const { listeners: t, getOutput: c } = _o();
-  Zo(`Running: flyway ${ea(A).join(" ")}`);
+}, ea = async (A, s) => {
+  const { listeners: t, getOutput: c } = jo();
+  Ko(`Running: flyway ${ta(A).join(" ")}`);
   const e = {
     ignoreReturnCode: !0,
     listeners: t
@@ -13260,7 +13269,7 @@ const Xo = () => {
   s && (e.cwd = s);
   const n = await pi("flyway", A, e), { stdout: a, stderr: Q } = c();
   return { exitCode: n, stdout: a, stderr: Q };
-}, ea = (A) => {
+}, ta = (A) => {
   const s = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
   return A.map((t) => {
     for (const c of s)
@@ -13270,25 +13279,25 @@ const Xo = () => {
       }
     return t;
   });
-}, ta = (A) => {
-  const s = [];
-  return A.targetEnvironment && s.push(`-environment=${A.targetEnvironment}`), A.targetUrl && s.push(`-url=${A.targetUrl}`), A.targetUser && s.push(`-user=${A.targetUser}`), A.targetPassword && s.push(`-password=${A.targetPassword}`), A.targetSchemas && s.push(`-schemas=${A.targetSchemas}`), s;
 }, ra = (A) => {
   const s = [];
-  return A.workingDirectory && s.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && s.push(...jo(A.extraArgs)), s;
+  return A.targetEnvironment && s.push(`-environment=${A.targetEnvironment}`), A.targetUrl && s.push(`-url=${A.targetUrl}`), A.targetUser && s.push(`-user=${A.targetUser}`), A.targetPassword && s.push(`-password=${A.targetPassword}`), A.targetSchemas && s.push(`-schemas=${A.targetSchemas}`), s;
 }, na = (A) => {
-  const s = ["check", "-dryrun"];
-  return s.push(...ta(A)), s.push(...ra(A)), A.targetMigrationVersion && s.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && s.push(`-cherryPick=${A.cherryPick}`), s;
-}, sa = async (A) => {
-  Ko("Running Flyway checks");
+  const s = [];
+  return A.workingDirectory && s.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && s.push(...$o(A.extraArgs)), s;
+}, sa = (A) => {
+  const s = ["check", "-dryrun", "-code"];
+  return A.failOnCodeReview && s.push("-failOnError=true"), s.push(...ra(A)), s.push(...na(A)), A.targetMigrationVersion && s.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && s.push(`-cherryPick=${A.cherryPick}`), s;
+}, ia = async (A) => {
+  zo("Running Flyway checks");
   try {
-    const s = na(A), t = await Aa(s, A.workingDirectory);
+    const s = sa(A), t = await ea(s, A.workingDirectory);
     return t.stderr && Ri(t.stderr), t.exitCode;
   } finally {
-    zo();
+    Xo();
   }
-}, ia = () => {
-  const A = Qe("target-environment") || void 0, s = Qe("target-url") || void 0, t = Qe("target-user") || void 0, c = Qe("target-password") || void 0, e = Qe("target-schemas") || void 0, n = Qe("target-migration-version") || void 0, a = Qe("cherry-pick") || void 0, Q = Qe("working-directory"), l = Q ? oe.resolve(Q) : void 0, B = Qe("extra-args") || void 0;
+}, oa = () => {
+  const A = ie("target-environment") || void 0, s = ie("target-url") || void 0, t = ie("target-user") || void 0, c = ie("target-password") || void 0, e = ie("target-schemas") || void 0, n = ie("target-migration-version") || void 0, a = ie("cherry-pick") || void 0, Q = Zo("fail-on-code-review"), l = ie("working-directory"), B = l ? ae.resolve(l) : void 0, r = ie("extra-args") || void 0;
   return {
     targetEnvironment: A,
     targetUrl: s,
@@ -13297,27 +13306,28 @@ const Xo = () => {
     targetSchemas: e,
     targetMigrationVersion: n,
     cherryPick: a,
-    workingDirectory: l,
-    extraArgs: B
+    failOnCodeReview: Q,
+    workingDirectory: B,
+    extraArgs: r
   };
-}, oa = (A) => {
+}, aa = (A) => {
   A.targetPassword && Po(A.targetPassword);
-}, aa = async () => {
+}, Qa = async () => {
   try {
-    if (!(await $o()).installed) {
+    if (!(await Aa()).installed) {
       de("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
-    const s = ia();
+    const s = oa();
     if (!s.targetEnvironment && !s.targetUrl) {
       de(
         'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.'
       );
       return;
     }
-    oa(s), await sa(s) !== 0 && de("Flyway checks failed");
+    aa(s), await ia(s) !== 0 && de("Flyway checks failed");
   } catch (A) {
     A instanceof Error ? de(A.message) : de(String(A));
   }
 };
-await aa();
+await Qa();
