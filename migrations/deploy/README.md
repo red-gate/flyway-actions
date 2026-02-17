@@ -34,7 +34,6 @@ steps:
   - uses: red-gate/flyway-actions/migrations/deploy@v1
     with:
       target-environment: qa
-      target-url: jdbc:postgresql://localhost:5432/mydb
       target-user: ${{ secrets.DB_USER }}
       target-password: ${{ secrets.DB_PASSWORD }}
       working-directory: sql/migrations
@@ -52,7 +51,6 @@ steps:
 - uses: red-gate/flyway-actions/migrations/deploy@v1
   with:
     target-environment: production
-    target-url: ${{ secrets.DB_URL }}
     target-user: ${{ secrets.DB_USER }}
     target-password: ${{ secrets.DB_PASSWORD }}
     cherry-pick: '2.0,2.1,3.0'
@@ -89,7 +87,6 @@ steps:
   id: migrate
   with:
     target-environment: production
-    target-url: ${{ secrets.DB_URL }}
 
 - run: echo "Applied ${{ steps.migrate.outputs.migrations-applied }} migrations"
 - run: echo "Schema is now at version ${{ steps.migrate.outputs.schema-version }}"
