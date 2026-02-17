@@ -22,17 +22,16 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    let generateReport = inputs.generateReport;
-    if (generateReport && !inputs.buildEnvironment && !inputs.buildUrl) {
-      core.info("No build environment provided. Skipping report generation.");
-      generateReport = false;
+    const hasBuildEnv = !!inputs.buildEnvironment || !!inputs.buildUrl;
+    if (inputs.generateReport && !hasBuildEnv) {
+      core.info("No build environment provided. Skipping change report.");
     }
 
     const flags = {
-      code: generateReport || inputs.failOnCodeReview,
-      drift: generateReport || inputs.failOnDrift,
-      changes: generateReport,
-      dryrun: generateReport,
+      code: inputs.generateReport || inputs.failOnCodeReview,
+      drift: inputs.generateReport || inputs.failOnDrift,
+      changes: inputs.generateReport && hasBuildEnv,
+      dryrun: inputs.generateReport,
     };
 
     if (!flags.code && !flags.drift && !flags.changes && !flags.dryrun) {

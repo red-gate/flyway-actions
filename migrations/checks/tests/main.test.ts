@@ -118,7 +118,7 @@ describe("run", () => {
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should override generateReport to false when no build env provided", async () => {
+  it("should only skip change report when no build env provided", async () => {
     setupChecksMock("Enterprise");
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
     setupBooleanInputMock({ "generate-report": true, "fail-on-drift": true, "fail-on-code-review": true });
@@ -134,7 +134,7 @@ describe("run", () => {
     expect(args).toContain("-code");
     expect(args).toContain("-drift");
     expect(args).not.toContain("-changes");
-    expect(args).not.toContain("-dryrun");
+    expect(args).toContain("-dryrun");
   });
 
   it("should only include code and drift flags when generate-report=false and fail flags true", async () => {
