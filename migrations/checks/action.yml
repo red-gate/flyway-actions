@@ -29,6 +29,10 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to include'
     required: false
+  fail-on-code-review:
+    description: 'Whether to fail the action when code review violations are found'
+    required: false
+    default: 'true'
   working-directory:
     description: 'Working directory for Flyway'
     required: false

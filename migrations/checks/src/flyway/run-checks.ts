@@ -4,7 +4,11 @@ import { runFlyway } from "@flyway-actions/shared";
 import { buildBaseArgs, buildTargetArgs } from "./arg-builders.js";
 
 const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
-  const args = ["check", "-dryrun"];
+  const args = ["check", "-dryrun", "-code"];
+
+  if (inputs.failOnCodeReview) {
+    args.push("-failOnError=true");
+  }
 
   args.push(...buildTargetArgs(inputs));
   args.push(...buildBaseArgs(inputs));

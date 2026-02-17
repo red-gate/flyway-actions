@@ -6,6 +6,7 @@ type FlywayMigrationsChecksInputs = {
   targetSchemas?: string;
   targetMigrationVersion?: string;
   cherryPick?: string;
+  failOnCodeReview?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
 };
