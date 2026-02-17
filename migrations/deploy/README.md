@@ -36,7 +36,7 @@ steps:
       target-environment: qa
       target-user: ${{ secrets.DB_USER }}
       target-password: ${{ secrets.DB_PASSWORD }}
-      working-directory: sql/migrations
+      working-directory: my-flyway-project
 ```
 
 ### With Cherry-Pick (Teams/Enterprise)
