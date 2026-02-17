@@ -37,7 +37,7 @@ inputs:
     description: 'Working directory for Flyway'
     required: false
   extra-args:
-    description: 'Additional arguments to pass to Flyway'
+    description: 'Additional Flyway CLI arguments (e.g. -sqlMigrationPrefix=M)'
     required: false
 
 outputs:
