@@ -1,4 +1,4 @@
-import type { FlywayEdition, FlywayDetails, FlywayRunResult } from "@flyway-actions/shared";
+import type { FlywayDetails, FlywayEdition, FlywayRunResult } from "@flyway-actions/shared";
 
 type FlywayMigrationsDeploymentInputs = {
   targetEnvironment?: string;
@@ -21,9 +21,9 @@ type FlywayMigrationsDeploymentOutputs = {
 };
 
 export type {
-  FlywayEdition,
   FlywayDetails,
-  FlywayRunResult,
+  FlywayEdition,
   FlywayMigrationsDeploymentInputs,
   FlywayMigrationsDeploymentOutputs,
+  FlywayRunResult,
 };

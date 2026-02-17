@@ -1,11 +1,14 @@
-import * as core from "@actions/core";
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
+import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { buildCommonArgs } from "./arg-builders.js";
 
-const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  return ["check", "-drift", "-failOnDrift=true", ...buildCommonArgs(inputs)];
-};
+const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [
+  "check",
+  "-drift",
+  "-failOnDrift=true",
+  ...buildCommonArgs(inputs),
+];
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
   core.startGroup("Checking for drift");

@@ -8,4 +8,4 @@ type FlywayRunResult = {
   stderr: string;
 };
 
-export type { FlywayEdition, FlywayDetails, FlywayRunResult };
+export type { FlywayDetails, FlywayEdition, FlywayRunResult };

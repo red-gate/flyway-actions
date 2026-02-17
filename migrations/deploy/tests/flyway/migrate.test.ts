@@ -1,5 +1,5 @@
-import type { ExecOptions } from "@actions/exec";
 import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
+import type { ExecOptions } from "@actions/exec";
 
 const setOutput = vi.fn();
 const exec = vi.fn();
@@ -20,11 +20,11 @@ const { buildFlywayMigrateArgs, migrate, parseFlywayOutput } = await import("../
 
 describe("migrate", () => {
   it("should set all outputs on success", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
         Buffer.from('Successfully applied 3 migrations to schema "main", now at version v2.0'),
       );
-      return 0;
+      return Promise.resolve(0);
     });
 
     await migrate({ targetUrl: "jdbc:sqlite:test.db" });
@@ -112,6 +112,7 @@ describe("parseFlywayOutput", () => {
 
   it("should handle empty string", () => {
     const result = parseFlywayOutput("");
+
     expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("unknown");
   });
