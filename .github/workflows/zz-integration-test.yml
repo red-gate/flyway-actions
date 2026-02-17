@@ -21,8 +21,8 @@ jobs:
           set -euo pipefail
           echo "Actions: ${{ steps.list.outputs.actions }}"
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | length > 0'
-          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/checks") != null'
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
 
   migrations-deploy-no-drift:
     strategy:
