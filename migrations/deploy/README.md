@@ -34,10 +34,9 @@ steps:
   - uses: red-gate/flyway-actions/migrations/deploy@v1
     with:
       target-environment: qa
-      target-url: jdbc:postgresql://localhost:5432/mydb
       target-user: ${{ secrets.DB_USER }}
       target-password: ${{ secrets.DB_PASSWORD }}
-      working-directory: sql/migrations
+      working-directory: my-flyway-project
 ```
 
 ### With Cherry-Pick (Teams/Enterprise)
@@ -52,7 +51,6 @@ steps:
 - uses: red-gate/flyway-actions/migrations/deploy@v1
   with:
     target-environment: production
-    target-url: ${{ secrets.DB_URL }}
     target-user: ${{ secrets.DB_USER }}
     target-password: ${{ secrets.DB_PASSWORD }}
     cherry-pick: '2.0,2.1,3.0'
@@ -60,18 +58,18 @@ steps:
 
 ## Inputs
 
-| Input                | Description                                         | Required |
-|----------------------|-----------------------------------------------------|----------|
-| `target-environment` | Flyway TOML environment name                        | No       |
-| `target-url`         | JDBC URL for the database connection                | No       |
-| `target-user`        | Database user                                       | No       |
-| `target-password`    | Database password                                   | No       |
-| `target-schemas`     | Comma-separated list of schemas                     | No       |
-| `target-migration-version` | Migrate up to this version                    | No       |
-| `cherry-pick`        | Comma-separated list of migration versions to apply | No       |
-| `skip-drift-check`   | Skip the drift check                                | No       |
-| `working-directory`  | Working directory for Flyway execution              | No       |
-| `extra-args`         | Additional arguments to pass to Flyway              | No       |
+| Input                      | Description                                         | Required                                 |
+|----------------------------|-----------------------------------------------------|------------------------------------------|
+| `target-environment`       | Flyway TOML environment name                        | Required if `target-url` not set         |
+| `target-url`               | JDBC URL for the database connection                | Required if `target-environment` not set |
+| `target-user`              | Database user                                       | No                                       |
+| `target-password`          | Database password                                   | No                                       |
+| `target-schemas`           | Comma-separated list of schemas                     | No                                       |
+| `target-migration-version` | Migrate up to this version                          | No                                       |
+| `cherry-pick`              | Comma-separated list of migration versions to apply | No                                       |
+| `skip-drift-check`         | Skip the drift check                                | No                                       |
+| `working-directory`        | Working directory for Flyway execution              | No                                       |
+| `extra-args`               | Additional arguments to pass to Flyway              | No                                       |
 
 ## Outputs
 
@@ -89,7 +87,6 @@ steps:
   id: migrate
   with:
     target-environment: production
-    target-url: ${{ secrets.DB_URL }}
 
 - run: echo "Applied ${{ steps.migrate.outputs.migrations-applied }} migrations"
 - run: echo "Schema is now at version ${{ steps.migrate.outputs.schema-version }}"
