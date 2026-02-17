@@ -58,18 +58,18 @@ steps:
 
 ## Inputs
 
-| Input                      | Description                                         | Required                                 |
-|----------------------------|-----------------------------------------------------|------------------------------------------|
-| `target-environment`       | Flyway TOML environment name                        | Required if `target-url` not set         |
-| `target-url`               | JDBC URL for the database connection                | Required if `target-environment` not set |
-| `target-user`              | Database user                                       | No                                       |
-| `target-password`          | Database password                                   | No                                       |
-| `target-schemas`           | Comma-separated list of schemas                     | No                                       |
-| `target-migration-version` | Migrate up to this version                          | No                                       |
-| `cherry-pick`              | Comma-separated list of migration versions to apply | No                                       |
-| `skip-drift-check`         | Skip the drift check                                | No                                       |
-| `working-directory`        | Working directory for Flyway execution              | No                                       |
-| `extra-args`               | Additional arguments to pass to Flyway              | No                                       |
+| Input                      | Description                                                    | Required                                 |
+|----------------------------|----------------------------------------------------------------|------------------------------------------|
+| `target-environment`       | Flyway TOML environment name                                   | Required if `target-url` not set         |
+| `target-url`               | JDBC URL for the database connection                           | Required if `target-environment` not set |
+| `target-user`              | Database user                                                  | No                                       |
+| `target-password`          | Database password                                              | No                                       |
+| `target-schemas`           | Comma-separated list of schemas                                | No                                       |
+| `target-migration-version` | Migrate up to this version                                     | No                                       |
+| `cherry-pick`              | Comma-separated list of migration versions to apply            | No                                       |
+| `skip-drift-check`         | Skip the drift check                                           | No                                       |
+| `working-directory`        | Working directory for Flyway execution                         | No                                       |
+| `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`) | No                                       |
 
 ## Outputs
 
