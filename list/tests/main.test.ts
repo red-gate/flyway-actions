@@ -16,7 +16,7 @@ describe("findActions", () => {
     const { findActions } = await import("../src/main.js");
     const actions = findActions(REPO_ROOT);
 
-    expect(actions).toEqual(["migrations/deploy"]);
+    expect(actions).toEqual(["migrations/checks", "migrations/deploy"]);
   });
 
   it("excludes directories", async () => {
