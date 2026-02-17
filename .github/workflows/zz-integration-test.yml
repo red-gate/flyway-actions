@@ -22,6 +22,62 @@ jobs:
           echo "Actions: ${{ steps.list.outputs.actions }}"
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | length > 0'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/checks") != null'
+
+  migrations-deploy-no-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run migrations deployment
+        id: migrate
+        uses: ./migrations/deploy
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          working-directory: sample-project
+      - name: Upload Flyway drift report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: flyway-no-drift-report-${{ matrix.os }}
+          path: sample-project/report.html
+          retention-days: 1
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.migrate.outputs.drift-detected }}"
+          echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
+          echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
+          test "${{ steps.migrate.outputs.exit-code }}" = "0"
+          test "${{ steps.migrate.outputs.drift-detected }}" = "false"
+          test "${{ steps.migrate.outputs.migrations-applied }}" = "3"
+          test "${{ steps.migrate.outputs.schema-version }}" = "3"
 
   migrations-deploy-drift:
     strategy:
@@ -81,3 +137,135 @@ jobs:
           test "${{ steps.migrate.outputs.drift-detected }}" = "true"
           test "${{ steps.migrate.outputs.migrations-applied }}" = ""
           test "${{ steps.migrate.outputs.schema-version }}" = ""
+
+  checks-success:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run checks
+        id: checks
+        uses: ./migrations/checks
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          build-url: jdbc:sqlite:database/build.db
+          working-directory: sample-project
+          fail-on-code-review: "false"
+          extra-args: -environments.build.provisioner=clean
+      - name: Upload Flyway checks report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: flyway-checks-report-${{ matrix.os }}
+          path: sample-project/report.html
+          retention-days: 1
+
+  checks-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run checks with drift database
+        id: checks
+        uses: ./migrations/checks
+        continue-on-error: true
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/drift.db
+          generate-report: "false"
+          fail-on-drift: "true"
+          fail-on-code-review: "false"
+          working-directory: sample-project
+      - name: Verify checks failed due to drift
+        shell: bash
+        run: test "${{ steps.checks.outcome }}" != "success"
+
+  checks-code-review:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run checks with code violations
+        id: checks
+        uses: ./migrations/checks
+        continue-on-error: true
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          generate-report: "false"
+          fail-on-drift: "false"
+          fail-on-code-review: "true"
+          working-directory: sample-project
+      - name: Verify checks failed due to code review violations
+        shell: bash
+        run: test "${{ steps.checks.outcome }}" != "success"

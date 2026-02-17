@@ -35,8 +35,19 @@ jobs:
         with:
           edition: enterprise
           i-agree-to-the-eula: true
-      - name: Run deployment
-        id: migrate
+      - name: Run checks
+        id: checks
+        uses: ./migrations/checks
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          build-url: jdbc:sqlite:database/build.db
+          working-directory: sample-project
+          fail-on-code-review: "false"
+          extra-args: -environments.build.provisioner=clean
+      - name: Run deploy
+        id: deploy
         uses: ./migrations/deploy
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
@@ -54,11 +65,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
-          echo "Drift detected: ${{ steps.migrate.outputs.drift-detected }}"
-          echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
-          echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
-          test "${{ steps.migrate.outputs.exit-code }}" = "0"
-          test "${{ steps.migrate.outputs.drift-detected }}" = "false"
-          test "${{ steps.migrate.outputs.migrations-applied }}" = "3"
-          test "${{ steps.migrate.outputs.schema-version }}" = "3"
+          test "${{ steps.deploy.outputs.exit-code }}" = "0"
+          test "${{ steps.deploy.outputs.drift-detected }}" = "false"
+          test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
+          test "${{ steps.deploy.outputs.schema-version }}" = "3"
