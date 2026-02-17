@@ -27,13 +27,13 @@ This is a GitHub Action with:
 ## Committing Changes
 
 - Commit messages should be as terse as possible. No need for long descriptions or a commit signature.
-- Before creating any commit, ALWAYS run `yarn format` to ensure code formatting is consistent across the codebase. This should be done for every commit without exception.
+- Before creating any commit, ALWAYS run formatting, linting, and tests for the affected project(s) only — not the entire monorepo.
 
 Example workflow:
 1. Make code changes
-2. Run `yarn format` to apply Prettier formatting
-3. Run `yarn lint` to verify ESLint rules
-4. Run `yarn test` to verify tests pass
+2. Run `yarn format` for affected project(s)
+3. Run `yarn lint` for affected project(s)
+4. Run `yarn test` for affected project(s)
 5. Stage and commit the changes
 
 ## Pull Request Workflow
