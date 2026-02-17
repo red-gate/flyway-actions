@@ -12771,7 +12771,7 @@ const So = /* @__PURE__ */ new Set(["node_modules", ".git", ".github", "dist"]),
       No(f);
     po("actions", JSON.stringify(A));
   } catch (A) {
-    A instanceof Error ? Ws(A.message) : Ws("An unexpected error occurred");
+    A instanceof Error ? Ws(A.message) : Ws(String(A));
   }
 };
 bo();
