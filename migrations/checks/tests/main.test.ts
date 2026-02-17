@@ -28,36 +28,42 @@ const setupMocks = () => {
 };
 
 const setupFlywayVersionMock = (edition: string) => {
-  exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+  exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
     options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
-    return 0;
+    return Promise.resolve(0);
   });
 };
 
 const setupChecksMock = (edition: string, checkExitCode = 0) => {
   let callCount = 0;
-  exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+  exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
     callCount++;
     if (callCount === 1) {
       options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
-      return 0;
+      return Promise.resolve(0);
     }
-    return checkExitCode;
+    return Promise.resolve(checkExitCode);
   });
 };
 
 const setupInputMock = (overrides: Record<string, string> = {}) => {
-  getInput.mockImplementation((name: string) => {
-    return overrides[name] || "";
-  });
+  getInput.mockImplementation((name: string) => overrides[name] || "");
 };
 
 const setupBooleanInputMock = (overrides: Record<string, boolean> = {}) => {
   getBooleanInput.mockImplementation((name: string) => {
-    if (name in overrides) return overrides[name];
-    if (name === "generate-report") return true;
-    if (name === "fail-on-drift") return true;
-    if (name === "fail-on-code-review") return true;
+    if (name in overrides) {
+      return overrides[name];
+    }
+    if (name === "generate-report") {
+      return true;
+    }
+    if (name === "fail-on-drift") {
+      return true;
+    }
+    if (name === "fail-on-code-review") {
+      return true;
+    }
     return false;
   });
 };

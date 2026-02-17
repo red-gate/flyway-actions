@@ -1,7 +1,7 @@
-import * as core from "@actions/core";
 import type { FlywayMigrationsChecksInputs } from "../types.js";
+import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { buildTargetArgs, buildBuildEnvArgs, buildBaseArgs } from "./arg-builders.js";
+import { buildBaseArgs, buildBuildEnvArgs, buildTargetArgs } from "./arg-builders.js";
 
 type CheckFlags = {
   code: boolean;

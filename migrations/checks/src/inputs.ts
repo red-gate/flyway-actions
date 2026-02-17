@@ -1,6 +1,6 @@
+import type { FlywayMigrationsChecksInputs } from "./types.js";
 import * as path from "path";
 import * as core from "@actions/core";
-import type { FlywayMigrationsChecksInputs } from "./types.js";
 
 const getInputs = (): FlywayMigrationsChecksInputs => {
   const targetEnvironment = core.getInput("target-environment") || undefined;

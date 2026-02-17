@@ -1,5 +1,5 @@
-import * as path from "path";
 import type { FlywayMigrationsChecksInputs } from "../src/types.js";
+import * as path from "path";
 
 const getInput = vi.fn();
 const getBooleanInput = vi.fn();
@@ -32,6 +32,7 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetUrl).toBe("jdbc:postgresql://localhost/db");
     expect(inputs.targetUser).toBe("admin");
     expect(inputs.targetPassword).toBe("secret");
@@ -52,6 +53,7 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.buildEnvironment).toBe("shadow");
     expect(inputs.buildUrl).toBe("jdbc:postgresql://localhost/build");
     expect(inputs.buildUser).toBe("builduser");
@@ -70,6 +72,7 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.generateReport).toBe(true);
     expect(inputs.failOnDrift).toBe(false);
     expect(inputs.failOnCodeReview).toBe(true);
@@ -85,32 +88,40 @@ describe("getInputs", () => {
     });
 
     const inputs = getInputs();
+
     expect(inputs.targetMigrationVersion).toBe("5.0");
     expect(inputs.cherryPick).toBe("3.0,4.0");
   });
 
   it("should resolve working directory to absolute path", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "working-directory") return "/app/db";
+      if (name === "working-directory") {
+        return "/app/db";
+      }
       return "";
     });
 
     const inputs = getInputs();
+
     expect(inputs.workingDirectory).toBe(path.resolve("/app/db"));
   });
 
   it("should return extra args", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "extra-args") return "-X -someFlag=value";
+      if (name === "extra-args") {
+        return "-X -someFlag=value";
+      }
       return "";
     });
 
     const inputs = getInputs();
+
     expect(inputs.extraArgs).toBe("-X -someFlag=value");
   });
 
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
+
     expect(inputs.targetUrl).toBeUndefined();
     expect(inputs.targetUser).toBeUndefined();
     expect(inputs.targetPassword).toBeUndefined();

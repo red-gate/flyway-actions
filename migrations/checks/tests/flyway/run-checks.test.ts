@@ -1,6 +1,6 @@
-import type { ExecOptions } from "@actions/exec";
-import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 import type { CheckFlags } from "../../src/flyway/run-checks.js";
+import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
+import type { ExecOptions } from "@actions/exec";
 
 const exec = vi.fn();
 
@@ -133,9 +133,9 @@ describe("buildCheckArgs", () => {
 
 describe("runChecks", () => {
   it("should return exit code 0 on success", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("All checks passed"));
-      return 0;
+      return Promise.resolve(0);
     });
 
     const exitCode = await runChecks(baseInputs, allFlags);
@@ -144,9 +144,9 @@ describe("runChecks", () => {
   });
 
   it("should return non-zero exit code on failure", async () => {
-    exec.mockImplementation(async (_cmd: string, _args?: string[], options?: ExecOptions) => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stderr?.(Buffer.from("Check failed"));
-      return 1;
+      return Promise.resolve(1);
     });
 
     const exitCode = await runChecks(baseInputs, allFlags);
