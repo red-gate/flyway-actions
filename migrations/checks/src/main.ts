@@ -10,9 +10,7 @@ const run = async (): Promise<void> => {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
-
     const inputs = getInputs();
-
     if (!inputs.targetEnvironment && !inputs.targetUrl) {
       core.setFailed(
         'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.',
@@ -23,7 +21,6 @@ const run = async (): Promise<void> => {
     maskSecrets(inputs);
 
     const exitCode = await runChecks(inputs);
-
     if (exitCode !== 0) {
       core.setFailed("Flyway checks failed");
     }

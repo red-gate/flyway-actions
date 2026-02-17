@@ -8,22 +8,23 @@ branding:
 
 inputs:
   target-environment:
-    description: 'Target database environment name'
+    description: 'Target database to check'
     required: false
+    default: 'default'
   target-url:
-    description: 'JDBC URL for the target database'
+    description: 'JDBC URL for the target database to check'
     required: false
   target-user:
-    description: 'Database user for the target database'
+    description: 'Database user for the target database to check'
     required: false
   target-password:
-    description: 'Database password for the target database'
+    description: 'Database password for the target database to check'
     required: false
   target-schemas:
     description: 'Comma-separated list of schemas for the target database'
     required: false
   target-migration-version:
-    description: 'Target migration version for dry run'
+    description: 'Migrate up to this version for dry run'
     required: false
   cherry-pick:
     description: 'Comma-separated list of migration versions to include'
@@ -32,7 +33,7 @@ inputs:
     description: 'Working directory for Flyway'
     required: false
   extra-args:
-    description: 'Additional arguments to pass to Flyway'
+    description: 'Additional Flyway CLI arguments (e.g. -sqlMigrationPrefix=M)'
     required: false
 
 runs:
