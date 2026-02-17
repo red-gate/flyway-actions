@@ -6,8 +6,8 @@
 
 ### Deploy database changes with confidence
 
-[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
-[![End-to-End Tests](../../actions/workflows/test-action.yml/badge.svg)](../../actions/workflows/test-action.yml)
+[![CI](https://github.com/red-gate/flyway-actions/actions/workflows/ci.yml/badge.svg)](https://github.com/red-gate/flyway-actions/actions/workflows/ci.yml)
+[![End-to-End Tests](https://github.com/red-gate/flyway-actions/actions/workflows/end-to-end-test.yml/badge.svg)](https://github.com/red-gate/flyway-actions/actions/workflows/end-to-end-test.yml)
 
 ---
 
