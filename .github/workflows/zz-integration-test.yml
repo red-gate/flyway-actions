@@ -51,8 +51,8 @@ jobs:
         with:
           edition: enterprise
           i-agree-to-the-eula: true
-      - name: Run migrations deployment
-        id: migrate
+      - name: Run migrations deploy
+        id: deploy
         uses: ./migrations/deploy
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
@@ -70,14 +70,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
-          echo "Drift detected: ${{ steps.migrate.outputs.drift-detected }}"
-          echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
-          echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
-          test "${{ steps.migrate.outputs.exit-code }}" = "0"
-          test "${{ steps.migrate.outputs.drift-detected }}" = "false"
-          test "${{ steps.migrate.outputs.migrations-applied }}" = "3"
-          test "${{ steps.migrate.outputs.schema-version }}" = "3"
+          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.deploy.outputs.drift-detected }}"
+          echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
+          echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          test "${{ steps.deploy.outputs.exit-code }}" = "0"
+          test "${{ steps.deploy.outputs.drift-detected }}" = "false"
+          test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
+          test "${{ steps.deploy.outputs.schema-version }}" = "3"
 
   migrations-deploy-drift:
     strategy:
@@ -106,8 +106,8 @@ jobs:
         with:
           edition: enterprise
           i-agree-to-the-eula: true
-      - name: Run migrations deployment
-        id: migrate
+      - name: Run migrations deploy
+        id: deploy
         uses: ./migrations/deploy
         continue-on-error: true
         env:
@@ -115,9 +115,9 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-project
-      - name: Verify deployment failed due to drift
+      - name: Verify deploy failed due to drift
         shell: bash
-        run: test "${{ steps.migrate.outcome }}" != "success"
+        run: test "${{ steps.deploy.outcome }}" != "success"
       - name: Upload Flyway drift report
         if: always()
         uses: actions/upload-artifact@v6
@@ -129,14 +129,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Exit code: ${{ steps.migrate.outputs.exit-code }}"
-          echo "Drift detected: ${{ steps.migrate.outputs.drift-detected }}"
-          echo "Migrations applied: ${{ steps.migrate.outputs.migrations-applied }}"
-          echo "Schema version: ${{ steps.migrate.outputs.schema-version }}"
-          test "${{ steps.migrate.outputs.exit-code }}" = "1"
-          test "${{ steps.migrate.outputs.drift-detected }}" = "true"
-          test "${{ steps.migrate.outputs.migrations-applied }}" = ""
-          test "${{ steps.migrate.outputs.schema-version }}" = ""
+          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.deploy.outputs.drift-detected }}"
+          echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
+          echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          test "${{ steps.deploy.outputs.exit-code }}" = "1"
+          test "${{ steps.deploy.outputs.drift-detected }}" = "true"
+          test "${{ steps.deploy.outputs.migrations-applied }}" = ""
+          test "${{ steps.deploy.outputs.schema-version }}" = ""
 
   checks-success:
     strategy:
