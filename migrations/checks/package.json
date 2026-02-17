@@ -1,0 +1,32 @@
+{
+  "name": "@flyway-actions/migrations-checks",
+  "version": "1.0.0",
+  "description": "GitHub Action to run pre-deployment checks on Flyway migrations",
+  "author": "Redgate",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint -c ../../eslint.config.mjs src/ tests/",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "dependencies": {
+    "@actions/core": "3.0.0",
+    "@actions/exec": "3.0.0",
+    "@actions/http-client": "4.0.0",
+    "@actions/io": "3.0.2",
+    "@flyway-actions/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.2.3",
+    "@vitest/coverage-v8": "4.0.18",
+    "vite": "7.3.1",
+    "vite-plugin-checker": "0.12.0",
+    "vitest": "4.0.18"
+  }
+}

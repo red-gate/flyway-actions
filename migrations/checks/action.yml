@@ -1,0 +1,40 @@
+name: 'Flyway Migrations Checks Action'
+description: 'A GitHub Action to run pre-deployment checks on your Flyway migrations'
+author: 'Redgate'
+
+branding:
+  icon: 'database'
+  color: 'red'
+
+inputs:
+  target-environment:
+    description: 'Target database environment name'
+    required: false
+  target-url:
+    description: 'JDBC URL for the target database'
+    required: false
+  target-user:
+    description: 'Database user for the target database'
+    required: false
+  target-password:
+    description: 'Database password for the target database'
+    required: false
+  target-schemas:
+    description: 'Comma-separated list of schemas for the target database'
+    required: false
+  target-migration-version:
+    description: 'Target migration version for dry run'
+    required: false
+  cherry-pick:
+    description: 'Comma-separated list of migration versions to include'
+    required: false
+  working-directory:
+    description: 'Working directory for Flyway'
+    required: false
+  extra-args:
+    description: 'Additional arguments to pass to Flyway'
+    required: false
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
