@@ -16,9 +16,9 @@ Supports 50+ databases including PostgreSQL, MySQL, SQL Server, and Oracle.
 
 ## Actions
 
-| Action                                                 | Description                                       |
-|--------------------------------------------------------|---------------------------------------------------|
-| [`migrations/deploy`](migrations/deploy) | Deploy pending migrations against target database |
+| Action                                    | Description                                       |
+|-------------------------------------------|---------------------------------------------------|
+| [`migrations/deploy`](migrations/deploy)  | Deploy pending migrations against target database |
 
 ## Usage
 
