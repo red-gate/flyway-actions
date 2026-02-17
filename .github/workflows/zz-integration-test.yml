@@ -138,7 +138,7 @@ jobs:
           test "${{ steps.deploy.outputs.migrations-applied }}" = ""
           test "${{ steps.deploy.outputs.schema-version }}" = ""
 
-  checks-success:
+  checks:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
