@@ -6,7 +6,7 @@ import { getCommonArgs } from "./arg-builders.js";
 const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [
   "check",
   "-drift",
-  "-failOnDrift=true",
+  "-check.failOnDrift=true",
   ...getCommonArgs(inputs),
 ];
 

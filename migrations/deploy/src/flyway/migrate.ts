@@ -15,7 +15,7 @@ const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   }
 
   if (inputs.saveSnapshot) {
-    args.push("-saveSnapshot=true");
+    args.push("-migrate.saveSnapshot=true");
   }
 
   return args;

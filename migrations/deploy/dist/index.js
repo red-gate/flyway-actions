@@ -13310,7 +13310,7 @@ const ra = () => {
 }, aa = (A) => [
   "check",
   "-drift",
-  "-failOnDrift=true",
+  "-check.failOnDrift=true",
   ...bi(A)
 ], ga = async (A) => {
   mi("Checking for drift");
@@ -13326,7 +13326,7 @@ const ra = () => {
   we("exit-code", A.toString()), we("drift-detected", r.toString());
 }, ca = (A) => {
   const r = ["migrate", ...bi(A)];
-  return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-saveSnapshot=true"), r;
+  return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-migrate.saveSnapshot=true"), r;
 }, Ba = async (A) => {
   mi("Running migrations");
   try {

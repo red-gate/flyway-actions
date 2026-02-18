@@ -217,7 +217,7 @@ describe("getMigrateArgs", () => {
     expect(args).toContain("-cherryPick=2.0,2.1");
   });
 
-  it("should include -saveSnapshot=true when saveSnapshot is true", () => {
+  it("should include -migrate.saveSnapshot=true when saveSnapshot is true", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
       saveSnapshot: true,
@@ -225,7 +225,7 @@ describe("getMigrateArgs", () => {
 
     const args = getMigrateArgs(inputs);
 
-    expect(args).toContain("-saveSnapshot=true");
+    expect(args).toContain("-migrate.saveSnapshot=true");
   });
 
   it("should omit -saveSnapshot when saveSnapshot is not set", () => {

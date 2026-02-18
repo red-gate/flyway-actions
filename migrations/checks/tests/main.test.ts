@@ -105,8 +105,8 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-code");
-    expect(args).toContain("-failOnError=true");
-    expect(args).not.toContain("-failOnDrift=true");
+    expect(args).toContain("-check.failOnError=true");
+    expect(args).not.toContain("-check.failOnDrift=true");
   });
 
   it("should not include -failOnError when fail-on-code-review is false", async () => {
@@ -120,7 +120,7 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-code");
-    expect(args).not.toContain("-failOnError=true");
+    expect(args).not.toContain("-check.failOnError=true");
   });
 
   it("should include -failOnDrift when fail-on-drift is true", async () => {
@@ -134,8 +134,8 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-drift");
-    expect(args).toContain("-failOnDrift=true");
-    expect(args).not.toContain("-failOnError=true");
+    expect(args).toContain("-check.failOnDrift=true");
+    expect(args).not.toContain("-check.failOnError=true");
   });
 
   it("should not include -failOnDrift when fail-on-drift is false", async () => {
@@ -149,7 +149,7 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-drift");
-    expect(args).not.toContain("-failOnDrift=true");
+    expect(args).not.toContain("-check.failOnDrift=true");
   });
 
   it("should include -changes and build args when build-url is provided", async () => {

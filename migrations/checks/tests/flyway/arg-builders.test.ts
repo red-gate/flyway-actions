@@ -96,7 +96,7 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-buildEnvironment=build");
+    expect(args).toContain("-check.buildEnvironment=build");
     expect(args).toContain("-environments.build.url=jdbc:postgresql://localhost/build-db");
     expect(args).toContain("-environments.build.user=deploy");
     expect(args).toContain("-environments.build.password=secret");
@@ -111,7 +111,7 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-buildEnvironment=default_build");
+    expect(args).toContain("-check.buildEnvironment=default_build");
     expect(args).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
   });
 
