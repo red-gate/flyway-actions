@@ -54,7 +54,7 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
   const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
   const args: string[] = [];
 
-  args.push(`-buildEnvironment=${environmentName}`);
+  args.push(`-check.buildEnvironment=${environmentName}`);
 
   if (inputs.buildUrl) {
     args.push(`-environments.${environmentName}.url=${inputs.buildUrl}`);
