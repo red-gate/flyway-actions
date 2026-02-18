@@ -44,6 +44,16 @@ jobs:
           i-agree-to-the-eula: true
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
+      - name: Run deployment checks and generate reports
+        uses: red-gate/flyway-actions/migrations/checks@v1
+        with:
+          environment: production
+          user: "${{ secrets.FLYWAY_USER }}"
+          password: "${{ secrets.FLYWAY_PASSWORD }}"
+          build-environment: build
+          build-user: "${{ secrets.FLYWAY_BUILD_USER }}"
+          build-password: "${{ secrets.FLYWAY_BUILD_PASSWORD }}"
+          working-directory: my-flyway-project
       - name: Run migrations deployment
         uses: red-gate/flyway-actions/migrations/deploy@v1
         with:
@@ -51,6 +61,13 @@ jobs:
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
+      - name: Upload Flyway pre-deployment report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flyway-report
+          path: my-flyway-project/report.html
+          retention-days: 1
 ```
 
 ### Flyway Community deployment
