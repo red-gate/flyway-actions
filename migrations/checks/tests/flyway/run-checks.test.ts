@@ -19,36 +19,38 @@ const { buildCheckArgs, runChecks } = await import("../../src/flyway/run-checks.
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
 describe("buildCheckArgs", () => {
-  it("should always include check -dryrun -code", () => {
+  it("should always include check -dryrun -code -drift", () => {
     const args = buildCheckArgs(baseInputs);
 
     expect(args[0]).toBe("check");
     expect(args[1]).toBe("-dryrun");
     expect(args[2]).toBe("-code");
+    expect(args[3]).toBe("-drift");
   });
 
   it("should include -failOnError when failOnCodeReview is true", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      failOnCodeReview: true,
-    };
+    const args = buildCheckArgs({ ...baseInputs, failOnCodeReview: true });
 
-    const args = buildCheckArgs(inputs);
-
-    expect(args).toContain("-code");
     expect(args).toContain("-failOnError=true");
   });
 
-  it("should not include -failOnError when failOnCodeReview is false", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      failOnCodeReview: false,
-    };
+  it("should include -failOnDrift when failOnDrift is true", () => {
+    const args = buildCheckArgs({ ...baseInputs, failOnDrift: true });
 
-    const args = buildCheckArgs(inputs);
+    expect(args).toContain("-failOnDrift=true");
+  });
 
-    expect(args).toContain("-code");
-    expect(args).not.toContain("-failOnError=true");
+  it("should not include -failOnDrift when failOnDrift is false", () => {
+    const args = buildCheckArgs({ ...baseInputs, failOnDrift: false });
+
+    expect(args).not.toContain("-failOnDrift=true");
+  });
+
+  it("should include both -failOnError and -failOnDrift flags independently", () => {
+    const args = buildCheckArgs({ ...baseInputs, failOnCodeReview: true, failOnDrift: true });
+
+    expect(args).toContain("-failOnError=true");
+    expect(args).toContain("-failOnDrift=true");
   });
 
   it("should include target args", () => {

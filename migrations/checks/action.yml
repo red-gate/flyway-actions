@@ -33,6 +33,10 @@ inputs:
     description: 'Whether to fail the action when code review violations are found'
     required: false
     default: 'true'
+  fail-on-drift:
+    description: 'Whether to fail the action when drift is detected'
+    required: false
+    default: 'true'
   working-directory:
     description: 'Working directory for Flyway'
     required: false

@@ -7,6 +7,7 @@ type FlywayMigrationsChecksInputs = {
   targetMigrationVersion?: string;
   cherryPick?: string;
   failOnCodeReview?: boolean;
+  failOnDrift?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
 };

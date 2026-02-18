@@ -11,6 +11,7 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const targetMigrationVersion = core.getInput("target-migration-version") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
   const failOnCodeReview = core.getBooleanInput("fail-on-code-review");
+  const failOnDrift = core.getBooleanInput("fail-on-drift");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
@@ -24,6 +25,7 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
     targetMigrationVersion,
     cherryPick,
     failOnCodeReview,
+    failOnDrift,
     workingDirectory,
     extraArgs,
   };
