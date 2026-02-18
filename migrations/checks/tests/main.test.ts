@@ -29,7 +29,7 @@ const setupMocks = () => {
 
 const setupFlywayVersionMock = (edition: string) => {
   exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-    options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
+    options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
     return Promise.resolve(0);
   });
 };
@@ -39,7 +39,7 @@ const setupChecksMock = (edition: string, checkExitCode = 0) => {
   exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
     callCount++;
     if (callCount === 1) {
-      options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
       return Promise.resolve(0);
     }
     return Promise.resolve(checkExitCode);
