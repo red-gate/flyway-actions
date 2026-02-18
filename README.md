@@ -82,6 +82,34 @@ jobs:
           working-directory: my-flyway-project
 ```
 
+## Best Practices for Secrets
+
+GitHub Actions secrets keep sensitive values like database credentials and license tokens out of your workflow files and logs.
+
+### Storing Secrets
+
+- **Use repository or organization secrets** — navigate to *Settings > Secrets and variables > Actions* to add secrets. Organization-level secrets can be shared across repositories.
+- **Use environment secrets for sensitive targets** — for production databases, store credentials under a [GitHub environment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment) (e.g. `production`). This scopes secrets to that environment and enables protection rules like required reviewers.
+- **Never hardcode credentials** — keep database URLs, usernames, passwords, and Flyway license tokens in secrets rather than in workflow files, `flyway.toml`, or source code.
+- **Rotate secrets regularly** — update secrets when team members leave or if a credential may have been exposed.
+
+### Accessing Secrets in Workflows
+
+Reference secrets using the `${{ secrets.SECRET_NAME }}` syntax:
+
+```yaml
+- name: Run migrations deployment
+  uses: red-gate/flyway-actions/migrations/deploy@v1
+  with:
+    target-environment: production
+    target-user: "${{ secrets.FLYWAY_USER }}"
+    target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+```
+
+- **Secrets are masked in logs** — GitHub automatically redacts secret values from workflow output, but avoid echoing or writing them to files.
+- **Limit secret scope with environments** — attach secrets to environments that have [protection rules](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#environment-protection-rules) (e.g. required reviewers, branch restrictions) to control who can trigger deployments that use those secrets.
+- **Pass secrets explicitly** — GitHub does not inject secrets automatically. Each step that needs a secret must reference it via `with` or `env`.
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE.md).
