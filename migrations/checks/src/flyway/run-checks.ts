@@ -17,7 +17,7 @@ const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   }
 
   if (inputs.failOnDrift) {
-    args.push("-failOnDrift=true");
+    args.push("-check.failOnDrift=true");
   }
 
   args.push(...getTargetEnvironmentArgs(inputs));

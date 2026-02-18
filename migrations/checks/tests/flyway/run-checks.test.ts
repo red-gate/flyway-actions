@@ -35,23 +35,23 @@ describe("getCheckArgs", () => {
     expect(args).toContain("-check.failOnError=true");
   });
 
-  it("should include -failOnDrift when failOnDrift is true", () => {
+  it("should include -check.failOnDrift when failOnDrift is true", () => {
     const args = getCheckArgs({ ...baseInputs, failOnDrift: true });
 
-    expect(args).toContain("-failOnDrift=true");
+    expect(args).toContain("-check.failOnDrift=true");
   });
 
-  it("should not include -failOnDrift when failOnDrift is false", () => {
+  it("should not include -check.failOnDrift when failOnDrift is false", () => {
     const args = getCheckArgs({ ...baseInputs, failOnDrift: false });
 
-    expect(args).not.toContain("-failOnDrift=true");
+    expect(args).not.toContain("-check.failOnDrift=true");
   });
 
   it("should include both -failOnError and -failOnDrift flags independently", () => {
     const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true, failOnDrift: true });
 
     expect(args).toContain("-check.failOnError=true");
-    expect(args).toContain("-failOnDrift=true");
+    expect(args).toContain("-check.failOnDrift=true");
   });
 
   it("should include target args", () => {
