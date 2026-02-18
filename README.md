@@ -135,7 +135,22 @@ jobs:
           working-directory: my-flyway-project
 ```
 
-To configure the approval gate, go to *Settings > Environments > production* and add required reviewers under protection rules. The `deploy` job will wait for approval after `checks` passes.
+#### Setting up the environments
+
+The manual review workflow uses two GitHub environments to separate read-only checks from write access deployment:
+
+1. **`production-read-only`** — used by the `checks` job. Go to *Settings > Environments > New environment*, name it `production-read-only`, and add the following secrets:
+   - `FLYWAY_USER`, `FLYWAY_PASSWORD` — database credentials with **read-only** access to the production database
+   - `FLYWAY_BUILD_USER`, `FLYWAY_BUILD_PASSWORD` — credentials for the build database
+
+   This environment does not need protection rules since it only performs read-only checks. Using a read-only database user here ensures the checks job cannot modify production data.
+
+2. **`production-write`** — used by the `deploy` job. Create a second environment named `production-write` and add the following secrets:
+   - `FLYWAY_USER`, `FLYWAY_PASSWORD` — database credentials with **write** access to the production database
+
+   Under *Protection rules*, enable **Required reviewers** and add the team members who should approve deployments. You can also restrict which branches can deploy by enabling **Deployment branches and tags** and limiting it to `main`.
+
+The `deploy` job will wait for reviewer approval after the `checks` job passes, giving reviewers a chance to inspect the check results and uploaded report before the migration runs.
 
 ### Flyway Community deployment
 ```yaml
