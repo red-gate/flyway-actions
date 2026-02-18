@@ -38,4 +38,4 @@ const setDriftOutput = (exitCode: number, driftDetected: boolean): void => {
   core.setOutput("drift-detected", driftDetected.toString());
 };
 
-export { getCheckDriftArgs, checkForDrift };
+export { checkForDrift, getCheckDriftArgs };

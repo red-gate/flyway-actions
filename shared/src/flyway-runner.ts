@@ -60,10 +60,7 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
 
   core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
 
-  const options: exec.ExecOptions = {
-    ignoreReturnCode: true,
-    listeners,
-  };
+  const options: exec.ExecOptions = { ignoreReturnCode: true, listeners };
 
   if (cwd) {
     options.cwd = cwd;
