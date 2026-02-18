@@ -45,10 +45,10 @@ jobs:
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
-          fail-on-code-review: 'false'
           target-url: jdbc:sqlite:database/no-drift.db
           build-url: jdbc:sqlite:database/build.db
           build-ok-to-erase: 'true'
+          fail-on-code-review: 'false'
           working-directory: sample-project
       - name: Run deploy
         id: deploy
@@ -58,11 +58,11 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
-      - name: Upload Flyway drift report
+      - name: Upload Flyway report
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: flyway-no-drift-report-${{ matrix.os }}
+          name: flyway-report-${{ matrix.os }}
           path: sample-project/report.html
           retention-days: 1
       - name: Test outputs
