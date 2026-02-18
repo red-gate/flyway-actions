@@ -152,6 +152,33 @@ describe("run", () => {
     expect(args).not.toContain("-failOnDrift=true");
   });
 
+  it("should include -changes and build args when build-url is provided", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-changes");
+    expect(args).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
+  });
+
+  it("should not include -changes when no build inputs provided", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-changes");
+  });
+
   it("should fail when check exits with non-zero code", async () => {
     setupChecksMock("Enterprise", 1);
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });

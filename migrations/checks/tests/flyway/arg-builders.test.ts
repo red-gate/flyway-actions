@@ -11,7 +11,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { buildTargetArgs, buildBaseArgs } = await import("../../src/flyway/arg-builders.js");
+const { buildTargetArgs, buildBaseArgs, getBuildEnvironmentArgs } = await import("../../src/flyway/arg-builders.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -48,6 +48,79 @@ describe("buildTargetArgs", () => {
     const args = buildTargetArgs(inputs);
 
     expect(args).toEqual(["-url=jdbc:sqlite:test.db"]);
+  });
+});
+
+describe("getBuildEnvironmentArgs", () => {
+  it("should return empty array when no build inputs", () => {
+    expect(getBuildEnvironmentArgs(baseInputs)).toEqual([]);
+  });
+
+  it("should include all build connection params", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildEnvironment: "build",
+      buildUrl: "jdbc:postgresql://localhost/build-db",
+      buildUser: "deploy",
+      buildPassword: "secret",
+      buildSchemas: "public,staging",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-buildEnvironment=build");
+    expect(args).toContain("-environments.build.url=jdbc:postgresql://localhost/build-db");
+    expect(args).toContain("-environments.build.user=deploy");
+    expect(args).toContain("-environments.build.password=secret");
+    expect(args).toContain("-environments.build.schemas=public,staging");
+  });
+
+  it("should only include provided build params", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildUrl: "jdbc:sqlite:build.db",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-buildEnvironment=default_build");
+    expect(args).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
+  });
+
+  it("should set clean provisioner for build environment when buildOkToErase is true", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildEnvironment: "build",
+      buildOkToErase: true,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.build.provisioner=clean");
+  });
+
+  it("should not set clean provisioner when buildOkToErase is false", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildEnvironment: "build",
+      buildOkToErase: false,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).not.toContain("-environments.build.provisioner=clean");
+  });
+
+  it("should use default_build environment when buildEnvironment is not set", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildUrl: "jdbc:sqlite:build.db",
+      buildOkToErase: true,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.provisioner=clean");
   });
 });
 

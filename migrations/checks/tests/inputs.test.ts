@@ -85,6 +85,15 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("fail-on-drift");
   });
 
+  it("should return build-ok-to-erase input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.buildOkToErase).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
+  });
+
   it("should return extra args", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "extra-args") {
@@ -98,6 +107,27 @@ describe("getInputs", () => {
     expect(inputs.extraArgs).toBe("-X -someFlag=value");
   });
 
+  it("should return build connection inputs when provided", () => {
+    getInput.mockImplementation((name: string) => {
+      const values: Record<string, string> = {
+        "build-environment": "build",
+        "build-url": "jdbc:postgresql://localhost/build-db",
+        "build-user": "deploy",
+        "build-password": "secret",
+        "build-schemas": "public,staging",
+      };
+      return values[name] || "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.buildEnvironment).toBe("build");
+    expect(inputs.buildUrl).toBe("jdbc:postgresql://localhost/build-db");
+    expect(inputs.buildUser).toBe("deploy");
+    expect(inputs.buildPassword).toBe("secret");
+    expect(inputs.buildSchemas).toBe("public,staging");
+  });
+
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
 
@@ -108,6 +138,11 @@ describe("getInputs", () => {
     expect(inputs.targetSchemas).toBeUndefined();
     expect(inputs.targetMigrationVersion).toBeUndefined();
     expect(inputs.cherryPick).toBeUndefined();
+    expect(inputs.buildEnvironment).toBeUndefined();
+    expect(inputs.buildUrl).toBeUndefined();
+    expect(inputs.buildUser).toBeUndefined();
+    expect(inputs.buildPassword).toBeUndefined();
+    expect(inputs.buildSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
   });
@@ -122,6 +157,16 @@ describe("maskSecrets", () => {
     maskSecrets(inputs);
 
     expect(setSecret).toHaveBeenCalledWith("secret123");
+  });
+
+  it("should mask build password", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      buildPassword: "secret",
+    };
+
+    maskSecrets(inputs);
+
+    expect(setSecret).toHaveBeenCalledWith("secret");
   });
 
   it("should not call setSecret when no passwords present", () => {
