@@ -92,6 +92,10 @@ steps:
 - run: echo "Schema is now at version ${{ steps.migrate.outputs.schema-version }}"
 ```
 
+## Secrets
+
+Store database credentials and license tokens in [GitHub Actions secrets](../../README.md#best-practices-for-secrets) rather than hardcoding them in workflow files. Use environment-scoped secrets for production targets.
+
 ## Supported Databases
 
 This action supports all databases supported by Flyway:
