@@ -20,34 +20,61 @@ describe("buildTargetArgs", () => {
     expect(buildTargetArgs(baseInputs)).toEqual([]);
   });
 
-  it("should include all target connection params", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      targetEnvironment: "production",
-      targetUrl: "jdbc:postgresql://localhost/db",
-      targetUser: "admin",
-      targetPassword: "secret",
-      targetSchemas: "public,audit",
-    };
+  describe("target params", () => {
+    it("should use flat params with no environment", () => {
+      const inputs: FlywayMigrationsChecksInputs = {
+        ...baseInputs,
+        targetUrl: "jdbc:postgresql://localhost/db",
+        targetUser: "admin",
+        targetPassword: "secret",
+        targetSchemas: "public,audit",
+      };
 
-    const args = buildTargetArgs(inputs);
+      const args = buildTargetArgs(inputs);
 
-    expect(args).toContain("-environment=production");
-    expect(args).toContain("-url=jdbc:postgresql://localhost/db");
-    expect(args).toContain("-user=admin");
-    expect(args).toContain("-password=secret");
-    expect(args).toContain("-schemas=public,audit");
-  });
+      expect(args).toContain("-url=jdbc:postgresql://localhost/db");
+      expect(args).toContain("-user=admin");
+      expect(args).toContain("-password=secret");
+      expect(args).toContain("-schemas=public,audit");
+    });
 
-  it("should only include provided target params", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      targetUrl: "jdbc:sqlite:test.db",
-    };
+    it("should use flat params with default environment", () => {
+      const inputs: FlywayMigrationsChecksInputs = {
+        ...baseInputs,
+        targetEnvironment: "default",
+        targetUrl: "jdbc:postgresql://localhost/db",
+        targetUser: "admin",
+        targetPassword: "secret",
+        targetSchemas: "public,audit",
+      };
 
-    const args = buildTargetArgs(inputs);
+      const args = buildTargetArgs(inputs);
 
-    expect(args).toEqual(["-url=jdbc:sqlite:test.db"]);
+      expect(args).toContain("-environment=default");
+      expect(args).toContain("-url=jdbc:postgresql://localhost/db");
+      expect(args).toContain("-user=admin");
+      expect(args).toContain("-password=secret");
+      expect(args).toContain("-schemas=public,audit");
+    });
+
+    it("should scope params to named environment", () => {
+      const inputs: FlywayMigrationsChecksInputs = {
+        ...baseInputs,
+        targetEnvironment: "production",
+        targetUrl: "jdbc:postgresql://localhost/db",
+        targetUser: "admin",
+        targetPassword: "secret",
+        targetSchemas: "public,audit",
+      };
+
+      const args = buildTargetArgs(inputs);
+
+      expect(args).toContain("-environment=production");
+      expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
+      expect(args).toContain("-environments.production.user=admin");
+      expect(args).toContain("-environments.production.password=secret");
+      expect(args).toContain("-environments.production.schemas=public,audit");
+    });
   });
 });
 
