@@ -44,34 +44,39 @@ const buildBaseArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
 };
 
 const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
-  const args: string[] = [];
-
-  if (inputs.buildEnvironment) {
-    args.push(`-buildEnvironment=${inputs.buildEnvironment}`);
+  if (!hasBuildInputs(inputs)) {
+    return [];
   }
 
+  const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
+  const args: string[] = [];
+
+  args.push(`-buildEnvironment=${environmentName}`);
+
   if (inputs.buildUrl) {
-    args.push(`-buildUrl=${inputs.buildUrl}`);
+    args.push(`-environments.${environmentName}.url=${inputs.buildUrl}`);
   }
 
   if (inputs.buildUser) {
-    args.push(`-buildUser=${inputs.buildUser}`);
+    args.push(`-environments.${environmentName}.user=${inputs.buildUser}`);
   }
 
   if (inputs.buildPassword) {
-    args.push(`-buildPassword=${inputs.buildPassword}`);
+    args.push(`-environments.${environmentName}.password=${inputs.buildPassword}`);
   }
 
   if (inputs.buildSchemas) {
-    args.push(`-buildSchemas=${inputs.buildSchemas}`);
+    args.push(`-environments.${environmentName}.schemas=${inputs.buildSchemas}`);
   }
 
   if (inputs.buildOkToErase) {
-    const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
-    args.push(`-environments.${environmentName}.flyway.cleanDisabled=false`);
+    args.push(`-environments.${environmentName}.provisioner=clean`);
   }
 
   return args;
 };
 
-export { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs };
+const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
+  !!(inputs.buildEnvironment || inputs.buildUrl);
+
+export { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs, hasBuildInputs };

@@ -1,10 +1,7 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs } from "./arg-builders.js";
-
-const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
-  !!(inputs.buildEnvironment || inputs.buildUrl);
+import { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
 
 const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args = ["check", "-dryrun", "-code", "-drift"];

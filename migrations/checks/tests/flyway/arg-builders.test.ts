@@ -69,10 +69,10 @@ describe("getBuildEnvironmentArgs", () => {
     const args = getBuildEnvironmentArgs(inputs);
 
     expect(args).toContain("-buildEnvironment=build");
-    expect(args).toContain("-buildUrl=jdbc:postgresql://localhost/build-db");
-    expect(args).toContain("-buildUser=deploy");
-    expect(args).toContain("-buildPassword=secret");
-    expect(args).toContain("-buildSchemas=public,staging");
+    expect(args).toContain("-environments.build.url=jdbc:postgresql://localhost/build-db");
+    expect(args).toContain("-environments.build.user=deploy");
+    expect(args).toContain("-environments.build.password=secret");
+    expect(args).toContain("-environments.build.schemas=public,staging");
   });
 
   it("should only include provided build params", () => {
@@ -83,10 +83,11 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toEqual(["-buildUrl=jdbc:sqlite:build.db"]);
+    expect(args).toContain("-buildEnvironment=default_build");
+    expect(args).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
   });
 
-  it("should include cleanDisabled=false for build environment when buildOkToErase is true", () => {
+  it("should set clean provisioner for build environment when buildOkToErase is true", () => {
     const inputs: FlywayMigrationsChecksInputs = {
       ...baseInputs,
       buildEnvironment: "build",
@@ -95,10 +96,10 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-environments.build.flyway.cleanDisabled=false");
+    expect(args).toContain("-environments.build.provisioner=clean");
   });
 
-  it("should not include cleanDisabled=false when buildOkToErase is false", () => {
+  it("should not set clean provisioner when buildOkToErase is false", () => {
     const inputs: FlywayMigrationsChecksInputs = {
       ...baseInputs,
       buildEnvironment: "build",
@@ -107,18 +108,19 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).not.toContain("-environments.build.flyway.cleanDisabled=false");
+    expect(args).not.toContain("-environments.build.provisioner=clean");
   });
 
   it("should use default_build environment when buildEnvironment is not set", () => {
     const inputs: FlywayMigrationsChecksInputs = {
       ...baseInputs,
+      buildUrl: "jdbc:sqlite:build.db",
       buildOkToErase: true,
     };
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-environments.default_build.flyway.cleanDisabled=false");
+    expect(args).toContain("-environments.default_build.provisioner=clean");
   });
 });
 

@@ -114,8 +114,8 @@ describe("buildCheckArgs", () => {
 
     const args = buildCheckArgs(inputs);
 
-    expect(args).toContain("-buildUrl=jdbc:postgresql://localhost/build-db");
-    expect(args).toContain("-buildUser=deploy");
+    expect(args).toContain("-environments.default_build.url=jdbc:postgresql://localhost/build-db");
+    expect(args).toContain("-environments.default_build.user=deploy");
   });
 
   it("should include target migration version and cherry pick", () => {

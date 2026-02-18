@@ -163,7 +163,7 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-changes");
-    expect(args).toContain("-buildUrl=jdbc:sqlite:build.db");
+    expect(args).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
   });
 
   it("should not include -changes when no build inputs provided", async () => {
