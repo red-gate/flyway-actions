@@ -29,10 +29,10 @@ describe("getCheckArgs", () => {
     expect(args[3]).toBe("-drift");
   });
 
-  it("should include -failOnError when failOnCodeReview is true", () => {
+  it("should include -check.failOnError when failOnCodeReview is true", () => {
     const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true });
 
-    expect(args).toContain("-failOnError=true");
+    expect(args).toContain("-check.failOnError=true");
   });
 
   it("should include -failOnDrift when failOnDrift is true", () => {
@@ -50,7 +50,7 @@ describe("getCheckArgs", () => {
   it("should include both -failOnError and -failOnDrift flags independently", () => {
     const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true, failOnDrift: true });
 
-    expect(args).toContain("-failOnError=true");
+    expect(args).toContain("-check.failOnError=true");
     expect(args).toContain("-failOnDrift=true");
   });
 

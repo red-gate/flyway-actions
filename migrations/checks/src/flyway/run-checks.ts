@@ -13,7 +13,7 @@ const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   }
 
   if (inputs.failOnCodeReview) {
-    args.push("-failOnError=true");
+    args.push("-check.failOnError=true");
   }
 
   if (inputs.failOnDrift) {
