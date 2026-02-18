@@ -47,6 +47,7 @@ jobs:
         with:
           fail-on-code-review: 'false'
           target-url: jdbc:sqlite:database/no-drift.db
+          build-url: jdbc:sqlite:database/build.db
           working-directory: sample-project
       - name: Run deploy
         id: deploy
