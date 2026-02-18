@@ -45,6 +45,7 @@ jobs:
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
+          fail-on-code-review: 'false'
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
       - name: Run deploy

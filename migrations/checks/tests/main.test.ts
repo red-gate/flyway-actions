@@ -1,6 +1,7 @@
 import type { ExecOptions } from "@actions/exec";
 
 const getInput = vi.fn();
+const getBooleanInput = vi.fn();
 const setFailed = vi.fn();
 const setSecret = vi.fn();
 const info = vi.fn();
@@ -12,6 +13,7 @@ const exec = vi.fn();
 const setupMocks = () => {
   vi.doMock("@actions/core", () => ({
     getInput,
+    getBooleanInput,
     setFailed,
     setSecret,
     info,
@@ -44,8 +46,9 @@ const setupChecksMock = (edition: string, checkExitCode = 0) => {
   });
 };
 
-const setupInputMock = (overrides: Record<string, string> = {}) => {
+const setupInputMock = (overrides: Record<string, string> = {}, booleanOverrides: Record<string, boolean> = {}) => {
   getInput.mockImplementation((name: string) => overrides[name] || "");
+  getBooleanInput.mockImplementation((name: string) => booleanOverrides[name] ?? false);
 };
 
 describe("run", () => {
@@ -89,6 +92,34 @@ describe("run", () => {
     expect(args).toContain("-dryrun");
     expect(args).toContain("-url=jdbc:sqlite:test.db");
     expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should include -failOnError flag when fail-on-code-review is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-code-review": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-code");
+    expect(args).toContain("-failOnError=true");
+  });
+
+  it("should not include -failOnError when fail-on-code-review is false", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-code-review": false });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-code");
+    expect(args).not.toContain("-failOnError=true");
   });
 
   it("should fail when check exits with non-zero code", async () => {

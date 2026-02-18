@@ -2,10 +2,12 @@ import type { FlywayMigrationsChecksInputs } from "../src/types.js";
 import * as path from "path";
 
 const getInput = vi.fn();
+const getBooleanInput = vi.fn();
 const setSecret = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   getInput,
+  getBooleanInput,
   setSecret,
 }));
 
@@ -63,6 +65,15 @@ describe("getInputs", () => {
     const inputs = getInputs();
 
     expect(inputs.workingDirectory).toBe(path.resolve("/app/db"));
+  });
+
+  it("should return fail-on-code-review input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.failOnCodeReview).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("fail-on-code-review");
   });
 
   it("should return extra args", () => {
