@@ -6,7 +6,7 @@ This sample project contains SQLite migrations used for end-to-end testing of th
 
 - **V1__create_users_table.sql**: Creates the users table with basic user information
 - **V2__create_posts_table.sql**: Creates the posts table with a foreign key to users
-- **V3__add_user_status.sql**: Adds a status column to the users table
+- **V3__add_user_status.sql**: Adds a status column to the users table and includes a code review violation
 
 ## Database
 
