@@ -13291,10 +13291,10 @@ const jo = () => {
   if (!Ni(A))
     return [];
   const r = A.buildEnvironment ?? na, t = [];
-  return t.push(`-buildEnvironment=${r}`), A.buildUrl && t.push(`-environments.${r}.url=${A.buildUrl}`), A.buildUser && t.push(`-environments.${r}.user=${A.buildUser}`), A.buildPassword && t.push(`-environments.${r}.password=${A.buildPassword}`), A.buildSchemas && t.push(`-environments.${r}.schemas=${A.buildSchemas}`), A.buildOkToErase && t.push(`-environments.${r}.provisioner=clean`), t;
+  return t.push(`-check.buildEnvironment=${r}`), A.buildUrl && t.push(`-environments.${r}.url=${A.buildUrl}`), A.buildUser && t.push(`-environments.${r}.user=${A.buildUser}`), A.buildPassword && t.push(`-environments.${r}.password=${A.buildPassword}`), A.buildSchemas && t.push(`-environments.${r}.schemas=${A.buildSchemas}`), A.buildOkToErase && t.push(`-environments.${r}.provisioner=clean`), t;
 }, Ni = (A) => !!(A.buildEnvironment || A.buildUrl), aa = (A) => {
   const r = ["check", "-dryrun", "-code", "-drift"];
-  return Ni(A) ? r.push("-changes") : mi('Skipping deployment changes report: no "build-environment" or "build-url" provided'), A.failOnCodeReview && r.push("-failOnError=true"), A.failOnDrift && r.push("-failOnDrift=true"), r.push(...sa(A)), r.push(...oa(A)), r.push(...ia(A)), A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), r;
+  return Ni(A) ? r.push("-changes") : mi('Skipping deployment changes report: no "build-environment" or "build-url" provided'), A.failOnCodeReview && r.push("-check.failOnError=true"), A.failOnDrift && r.push("-check.failOnDrift=true"), r.push(...sa(A)), r.push(...oa(A)), r.push(...ia(A)), A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), r;
 }, Qa = async (A) => {
   Xo("Running Flyway checks");
   try {
