@@ -29,6 +29,21 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to include'
     required: false
+  build-environment:
+    description: 'Build database for generating a deployment changes report'
+    required: false
+  build-url:
+    description: 'JDBC URL for the build database'
+    required: false
+  build-user:
+    description: 'Database user for the build database'
+    required: false
+  build-password:
+    description: 'Database password for the build database'
+    required: false
+  build-schemas:
+    description: 'Comma-separated list of schemas for the build database'
+    required: false
   fail-on-code-review:
     description: 'Whether to fail the action when code review violations are found'
     required: false

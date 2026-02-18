@@ -10,6 +10,11 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const targetSchemas = core.getInput("target-schemas") || undefined;
   const targetMigrationVersion = core.getInput("target-migration-version") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
+  const buildEnvironment = core.getInput("build-environment") || undefined;
+  const buildUrl = core.getInput("build-url") || undefined;
+  const buildUser = core.getInput("build-user") || undefined;
+  const buildPassword = core.getInput("build-password") || undefined;
+  const buildSchemas = core.getInput("build-schemas") || undefined;
   const failOnCodeReview = core.getBooleanInput("fail-on-code-review");
   const failOnDrift = core.getBooleanInput("fail-on-drift");
   const rawWorkingDirectory = core.getInput("working-directory");
@@ -24,6 +29,11 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
     targetSchemas,
     targetMigrationVersion,
     cherryPick,
+    buildEnvironment,
+    buildUrl,
+    buildUser,
+    buildPassword,
+    buildSchemas,
     failOnCodeReview,
     failOnDrift,
     workingDirectory,
@@ -34,6 +44,10 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
 const maskSecrets = (inputs: FlywayMigrationsChecksInputs): void => {
   if (inputs.targetPassword) {
     core.setSecret(inputs.targetPassword);
+  }
+
+  if (inputs.buildPassword) {
+    core.setSecret(inputs.buildPassword);
   }
 };
 
