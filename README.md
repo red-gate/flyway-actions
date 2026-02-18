@@ -47,9 +47,9 @@ jobs:
       - name: Run deployment checks and generate reports
         uses: red-gate/flyway-actions/migrations/checks@v1
         with:
-          environment: production
-          user: "${{ secrets.FLYWAY_USER }}"
-          password: "${{ secrets.FLYWAY_PASSWORD }}"
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           build-environment: build
           build-user: "${{ secrets.FLYWAY_BUILD_USER }}"
           build-password: "${{ secrets.FLYWAY_BUILD_PASSWORD }}"
@@ -72,7 +72,7 @@ jobs:
 
 ### Manual review between checks and deployment (Flyway Enterprise)
 
-Split checks and deployment into separate jobs and use a [GitHub environment with required reviewers](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#required-reviewers) on the deploy job. The deployment will pause until a reviewer approves it.
+Split checks and deployment into separate jobs and use a [GitHub environment with required reviewers](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#required-reviewers) on the 'deploy' job. The deployment will pause until a reviewer approves it.
 
 ```yaml
 name: Deploy to production
