@@ -1,9 +1,9 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
+import { getBaseArgs, getTargetEnvironmentArgs, getBuildEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
 
-const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args = ["check", "-dryrun", "-code", "-drift"];
 
   if (hasBuildInputs(inputs)) {
@@ -20,9 +20,9 @@ const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
     args.push("-failOnDrift=true");
   }
 
-  args.push(...buildTargetArgs(inputs));
+  args.push(...getTargetEnvironmentArgs(inputs));
   args.push(...getBuildEnvironmentArgs(inputs));
-  args.push(...buildBaseArgs(inputs));
+  args.push(...getBaseArgs(inputs));
 
   if (inputs.targetMigrationVersion) {
     args.push(`-target=${inputs.targetMigrationVersion}`);
@@ -38,7 +38,7 @@ const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
 const runChecks = async (inputs: FlywayMigrationsChecksInputs): Promise<number> => {
   core.startGroup("Running Flyway checks");
   try {
-    const args = buildCheckArgs(inputs);
+    const args = getCheckArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.stderr) {
@@ -51,4 +51,4 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs): Promise<number> 
   }
 };
 
-export { buildCheckArgs, runChecks };
+export { getCheckArgs, runChecks };
