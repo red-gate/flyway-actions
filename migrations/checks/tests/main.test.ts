@@ -106,6 +106,7 @@ describe("run", () => {
 
     expect(args).toContain("-code");
     expect(args).toContain("-failOnError=true");
+    expect(args).not.toContain("-failOnDrift=true");
   });
 
   it("should not include -failOnError when fail-on-code-review is false", async () => {
@@ -120,6 +121,35 @@ describe("run", () => {
 
     expect(args).toContain("-code");
     expect(args).not.toContain("-failOnError=true");
+  });
+
+  it("should include -failOnDrift when fail-on-drift is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-drift": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-drift");
+    expect(args).toContain("-failOnDrift=true");
+    expect(args).not.toContain("-failOnError=true");
+  });
+
+  it("should not include -failOnDrift when fail-on-drift is false", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-drift": false });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-drift");
+    expect(args).not.toContain("-failOnDrift=true");
   });
 
   it("should fail when check exits with non-zero code", async () => {

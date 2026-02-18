@@ -76,6 +76,15 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("fail-on-code-review");
   });
 
+  it("should return fail-on-drift input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.failOnDrift).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("fail-on-drift");
+  });
+
   it("should return extra args", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "extra-args") {
