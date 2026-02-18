@@ -1,10 +1,10 @@
 import type { FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { buildCommonArgs } from "./arg-builders.js";
+import { getCommonArgs } from "./arg-builders.js";
 
-const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = ["migrate", ...buildCommonArgs(inputs)];
+const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+  const args: string[] = ["migrate", ...getCommonArgs(inputs)];
 
   if (inputs.targetMigrationVersion) {
     args.push(`-target=${inputs.targetMigrationVersion}`);
@@ -24,7 +24,7 @@ const buildFlywayMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): strin
 const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> => {
   core.startGroup("Running migrations");
   try {
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.stderr) {
@@ -92,4 +92,4 @@ const parseFlywayOutput = (stdout: string): { migrationsApplied: number; schemaV
   return { migrationsApplied, schemaVersion };
 };
 
-export { buildFlywayMigrateArgs, migrate, parseFlywayOutput };
+export { getMigrateArgs, migrate, parseFlywayOutput };

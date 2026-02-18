@@ -16,7 +16,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { buildFlywayMigrateArgs, migrate, parseFlywayOutput } = await import("../../src/flyway/migrate.js");
+const { getMigrateArgs, migrate, parseFlywayOutput } = await import("../../src/flyway/migrate.js");
 
 describe("migrate", () => {
   it("should set all outputs on success", async () => {
@@ -131,11 +131,11 @@ describe("parseFlywayOutput", () => {
   });
 });
 
-describe("buildFlywayMigrateArgs", () => {
+describe("getMigrateArgs", () => {
   it("should build args with defaults only", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args).toContain("migrate");
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
@@ -150,7 +150,7 @@ describe("buildFlywayMigrateArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildFlywayMigrateArgs(inputs);
+      const args = getMigrateArgs(inputs);
 
       expect(args).toContain("-url=jdbc:postgresql://localhost/db");
       expect(args).toContain("-user=admin");
@@ -167,7 +167,7 @@ describe("buildFlywayMigrateArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildFlywayMigrateArgs(inputs);
+      const args = getMigrateArgs(inputs);
 
       expect(args).toContain("-environment=default");
       expect(args).toContain("-url=jdbc:postgresql://localhost/db");
@@ -185,7 +185,7 @@ describe("buildFlywayMigrateArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildFlywayMigrateArgs(inputs);
+      const args = getMigrateArgs(inputs);
 
       expect(args).toContain("-environment=production");
       expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
@@ -201,7 +201,7 @@ describe("buildFlywayMigrateArgs", () => {
       targetMigrationVersion: "5.0",
     };
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args).toContain("-target=5.0");
   });
@@ -212,7 +212,7 @@ describe("buildFlywayMigrateArgs", () => {
       cherryPick: "2.0,2.1",
     };
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args).toContain("-cherryPick=2.0,2.1");
   });
@@ -223,7 +223,7 @@ describe("buildFlywayMigrateArgs", () => {
       saveSnapshot: true,
     };
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args).toContain("-saveSnapshot=true");
   });
@@ -233,7 +233,7 @@ describe("buildFlywayMigrateArgs", () => {
       targetUrl: "jdbc:postgresql://localhost/db",
     };
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
   });
@@ -243,7 +243,7 @@ describe("buildFlywayMigrateArgs", () => {
       workingDirectory: "/app/db",
     };
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args).toContain("-workingDirectory=/app/db");
   });
@@ -254,7 +254,7 @@ describe("buildFlywayMigrateArgs", () => {
       extraArgs: "-X -custom=value",
     };
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args).toContain("-X");
     expect(args).toContain("-custom=value");
@@ -263,7 +263,7 @@ describe("buildFlywayMigrateArgs", () => {
   it("should not include undefined optional values", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
-    const args = buildFlywayMigrateArgs(inputs);
+    const args = getMigrateArgs(inputs);
 
     expect(args.filter((a) => a.includes("url")).length).toBe(0);
     expect(args.filter((a) => a.includes("user")).length).toBe(0);

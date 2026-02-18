@@ -1,7 +1,7 @@
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
 import { parseExtraArgs } from "@flyway-actions/shared";
 
-const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
+const getCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = [];
 
   if (inputs.targetEnvironment) {
@@ -38,4 +38,4 @@ const buildCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => 
   return args;
 };
 
-export { buildCommonArgs };
+export { getCommonArgs };

@@ -15,7 +15,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { buildFlywayCheckDriftArgs, checkForDrift } = await import("../../src/flyway/check-for-drift.js");
+const { getCheckDriftArgs, checkForDrift } = await import("../../src/flyway/check-for-drift.js");
 
 describe("checkForDrift", () => {
   it("should set drift-detected output to false when exit code is 0", async () => {
@@ -35,11 +35,11 @@ describe("checkForDrift", () => {
   });
 });
 
-describe("buildFlywayCheckDriftArgs", () => {
+describe("getCheckDriftArgs", () => {
   it("should build args with check and -drift as first elements", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {};
 
-    const args = buildFlywayCheckDriftArgs(inputs);
+    const args = getCheckDriftArgs(inputs);
 
     expect(args[0]).toBe("check");
     expect(args[1]).toBe("-drift");
@@ -55,7 +55,7 @@ describe("buildFlywayCheckDriftArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildFlywayCheckDriftArgs(inputs);
+      const args = getCheckDriftArgs(inputs);
 
       expect(args).toContain("-url=jdbc:postgresql://localhost/db");
       expect(args).toContain("-user=admin");
@@ -72,7 +72,7 @@ describe("buildFlywayCheckDriftArgs", () => {
         targetEnvironment: "default",
       };
 
-      const args = buildFlywayCheckDriftArgs(inputs);
+      const args = getCheckDriftArgs(inputs);
 
       expect(args).toContain("-environment=default");
       expect(args).toContain("-url=jdbc:postgresql://localhost/db");
@@ -90,7 +90,7 @@ describe("buildFlywayCheckDriftArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildFlywayCheckDriftArgs(inputs);
+      const args = getCheckDriftArgs(inputs);
 
       expect(args).toContain("-environment=production");
       expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
@@ -106,7 +106,7 @@ describe("buildFlywayCheckDriftArgs", () => {
       extraArgs: "-X -custom=value",
     };
 
-    const args = buildFlywayCheckDriftArgs(inputs);
+    const args = getCheckDriftArgs(inputs);
 
     expect(args).toContain("-workingDirectory=/app/db");
     expect(args).toContain("-X");
@@ -121,7 +121,7 @@ describe("buildFlywayCheckDriftArgs", () => {
       saveSnapshot: true,
     };
 
-    const args = buildFlywayCheckDriftArgs(inputs);
+    const args = getCheckDriftArgs(inputs);
 
     expect(args.some((a) => a.includes("target"))).toBe(false);
     expect(args.some((a) => a.includes("cherryPick"))).toBe(false);

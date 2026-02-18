@@ -1,19 +1,19 @@
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { buildCommonArgs } from "./arg-builders.js";
+import { getCommonArgs } from "./arg-builders.js";
 
-const buildFlywayCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [
+const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [
   "check",
   "-drift",
   "-failOnDrift=true",
-  ...buildCommonArgs(inputs),
+  ...getCommonArgs(inputs),
 ];
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
   core.startGroup("Checking for drift");
   try {
-    const driftArgs = buildFlywayCheckDriftArgs(inputs);
+    const driftArgs = getCheckDriftArgs(inputs);
     const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
     if (result.stderr) {
@@ -38,4 +38,4 @@ const setDriftOutput = (exitCode: number, driftDetected: boolean): void => {
   core.setOutput("drift-detected", driftDetected.toString());
 };
 
-export { buildFlywayCheckDriftArgs, checkForDrift };
+export { getCheckDriftArgs, checkForDrift };
