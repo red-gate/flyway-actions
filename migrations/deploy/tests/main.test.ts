@@ -109,7 +109,11 @@ describe("run", () => {
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(exec).toHaveBeenCalledWith("flyway", expect.arrayContaining(["-saveSnapshot=true"]), expect.any(Object));
+    expect(exec).toHaveBeenCalledWith(
+      "flyway",
+      expect.arrayContaining(["-migrate.saveSnapshot=true"]),
+      expect.any(Object),
+    );
   });
 
   it("should not include saveSnapshot for community edition", async () => {
@@ -128,7 +132,11 @@ describe("run", () => {
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(exec).not.toHaveBeenCalledWith("flyway", expect.arrayContaining(["-saveSnapshot=true"]), expect.any(Object));
+    expect(exec).not.toHaveBeenCalledWith(
+      "flyway",
+      expect.arrayContaining(["-migrate.saveSnapshot=true"]),
+      expect.any(Object),
+    );
   });
 
   it("should fail when flyway returns non-zero exit code", async () => {
