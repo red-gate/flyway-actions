@@ -13304,7 +13304,9 @@ const ra = () => {
   });
 }, bi = (A) => {
   const r = [];
-  return A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`), A.targetUrl && r.push(`-url=${A.targetUrl}`), A.targetUser && r.push(`-user=${A.targetUser}`), A.targetPassword && r.push(`-password=${A.targetPassword}`), A.targetSchemas && r.push(`-schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...sa(A.extraArgs)), r;
+  A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`);
+  const g = A.targetEnvironment && A.targetEnvironment !== "default" ? `-environments.${A.targetEnvironment}.` : "-";
+  return A.targetUrl && r.push(`${g}url=${A.targetUrl}`), A.targetUser && r.push(`${g}user=${A.targetUser}`), A.targetPassword && r.push(`${g}password=${A.targetPassword}`), A.targetSchemas && r.push(`${g}schemas=${A.targetSchemas}`), A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...sa(A.extraArgs)), r;
 }, aa = (A) => [
   "check",
   "-drift",

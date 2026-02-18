@@ -46,22 +46,58 @@ describe("buildFlywayCheckDriftArgs", () => {
     expect(args[2]).toBe("-failOnDrift=true");
   });
 
-  it("should include connection params", () => {
-    const inputs: FlywayMigrationsDeploymentInputs = {
-      targetUrl: "jdbc:postgresql://localhost/db",
-      targetUser: "admin",
-      targetPassword: "secret",
-      targetEnvironment: "production",
-      targetSchemas: "public,audit",
-    };
+  describe("target params", () => {
+    it("should use flat params with no environment", () => {
+      const inputs: FlywayMigrationsDeploymentInputs = {
+        targetUrl: "jdbc:postgresql://localhost/db",
+        targetUser: "admin",
+        targetPassword: "secret",
+        targetSchemas: "public,audit",
+      };
 
-    const args = buildFlywayCheckDriftArgs(inputs);
+      const args = buildFlywayCheckDriftArgs(inputs);
 
-    expect(args).toContain("-url=jdbc:postgresql://localhost/db");
-    expect(args).toContain("-user=admin");
-    expect(args).toContain("-password=secret");
-    expect(args).toContain("-environment=production");
-    expect(args).toContain("-schemas=public,audit");
+      expect(args).toContain("-url=jdbc:postgresql://localhost/db");
+      expect(args).toContain("-user=admin");
+      expect(args).toContain("-password=secret");
+      expect(args).toContain("-schemas=public,audit");
+    });
+
+    it("should use flat params with default environment", () => {
+      const inputs: FlywayMigrationsDeploymentInputs = {
+        targetUrl: "jdbc:postgresql://localhost/db",
+        targetUser: "admin",
+        targetPassword: "secret",
+        targetSchemas: "public,audit",
+        targetEnvironment: "default",
+      };
+
+      const args = buildFlywayCheckDriftArgs(inputs);
+
+      expect(args).toContain("-environment=default");
+      expect(args).toContain("-url=jdbc:postgresql://localhost/db");
+      expect(args).toContain("-user=admin");
+      expect(args).toContain("-password=secret");
+      expect(args).toContain("-schemas=public,audit");
+    });
+
+    it("should scope params to named environment", () => {
+      const inputs: FlywayMigrationsDeploymentInputs = {
+        targetUrl: "jdbc:postgresql://localhost/db",
+        targetUser: "admin",
+        targetPassword: "secret",
+        targetEnvironment: "production",
+        targetSchemas: "public,audit",
+      };
+
+      const args = buildFlywayCheckDriftArgs(inputs);
+
+      expect(args).toContain("-environment=production");
+      expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
+      expect(args).toContain("-environments.production.user=admin");
+      expect(args).toContain("-environments.production.password=secret");
+      expect(args).toContain("-environments.production.schemas=public,audit");
+    });
   });
 
   it("should include workingDirectory and extraArgs", () => {
