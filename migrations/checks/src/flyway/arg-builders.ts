@@ -3,7 +3,7 @@ import { parseExtraArgs } from "@flyway-actions/shared";
 
 const DEFAULT_BUILD_ENVIRONMENT = "default_build";
 
-const buildTargetArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getTargetEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args: string[] = [];
 
   if (inputs.targetEnvironment) {
@@ -32,7 +32,7 @@ const buildTargetArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   return args;
 };
 
-const buildBaseArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getBaseArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args: string[] = [];
 
   if (inputs.workingDirectory) {
@@ -82,4 +82,4 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
 const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
   !!(inputs.buildEnvironment || inputs.buildUrl);
 
-export { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs, hasBuildInputs };
+export { getBaseArgs, getTargetEnvironmentArgs, getBuildEnvironmentArgs, hasBuildInputs };

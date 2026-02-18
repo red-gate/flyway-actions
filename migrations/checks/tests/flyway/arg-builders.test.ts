@@ -11,13 +11,14 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { buildTargetArgs, buildBaseArgs, getBuildEnvironmentArgs } = await import("../../src/flyway/arg-builders.js");
+const { getTargetEnvironmentArgs, getBaseArgs, getBuildEnvironmentArgs } =
+  await import("../../src/flyway/arg-builders.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
-describe("buildTargetArgs", () => {
+describe("getTargetEnvironmentArgs", () => {
   it("should return empty array when no target inputs", () => {
-    expect(buildTargetArgs(baseInputs)).toEqual([]);
+    expect(getTargetEnvironmentArgs(baseInputs)).toEqual([]);
   });
 
   describe("target params", () => {
@@ -30,7 +31,7 @@ describe("buildTargetArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildTargetArgs(inputs);
+      const args = getTargetEnvironmentArgs(inputs);
 
       expect(args).toContain("-url=jdbc:postgresql://localhost/db");
       expect(args).toContain("-user=admin");
@@ -48,7 +49,7 @@ describe("buildTargetArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildTargetArgs(inputs);
+      const args = getTargetEnvironmentArgs(inputs);
 
       expect(args).toContain("-environment=default");
       expect(args).toContain("-url=jdbc:postgresql://localhost/db");
@@ -67,7 +68,7 @@ describe("buildTargetArgs", () => {
         targetSchemas: "public,audit",
       };
 
-      const args = buildTargetArgs(inputs);
+      const args = getTargetEnvironmentArgs(inputs);
 
       expect(args).toContain("-environment=production");
       expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
@@ -151,9 +152,9 @@ describe("getBuildEnvironmentArgs", () => {
   });
 });
 
-describe("buildBaseArgs", () => {
+describe("getBaseArgs", () => {
   it("should return empty array when no base inputs", () => {
-    expect(buildBaseArgs(baseInputs)).toEqual([]);
+    expect(getBaseArgs(baseInputs)).toEqual([]);
   });
 
   it("should include working directory", () => {
@@ -162,7 +163,7 @@ describe("buildBaseArgs", () => {
       workingDirectory: "/app/db",
     };
 
-    const args = buildBaseArgs(inputs);
+    const args = getBaseArgs(inputs);
 
     expect(args).toContain("-workingDirectory=/app/db");
   });
@@ -173,7 +174,7 @@ describe("buildBaseArgs", () => {
       extraArgs: "-X -custom=value",
     };
 
-    const args = buildBaseArgs(inputs);
+    const args = getBaseArgs(inputs);
 
     expect(args).toContain("-X");
     expect(args).toContain("-custom=value");

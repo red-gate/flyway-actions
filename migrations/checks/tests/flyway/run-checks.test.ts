@@ -15,13 +15,13 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { buildCheckArgs, runChecks } = await import("../../src/flyway/run-checks.js");
+const { getCheckArgs, runChecks } = await import("../../src/flyway/run-checks.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
-describe("buildCheckArgs", () => {
+describe("getCheckArgs", () => {
   it("should always include check -dryrun -code -drift", () => {
-    const args = buildCheckArgs(baseInputs);
+    const args = getCheckArgs(baseInputs);
 
     expect(args[0]).toBe("check");
     expect(args[1]).toBe("-dryrun");
@@ -30,25 +30,25 @@ describe("buildCheckArgs", () => {
   });
 
   it("should include -failOnError when failOnCodeReview is true", () => {
-    const args = buildCheckArgs({ ...baseInputs, failOnCodeReview: true });
+    const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true });
 
     expect(args).toContain("-failOnError=true");
   });
 
   it("should include -failOnDrift when failOnDrift is true", () => {
-    const args = buildCheckArgs({ ...baseInputs, failOnDrift: true });
+    const args = getCheckArgs({ ...baseInputs, failOnDrift: true });
 
     expect(args).toContain("-failOnDrift=true");
   });
 
   it("should not include -failOnDrift when failOnDrift is false", () => {
-    const args = buildCheckArgs({ ...baseInputs, failOnDrift: false });
+    const args = getCheckArgs({ ...baseInputs, failOnDrift: false });
 
     expect(args).not.toContain("-failOnDrift=true");
   });
 
   it("should include both -failOnError and -failOnDrift flags independently", () => {
-    const args = buildCheckArgs({ ...baseInputs, failOnCodeReview: true, failOnDrift: true });
+    const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true, failOnDrift: true });
 
     expect(args).toContain("-failOnError=true");
     expect(args).toContain("-failOnDrift=true");
@@ -61,7 +61,7 @@ describe("buildCheckArgs", () => {
       targetUser: "admin",
     };
 
-    const args = buildCheckArgs(inputs);
+    const args = getCheckArgs(inputs);
 
     expect(args).toContain("-url=jdbc:postgresql://localhost/db");
     expect(args).toContain("-user=admin");
@@ -74,33 +74,33 @@ describe("buildCheckArgs", () => {
       extraArgs: "-X",
     };
 
-    const args = buildCheckArgs(inputs);
+    const args = getCheckArgs(inputs);
 
     expect(args).toContain("-workingDirectory=/app/db");
     expect(args).toContain("-X");
   });
 
   it("should include -changes when build url is provided", () => {
-    const args = buildCheckArgs({ ...baseInputs, buildUrl: "jdbc:sqlite:build.db" });
+    const args = getCheckArgs({ ...baseInputs, buildUrl: "jdbc:sqlite:build.db" });
 
     expect(args).toContain("-changes");
   });
 
   it("should include -changes when build environment is provided", () => {
-    const args = buildCheckArgs({ ...baseInputs, buildEnvironment: "build" });
+    const args = getCheckArgs({ ...baseInputs, buildEnvironment: "build" });
 
     expect(args).toContain("-changes");
   });
 
   it("should not include -changes when no build inputs provided", () => {
-    const args = buildCheckArgs(baseInputs);
+    const args = getCheckArgs(baseInputs);
 
     expect(args).not.toContain("-changes");
   });
 
   it("should log info when no build inputs provided", () => {
     coreInfo.mockClear();
-    buildCheckArgs(baseInputs);
+    getCheckArgs(baseInputs);
 
     expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
   });
@@ -112,7 +112,7 @@ describe("buildCheckArgs", () => {
       buildUser: "deploy",
     };
 
-    const args = buildCheckArgs(inputs);
+    const args = getCheckArgs(inputs);
 
     expect(args).toContain("-environments.default_build.url=jdbc:postgresql://localhost/build-db");
     expect(args).toContain("-environments.default_build.user=deploy");
@@ -125,7 +125,7 @@ describe("buildCheckArgs", () => {
       cherryPick: "3.0,4.0",
     };
 
-    const args = buildCheckArgs(inputs);
+    const args = getCheckArgs(inputs);
 
     expect(args).toContain("-target=5.0");
     expect(args).toContain("-cherryPick=3.0,4.0");
