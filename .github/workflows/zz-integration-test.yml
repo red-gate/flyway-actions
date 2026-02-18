@@ -178,6 +178,47 @@ jobs:
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"
 
+  checks-fail-on-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run checks with drift
+        id: checks
+        continue-on-error: true
+        uses: ./migrations/checks
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          fail-on-code-review: 'false'
+          target-url: jdbc:sqlite:database/drift.db
+          working-directory: sample-project
+      - name: Verify checks failed due to drift
+        shell: bash
+        run: test "${{ steps.checks.outcome }}" != "success"
+
   checks:
     strategy:
       matrix:
