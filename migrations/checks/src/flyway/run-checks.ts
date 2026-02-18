@@ -1,10 +1,19 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { buildBaseArgs, buildTargetArgs } from "./arg-builders.js";
+import { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs } from "./arg-builders.js";
+
+const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
+  !!(inputs.buildEnvironment || inputs.buildUrl);
 
 const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args = ["check", "-dryrun", "-code", "-drift"];
+
+  if (hasBuildInputs(inputs)) {
+    args.push("-changes");
+  } else {
+    core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
+  }
 
   if (inputs.failOnCodeReview) {
     args.push("-failOnError=true");
@@ -15,6 +24,7 @@ const buildCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   }
 
   args.push(...buildTargetArgs(inputs));
+  args.push(...getBuildEnvironmentArgs(inputs));
   args.push(...buildBaseArgs(inputs));
 
   if (inputs.targetMigrationVersion) {

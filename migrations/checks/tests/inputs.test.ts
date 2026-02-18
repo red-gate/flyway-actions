@@ -103,8 +103,8 @@ describe("getInputs", () => {
       const values: Record<string, string> = {
         "build-environment": "build",
         "build-url": "jdbc:postgresql://localhost/build-db",
-        "build-user": "build-admin",
-        "build-password": "build-secret",
+        "build-user": "deploy",
+        "build-password": "secret",
         "build-schemas": "public,staging",
       };
       return values[name] || "";
@@ -114,8 +114,8 @@ describe("getInputs", () => {
 
     expect(inputs.buildEnvironment).toBe("build");
     expect(inputs.buildUrl).toBe("jdbc:postgresql://localhost/build-db");
-    expect(inputs.buildUser).toBe("build-admin");
-    expect(inputs.buildPassword).toBe("build-secret");
+    expect(inputs.buildUser).toBe("deploy");
+    expect(inputs.buildPassword).toBe("secret");
     expect(inputs.buildSchemas).toBe("public,staging");
   });
 
@@ -152,12 +152,12 @@ describe("maskSecrets", () => {
 
   it("should mask build password", () => {
     const inputs: FlywayMigrationsChecksInputs = {
-      buildPassword: "build-secret-123",
+      buildPassword: "secret",
     };
 
     maskSecrets(inputs);
 
-    expect(setSecret).toHaveBeenCalledWith("build-secret-123");
+    expect(setSecret).toHaveBeenCalledWith("secret");
   });
 
   it("should not call setSecret when no passwords present", () => {

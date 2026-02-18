@@ -11,7 +11,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { buildTargetArgs, buildBaseArgs } = await import("../../src/flyway/arg-builders.js");
+const { buildTargetArgs, buildBaseArgs, getBuildEnvironmentArgs } = await import("../../src/flyway/arg-builders.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -48,6 +48,42 @@ describe("buildTargetArgs", () => {
     const args = buildTargetArgs(inputs);
 
     expect(args).toEqual(["-url=jdbc:sqlite:test.db"]);
+  });
+});
+
+describe("getBuildEnvironmentArgs", () => {
+  it("should return empty array when no build inputs", () => {
+    expect(getBuildEnvironmentArgs(baseInputs)).toEqual([]);
+  });
+
+  it("should include all build connection params", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildEnvironment: "build",
+      buildUrl: "jdbc:postgresql://localhost/build-db",
+      buildUser: "deploy",
+      buildPassword: "secret",
+      buildSchemas: "public,staging",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-buildEnvironment=build");
+    expect(args).toContain("-buildUrl=jdbc:postgresql://localhost/build-db");
+    expect(args).toContain("-buildUser=deploy");
+    expect(args).toContain("-buildPassword=secret");
+    expect(args).toContain("-buildSchemas=public,staging");
+  });
+
+  it("should only include provided build params", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildUrl: "jdbc:sqlite:build.db",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toEqual(["-buildUrl=jdbc:sqlite:build.db"]);
   });
 });
 

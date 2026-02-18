@@ -41,4 +41,30 @@ const buildBaseArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   return args;
 };
 
-export { buildBaseArgs, buildTargetArgs };
+const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  const args: string[] = [];
+
+  if (inputs.buildEnvironment) {
+    args.push(`-buildEnvironment=${inputs.buildEnvironment}`);
+  }
+
+  if (inputs.buildUrl) {
+    args.push(`-buildUrl=${inputs.buildUrl}`);
+  }
+
+  if (inputs.buildUser) {
+    args.push(`-buildUser=${inputs.buildUser}`);
+  }
+
+  if (inputs.buildPassword) {
+    args.push(`-buildPassword=${inputs.buildPassword}`);
+  }
+
+  if (inputs.buildSchemas) {
+    args.push(`-buildSchemas=${inputs.buildSchemas}`);
+  }
+
+  return args;
+};
+
+export { buildBaseArgs, buildTargetArgs, getBuildEnvironmentArgs };

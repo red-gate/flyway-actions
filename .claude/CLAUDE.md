@@ -24,6 +24,9 @@ This is a GitHub Action with:
 - Avoid comments unless absolutely necessary for complex logic that cannot be clarified through refactoring.
 - Do NOT use JSDoc comments (`/** ... */`). The code should be self-explanatory without documentation comments.
 
+### Tests
+- Use values that do not cause typo warnings
+
 ## Committing Changes
 
 - Commit messages should be as terse as possible. No need for long descriptions or a commit signature.

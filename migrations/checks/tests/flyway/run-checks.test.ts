@@ -2,9 +2,10 @@ import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
 
 const exec = vi.fn();
+const coreInfo = vi.fn();
 
 vi.doMock("@actions/core", () => ({
-  info: vi.fn(),
+  info: coreInfo,
   error: vi.fn(),
   startGroup: vi.fn(),
   endGroup: vi.fn(),
@@ -77,6 +78,44 @@ describe("buildCheckArgs", () => {
 
     expect(args).toContain("-workingDirectory=/app/db");
     expect(args).toContain("-X");
+  });
+
+  it("should include -changes when build url is provided", () => {
+    const args = buildCheckArgs({ ...baseInputs, buildUrl: "jdbc:sqlite:build.db" });
+
+    expect(args).toContain("-changes");
+  });
+
+  it("should include -changes when build environment is provided", () => {
+    const args = buildCheckArgs({ ...baseInputs, buildEnvironment: "build" });
+
+    expect(args).toContain("-changes");
+  });
+
+  it("should not include -changes when no build inputs provided", () => {
+    const args = buildCheckArgs(baseInputs);
+
+    expect(args).not.toContain("-changes");
+  });
+
+  it("should log info when no build inputs provided", () => {
+    coreInfo.mockClear();
+    buildCheckArgs(baseInputs);
+
+    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
+  });
+
+  it("should include build args", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildUrl: "jdbc:postgresql://localhost/build-db",
+      buildUser: "deploy",
+    };
+
+    const args = buildCheckArgs(inputs);
+
+    expect(args).toContain("-buildUrl=jdbc:postgresql://localhost/build-db");
+    expect(args).toContain("-buildUser=deploy");
   });
 
   it("should include target migration version and cherry pick", () => {
