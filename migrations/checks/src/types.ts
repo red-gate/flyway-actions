@@ -11,6 +11,7 @@ type FlywayMigrationsChecksInputs = {
   buildUser?: string;
   buildPassword?: string;
   buildSchemas?: string;
+  buildOkToErase?: boolean;
   failOnCodeReview?: boolean;
   failOnDrift?: boolean;
   workingDirectory?: string;

@@ -15,6 +15,7 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const buildUser = core.getInput("build-user") || undefined;
   const buildPassword = core.getInput("build-password") || undefined;
   const buildSchemas = core.getInput("build-schemas") || undefined;
+  const buildOkToErase = core.getBooleanInput("build-ok-to-erase");
   const failOnCodeReview = core.getBooleanInput("fail-on-code-review");
   const failOnDrift = core.getBooleanInput("fail-on-drift");
   const rawWorkingDirectory = core.getInput("working-directory");
@@ -34,6 +35,7 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
     buildUser,
     buildPassword,
     buildSchemas,
+    buildOkToErase,
     failOnCodeReview,
     failOnDrift,
     workingDirectory,

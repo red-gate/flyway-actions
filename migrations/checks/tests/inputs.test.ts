@@ -85,6 +85,15 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("fail-on-drift");
   });
 
+  it("should return build-ok-to-erase input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.buildOkToErase).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
+  });
+
   it("should return extra args", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "extra-args") {

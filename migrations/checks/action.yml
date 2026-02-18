@@ -44,6 +44,10 @@ inputs:
   build-schemas:
     description: 'Comma-separated list of schemas for the build database'
     required: false
+  build-ok-to-erase:
+    description: 'Allow Flyway to erase the build database. This will delete all schema and data objects'
+    required: false
+    default: 'false'
   fail-on-code-review:
     description: 'Whether to fail the action when code review violations are found'
     required: false

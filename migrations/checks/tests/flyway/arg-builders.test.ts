@@ -85,6 +85,41 @@ describe("getBuildEnvironmentArgs", () => {
 
     expect(args).toEqual(["-buildUrl=jdbc:sqlite:build.db"]);
   });
+
+  it("should include cleanDisabled=false for build environment when buildOkToErase is true", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildEnvironment: "build",
+      buildOkToErase: true,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.build.flyway.cleanDisabled=false");
+  });
+
+  it("should not include cleanDisabled=false when buildOkToErase is false", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildEnvironment: "build",
+      buildOkToErase: false,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).not.toContain("-environments.build.flyway.cleanDisabled=false");
+  });
+
+  it("should use default_build environment when buildEnvironment is not set", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildOkToErase: true,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.flyway.cleanDisabled=false");
+  });
 });
 
 describe("buildBaseArgs", () => {

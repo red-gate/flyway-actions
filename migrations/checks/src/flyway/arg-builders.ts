@@ -1,6 +1,8 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
 import { parseExtraArgs } from "@flyway-actions/shared";
 
+const DEFAULT_BUILD_ENVIRONMENT = "default_build";
+
 const buildTargetArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args: string[] = [];
 
@@ -62,6 +64,11 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
 
   if (inputs.buildSchemas) {
     args.push(`-buildSchemas=${inputs.buildSchemas}`);
+  }
+
+  if (inputs.buildOkToErase) {
+    const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
+    args.push(`-environments.${environmentName}.flyway.cleanDisabled=false`);
   }
 
   return args;
