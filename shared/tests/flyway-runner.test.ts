@@ -195,6 +195,19 @@ describe("runFlyway", () => {
     expect(info).toHaveBeenCalledWith(expect.stringContaining("-password=***"));
     expect(info).toHaveBeenCalledWith(expect.not.stringContaining("secret"));
   });
+
+  it("should log JSON log messages", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stderr?.(Buffer.from(`${JSON.stringify({ level: "INFO", message: "Migrate running" })}\n`));
+      options?.listeners?.stderr?.(Buffer.from(`${JSON.stringify({ level: "ERROR", message: "Migrate failed" })}\n`));
+      return Promise.resolve(1);
+    });
+
+    await runFlyway(["migrate", "-outputType=json", "-outputLogsInJson=true"]);
+
+    expect(info).toHaveBeenCalledWith("Migrate running");
+    expect(error).toHaveBeenCalledWith("Migrate failed");
+  });
 });
 
 describe("getFlywayDetails", () => {
