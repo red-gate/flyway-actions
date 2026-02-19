@@ -33,6 +33,20 @@ describe("checkForDrift", () => {
 
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
+
+  it("should return false and not set drift-detected when database does not support comparison", async () => {
+    exec.mockImplementation(
+      (_cmd: string, _args: string[], options: { listeners?: { stderr?: (data: Buffer) => void } }) => {
+        options?.listeners?.stderr?.(Buffer.from("No comparison capability found that supports both types"));
+        return Promise.resolve(1);
+      },
+    );
+
+    const result = await checkForDrift({ targetUrl: "jdbc:h2:mem:test" });
+
+    expect(result).toBe(false);
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+  });
 });
 
 describe("getCheckDriftArgs", () => {
