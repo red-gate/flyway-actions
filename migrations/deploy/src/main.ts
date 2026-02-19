@@ -23,7 +23,7 @@ const run = async (): Promise<void> => {
 
     if (flyway.edition === "enterprise") {
       if (inputs.skipDriftCheck) {
-        core.info("Skipping drift check.");
+        core.info('Skipping drift check: "skip-drift-check" set to true');
       } else {
         const driftDetected = await checkForDrift(inputs);
         if (driftDetected) {
