@@ -1,4 +1,4 @@
-import type { FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput } from "./types.js";
+import type { ErrorOutput, FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput } from "./types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 import { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners } from "./utils.js";
@@ -52,21 +52,34 @@ const maskArgsForLog = (args: string[]): string[] => {
 const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
   const { listeners, getOutput } = createStdoutStderrListeners();
   const jsonStderrListener = createJsonStderrListener();
+  const isJsonOutput = args.includes("-outputType=json");
 
   core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
 
   const options: exec.ExecOptions = {
-    silent: args.includes("-outputType=json"),
+    silent: isJsonOutput,
     ignoreReturnCode: true,
     listeners: {
       stdout: listeners.stdout,
-      stderr: (data: Buffer) => (args.includes("-outputType=json") ? jsonStderrListener(data) : listeners.stderr(data)),
+      stderr: (data: Buffer) => (isJsonOutput ? jsonStderrListener(data) : listeners.stderr(data)),
     },
     cwd: cwd || undefined,
   };
   const exitCode = await exec.exec("flyway", args, options);
 
   const { stdout, stderr } = getOutput();
+
+  if (isJsonOutput) {
+    core.info(stdout);
+    if (exitCode !== 0) {
+      const errorOutput = parseErrorOutput(stdout);
+      errorOutput?.error?.message && core.error(errorOutput.error.message);
+    }
+  }
+  if (!isJsonOutput && stderr) {
+    core.error(stderr);
+  }
+
   return { exitCode, stdout, stderr };
 };
 
@@ -87,4 +100,12 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
   }
 };
 
-export { getFlywayDetails, maskArgsForLog, parseExtraArgs, runFlyway };
+const parseErrorOutput = (stdout: string): ErrorOutput | undefined => {
+  try {
+    return JSON.parse(stdout) as ErrorOutput;
+  } catch {
+    return undefined;
+  }
+};
+
+export { getFlywayDetails, maskArgsForLog, parseErrorOutput, parseExtraArgs, runFlyway };

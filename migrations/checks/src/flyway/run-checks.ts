@@ -1,7 +1,7 @@
-import type { Changes, Code, Drift, ErrorOutput, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
+import type { Changes, Code, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
-import { runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
 
 const getCheckDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
@@ -93,8 +93,6 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
         core.error(
           'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.',
         );
-      } else if (errorOutput?.error?.message) {
-        core.error(errorOutput.error.message);
       }
       throw new Error("Flyway checks failed");
     }
@@ -106,14 +104,6 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
 const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
   try {
     return JSON.parse(stdout) as FlywayCheckOutput;
-  } catch {
-    return undefined;
-  }
-};
-
-const parseErrorOutput = (stdout: string): ErrorOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as ErrorOutput;
   } catch {
     return undefined;
   }
@@ -147,4 +137,4 @@ const setOutputs = (output: FlywayCheckOutput | undefined, exitCode: number): vo
   }
 };
 
-export { getCheckArgs, parseCheckOutput, parseErrorOutput, runChecks, setOutputs };
+export { getCheckArgs, parseCheckOutput, runChecks, setOutputs };

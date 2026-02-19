@@ -32,6 +32,4 @@ type Dryrun = { operation?: "dryrun" };
 
 type FlywayCheckOutput = { individualResults?: (Drift | Changes | Code | Dryrun)[] };
 
-type ErrorOutput = { error?: { errorCode?: string; message?: string } };
-
-export type { Changes, Code, Drift, ErrorOutput, FlywayCheckOutput, FlywayMigrationsChecksInputs };
+export type { Changes, Code, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };

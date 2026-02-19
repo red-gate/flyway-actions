@@ -8,4 +8,6 @@ type FlywayVersionOutput = { edition?: string };
 
 type JsonLogModel = { level?: "DEBUG" | "INFO" | "WARN" | "ERROR" | "NOTICE"; message?: string };
 
-export type { FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput, JsonLogModel };
+type ErrorOutput = { error?: { errorCode?: string; message?: string } };
+
+export type { ErrorOutput, FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput, JsonLogModel };

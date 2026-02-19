@@ -18,8 +18,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getCheckArgs, parseCheckOutput, parseErrorOutput, runChecks, setOutputs } =
-  await import("../../src/flyway/run-checks.js");
+const { getCheckArgs, parseCheckOutput, runChecks, setOutputs } = await import("../../src/flyway/run-checks.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -240,38 +239,6 @@ describe("getCheckArgs", () => {
       expect(info).toHaveBeenCalledWith("Skipping drift check: not available in Teams edition");
       expect(info).toHaveBeenCalledWith("Skipping deployment changes report: not available in Teams edition");
     });
-  });
-});
-
-describe("parseErrorOutput", () => {
-  it("should return the error message from valid error output", () => {
-    const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Migration validation failed" } });
-
-    const errorOutput = parseErrorOutput(stdout);
-
-    expect(errorOutput?.error?.errorCode).toBe("FAULT");
-    expect(errorOutput?.error?.message).toBe("Migration validation failed");
-  });
-
-  it("should return undefined for invalid JSON", () => {
-    expect(parseErrorOutput("not json")).toBeUndefined();
-  });
-
-  it("should return undefined when error has no message", () => {
-    const stdout = JSON.stringify({ error: { errorCode: "FAULT" } });
-
-    const errorOutput = parseErrorOutput(stdout);
-
-    expect(errorOutput?.error?.errorCode).toBe("FAULT");
-    expect(errorOutput?.error?.message).toBeUndefined();
-  });
-
-  it("should return undefined when error field is missing", () => {
-    const stdout = JSON.stringify({ something: "else" });
-
-    const errorOutput = parseErrorOutput(stdout);
-
-    expect(errorOutput?.error).toBeUndefined();
   });
 });
 

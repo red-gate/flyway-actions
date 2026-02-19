@@ -16,10 +16,6 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     const driftArgs = getCheckDriftArgs(inputs);
     const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-    if (result.stderr) {
-      core.error(result.stderr);
-    }
-
     const driftDetected = result.exitCode !== 0;
     setDriftOutput(result.exitCode, driftDetected);
 
