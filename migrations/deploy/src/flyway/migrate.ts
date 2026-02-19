@@ -32,7 +32,6 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
     }
 
     const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
-
     setOutputs({ exitCode: result.exitCode, migrationsApplied, schemaVersion });
 
     if (result.exitCode !== 0) {
