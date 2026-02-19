@@ -1,4 +1,4 @@
-import * as le from "os";
+import * as he from "os";
 import ti from "os";
 import "crypto";
 import * as ri from "fs";
@@ -48,7 +48,7 @@ function Zi(A) {
 }
 function qr(A, n, t) {
   const c = new Ki(A, n, t);
-  process.stdout.write(c.toString() + le.EOL);
+  process.stdout.write(c.toString() + he.EOL);
 }
 function ai(A, n = "") {
   qr(A, {}, n);
@@ -2003,10 +2003,10 @@ function Oe() {
   }
   return Et = B, Et;
 }
-var It = {}, we = {}, un;
+var It = {}, ye = {}, un;
 function eo() {
-  if (un) return we;
-  un = 1, Object.defineProperty(we, "__esModule", { value: !0 }), we.enumToMap = void 0;
+  if (un) return ye;
+  un = 1, Object.defineProperty(ye, "__esModule", { value: !0 }), ye.enumToMap = void 0;
   function A(n) {
     const t = {};
     return Object.keys(n).forEach((c) => {
@@ -2014,7 +2014,7 @@ function eo() {
       typeof e == "number" && (t[c] = e);
     }), t;
   }
-  return we.enumToMap = A, we;
+  return ye.enumToMap = A, ye;
 }
 var dn;
 function to() {
@@ -3618,7 +3618,7 @@ function re() {
   }, wt;
 }
 var yt, mn;
-function Ie() {
+function Ce() {
   return mn || (mn = 1, yt = {
     kUrl: /* @__PURE__ */ Symbol("url"),
     kHeaders: /* @__PURE__ */ Symbol("headers"),
@@ -3631,7 +3631,7 @@ var Dt, Nn;
 function ci() {
   if (Nn) return Dt;
   Nn = 1;
-  const { Blob: A, File: n } = ne, { kState: t } = Ie(), { webidl: c } = XA();
+  const { Blob: A, File: n } = ne, { kState: t } = Ce(), { webidl: c } = XA();
   class e {
     constructor(Q, l, B = {}) {
       const r = l, i = B.type, C = B.lastModified ?? Date.now();
@@ -3680,7 +3680,7 @@ var pt, Sn;
 function Ze() {
   if (Sn) return pt;
   Sn = 1;
-  const { isBlobLike: A, iteratorMixin: n } = re(), { kState: t } = Ie(), { kEnumerableProperty: c } = UA(), { FileLike: e, isFileLike: s } = ci(), { webidl: a } = XA(), { File: Q } = ne, l = $A, B = globalThis.File ?? Q;
+  const { isBlobLike: A, iteratorMixin: n } = re(), { kState: t } = Ce(), { kEnumerableProperty: c } = UA(), { FileLike: e, isFileLike: s } = ci(), { webidl: a } = XA(), { File: Q } = ne, l = $A, B = globalThis.File ?? Q;
   class r {
     constructor(I) {
       if (a.util.markAsUncloneable(this), I !== void 0)
@@ -3941,7 +3941,7 @@ function me() {
     fullyReadBody: a,
     extractMimeType: Q,
     utf8DecodeBytes: l
-  } = re(), { FormData: B } = Ze(), { kState: r } = Ie(), { webidl: i } = XA(), { Blob: C } = ne, I = HA, { isErrored: g, isDisturbed: u } = te, { isArrayBuffer: p } = si, { serializeAMimeType: m } = Ae(), { multipartFormDataParser: S } = no();
+  } = re(), { FormData: B } = Ze(), { kState: r } = Ce(), { webidl: i } = XA(), { Blob: C } = ne, I = HA, { isErrored: g, isDisturbed: u } = te, { isArrayBuffer: p } = si, { serializeAMimeType: m } = Ae(), { multipartFormDataParser: S } = no();
   let M;
   try {
     const G = require("node:crypto");
@@ -7903,7 +7903,7 @@ function po() {
   }, ar;
 }
 var gr, us;
-function de() {
+function fe() {
   if (us) return gr;
   us = 1;
   const { kConstruct: A } = WA(), { kEnumerableProperty: n } = UA(), {
@@ -8232,7 +8232,7 @@ var Qr, ds;
 function Xe() {
   if (ds) return Qr;
   ds = 1;
-  const { Headers: A, HeadersList: n, fill: t, getHeadersGuard: c, setHeadersGuard: e, setHeadersList: s } = de(), { extractBody: a, cloneBody: Q, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: r, bodyUnusable: i } = me(), C = UA(), I = $A, { kEnumerableProperty: g } = C, {
+  const { Headers: A, HeadersList: n, fill: t, getHeadersGuard: c, setHeadersGuard: e, setHeadersList: s } = fe(), { extractBody: a, cloneBody: Q, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: r, bodyUnusable: i } = me(), C = UA(), I = $A, { kEnumerableProperty: g } = C, {
     isValidReasonPhrase: u,
     isCancelled: p,
     isAborted: m,
@@ -8244,7 +8244,7 @@ function Xe() {
   } = re(), {
     redirectStatusSet: h,
     nullBodyStatus: D
-  } = Pe(), { kState: o, kHeaders: f } = Ie(), { webidl: w } = XA(), { FormData: d } = Ze(), { URLSerializer: y } = Ae(), { kConstruct: R } = WA(), L = HA, { types: T } = $A, Y = new TextEncoder("utf-8");
+  } = Pe(), { kState: o, kHeaders: f } = Ce(), { webidl: w } = XA(), { FormData: d } = Ze(), { URLSerializer: y } = Ae(), { kConstruct: R } = WA(), L = HA, { types: T } = $A, Y = new TextEncoder("utf-8");
   class G {
     // Creates network error Response.
     static error() {
@@ -8544,7 +8544,7 @@ var Br, ws;
 function Me() {
   if (ws) return Br;
   ws = 1;
-  const { extractBody: A, mixinBody: n, cloneBody: t, bodyUnusable: c } = me(), { Headers: e, fill: s, HeadersList: a, setHeadersGuard: Q, getHeadersGuard: l, setHeadersList: B, getHeadersList: r } = de(), { FinalizationRegistry: i } = ko()(), C = UA(), I = $A, {
+  const { extractBody: A, mixinBody: n, cloneBody: t, bodyUnusable: c } = me(), { Headers: e, fill: s, HeadersList: a, setHeadersGuard: Q, getHeadersGuard: l, setHeadersList: B, getHeadersList: r } = fe(), { FinalizationRegistry: i } = ko()(), C = UA(), I = $A, {
     isValidHTTPToken: g,
     sameOrigin: u,
     environmentSettingsObject: p
@@ -8557,7 +8557,7 @@ function Me() {
     requestCredentials: E,
     requestCache: h,
     requestDuplex: D
-  } = Pe(), { kEnumerableProperty: o, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: R, kDispatcher: L } = Ie(), { webidl: T } = XA(), { URLSerializer: Y } = Ae(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new i(({ signal: x, abort: z }) => {
+  } = Pe(), { kEnumerableProperty: o, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: R, kDispatcher: L } = Ce(), { webidl: T } = XA(), { URLSerializer: Y } = Ae(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new i(({ signal: x, abort: z }) => {
     x.removeEventListener("abort", z);
   }), pA = /* @__PURE__ */ new WeakMap();
   function yA(x) {
@@ -9077,7 +9077,7 @@ function _e() {
     filterResponse: t,
     makeResponse: c,
     fromInnerResponse: e
-  } = Xe(), { HeadersList: s } = de(), { Request: a, cloneRequest: Q } = Me(), l = Wr, {
+  } = Xe(), { HeadersList: s } = fe(), { Request: a, cloneRequest: Q } = Me(), l = Wr, {
     bytesMatch: B,
     makePolicyContainer: r,
     clonePolicyContainer: i,
@@ -9111,7 +9111,7 @@ function _e() {
     buildContentRange: lA,
     createInflate: CA,
     extractMimeType: IA
-  } = re(), { kState: pA, kDispatcher: yA } = Ie(), j = HA, { safelyExtractBody: P, extractBody: rA } = me(), {
+  } = re(), { kState: pA, kDispatcher: yA } = Ce(), j = HA, { safelyExtractBody: P, extractBody: rA } = me(), {
     redirectStatusSet: v,
     nullBodyStatus: O,
     safeMethodsSet: x,
@@ -9578,7 +9578,7 @@ function _e() {
             for (let ie = 0; ie < jA.length; ie += 2)
               Ye.append(mA(jA[ie]), jA[ie + 1].toString("latin1"), !0);
             Qe = Ye.get("location", !0), this.body = new iA({ read: At });
-            const Ce = [], Si = Qe && W.redirect === "follow" && v.has(ZA);
+            const le = [], Si = Qe && W.redirect === "follow" && v.has(ZA);
             if (W.method !== "HEAD" && W.method !== "CONNECT" && !O.includes(ZA) && !Si) {
               const ie = Ye.get("content-encoding", !0), Ge = ie ? ie.toLowerCase().split(",") : [], en = 5;
               if (Ge.length > en)
@@ -9586,7 +9586,7 @@ function _e() {
               for (let et = Ge.length - 1; et >= 0; --et) {
                 const Je = Ge[et].trim();
                 if (Je === "x-gzip" || Je === "gzip")
-                  Ce.push(l.createGunzip({
+                  le.push(l.createGunzip({
                     // Be less strict when decoding compressed responses, since sometimes
                     // servers send slightly invalid responses that are still accepted
                     // by common browsers.
@@ -9595,17 +9595,17 @@ function _e() {
                     finishFlush: l.constants.Z_SYNC_FLUSH
                   }));
                 else if (Je === "deflate")
-                  Ce.push(CA({
+                  le.push(CA({
                     flush: l.constants.Z_SYNC_FLUSH,
                     finishFlush: l.constants.Z_SYNC_FLUSH
                   }));
                 else if (Je === "br")
-                  Ce.push(l.createBrotliDecompress({
+                  le.push(l.createBrotliDecompress({
                     flush: l.constants.BROTLI_OPERATION_FLUSH,
                     finishFlush: l.constants.BROTLI_OPERATION_FLUSH
                   }));
                 else {
-                  Ce.length = 0;
+                  le.length = 0;
                   break;
                 }
               }
@@ -9615,7 +9615,7 @@ function _e() {
               status: ZA,
               statusText: Te,
               headersList: Ye,
-              body: Ce.length ? fA(this.body, ...Ce, (ie) => {
+              body: le.length ? fA(this.body, ...le, (ie) => {
                 ie && this.onError(ie);
               }).on("error", An) : this.body.on("error", An)
             }), !0;
@@ -10313,7 +10313,7 @@ var wr, Ss;
 function bo() {
   if (Ss) return wr;
   Ss = 1;
-  const { kConstruct: A } = _r(), { urlEquals: n, getFieldValues: t } = So(), { kEnumerableProperty: c, isDisturbed: e } = UA(), { webidl: s } = XA(), { Response: a, cloneResponse: Q, fromInnerResponse: l } = Xe(), { Request: B, fromInnerRequest: r } = Me(), { kState: i } = Ie(), { fetching: C } = _e(), { urlIsHttpHttpsScheme: I, createDeferredPromise: g, readAllBytes: u } = re(), p = HA;
+  const { kConstruct: A } = _r(), { urlEquals: n, getFieldValues: t } = So(), { kEnumerableProperty: c, isDisturbed: e } = UA(), { webidl: s } = XA(), { Response: a, cloneResponse: Q, fromInnerResponse: l } = Xe(), { Request: B, fromInnerRequest: r } = Me(), { kState: i } = Ce(), { fetching: C } = _e(), { urlIsHttpHttpsScheme: I, createDeferredPromise: g, readAllBytes: u } = re(), p = HA;
   class m {
     /**
      * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
@@ -11023,7 +11023,7 @@ var Rr, Ts;
 function To() {
   if (Ts) return Rr;
   Ts = 1;
-  const { parseSetCookie: A } = Lo(), { stringify: n } = yi(), { webidl: t } = XA(), { Headers: c } = de();
+  const { parseSetCookie: A } = Lo(), { stringify: n } = yi(), { webidl: t } = XA(), { Headers: c } = fe();
   function e(l) {
     t.argumentLengthCheck(arguments, 1, "getCookies"), t.brandCheck(l, c, { strict: !1 });
     const B = l.get("cookie"), r = {};
@@ -11337,7 +11337,7 @@ function Le() {
   }, Fr;
 }
 var mr, Gs;
-function fe() {
+function we() {
   if (Gs) return mr;
   Gs = 1;
   const A = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", n = {
@@ -11400,7 +11400,7 @@ var Sr, vs;
 function $e() {
   if (vs) return Sr;
   vs = 1;
-  const { kReadyState: A, kController: n, kResponse: t, kBinaryType: c, kWebSocketURL: e } = je(), { states: s, opcodes: a } = fe(), { ErrorEvent: Q, createFastMessageEvent: l } = Le(), { isUtf8: B } = ne, { collectASequenceOfCodePointsFast: r, removeHTTPWhitespace: i } = Ae();
+  const { kReadyState: A, kController: n, kResponse: t, kBinaryType: c, kWebSocketURL: e } = je(), { states: s, opcodes: a } = we(), { ErrorEvent: Q, createFastMessageEvent: l } = Le(), { isUtf8: B } = ne, { collectASequenceOfCodePointsFast: r, removeHTTPWhitespace: i } = Ae();
   function C(L) {
     return L[A] === s.CONNECTING;
   }
@@ -11535,7 +11535,7 @@ var br, Hs;
 function jr() {
   if (Hs) return br;
   Hs = 1;
-  const { maxUnsigned16Bit: A } = fe(), n = 16386;
+  const { maxUnsigned16Bit: A } = we(), n = 16386;
   let t, c = null, e = n;
   try {
     t = require("node:crypto");
@@ -11579,13 +11579,13 @@ var Ur, Vs;
 function Di() {
   if (Vs) return Ur;
   Vs = 1;
-  const { uid: A, states: n, sentCloseFrameState: t, emptyBuffer: c, opcodes: e } = fe(), {
+  const { uid: A, states: n, sentCloseFrameState: t, emptyBuffer: c, opcodes: e } = we(), {
     kReadyState: s,
     kSentClose: a,
     kByteParser: Q,
     kReceivedClose: l,
     kResponse: B
-  } = je(), { fireEvent: r, failWebsocketConnection: i, isClosing: C, isClosed: I, isEstablished: g, parseExtensions: u } = $e(), { channels: p } = Re(), { CloseEvent: m } = Le(), { makeRequest: S } = Me(), { fetching: M } = _e(), { Headers: U, getHeadersList: b } = de(), { getDecodeSplit: E } = re(), { WebsocketFrameSend: h } = jr();
+  } = je(), { fireEvent: r, failWebsocketConnection: i, isClosing: C, isClosed: I, isEstablished: g, parseExtensions: u } = $e(), { channels: p } = Re(), { CloseEvent: m } = Le(), { makeRequest: S } = Me(), { fetching: M } = _e(), { Headers: U, getHeadersList: b } = fe(), { getDecodeSplit: E } = re(), { WebsocketFrameSend: h } = jr();
   let D;
   try {
     D = require("node:crypto");
@@ -11735,7 +11735,7 @@ var Lr, Ws;
 function Go() {
   if (Ws) return Lr;
   Ws = 1;
-  const { Writable: A } = te, n = HA, { parserStates: t, opcodes: c, states: e, emptyBuffer: s, sentCloseFrameState: a } = fe(), { kReadyState: Q, kSentClose: l, kResponse: B, kReceivedClose: r } = je(), { channels: i } = Re(), {
+  const { Writable: A } = te, n = HA, { parserStates: t, opcodes: c, states: e, emptyBuffer: s, sentCloseFrameState: a } = we(), { kReadyState: Q, kSentClose: l, kResponse: B, kReceivedClose: r } = je(), { channels: i } = Re(), {
     isValidStatusCode: C,
     isValidOpcode: I,
     failWebsocketConnection: g,
@@ -11941,7 +11941,7 @@ var Tr, qs;
 function Jo() {
   if (qs) return Tr;
   qs = 1;
-  const { WebsocketFrameSend: A } = jr(), { opcodes: n, sendHints: t } = fe(), c = Bi(), e = Buffer[Symbol.species];
+  const { WebsocketFrameSend: A } = jr(), { opcodes: n, sendHints: t } = we(), c = Bi(), e = Buffer[Symbol.species];
   class s {
     /**
      * @type {FixedQueue}
@@ -12010,7 +12010,7 @@ var Yr, Os;
 function vo() {
   if (Os) return Yr;
   Os = 1;
-  const { webidl: A } = XA(), { URLSerializer: n } = Ae(), { environmentSettingsObject: t } = re(), { staticPropertyDescriptors: c, states: e, sentCloseFrameState: s, sendHints: a } = fe(), {
+  const { webidl: A } = XA(), { URLSerializer: n } = Ae(), { environmentSettingsObject: t } = re(), { staticPropertyDescriptors: c, states: e, sentCloseFrameState: s, sendHints: a } = we(), {
     kWebSocketURL: Q,
     kReadyState: l,
     kController: B,
@@ -12681,7 +12681,7 @@ function xo() {
     } catch (pA) {
       throw pA && typeof pA == "object" && Error.captureStackTrace(pA), pA;
     }
-  }, DA.Headers = de().Headers, DA.Response = Xe().Response, DA.Request = Me().Request, DA.FormData = Ze().FormData, DA.File = globalThis.File ?? ne.File, DA.FileReader = No().FileReader;
+  }, DA.Headers = fe().Headers, DA.Response = Xe().Response, DA.Request = Me().Request, DA.FormData = Ze().FormData, DA.File = globalThis.File ?? ne.File, DA.FileReader = No().FileReader;
   const { setGlobalOrigin: o, getGlobalOrigin: f } = Qi();
   DA.setGlobalOrigin = o, DA.getGlobalOrigin = f;
   const { CacheStorage: w } = Uo(), { kConstruct: d } = _r();
@@ -12710,7 +12710,7 @@ var _s;
 })(_s || (_s = {}));
 oe.MovedPermanently, oe.ResourceMoved, oe.SeeOther, oe.TemporaryRedirect, oe.PermanentRedirect;
 oe.BadGateway, oe.ServiceUnavailable, oe.GatewayTimeout;
-const { access: $a, appendFile: Ag, writeFile: eg } = bi;
+const { access: Ag, appendFile: eg, writeFile: tg } = bi;
 var ki = function(A, n, t, c) {
   function e(s) {
     return s instanceof t ? s : new t(function(a) {
@@ -12738,7 +12738,7 @@ var ki = function(A, n, t, c) {
     B((c = c.apply(A, n || [])).next());
   });
 };
-const { chmod: tg, copyFile: rg, lstat: ng, mkdir: sg, open: ig, readdir: Wo, rename: og, rm: ag, rmdir: gg, stat: Hr, symlink: Qg, unlink: cg } = ri.promises, he = process.platform === "win32";
+const { chmod: rg, copyFile: ng, lstat: sg, mkdir: ig, open: og, readdir: Wo, rename: ag, rm: gg, rmdir: Qg, stat: Hr, symlink: cg, unlink: Bg } = ri.promises, ue = process.platform === "win32";
 ri.constants.O_RDONLY;
 function qo(A) {
   return ki(this, void 0, void 0, function* () {
@@ -12755,7 +12755,7 @@ function qo(A) {
 function Ri(A) {
   if (A = Oo(A), !A)
     throw new Error('isRooted() parameter "p" cannot be empty');
-  return he ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
+  return ue ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
 }
 function js(A, n) {
   return ki(this, void 0, void 0, function* () {
@@ -12766,7 +12766,7 @@ function js(A, n) {
       e.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${e}`);
     }
     if (t && t.isFile()) {
-      if (he) {
+      if (ue) {
         const e = ae.extname(A).toUpperCase();
         if (n.some((s) => s.toUpperCase() === e))
           return A;
@@ -12782,7 +12782,7 @@ function js(A, n) {
         s.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${s}`);
       }
       if (t && t.isFile()) {
-        if (he) {
+        if (ue) {
           try {
             const s = ae.dirname(A), a = ae.basename(A).toUpperCase();
             for (const Q of yield Wo(s))
@@ -12802,7 +12802,7 @@ function js(A, n) {
   });
 }
 function Oo(A) {
-  return A = A || "", he ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
+  return A = A || "", ue ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
 }
 function $s(A) {
   return (A.mode & 1) > 0 || (A.mode & 8) > 0 && process.getgid !== void 0 && A.gid === process.getgid() || (A.mode & 64) > 0 && process.getuid !== void 0 && A.uid === process.getuid();
@@ -12841,7 +12841,7 @@ function mi(A, n) {
     if (n) {
       const c = yield mi(A, !1);
       if (!c)
-        throw he ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+        throw ue ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
       return c;
     }
     const t = yield Po(A);
@@ -12853,7 +12853,7 @@ function Po(A) {
     if (!A)
       throw new Error("parameter 'tool' is required");
     const n = [];
-    if (he && process.env.PATHEXT)
+    if (ue && process.env.PATHEXT)
       for (const e of process.env.PATHEXT.split(ae.delimiter))
         e && n.push(e);
     if (Ri(A)) {
@@ -12937,10 +12937,10 @@ class Zo extends ni.EventEmitter {
   }
   _processLineBuffer(n, t, c) {
     try {
-      let e = t + n.toString(), s = e.indexOf(le.EOL);
+      let e = t + n.toString(), s = e.indexOf(he.EOL);
       for (; s > -1; ) {
         const a = e.substring(0, s);
-        c(a), e = e.substring(s + le.EOL.length), s = e.indexOf(le.EOL);
+        c(a), e = e.substring(s + he.EOL.length), s = e.indexOf(he.EOL);
       }
       return e;
     } catch (e) {
@@ -13054,7 +13054,7 @@ class Zo extends ni.EventEmitter {
         for (const B of this.args)
           this._debug(`   ${B}`);
         const c = this._cloneExecOptions(this.options);
-        !c.silent && c.outStream && c.outStream.write(this._getCommandString(c) + le.EOL);
+        !c.silent && c.outStream && c.outStream.write(this._getCommandString(c) + he.EOL);
         const e = new $r(c, this.toolPath);
         if (e.on("debug", (B) => {
           this._debug(B);
@@ -13200,14 +13200,14 @@ function Ee(A, n) {
   throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${A}
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 }
-function ye(A) {
-  process.exitCode = Vr.Failure, De(A);
+function De(A) {
+  process.exitCode = Vr.Failure, de(A);
 }
-function De(A, n = {}) {
+function de(A, n = {}) {
   qr("error", Zi(n), A instanceof Error ? A.toString() : A);
 }
-function ue(A) {
-  process.stdout.write(A + le.EOL);
+function Ie(A) {
+  process.stdout.write(A + he.EOL);
 }
 function Xo(A) {
   ai("group", A);
@@ -13230,7 +13230,21 @@ const jo = () => {
     },
     getOutput: () => ({ stdout: A, stderr: n })
   };
-}, Aa = (A) => {
+}, Aa = () => {
+  let A = "";
+  return (n) => {
+    A += n.toString();
+    const t = A.split(`
+`);
+    A = t.pop() ?? "";
+    for (const c of t)
+      try {
+        const e = JSON.parse(c.trim());
+        e.message && (e.level === "ERROR" ? de(e.message) : Ie(e.message));
+      } catch {
+      }
+  };
+}, ea = (A) => {
   const n = [];
   let t = "", c = !1, e = "";
   for (let s = 0; s < A.length; s++) {
@@ -13238,7 +13252,7 @@ const jo = () => {
     (a === '"' || a === "'") && !c ? (c = !0, e = a) : a === e && c ? (c = !1, e = "") : a === " " && !c ? (t.trim() && n.push(t.trim()), t = "") : t += a;
   }
   return t.trim() && n.push(t.trim()), n;
-}, ea = (A) => {
+}, ta = (A) => {
   const n = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
   return A.map((t) => {
     for (const c of n)
@@ -13248,53 +13262,61 @@ const jo = () => {
       }
     return t;
   });
-}, ta = async (A, n) => {
-  const { listeners: t, getOutput: c } = $o();
-  ue(`Running: flyway ${ea(A).join(" ")}`);
-  const s = await Ni("flyway", A, { ignoreReturnCode: !0, listeners: t, cwd: n || void 0 }), { stdout: a, stderr: Q } = c();
-  return { exitCode: s, stdout: a, stderr: Q };
-}, ra = async () => {
+}, ra = async (A, n) => {
+  const { listeners: t, getOutput: c } = $o(), e = Aa();
+  Ie(`Running: flyway ${ta(A).join(" ")}`);
+  const s = {
+    silent: A.includes("-outputType=json"),
+    ignoreReturnCode: !0,
+    listeners: {
+      stdout: t.stdout,
+      stderr: (B) => A.includes("-outputType=json") ? e(B) : t.stderr(B)
+    },
+    cwd: n || void 0
+  }, a = await Ni("flyway", A, s), { stdout: Q, stderr: l } = c();
+  return { exitCode: a, stdout: Q, stderr: l };
+}, na = async () => {
   const { listener: A, getOutput: n } = jo();
   try {
     return await Ni("flyway", ["version", "-outputType=json"], { silent: !0, listeners: { stdout: A } }), { installed: !0, edition: JSON.parse(n()).edition?.toLowerCase() ?? "community" };
   } catch (t) {
-    return t instanceof Error ? De(t.message) : De(String(t)), { installed: !1 };
+    return t instanceof Error ? de(t.message) : de(String(t)), { installed: !1 };
   }
-}, na = "default_build", sa = (A) => {
+}, sa = "default_build", ia = (A) => {
   const n = [];
   A.targetEnvironment && n.push(`-environment=${A.targetEnvironment}`);
   const c = A.targetEnvironment && A.targetEnvironment !== "default" ? `-environments.${A.targetEnvironment}.` : "-";
   return A.targetUrl && n.push(`${c}url=${A.targetUrl}`), A.targetUser && n.push(`${c}user=${A.targetUser}`), A.targetPassword && n.push(`${c}password=${A.targetPassword}`), A.targetSchemas && n.push(`${c}schemas=${A.targetSchemas}`), n;
-}, ia = (A) => {
-  const n = [];
-  return A.workingDirectory && n.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && n.push(...Aa(A.extraArgs)), n;
 }, oa = (A) => {
+  const n = [];
+  return A.workingDirectory && n.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && n.push(...ea(A.extraArgs)), n;
+}, aa = (A) => {
   if (!xr(A))
     return [];
-  const n = A.buildEnvironment ?? na, t = [];
+  const n = A.buildEnvironment ?? sa, t = [];
   return t.push(`-check.buildEnvironment=${n}`), A.buildUrl && t.push(`-environments.${n}.url=${A.buildUrl}`), A.buildUser && t.push(`-environments.${n}.user=${A.buildUser}`), A.buildPassword && t.push(`-environments.${n}.password=${A.buildPassword}`), A.buildSchemas && t.push(`-environments.${n}.schemas=${A.buildSchemas}`), A.buildOkToErase && t.push(`-environments.${n}.provisioner=clean`), t;
-}, xr = (A) => !!(A.buildEnvironment || A.buildUrl), aa = (A) => A.skipDeploymentScriptReview ? (ue('Skipping deployment script review: "skip-deployment-script-review" set to true'), []) : ["-dryrun"], ga = (A) => A.skipCodeReview ? (ue('Skipping code review: "skip-code-review" set to true'), []) : ["-code", ...A.failOnCodeReview ? ["-check.failOnError=true"] : []], Qa = (A) => A.skipDriftCheck ? (ue('Skipping drift check: "skip-drift-check" set to true'), []) : ["-drift", ...A.failOnDrift ? ["-check.failOnDrift=true"] : []], ca = (A) => A.skipDeploymentChangesReport && xr(A) ? (ue('Skipping deployment changes report: "skip-deployment-changes-report" set to true'), []) : xr(A) ? ["-changes", ...oa(A)] : (ue('Skipping deployment changes report: no "build-environment" or "build-url" provided'), []), Ba = (A) => {
+}, xr = (A) => !!(A.buildEnvironment || A.buildUrl), ga = (A) => A.skipDeploymentScriptReview ? (Ie('Skipping deployment script review: "skip-deployment-script-review" set to true'), []) : ["-dryrun"], Qa = (A) => A.skipCodeReview ? (Ie('Skipping code review: "skip-code-review" set to true'), []) : ["-code", ...A.failOnCodeReview ? ["-check.failOnError=true"] : []], ca = (A) => A.skipDriftCheck ? (Ie('Skipping drift check: "skip-drift-check" set to true'), []) : ["-drift", ...A.failOnDrift ? ["-check.failOnDrift=true"] : []], Ba = (A) => A.skipDeploymentChangesReport && xr(A) ? (Ie('Skipping deployment changes report: "skip-deployment-changes-report" set to true'), []) : xr(A) ? ["-changes", ...aa(A)] : (Ie('Skipping deployment changes report: no "build-environment" or "build-url" provided'), []), Ea = (A) => {
   const n = [
     "check",
-    ...aa(A),
     ...ga(A),
     ...Qa(A),
     ...ca(A),
-    ...sa(A),
-    ...ia(A)
+    ...Ba(A),
+    ...ia(A),
+    ...oa(A)
   ];
   return A.targetMigrationVersion && n.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && n.push(`-cherryPick=${A.cherryPick}`), n;
-}, Ea = async (A) => {
+}, Ia = async (A) => {
   Xo("Running Flyway checks");
   try {
-    const n = Ba(A), t = await ta(n, A.workingDirectory);
-    return t.stderr?.includes("configure a provisioner") && !A.buildOkToErase ? De(
+    const n = Ea(A), t = await ra(n, A.workingDirectory);
+    return t.stderr?.includes("configure a provisioner") && !A.buildOkToErase ? de(
       'The build database needs to be erasable. Set the "build-ok-to-erase" input to true to allow Flyway to clean the build database before use. Note that this will drop all schema objects and data from the database.'
-    ) : t.stderr && De(t.stderr), t.exitCode;
+    ) : t.stderr && de(t.stderr), t.exitCode;
   } finally {
     _o();
   }
-}, Ia = () => {
+}, Ca = () => {
   const A = _A("target-environment") || void 0, n = _A("target-url") || void 0, t = _A("target-user") || void 0, c = _A("target-password") || void 0, e = _A("target-schemas") || void 0, s = _A("target-migration-version") || void 0, a = _A("cherry-pick") || void 0, Q = _A("build-environment") || void 0, l = _A("build-url") || void 0, B = _A("build-user") || void 0, r = _A("build-password") || void 0, i = _A("build-schemas") || void 0, C = Ee("build-ok-to-erase"), I = Ee("skip-code-review"), g = Ee("skip-drift-check"), u = Ee("skip-deployment-changes-report"), p = Ee("skip-deployment-script-review"), m = Ee("fail-on-code-review"), S = Ee("fail-on-drift"), M = _A("working-directory"), U = M ? ae.resolve(M) : void 0, b = _A("extra-args") || void 0;
   return {
     targetEnvironment: A,
@@ -13319,24 +13341,24 @@ const jo = () => {
     workingDirectory: U,
     extraArgs: b
   };
-}, Ca = (A) => {
+}, la = (A) => {
   A.targetPassword && ei(A.targetPassword), A.buildPassword && ei(A.buildPassword);
-}, la = async () => {
+}, ha = async () => {
   try {
-    if (!(await ra()).installed) {
-      ye("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
+    if (!(await na()).installed) {
+      De("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
-    const n = Ia();
+    const n = Ca();
     if (!n.targetEnvironment && !n.targetUrl) {
-      ye(
+      De(
         'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.'
       );
       return;
     }
-    Ca(n), await Ea(n) !== 0 && ye("Flyway checks failed");
+    la(n), await Ia(n) !== 0 && De("Flyway checks failed");
   } catch (A) {
-    A instanceof Error ? ye(A.message) : ye(String(A));
+    A instanceof Error ? De(A.message) : De(String(A));
   }
 };
-await la();
+await ha();
