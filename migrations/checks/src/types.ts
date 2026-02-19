@@ -20,6 +20,9 @@ type FlywayMigrationsChecksInputs = {
   failOnDrift?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
+  skipHtmlReportUpload: boolean;
+  reportRetentionDays: number;
+  reportName: string;
 };
 
 export type { FlywayMigrationsChecksInputs };

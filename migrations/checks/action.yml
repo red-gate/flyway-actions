@@ -78,6 +78,18 @@ inputs:
   extra-args:
     description: 'Additional Flyway CLI arguments (e.g. -sqlMigrationPrefix=M)'
     required: false
+  skip-html-report-upload:
+    description: 'Skip uploading the HTML report as a workflow artifact'
+    required: false
+    default: 'false'
+  report-retention-days:
+    description: 'Number of days to retain the report artifact'
+    required: false
+    default: '7'
+  report-name:
+    description: 'Name of the report artifact'
+    required: false
+    default: 'flyway-report'
 
 runs:
   using: 'node24'

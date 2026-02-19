@@ -25,6 +25,9 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
+  const skipHtmlReportUpload = core.getBooleanInput("skip-html-report-upload");
+  const reportRetentionDays = parseInt(core.getInput("report-retention-days"), 10);
+  const reportName = core.getInput("report-name");
 
   return {
     targetEnvironment,
@@ -48,6 +51,9 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
     failOnDrift,
     workingDirectory,
     extraArgs,
+    skipHtmlReportUpload,
+    reportRetentionDays,
+    reportName,
   };
 };
 

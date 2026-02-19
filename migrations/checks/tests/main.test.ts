@@ -59,7 +59,8 @@ const setupChecksMock = (edition: string, checkExitCode = 0) => {
 };
 
 const setupInputMock = (overrides: Record<string, string> = {}, booleanOverrides: Record<string, boolean> = {}) => {
-  getInput.mockImplementation((name: string) => overrides[name] || "");
+  const inputDefaults: Record<string, string> = { "report-retention-days": "7", "report-name": "flyway-report" };
+  getInput.mockImplementation((name: string) => overrides[name] || inputDefaults[name] || "");
   getBooleanInput.mockImplementation((name: string) => booleanOverrides[name] ?? false);
 };
 
@@ -333,5 +334,27 @@ describe("run", () => {
     expect(args).not.toContain("-drift");
     expect(args).not.toContain("-changes");
     expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should not upload report when skip-html-report-upload is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-html-report-upload": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(uploadArtifact).not.toHaveBeenCalled();
+  });
+
+  it("should upload report when skip-html-report-upload is false", async () => {
+    existsSync.mockReturnValue(true);
+    uploadArtifact.mockResolvedValue({ id: 1, size: 100 });
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(uploadArtifact).toHaveBeenCalled();
   });
 });

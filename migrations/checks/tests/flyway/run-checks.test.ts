@@ -18,7 +18,11 @@ vi.doMock("@actions/exec", () => ({
 
 const { getCheckArgs, runChecks } = await import("../../src/flyway/run-checks.js");
 
-const baseInputs: FlywayMigrationsChecksInputs = {};
+const baseInputs: FlywayMigrationsChecksInputs = {
+  skipHtmlReportUpload: false,
+  reportRetentionDays: 7,
+  reportName: "flyway-report",
+};
 
 describe("getCheckArgs", () => {
   it("should include check -dryrun -code -drift by default", () => {

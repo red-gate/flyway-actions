@@ -130,6 +130,31 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
   });
 
+  it("should return skip-html-report-upload input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "skip-html-report-upload");
+
+    const inputs = getInputs();
+
+    expect(inputs.skipHtmlReportUpload).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("skip-html-report-upload");
+  });
+
+  it("should return report-retention-days input", () => {
+    getInput.mockImplementation((name: string) => (name === "report-retention-days" ? "14" : ""));
+
+    const inputs = getInputs();
+
+    expect(inputs.reportRetentionDays).toBe(14);
+  });
+
+  it("should return report-name input", () => {
+    getInput.mockImplementation((name: string) => (name === "report-name" ? "custom-report" : ""));
+
+    const inputs = getInputs();
+
+    expect(inputs.reportName).toBe("custom-report");
+  });
+
   it("should return extra args", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "extra-args") {
@@ -185,32 +210,26 @@ describe("getInputs", () => {
 });
 
 describe("maskSecrets", () => {
-  it("should mask target password", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      targetPassword: "secret123",
-    };
+  const baseSecretInputs: FlywayMigrationsChecksInputs = {
+    skipHtmlReportUpload: false,
+    reportRetentionDays: 7,
+    reportName: "flyway-report",
+  };
 
-    maskSecrets(inputs);
+  it("should mask target password", () => {
+    maskSecrets({ ...baseSecretInputs, targetPassword: "secret123" });
 
     expect(setSecret).toHaveBeenCalledWith("secret123");
   });
 
   it("should mask build password", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      buildPassword: "secret",
-    };
-
-    maskSecrets(inputs);
+    maskSecrets({ ...baseSecretInputs, buildPassword: "secret" });
 
     expect(setSecret).toHaveBeenCalledWith("secret");
   });
 
   it("should not call setSecret when no passwords present", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      targetUrl: "jdbc:postgresql://localhost/db",
-    };
-
-    maskSecrets(inputs);
+    maskSecrets({ ...baseSecretInputs, targetUrl: "jdbc:postgresql://localhost/db" });
 
     expect(setSecret).not.toHaveBeenCalled();
   });

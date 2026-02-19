@@ -4,15 +4,14 @@ import { runChecks } from "./flyway/run-checks.js";
 import { getInputs, maskSecrets } from "./inputs.js";
 
 const run = async (): Promise<void> => {
-  let workingDirectory: string | undefined;
+  let inputs: ReturnType<typeof getInputs> | undefined;
   try {
     const flywayDetails = await getFlywayDetails();
     if (!flywayDetails.installed) {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
-    const inputs = getInputs();
-    workingDirectory = inputs.workingDirectory;
+    inputs = getInputs();
     if (!inputs.targetEnvironment && !inputs.targetUrl) {
       core.setFailed(
         'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.',
@@ -33,7 +32,13 @@ const run = async (): Promise<void> => {
       core.setFailed(String(error));
     }
   } finally {
-    await uploadReport(workingDirectory);
+    if (!inputs?.skipHtmlReportUpload) {
+      await uploadReport({
+        workingDirectory: inputs?.workingDirectory,
+        retentionDays: inputs?.reportRetentionDays,
+        artifactName: inputs?.reportName,
+      });
+    }
   }
 };
 

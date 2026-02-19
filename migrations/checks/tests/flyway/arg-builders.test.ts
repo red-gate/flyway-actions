@@ -14,7 +14,11 @@ vi.doMock("@actions/exec", () => ({
 const { getTargetEnvironmentArgs, getBaseArgs, getBuildEnvironmentArgs } =
   await import("../../src/flyway/arg-builders.js");
 
-const baseInputs: FlywayMigrationsChecksInputs = {};
+const baseInputs: FlywayMigrationsChecksInputs = {
+  skipHtmlReportUpload: false,
+  reportRetentionDays: 7,
+  reportName: "flyway-report",
+};
 
 describe("getTargetEnvironmentArgs", () => {
   it("should return empty array when no target inputs", () => {
