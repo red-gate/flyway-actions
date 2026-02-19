@@ -1,4 +1,4 @@
-import type { FlywayMigrationsChecksInputs } from "../types.js";
+import type { ErrorOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
@@ -57,6 +57,8 @@ const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: Flyw
 const getCheckArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
   const args = [
     "check",
+    "-outputType=json",
+    "-outputLogsInJson=true",
     ...getCheckDryrunArgs(inputs, edition),
     ...getCheckCodeArgs(inputs),
     ...getCheckDriftArgs(inputs, edition),
@@ -76,24 +78,36 @@ const getCheckArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEditi
   return args;
 };
 
-const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): Promise<number> => {
+const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): Promise<void> => {
   core.startGroup("Running Flyway checks");
   try {
     const args = getCheckArgs(inputs, edition);
     const result = await runFlyway(args, inputs.workingDirectory);
 
-    if (result.stderr?.includes("configure a provisioner") && !inputs.buildOkToErase) {
-      core.error(
-        'The build database needs to be erasable. Set the "build-ok-to-erase" input to true to allow Flyway to clean the build database before use. Note that this will drop all schema objects and data from the database.',
-      );
-    } else if (result.stderr) {
-      core.error(result.stderr);
-    }
+    if (result.exitCode !== 0) {
+      const errorOutput = parseErrorOutput(result.stdout);
 
-    return result.exitCode;
+      if (errorOutput?.error?.message?.includes("configure a provisioner") && !inputs.buildOkToErase) {
+        core.error(
+          'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.',
+        );
+      } else if (errorOutput?.error?.message) {
+        core.error(errorOutput.error.message);
+      }
+
+      throw new Error("Flyway checks failed");
+    }
   } finally {
     core.endGroup();
   }
 };
 
-export { getCheckArgs, runChecks };
+const parseErrorOutput = (stdout: string): ErrorOutput | undefined => {
+  try {
+    return JSON.parse(stdout) as ErrorOutput;
+  } catch {
+    return undefined;
+  }
+};
+
+export { getCheckArgs, parseErrorOutput, runChecks };

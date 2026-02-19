@@ -16,15 +16,17 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getCheckArgs, runChecks } = await import("../../src/flyway/run-checks.js");
+const { getCheckArgs, parseErrorOutput, runChecks } = await import("../../src/flyway/run-checks.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
 describe("getCheckArgs", () => {
-  it("should include check -dryrun -code -drift by default", () => {
+  it("should include check -outputType=json -outputLogsInJson=true -dryrun -code -drift by default", () => {
     const args = getCheckArgs(baseInputs, "enterprise");
 
     expect(args[0]).toBe("check");
+    expect(args).toContain("-outputType=json");
+    expect(args).toContain("-outputLogsInJson=true");
     expect(args).toContain("-dryrun");
     expect(args).toContain("-code");
     expect(args).toContain("-drift");
@@ -238,50 +240,89 @@ describe("getCheckArgs", () => {
   });
 });
 
+describe("parseErrorOutput", () => {
+  it("should return the error message from valid error output", () => {
+    const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Migration validation failed" } });
+
+    const errorOutput = parseErrorOutput(stdout);
+
+    expect(errorOutput?.error?.errorCode).toBe("FAULT");
+    expect(errorOutput?.error?.message).toBe("Migration validation failed");
+  });
+
+  it("should return undefined for invalid JSON", () => {
+    expect(parseErrorOutput("not json")).toBeUndefined();
+  });
+
+  it("should return undefined when error has no message", () => {
+    const stdout = JSON.stringify({ error: { errorCode: "FAULT" } });
+
+    const errorOutput = parseErrorOutput(stdout);
+
+    expect(errorOutput?.error?.errorCode).toBe("FAULT");
+    expect(errorOutput?.error?.message).toBeUndefined();
+  });
+
+  it("should return undefined when error field is missing", () => {
+    const stdout = JSON.stringify({ something: "else" });
+
+    const errorOutput = parseErrorOutput(stdout);
+
+    expect(errorOutput?.error).toBeUndefined();
+  });
+});
+
 describe("runChecks", () => {
-  it("should return exit code 0 on success", async () => {
+  it("should not throw on success", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("All checks passed"));
+      options?.listeners?.stdout?.(Buffer.from("{}"));
       return Promise.resolve(0);
     });
 
-    const exitCode = await runChecks(baseInputs, "enterprise");
-
-    expect(exitCode).toBe(0);
+    await expect(runChecks(baseInputs, "enterprise")).resolves.not.toThrow();
   });
 
-  it("should return non-zero exit code on failure", async () => {
+  it("should throw and log JSON error message on failure", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stderr?.(Buffer.from("Check failed"));
+      options?.listeners?.stdout?.(
+        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Check failed" } })),
+      );
       return Promise.resolve(1);
     });
 
-    const exitCode = await runChecks(baseInputs, "enterprise");
-
-    expect(exitCode).toBe(1);
+    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrowError("Flyway checks failed");
+    expect(error).toHaveBeenCalledWith("Check failed");
   });
 
-  it("should log friendly message when provisioner error and build-ok-to-erase is not set", async () => {
-    coreError.mockClear();
+  it("should log friendly message on provisioner error and build-ok-to-erase is not set", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stderr?.(Buffer.from("ERROR: You need to configure a provisioner for the build environment"));
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
+          }),
+        ),
+      );
       return Promise.resolve(1);
     });
 
-    await runChecks(baseInputs, "enterprise");
-
-    expect(coreError).toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
+    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow();
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
   });
 
-  it("should not log friendly message when provisioner error and build-ok-to-erase is true", async () => {
-    coreError.mockClear();
+  it("should not log friendly message on provisioner error and build-ok-to-erase is set", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stderr?.(Buffer.from("ERROR: You need to configure a provisioner for the build environment"));
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
+          }),
+        ),
+      );
       return Promise.resolve(1);
     });
 
-    await runChecks({ ...baseInputs, buildOkToErase: true }, "enterprise");
-
-    expect(coreError).not.toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
+    await expect(runChecks({ ...baseInputs, buildOkToErase: true }, "enterprise")).rejects.toThrow();
+    expect(error).not.toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
   });
 });

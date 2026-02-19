@@ -22,4 +22,6 @@ type FlywayMigrationsChecksInputs = {
   extraArgs?: string;
 };
 
-export type { FlywayMigrationsChecksInputs };
+type ErrorOutput = { error?: { errorCode?: string; message?: string } };
+
+export type { ErrorOutput, FlywayMigrationsChecksInputs };
