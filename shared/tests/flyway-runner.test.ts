@@ -1,10 +1,12 @@
 import type { ExecOptions } from "@actions/exec";
 
 const info = vi.fn();
+const error = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
+  error,
   setOutput: vi.fn(),
 }));
 
@@ -201,12 +203,13 @@ describe("getFlywayDetails", () => {
 
     const result = await getFlywayDetails();
 
+    expect(error).toHaveBeenCalledWith("Command not found");
     expect(result).toEqual({ installed: false });
   });
 
   it("should detect Community edition", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("Flyway Community Edition 10.0.0 by Redgate\n"));
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "COMMUNITY", version: "10.0.0" })));
       return Promise.resolve(0);
     });
 
@@ -217,7 +220,7 @@ describe("getFlywayDetails", () => {
 
   it("should detect Teams edition", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("Flyway Teams Edition 10.5.0 by Redgate\n"));
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "TEAMS", version: "10.5.0" })));
       return Promise.resolve(0);
     });
 
@@ -228,7 +231,7 @@ describe("getFlywayDetails", () => {
 
   it("should detect Enterprise edition", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("Flyway Enterprise Edition 11.0.0 by Redgate\n"));
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "ENTERPRISE", version: "11.0.0" })));
       return Promise.resolve(0);
     });
 
@@ -237,7 +240,7 @@ describe("getFlywayDetails", () => {
     expect(result).toEqual({ installed: true, edition: "enterprise" });
   });
 
-  it("should default to community for unparseable output", async () => {
+  it("should return installed false for unparseable output", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("Something unexpected\n"));
       return Promise.resolve(0);
@@ -245,6 +248,18 @@ describe("getFlywayDetails", () => {
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: "community" });
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("not valid JSON"));
+    expect(result).toEqual({ installed: false });
+  });
+
+  it("should pass version command with json output type", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "COMMUNITY", version: "10.0.0" })));
+      return Promise.resolve(0);
+    });
+
+    await getFlywayDetails();
+
+    expect(exec).toHaveBeenCalledWith("flyway", ["version", "-outputType=json"], expect.any(Object));
   });
 });

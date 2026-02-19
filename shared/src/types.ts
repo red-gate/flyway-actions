@@ -4,4 +4,6 @@ type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEd
 
 type FlywayRunResult = { exitCode: number; stdout: string; stderr: string };
 
-export type { FlywayDetails, FlywayEdition, FlywayRunResult };
+type FlywayVersionOutput = { edition?: string };
+
+export type { FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput };

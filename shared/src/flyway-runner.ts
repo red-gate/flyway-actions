@@ -1,4 +1,4 @@
-import type { FlywayDetails, FlywayEdition, FlywayRunResult } from "./types.js";
+import type { FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput } from "./types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
@@ -62,21 +62,18 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
 };
 
 const getFlywayDetails = async (): Promise<FlywayDetails> => {
+  const { listener, getOutput } = createStdoutListener();
   try {
-    const { listener, getOutput } = createStdoutListener();
+    await exec.exec("flyway", ["version", "-outputType=json"], { silent: true, listeners: { stdout: listener } });
 
-    await exec.exec("flyway", ["--version"], {
-      silent: true,
-      listeners: { stdout: listener },
-    });
-
-    const stdout = getOutput();
-    const match = stdout.match(/Flyway\s+(Community|Teams|Enterprise)\s+Edition/);
-    return {
-      installed: true,
-      edition: (match ? match[1].toLowerCase() : "community") as FlywayEdition,
-    };
-  } catch {
+    const result = JSON.parse(getOutput()) as FlywayVersionOutput;
+    return { installed: true, edition: (result.edition?.toLowerCase() as FlywayEdition) ?? "community" };
+  } catch (error) {
+    if (error instanceof Error) {
+      core.error(error.message);
+    } else {
+      core.error(String(error));
+    }
     return { installed: false };
   }
 };

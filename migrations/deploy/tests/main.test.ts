@@ -55,7 +55,7 @@ describe("run", () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       if (callCount === 1) {
-        options?.listeners?.stdout?.(Buffer.from(`Flyway ${edition} Edition 10.0.0 by Redgate\n`));
+        options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
         return Promise.resolve(0);
       }
       if (hasDriftCheck && callCount === 2) {

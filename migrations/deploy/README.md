@@ -60,25 +60,25 @@ steps:
 
 | Input                      | Description                                                    | Required                                 | Default |
 |----------------------------|----------------------------------------------------------------|------------------------------------------|---------|
-| `target-environment`       | Flyway TOML environment name                                   | Required if `target-url` not set         |         |
-| `target-url`               | JDBC URL for the database connection                           | Required if `target-environment` not set |         |
+| `target-environment`       | Target database to deploy to                                   | Required if `target-url` not set         |         |
+| `target-url`               | JDBC URL for the target database                               | Required if `target-environment` not set |         |
 | `target-user`              | Database user                                                  | No                                       |         |
 | `target-password`          | Database password                                              | No                                       |         |
 | `target-schemas`           | Comma-separated list of schemas                                | No                                       |         |
 | `target-migration-version` | Migrate up to this version                                     | No                                       |         |
 | `cherry-pick`              | Comma-separated list of migration versions to apply            | No                                       |         |
 | `skip-drift-check`         | Skip the drift check                                           | No                                       | false   |
-| `working-directory`        | Working directory for Flyway execution                         | No                                       |         |
+| `working-directory`        | Working directory for Flyway                                   | No                                       |         |
 | `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`) | No                                       |         |
 
 ## Outputs
 
 | Output               | Description                                   |
 |----------------------|-----------------------------------------------|
-| `exit-code`          | Flyway command exit code                      |
+| `exit-code`          | Flyway exit code                              |
 | `drift-detected`     | Whether drift was detected (empty if skipped) |
 | `migrations-applied` | Number of migrations applied                  |
-| `schema-version`     | Schema version after migration                |
+| `schema-version`     | Schema version after deployment               |
 
 ### Using Outputs
 
