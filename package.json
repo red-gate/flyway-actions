@@ -16,11 +16,11 @@
   },
   "packageManager": "yarn@4.6.0",
   "devDependencies": {
-    "@vitest/eslint-plugin": "1.6.7",
+    "@vitest/eslint-plugin": "1.6.9",
     "eslint": "9.39.2",
     "eslint-plugin-import": "2.32.0",
     "prettier": "3.8.1",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.55.0"
+    "typescript-eslint": "8.56.0"
   }
 }
