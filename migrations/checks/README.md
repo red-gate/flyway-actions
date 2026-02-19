@@ -162,14 +162,14 @@ This action runs the following pre-deployment checks:
 
 A build database is required for the deployment changes report. If no build database is configured, this step will be skipped.
 
-| Input               | Description                                                                    | Required | Default |
-|---------------------|--------------------------------------------------------------------------------|----------|---------|
-| `build-environment` | Flyway TOML environment name for the build database                            | No       |         |
-| `build-url`         | JDBC URL for the build database                                                | No       |         |
-| `build-user`        | Database user for the build database                                           | No       |         |
-| `build-password`    | Database password for the build database                                       | No       |         |
-| `build-schemas`     | Comma-separated list of schemas for the build database                         | No       |         |
-| `build-ok-to-erase` | Allow Flyway to erase the build database. This will delete all schema and data | No       | `false` |
+| Input               | Description                                                                    | Required                                                                                                                              | Default |
+|---------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `build-environment` | Flyway TOML environment name for the build database                            | No                                                                                                                                    |         |
+| `build-url`         | JDBC URL for the build database                                                | No                                                                                                                                    |         |
+| `build-user`        | Database user for the build database                                           | No                                                                                                                                    |         |
+| `build-password`    | Database password for the build database                                       | No                                                                                                                                    |         |
+| `build-schemas`     | Comma-separated list of schemas for the build database                         | No                                                                                                                                    |         |
+| `build-ok-to-erase` | Allow Flyway to erase the build database. This will delete all schema and data | Required if build database is configured but `build-environment` not set or build environment does not have a provisioner configured. | `false` |
 
 ### Check Options
 
