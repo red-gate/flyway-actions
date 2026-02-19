@@ -3,10 +3,11 @@ import type { ExecOptions } from "@actions/exec";
 
 const exec = vi.fn();
 const coreInfo = vi.fn();
+const coreError = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info: coreInfo,
-  error: vi.fn(),
+  error: coreError,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -153,5 +154,29 @@ describe("runChecks", () => {
     const exitCode = await runChecks(baseInputs);
 
     expect(exitCode).toBe(1);
+  });
+
+  it("should log friendly message when provisioner error and build-ok-to-erase is not set", async () => {
+    coreError.mockClear();
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stderr?.(Buffer.from("ERROR: You need to configure a provisioner for the build environment"));
+      return Promise.resolve(1);
+    });
+
+    await runChecks(baseInputs);
+
+    expect(coreError).toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
+  });
+
+  it("should not log friendly message when provisioner error and build-ok-to-erase is true", async () => {
+    coreError.mockClear();
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stderr?.(Buffer.from("ERROR: You need to configure a provisioner for the build environment"));
+      return Promise.resolve(1);
+    });
+
+    await runChecks({ ...baseInputs, buildOkToErase: true });
+
+    expect(coreError).not.toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
   });
 });
