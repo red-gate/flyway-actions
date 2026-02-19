@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  migrations:
+  migrations-enterprise:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -75,5 +75,44 @@ jobs:
           echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.deploy.outputs.drift-detected }}" = "false"
+          test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
+          test "${{ steps.deploy.outputs.schema-version }}" = "3"
+
+  migrations-community:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: community
+          i-agree-to-the-eula: true
+      - name: Run checks
+        id: checks
+        uses: ./migrations/checks
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          fail-on-code-review: 'false'
+          working-directory: sample-project
+      - name: Run deploy
+        id: deploy
+        uses: ./migrations/deploy
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          working-directory: sample-project
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
+          echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"
