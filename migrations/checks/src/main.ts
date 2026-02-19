@@ -5,8 +5,8 @@ import { getInputs, maskSecrets } from "./inputs.js";
 
 const run = async (): Promise<void> => {
   try {
-    const flyway = await getFlywayDetails();
-    if (!flyway.installed) {
+    const flywayDetails = await getFlywayDetails();
+    if (!flywayDetails.installed) {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
