@@ -1,9 +1,10 @@
 import * as core from "@actions/core";
-import { getFlywayDetails } from "@flyway-actions/shared";
+import { getFlywayDetails, uploadReport } from "@flyway-actions/shared";
 import { runChecks } from "./flyway/run-checks.js";
 import { getInputs, maskSecrets } from "./inputs.js";
 
 const run = async (): Promise<void> => {
+  let workingDirectory: string | undefined;
   try {
     const flywayDetails = await getFlywayDetails();
     if (!flywayDetails.installed) {
@@ -11,6 +12,7 @@ const run = async (): Promise<void> => {
       return;
     }
     const inputs = getInputs();
+    workingDirectory = inputs.workingDirectory;
     if (!inputs.targetEnvironment && !inputs.targetUrl) {
       core.setFailed(
         'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.',
@@ -30,6 +32,8 @@ const run = async (): Promise<void> => {
     } else {
       core.setFailed(String(error));
     }
+  } finally {
+    await uploadReport(workingDirectory);
   }
 };
 

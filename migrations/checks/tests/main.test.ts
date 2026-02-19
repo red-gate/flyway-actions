@@ -10,6 +10,9 @@ const startGroup = vi.fn();
 const endGroup = vi.fn();
 const exec = vi.fn();
 
+const existsSync = vi.fn().mockReturnValue(false);
+const uploadArtifact = vi.fn();
+
 const setupMocks = () => {
   vi.doMock("@actions/core", () => ({
     getInput,
@@ -20,10 +23,19 @@ const setupMocks = () => {
     error,
     startGroup,
     endGroup,
+    warning: vi.fn(),
   }));
 
   vi.doMock("@actions/exec", () => ({
     exec,
+  }));
+
+  vi.doMock("fs", () => ({ existsSync }));
+
+  vi.doMock("@actions/artifact", () => ({
+    DefaultArtifactClient: class {
+      uploadArtifact = uploadArtifact;
+    },
   }));
 };
 
