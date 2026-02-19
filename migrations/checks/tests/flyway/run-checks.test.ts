@@ -3,11 +3,13 @@ import type { ExecOptions } from "@actions/exec";
 
 const info = vi.fn();
 const error = vi.fn();
+const setOutput = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
   error,
+  setOutput,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -16,7 +18,8 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getCheckArgs, parseErrorOutput, runChecks } = await import("../../src/flyway/run-checks.js");
+const { getCheckArgs, parseCheckOutput, parseErrorOutput, runChecks, setOutputs } =
+  await import("../../src/flyway/run-checks.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -272,6 +275,138 @@ describe("parseErrorOutput", () => {
   });
 });
 
+describe("parseCheckOutput", () => {
+  it("should parse valid JSON with individualResults", () => {
+    const stdout = JSON.stringify({ individualResults: [{ operation: "drift", differences: [] }] });
+
+    const result = parseCheckOutput(stdout);
+
+    expect(result?.individualResults).toHaveLength(1);
+    expect(result?.individualResults?.[0].operation).toBe("drift");
+  });
+
+  it("should return undefined for invalid JSON", () => {
+    expect(parseCheckOutput("not json")).toBeUndefined();
+  });
+
+  it("should handle empty object", () => {
+    const result = parseCheckOutput("{}");
+
+    expect(result?.individualResults).toBeUndefined();
+  });
+});
+
+describe("setOutputs", () => {
+  it("should set exit-code", () => {
+    setOutputs(undefined, 0);
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+  });
+
+  it("should set non-zero exit-code", () => {
+    setOutputs(undefined, 1);
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
+  });
+
+  it("should set drift-detected to true when differences exist", () => {
+    setOutputs({ individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }] }, 0);
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+  });
+
+  it("should set drift-detected to false when no differences", () => {
+    setOutputs({ individualResults: [{ operation: "drift", onlyInSource: [], onlyInTarget: [] }] }, 0);
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
+  });
+
+  it("should not set drift-detected when drift result is absent", () => {
+    setOutputs({ individualResults: [{ operation: "code", results: [] }] }, 0);
+
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+  });
+
+  it("should set changed-object-count from changes result", () => {
+    setOutputs(
+      {
+        individualResults: [
+          {
+            operation: "changes",
+            differences: [{ name: "Table_1" }, { name: "Table_2" }],
+            onlyInSource: [{ name: "View_1" }],
+          },
+        ],
+      },
+      0,
+    );
+
+    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "3");
+  });
+
+  it("should set changed-object-count to zero when no changes", () => {
+    setOutputs({ individualResults: [{ operation: "changes" }] }, 0);
+
+    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "0");
+  });
+
+  it("should not set changed-object-count when changes result is absent", () => {
+    setOutputs({ individualResults: [{ operation: "drift" }] }, 0);
+
+    expect(setOutput).not.toHaveBeenCalledWith("changed-object-count", expect.anything());
+  });
+
+  it("should set code-violation-count and code-violation-codes", () => {
+    setOutputs(
+      {
+        individualResults: [
+          {
+            operation: "code",
+            results: [{ violations: [{ code: "RG06" }, { code: "RG09" }] }, { violations: [{ code: "RG06" }] }],
+          },
+        ],
+      },
+      0,
+    );
+
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "3");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06,RG09");
+  });
+
+  it("should set code-violation-count to zero when no violations", () => {
+    setOutputs({ individualResults: [{ operation: "code", results: [{ violations: [] }] }] }, 0);
+
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "0");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "");
+  });
+
+  it("should not set code outputs when code result is absent", () => {
+    setOutputs({ individualResults: [{ operation: "drift" }] }, 0);
+
+    expect(setOutput).not.toHaveBeenCalledWith("code-violation-count", expect.anything());
+    expect(setOutput).not.toHaveBeenCalledWith("code-violation-codes", expect.anything());
+  });
+
+  it("should handle all result types together", () => {
+    setOutputs(
+      {
+        individualResults: [
+          { operation: "drift", differences: [{ name: "Table_1" }], onlyInSource: [], onlyInTarget: [] },
+          { operation: "changes", differences: [{ name: "Table_1" }], onlyInTarget: [{ name: "Index_1" }] },
+          { operation: "code", results: [{ violations: [{ code: "RG06" }] }] },
+        ],
+      },
+      0,
+    );
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "2");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "1");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06");
+  });
+});
+
 describe("runChecks", () => {
   it("should not throw on success", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
@@ -280,6 +415,29 @@ describe("runChecks", () => {
     });
 
     await expect(runChecks(baseInputs, "enterprise")).resolves.not.toThrow();
+  });
+
+  it("should set exit-code on success", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
+    });
+
+    await runChecks(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+  });
+
+  it("should set exit-code before throwing on failure", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Check failed" } })),
+      );
+      return Promise.resolve(1);
+    });
+
+    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow();
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
   });
 
   it("should throw and log JSON error message on failure", async () => {
