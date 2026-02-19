@@ -13382,7 +13382,7 @@ const ra = () => {
     }
     if (ha(r), A.edition === "enterprise") {
       if (r.skipDriftCheck)
-        xe("Skipping drift check.");
+        xe('Skipping drift check: "skip-drift-check" set to true');
       else if (await ga(r)) {
         de("Drift detected. Aborting deployment.");
         return;
