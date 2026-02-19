@@ -8,23 +8,23 @@ const getCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
     args.push(`-environment=${inputs.targetEnvironment}`);
   }
 
-  const scoped = inputs.targetEnvironment && inputs.targetEnvironment !== "default";
-  const prefix = scoped ? `-environments.${inputs.targetEnvironment}.` : "-";
+  const hasEnvironment = inputs.targetEnvironment && inputs.targetEnvironment !== "default";
+  const targetPrefix = hasEnvironment ? `-environments.${inputs.targetEnvironment}.` : "-";
 
   if (inputs.targetUrl) {
-    args.push(`${prefix}url=${inputs.targetUrl}`);
+    args.push(`${targetPrefix}url=${inputs.targetUrl}`);
   }
 
   if (inputs.targetUser) {
-    args.push(`${prefix}user=${inputs.targetUser}`);
+    args.push(`${targetPrefix}user=${inputs.targetUser}`);
   }
 
   if (inputs.targetPassword) {
-    args.push(`${prefix}password=${inputs.targetPassword}`);
+    args.push(`${targetPrefix}password=${inputs.targetPassword}`);
   }
 
   if (inputs.targetSchemas) {
-    args.push(`${prefix}schemas=${inputs.targetSchemas}`);
+    args.push(`${targetPrefix}schemas=${inputs.targetSchemas}`);
   }
 
   if (inputs.workingDirectory) {

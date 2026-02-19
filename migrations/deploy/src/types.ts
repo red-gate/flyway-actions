@@ -1,5 +1,3 @@
-import type { FlywayDetails, FlywayEdition, FlywayRunResult } from "@flyway-actions/shared";
-
 type FlywayMigrationsDeploymentInputs = {
   targetEnvironment?: string;
   targetUrl?: string;
@@ -20,10 +18,4 @@ type FlywayMigrationsDeploymentOutputs = {
   schemaVersion: string;
 };
 
-export type {
-  FlywayDetails,
-  FlywayEdition,
-  FlywayMigrationsDeploymentInputs,
-  FlywayMigrationsDeploymentOutputs,
-  FlywayRunResult,
-};
+export type { FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs };

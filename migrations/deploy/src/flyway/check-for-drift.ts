@@ -23,10 +23,6 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     const driftDetected = result.exitCode !== 0;
     setDriftOutput(result.exitCode, driftDetected);
 
-    if (!driftDetected) {
-      core.info("No drift detected. Proceeding with migration.");
-    }
-
     return driftDetected;
   } finally {
     core.endGroup();
