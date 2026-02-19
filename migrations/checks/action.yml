@@ -78,7 +78,53 @@ inputs:
   extra-args:
     description: 'Additional Flyway CLI arguments (e.g. -sqlMigrationPrefix=M)'
     required: false
+  skip-html-report-upload:
+    description: 'Skip uploading the HTML report as a workflow artifact'
+    required: false
+    default: 'false'
+  report-retention-days:
+    description: 'Number of days to retain the report artifact'
+    required: false
+    default: '7'
+  report-name:
+    description: 'Name for the report artifact'
+    required: false
+    default: 'flyway-report'
 
 runs:
-  using: 'node24'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Run Flyway checks
+      run: node "${{ github.action_path }}/dist/index.js"
+      shell: bash
+      env:
+        INPUT_TARGET-ENVIRONMENT: ${{ inputs.target-environment }}
+        INPUT_TARGET-URL: ${{ inputs.target-url }}
+        INPUT_TARGET-USER: ${{ inputs.target-user }}
+        INPUT_TARGET-PASSWORD: ${{ inputs.target-password }}
+        INPUT_TARGET-SCHEMAS: ${{ inputs.target-schemas }}
+        INPUT_TARGET-MIGRATION-VERSION: ${{ inputs.target-migration-version }}
+        INPUT_CHERRY-PICK: ${{ inputs.cherry-pick }}
+        INPUT_BUILD-ENVIRONMENT: ${{ inputs.build-environment }}
+        INPUT_BUILD-URL: ${{ inputs.build-url }}
+        INPUT_BUILD-USER: ${{ inputs.build-user }}
+        INPUT_BUILD-PASSWORD: ${{ inputs.build-password }}
+        INPUT_BUILD-SCHEMAS: ${{ inputs.build-schemas }}
+        INPUT_BUILD-OK-TO-ERASE: ${{ inputs.build-ok-to-erase }}
+        INPUT_SKIP-CODE-REVIEW: ${{ inputs.skip-code-review }}
+        INPUT_SKIP-DRIFT-CHECK: ${{ inputs.skip-drift-check }}
+        INPUT_SKIP-DEPLOYMENT-CHANGES-REPORT: ${{ inputs.skip-deployment-changes-report }}
+        INPUT_SKIP-DEPLOYMENT-SCRIPT-REVIEW: ${{ inputs.skip-deployment-script-review }}
+        INPUT_FAIL-ON-CODE-REVIEW: ${{ inputs.fail-on-code-review }}
+        INPUT_FAIL-ON-DRIFT: ${{ inputs.fail-on-drift }}
+        INPUT_WORKING-DIRECTORY: ${{ inputs.working-directory }}
+        INPUT_EXTRA-ARGS: ${{ inputs.extra-args }}
+
+    - name: Upload HTML report
+      if: inputs.skip-html-report-upload != 'true' && always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.report-name }}
+        path: ${{ inputs.working-directory && format('{0}/report.html', inputs.working-directory) || 'report.html' }}
+        retention-days: ${{ inputs.report-retention-days }}
+        if-no-files-found: ignore

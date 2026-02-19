@@ -50,6 +50,8 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-project
+          report-name: flyway-checks-report-${{ matrix.os }}
+          report-retention-days: '1'
       - name: Run deploy
         id: deploy
         uses: ./migrations/deploy
@@ -58,13 +60,13 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
-      - name: Upload Flyway report
-        if: always()
-        uses: actions/upload-artifact@v6
+      - name: Verify report artifact uploaded
+        uses: actions/download-artifact@v4
         with:
-          name: flyway-report-${{ matrix.os }}
-          path: sample-project/report.html
-          retention-days: 1
+          name: flyway-checks-report-${{ matrix.os }}
+      - name: Verify report exists
+        shell: bash
+        run: test -s report.html
       - name: Test outputs
         shell: bash
         run: |
