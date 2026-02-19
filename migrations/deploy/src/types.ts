@@ -18,4 +18,6 @@ type FlywayMigrationsDeploymentOutputs = {
   schemaVersion: string;
 };
 
-export type { FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs };
+type FlywayMigrateOutput = { migrationsExecuted?: number; targetSchemaVersion?: string };
+
+export type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs };

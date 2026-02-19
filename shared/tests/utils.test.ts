@@ -1,4 +1,12 @@
-import { createStdoutListener, createStdoutStderrListeners } from "../src/utils.js";
+const info = vi.fn();
+const error = vi.fn();
+
+vi.doMock("@actions/core", () => ({
+  info,
+  error,
+}));
+
+const { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners } = await import("../src/utils.js");
 
 describe("createStdoutListener", () => {
   it("should return empty string before any data", () => {
@@ -46,5 +54,46 @@ describe("createStdoutStderrListeners", () => {
     listeners.stderr(Buffer.from("warn2\n"));
 
     expect(getOutput()).toEqual({ stdout: "line1\nline2\n", stderr: "warn1\nwarn2\n" });
+  });
+});
+
+describe("createJsonStderrListener", () => {
+  it("should parse and log JSON stderr lines", () => {
+    const listener = createJsonStderrListener();
+    const jsonLine = JSON.stringify({ level: "INFO", message: "Starting migration" });
+
+    listener(Buffer.from(`${jsonLine}\n`));
+
+    expect(info).toHaveBeenCalledWith("Starting migration");
+  });
+
+  it("should parse and log JSON stderr error lines", () => {
+    const listener = createJsonStderrListener();
+    const jsonLine = JSON.stringify({ level: "ERROR", message: "err" });
+
+    listener(Buffer.from(`${jsonLine}\n`));
+
+    expect(error).toHaveBeenCalledWith("err");
+  });
+
+  it("should parse multiple JSON stderr lines", () => {
+    const listener = createJsonStderrListener();
+    const lines = [
+      JSON.stringify({ level: "INFO", message: "Starting migration" }),
+      JSON.stringify({ level: "WARN", message: "Schema missing" }),
+    ].join("\n");
+
+    listener(Buffer.from(`${lines}\n`));
+
+    expect(info).toHaveBeenCalledWith("Starting migration");
+    expect(info).toHaveBeenCalledWith("Schema missing");
+  });
+
+  it("should skip non-JSON stderr lines", () => {
+    const listener = createJsonStderrListener();
+
+    listener(Buffer.from("plain text warning\n"));
+
+    expect(info).not.toHaveBeenCalled();
   });
 });

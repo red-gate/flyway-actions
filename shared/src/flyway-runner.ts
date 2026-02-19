@@ -1,7 +1,7 @@
 import type { FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput } from "./types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import { createStdoutListener, createStdoutStderrListeners } from "./utils.js";
+import { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners } from "./utils.js";
 
 const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];
@@ -51,10 +51,19 @@ const maskArgsForLog = (args: string[]): string[] => {
 
 const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
   const { listeners, getOutput } = createStdoutStderrListeners();
+  const jsonStderrListener = createJsonStderrListener();
 
   core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
 
-  const options: exec.ExecOptions = { ignoreReturnCode: true, listeners, cwd: cwd || undefined };
+  const options: exec.ExecOptions = {
+    silent: args.includes("-outputType=json"),
+    ignoreReturnCode: true,
+    listeners: {
+      stdout: listeners.stdout,
+      stderr: (data: Buffer) => (args.includes("-outputType=json") ? jsonStderrListener(data) : listeners.stderr(data)),
+    },
+    cwd: cwd || undefined,
+  };
   const exitCode = await exec.exec("flyway", args, options);
 
   const { stdout, stderr } = getOutput();

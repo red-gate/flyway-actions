@@ -1,3 +1,6 @@
+import type { JsonLogModel } from "./types.js";
+import * as core from "@actions/core";
+
 const createStdoutListener = (): { listener: (data: Buffer) => void; getOutput: () => string } => {
   let output = "";
   return {
@@ -21,4 +24,21 @@ const createStdoutStderrListeners = (): {
   };
 };
 
-export { createStdoutListener, createStdoutStderrListeners };
+const createJsonStderrListener = (): ((data: Buffer) => void) => {
+  let buffer = "";
+  return (data: Buffer) => {
+    buffer += data.toString();
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      try {
+        const parsed = JSON.parse(line.trim()) as JsonLogModel;
+        parsed.message && (parsed.level === "ERROR" ? core.error(parsed.message) : core.info(parsed.message));
+      } catch {
+        // Not valid JSON, skip
+      }
+    }
+  };
+};
+
+export { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners };

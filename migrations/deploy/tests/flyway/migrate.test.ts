@@ -21,9 +21,7 @@ const { getMigrateArgs, migrate, parseFlywayOutput } = await import("../../src/f
 describe("migrate", () => {
   it("should set all outputs on success", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from('Successfully applied 3 migrations to schema "main", now at version v2.0'),
-      );
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ migrationsExecuted: 3, targetSchemaVersion: "2.0" })));
       return Promise.resolve(0);
     });
 
@@ -36,53 +34,8 @@ describe("migrate", () => {
 });
 
 describe("parseFlywayOutput", () => {
-  it("should parse migration count from success message", () => {
-    const stdout = `
-      Flyway Community Edition 10.0.0 by Redgate
-      Database: jdbc:postgresql://localhost/test
-      Successfully applied 3 migrations to schema "public" (execution time 00:00.150s)
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(3);
-  });
-
-  it("should parse schema version", () => {
-    const stdout = `
-      Flyway Community Edition 10.0.0 by Redgate
-      Database: jdbc:postgresql://localhost/test
-      Schema version: 2.0.1
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.schemaVersion).toBe("2.0.1");
-  });
-
-  it("should parse current version of schema format", () => {
-    const stdout = `
-      Current version of schema "public": 1.5
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.schemaVersion).toBe("1.5");
-  });
-
-  it("should return defaults when no patterns match", () => {
-    const stdout = "Some unrelated output";
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(0);
-    expect(result.schemaVersion).toBe("unknown");
-  });
-
-  it("should parse JSON output if present", () => {
-    const stdout = `
-      {"schemaVersion": "3.0", "migrationsExecuted": 5}
-    `;
+  it("should parse migrationsExecuted and targetSchemaVersion from JSON", () => {
+    const stdout = JSON.stringify({ database: "testdb", migrationsExecuted: 5, targetSchemaVersion: "3.0" });
 
     const result = parseFlywayOutput(stdout);
 
@@ -90,43 +43,44 @@ describe("parseFlywayOutput", () => {
     expect(result.schemaVersion).toBe("3.0");
   });
 
-  it("should not count validated migrations as applied", () => {
-    const stdout = `
-      Successfully validated 10 migrations
-    `;
-
-    const result = parseFlywayOutput(stdout);
-
-    expect(result.migrationsApplied).toBe(0);
-  });
-
   it("should handle zero migrations", () => {
-    const stdout = `
-      Schema "public" is up to date. No migration necessary.
-    `;
+    const stdout = JSON.stringify({ migrationsExecuted: 0, targetSchemaVersion: "2.0" });
 
     const result = parseFlywayOutput(stdout);
 
     expect(result.migrationsApplied).toBe(0);
+    expect(result.schemaVersion).toBe("2.0");
   });
 
-  it("should handle empty string", () => {
+  it("should return defaults for empty string", () => {
     const result = parseFlywayOutput("");
 
     expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("unknown");
   });
 
-  it("should fall back to regex when JSON is malformed", () => {
-    const stdout = `
-      Successfully applied 2 migrations
-      Schema version: 4.0
-      {"schemaVersion": broken json}
-    `;
+  it("should return defaults for invalid JSON", () => {
+    const result = parseFlywayOutput("not valid json");
+
+    expect(result.migrationsApplied).toBe(0);
+    expect(result.schemaVersion).toBe("unknown");
+  });
+
+  it("should handle null targetSchemaVersion", () => {
+    const stdout = JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: null });
 
     const result = parseFlywayOutput(stdout);
 
-    expect(result.migrationsApplied).toBe(2);
+    expect(result.migrationsApplied).toBe(1);
+    expect(result.schemaVersion).toBe("unknown");
+  });
+
+  it("should default migrationsExecuted to zero when missing", () => {
+    const stdout = JSON.stringify({ targetSchemaVersion: "4.0" });
+
+    const result = parseFlywayOutput(stdout);
+
+    expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("4.0");
   });
 });
@@ -138,6 +92,8 @@ describe("getMigrateArgs", () => {
     const args = getMigrateArgs(inputs);
 
     expect(args).toContain("migrate");
+    expect(args).toContain("-outputType=json");
+    expect(args).toContain("-outputLogsInJson=true");
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
   });
 

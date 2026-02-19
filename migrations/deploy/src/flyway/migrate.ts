@@ -1,10 +1,14 @@
-import type { FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs } from "../types.js";
+import type {
+  FlywayMigrateOutput,
+  FlywayMigrationsDeploymentInputs,
+  FlywayMigrationsDeploymentOutputs,
+} from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = ["migrate", ...getCommonArgs(inputs)];
+  const args: string[] = ["migrate", "-outputType=json", "-outputLogsInJson=true", ...getCommonArgs(inputs)];
 
   if (inputs.targetMigrationVersion) {
     args.push(`-target=${inputs.targetMigrationVersion}`);
@@ -27,10 +31,6 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
     const args = getMigrateArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
-    if (result.stderr) {
-      core.error(result.stderr);
-    }
-
     const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
     setOutputs({ exitCode: result.exitCode, migrationsApplied, schemaVersion });
 
@@ -48,47 +48,13 @@ const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
   core.setOutput("schema-version", outputs.schemaVersion);
 };
 
-const extractSchemaVersion = (stdout: string): string => {
-  const finalVersionMatch = stdout.match(/now\s+at\s+version\s+v?(\d+(?:\.\d+)*)/i);
-  if (finalVersionMatch) {
-    return finalVersionMatch[1];
-  }
-
-  const versionMatch = stdout.match(
-    /(?:Schema\s+version|Current\s+version\s+of\s+schema(?:\s+"[^"]*")?):\s*v?(\d+(?:\.\d+)*)/i,
-  );
-  if (versionMatch) {
-    return versionMatch[1];
-  }
-
-  return "unknown";
-};
-
 const parseFlywayOutput = (stdout: string): { migrationsApplied: number; schemaVersion: string } => {
-  let migrationsApplied = 0;
-  let schemaVersion = extractSchemaVersion(stdout);
-
-  const migrationsMatch = stdout.match(/Successfully\s+applied\s+(\d+)\s+migration/i);
-  if (migrationsMatch) {
-    migrationsApplied = parseInt(migrationsMatch[1], 10);
-  }
-
   try {
-    const jsonMatch = stdout.match(/\{[\s\S]*"schemaVersion"[\s\S]*}/);
-    if (jsonMatch) {
-      const json = JSON.parse(jsonMatch[0]);
-      if (json.migrationsExecuted !== undefined) {
-        migrationsApplied = json.migrationsExecuted;
-      }
-      if (json.schemaVersion) {
-        schemaVersion = json.schemaVersion;
-      }
-    }
+    const json = JSON.parse(stdout) as FlywayMigrateOutput;
+    return { migrationsApplied: json.migrationsExecuted ?? 0, schemaVersion: json.targetSchemaVersion ?? "unknown" };
   } catch {
-    // JSON parsing failed, continue with regex results
+    return { migrationsApplied: 0, schemaVersion: "unknown" };
   }
-
-  return { migrationsApplied, schemaVersion };
 };
 
 export { getMigrateArgs, migrate, parseFlywayOutput };

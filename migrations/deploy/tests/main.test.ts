@@ -34,7 +34,6 @@ type SetupFlywayMockOptions = {
   driftExitCode?: number;
   migrateExitCode: number;
   migrateOutput?: string;
-  migrateStderr?: string;
 };
 
 describe("run", () => {
@@ -43,13 +42,7 @@ describe("run", () => {
     setupMocks();
   });
 
-  const setupFlywayMock = ({
-    edition,
-    driftExitCode,
-    migrateExitCode,
-    migrateOutput = "",
-    migrateStderr = "",
-  }: SetupFlywayMockOptions) => {
+  const setupFlywayMock = ({ edition, driftExitCode, migrateExitCode, migrateOutput = "" }: SetupFlywayMockOptions) => {
     let callCount = 0;
     const hasDriftCheck = driftExitCode !== undefined && edition.toLowerCase() === "enterprise";
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
@@ -63,9 +56,6 @@ describe("run", () => {
       }
       if (migrateOutput) {
         options?.listeners?.stdout?.(Buffer.from(migrateOutput));
-      }
-      if (migrateStderr) {
-        options?.listeners?.stderr?.(Buffer.from(migrateStderr));
       }
       return Promise.resolve(migrateExitCode);
     });
@@ -97,7 +87,7 @@ describe("run", () => {
       edition: "Enterprise",
       driftExitCode: 0,
       migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
+      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -120,7 +110,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Community",
       migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
+      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -154,31 +144,11 @@ describe("run", () => {
     expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway migrate failed with exit code 1"));
   });
 
-  it("should log stderr as error", async () => {
-    setupFlywayMock({
-      edition: "Community",
-      migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
-      migrateStderr: "some warning",
-    });
-    getInput.mockImplementation((name: string) => {
-      if (name === "target-url") {
-        return "jdbc:sqlite:test.db";
-      }
-      return "";
-    });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    expect(error).toHaveBeenCalledWith("some warning");
-  });
-
   it("should set outputs on successful execution", async () => {
     setupFlywayMock({
       edition: "Community",
       migrateExitCode: 0,
-      migrateOutput: "Successfully applied 3 migrations\nSchema now at version 3\n",
+      migrateOutput: JSON.stringify({ migrationsExecuted: 3, targetSchemaVersion: "3" }),
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -216,7 +186,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
+      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -239,7 +209,7 @@ describe("run", () => {
       edition: "Enterprise",
       driftExitCode: 0,
       migrateExitCode: 0,
-      migrateOutput: "Successfully applied 1 migrations\n",
+      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
