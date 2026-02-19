@@ -20,7 +20,7 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    const exitCode = await runChecks(inputs);
+    const exitCode = await runChecks(inputs, flywayDetails.edition);
     if (exitCode !== 0) {
       core.setFailed("Flyway checks failed");
     }

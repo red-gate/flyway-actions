@@ -288,4 +288,38 @@ describe("run", () => {
 
     expect(setFailed).not.toHaveBeenCalled();
   });
+
+  it("should only include -code for Community edition", async () => {
+    setupChecksMock("Community");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-code");
+    expect(args).not.toContain("-dryrun");
+    expect(args).not.toContain("-drift");
+    expect(args).not.toContain("-changes");
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should include -dryrun and -code but not -drift or -changes for Teams edition", async () => {
+    setupChecksMock("Teams");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).toContain("-dryrun");
+    expect(args).toContain("-code");
+    expect(args).not.toContain("-drift");
+    expect(args).not.toContain("-changes");
+    expect(setFailed).not.toHaveBeenCalled();
+  });
 });

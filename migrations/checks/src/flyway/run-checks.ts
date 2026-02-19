@@ -1,9 +1,15 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
+import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
 
-const getCheckDryrunArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getCheckDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
+  if (edition === "community") {
+    core.info("Skipping deployment script review: not available in Community edition");
+    return [];
+  }
+
   if (inputs.skipDeploymentScriptReview) {
     core.info('Skipping deployment script review: "skip-deployment-script-review" set to true');
     return [];
@@ -21,7 +27,12 @@ const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   return ["-code", ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : [])];
 };
 
-const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
+  if (edition !== "enterprise") {
+    core.info(`Skipping drift check: not available in ${edition === "community" ? "Community" : "Teams"} edition`);
+    return [];
+  }
+
   if (inputs.skipDriftCheck) {
     core.info('Skipping drift check: "skip-drift-check" set to true');
     return [];
@@ -30,7 +41,14 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   return ["-drift", ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : [])];
 };
 
-const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
+  if (edition !== "enterprise") {
+    core.info(
+      `Skipping deployment changes report: not available in ${edition === "community" ? "Community" : "Teams"} edition`,
+    );
+    return [];
+  }
+
   if (inputs.skipDeploymentChangesReport && hasBuildInputs(inputs)) {
     core.info('Skipping deployment changes report: "skip-deployment-changes-report" set to true');
     return [];
@@ -44,13 +62,13 @@ const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs): string[] => 
   return ["-changes", ...getBuildEnvironmentArgs(inputs)];
 };
 
-const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+const getCheckArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
   const args = [
     "check",
-    ...getCheckDryrunArgs(inputs),
+    ...getCheckDryrunArgs(inputs, edition),
     ...getCheckCodeArgs(inputs),
-    ...getCheckDriftArgs(inputs),
-    ...getCheckChangesArgs(inputs),
+    ...getCheckDriftArgs(inputs, edition),
+    ...getCheckChangesArgs(inputs, edition),
     ...getTargetEnvironmentArgs(inputs),
     ...getBaseArgs(inputs),
   ];
@@ -66,10 +84,10 @@ const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   return args;
 };
 
-const runChecks = async (inputs: FlywayMigrationsChecksInputs): Promise<number> => {
+const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): Promise<number> => {
   core.startGroup("Running Flyway checks");
   try {
-    const args = getCheckArgs(inputs);
+    const args = getCheckArgs(inputs, edition);
     const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.stderr?.includes("configure a provisioner") && !inputs.buildOkToErase) {
