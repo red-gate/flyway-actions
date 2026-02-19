@@ -30,13 +30,13 @@ This is a GitHub Action with:
 ## Committing Changes
 
 - Commit messages should be as terse as possible. No need for long descriptions or a commit signature.
-- Before creating any commit, ALWAYS run formatting, linting, and tests for the affected project(s) only — not the entire monorepo.
+- Before creating any commit, ALWAYS run formatting, linting, and tests.
 
 Example workflow:
 1. Make code changes
-2. Run `yarn format` for affected project(s)
-3. Run `yarn lint` for affected project(s)
-4. Run `yarn test` for affected project(s)
+2. Run `yarn format`
+3. Run `yarn lint`
+4. Run `yarn test`
 5. Stage and commit the changes
 
 ## Pull Request Workflow

@@ -13241,21 +13241,15 @@ function Ni() {
 const ra = () => {
   let A = "";
   return {
-    listener: (r) => {
-      A += r.toString();
-    },
+    listener: (r) => A += r.toString(),
     getOutput: () => A
   };
 }, na = () => {
   let A = "", r = "";
   return {
     listeners: {
-      stdout: (t) => {
-        A += t.toString();
-      },
-      stderr: (t) => {
-        r += t.toString();
-      }
+      stdout: (t) => A += t.toString(),
+      stderr: (t) => r += t.toString()
     },
     getOutput: () => ({ stdout: A, stderr: r })
   };
@@ -13267,7 +13261,22 @@ const ra = () => {
     (a === '"' || a === "'") && !g ? (g = !0, e = a) : a === e && g ? (g = !1, e = "") : a === " " && !g ? (t.trim() && r.push(t.trim()), t = "") : t += a;
   }
   return t.trim() && r.push(t.trim()), r;
-}, ia = async () => {
+}, ia = (A) => {
+  const r = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
+  return A.map((t) => {
+    for (const g of r)
+      if (g.test(t)) {
+        const e = t.indexOf("=");
+        return `${t.substring(0, e + 1)}***`;
+      }
+    return t;
+  });
+}, Si = async (A, r) => {
+  const { listeners: t, getOutput: g } = na();
+  xe(`Running: flyway ${ia(A).join(" ")}`);
+  const n = await Fi("flyway", A, { ignoreReturnCode: !0, listeners: t, cwd: r || void 0 }), { stdout: a, stderr: Q } = g();
+  return { exitCode: n, stdout: a, stderr: Q };
+}, oa = async () => {
   try {
     const { listener: A, getOutput: r } = ra();
     await Fi("flyway", ["--version"], {
@@ -13282,26 +13291,6 @@ const ra = () => {
   } catch {
     return { installed: !1 };
   }
-}, Si = async (A, r) => {
-  const { listeners: t, getOutput: g } = na();
-  xe(`Running: flyway ${oa(A).join(" ")}`);
-  const e = {
-    ignoreReturnCode: !0,
-    listeners: t
-  };
-  r && (e.cwd = r);
-  const n = await Fi("flyway", A, e), { stdout: a, stderr: Q } = g();
-  return { exitCode: n, stdout: a, stderr: Q };
-}, oa = (A) => {
-  const r = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
-  return A.map((t) => {
-    for (const g of r)
-      if (g.test(t)) {
-        const e = t.indexOf("=");
-        return `${t.substring(0, e + 1)}***`;
-      }
-    return t;
-  });
 }, bi = (A) => {
   const r = [];
   A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`);
@@ -13379,7 +13368,7 @@ const ra = () => {
   A.targetPassword && ea(A.targetPassword);
 }, ua = async () => {
   try {
-    const A = await ia();
+    const A = await oa();
     if (!A.installed) {
       de("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;

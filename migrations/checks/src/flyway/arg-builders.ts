@@ -82,4 +82,4 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
 const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
   !!(inputs.buildEnvironment || inputs.buildUrl);
 
-export { getBaseArgs, getTargetEnvironmentArgs, getBuildEnvironmentArgs, hasBuildInputs };
+export { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs };

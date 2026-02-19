@@ -35,6 +35,32 @@ const parseExtraArgs = (extraArgs: string): string[] => {
   return args;
 };
 
+const maskArgsForLog = (args: string[]): string[] => {
+  const sensitivePatterns = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
+
+  return args.map((arg) => {
+    for (const pattern of sensitivePatterns) {
+      if (pattern.test(arg)) {
+        const eqIndex = arg.indexOf("=");
+        return `${arg.substring(0, eqIndex + 1)}***`;
+      }
+    }
+    return arg;
+  });
+};
+
+const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
+  const { listeners, getOutput } = createStdoutStderrListeners();
+
+  core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
+
+  const options: exec.ExecOptions = { ignoreReturnCode: true, listeners, cwd: cwd || undefined };
+  const exitCode = await exec.exec("flyway", args, options);
+
+  const { stdout, stderr } = getOutput();
+  return { exitCode, stdout, stderr };
+};
+
 const getFlywayDetails = async (): Promise<FlywayDetails> => {
   try {
     const { listener, getOutput } = createStdoutListener();
@@ -53,40 +79,6 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
   } catch {
     return { installed: false };
   }
-};
-
-const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
-  const { listeners, getOutput } = createStdoutStderrListeners();
-
-  core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
-
-  const options: exec.ExecOptions = {
-    ignoreReturnCode: true,
-    listeners,
-  };
-
-  if (cwd) {
-    options.cwd = cwd;
-  }
-
-  const exitCode = await exec.exec("flyway", args, options);
-  const { stdout, stderr } = getOutput();
-
-  return { exitCode, stdout, stderr };
-};
-
-const maskArgsForLog = (args: string[]): string[] => {
-  const sensitivePatterns = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
-
-  return args.map((arg) => {
-    for (const pattern of sensitivePatterns) {
-      if (pattern.test(arg)) {
-        const eqIndex = arg.indexOf("=");
-        return `${arg.substring(0, eqIndex + 1)}***`;
-      }
-    }
-    return arg;
-  });
 };
 
 export { getFlywayDetails, maskArgsForLog, parseExtraArgs, runFlyway };
