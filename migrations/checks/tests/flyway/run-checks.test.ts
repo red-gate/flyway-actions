@@ -1,13 +1,13 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
 
+const info = vi.fn();
+const error = vi.fn();
 const exec = vi.fn();
-const coreInfo = vi.fn();
-const coreError = vi.fn();
 
 vi.doMock("@actions/core", () => ({
-  info: coreInfo,
-  error: coreError,
+  info,
+  error,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -100,10 +100,9 @@ describe("getCheckArgs", () => {
   });
 
   it("should log info when no build inputs provided", () => {
-    coreInfo.mockClear();
     getCheckArgs(baseInputs, "enterprise");
 
-    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
   });
 
   it("should include build args", () => {
@@ -178,31 +177,27 @@ describe("getCheckArgs", () => {
   });
 
   it("should log info when skipDeploymentScriptReview is true", () => {
-    coreInfo.mockClear();
     getCheckArgs({ ...baseInputs, skipDeploymentScriptReview: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
-    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment script review"));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment script review"));
   });
 
   it("should log info when skipCodeReview is true and build inputs exist", () => {
-    coreInfo.mockClear();
     getCheckArgs({ ...baseInputs, skipCodeReview: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
-    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping code review"));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping code review"));
   });
 
   it("should log info when skipDriftCheck is true and build inputs exist", () => {
-    coreInfo.mockClear();
     getCheckArgs({ ...baseInputs, skipDriftCheck: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
-    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping drift check"));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping drift check"));
   });
 
   it("should log info when skipDeploymentChangesReport is true and build inputs exist", () => {
-    coreInfo.mockClear();
     getCheckArgs({ ...baseInputs, skipDeploymentChangesReport: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
-    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
   });
 
   describe("community edition", () => {
@@ -216,12 +211,11 @@ describe("getCheckArgs", () => {
     });
 
     it("should log skip messages for unavailable checks", () => {
-      coreInfo.mockClear();
       getCheckArgs(baseInputs, "community");
 
-      expect(coreInfo).toHaveBeenCalledWith("Skipping deployment script review: not available in Community edition");
-      expect(coreInfo).toHaveBeenCalledWith("Skipping drift check: not available in Community edition");
-      expect(coreInfo).toHaveBeenCalledWith("Skipping deployment changes report: not available in Community edition");
+      expect(info).toHaveBeenCalledWith("Skipping deployment script review: not available in Community edition");
+      expect(info).toHaveBeenCalledWith("Skipping drift check: not available in Community edition");
+      expect(info).toHaveBeenCalledWith("Skipping deployment changes report: not available in Community edition");
     });
   });
 
@@ -236,11 +230,10 @@ describe("getCheckArgs", () => {
     });
 
     it("should log skip messages for enterprise-only checks", () => {
-      coreInfo.mockClear();
       getCheckArgs(baseInputs, "teams");
 
-      expect(coreInfo).toHaveBeenCalledWith("Skipping drift check: not available in Teams edition");
-      expect(coreInfo).toHaveBeenCalledWith("Skipping deployment changes report: not available in Teams edition");
+      expect(info).toHaveBeenCalledWith("Skipping drift check: not available in Teams edition");
+      expect(info).toHaveBeenCalledWith("Skipping deployment changes report: not available in Teams edition");
     });
   });
 });

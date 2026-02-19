@@ -55,7 +55,6 @@ const maskSecrets = (inputs: FlywayMigrationsChecksInputs): void => {
   if (inputs.targetPassword) {
     core.setSecret(inputs.targetPassword);
   }
-
   if (inputs.buildPassword) {
     core.setSecret(inputs.buildPassword);
   }

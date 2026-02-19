@@ -74,7 +74,7 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(setFailed).toHaveBeenCalledWith(
-      expect.stringContaining('Either "target-url" or "target-environment" must be provided'),
+      expect.stringContaining('Either "target-environment" or "target-url" must be provided'),
     );
   });
 

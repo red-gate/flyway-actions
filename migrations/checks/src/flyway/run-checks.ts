@@ -9,12 +9,10 @@ const getCheckDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: Flywa
     core.info("Skipping deployment script review: not available in Community edition");
     return [];
   }
-
   if (inputs.skipDeploymentScriptReview) {
     core.info('Skipping deployment script review: "skip-deployment-script-review" set to true');
     return [];
   }
-
   return ["-dryrun"];
 };
 
@@ -23,7 +21,6 @@ const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
     core.info('Skipping code review: "skip-code-review" set to true');
     return [];
   }
-
   return ["-code", ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : [])];
 };
 
@@ -32,12 +29,10 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: Flyway
     core.info(`Skipping drift check: not available in ${edition === "community" ? "Community" : "Teams"} edition`);
     return [];
   }
-
   if (inputs.skipDriftCheck) {
     core.info('Skipping drift check: "skip-drift-check" set to true');
     return [];
   }
-
   return ["-drift", ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : [])];
 };
 
@@ -48,17 +43,14 @@ const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     );
     return [];
   }
-
   if (inputs.skipDeploymentChangesReport && hasBuildInputs(inputs)) {
     core.info('Skipping deployment changes report: "skip-deployment-changes-report" set to true');
     return [];
   }
-
   if (!hasBuildInputs(inputs)) {
     core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
     return [];
   }
-
   return ["-changes", ...getBuildEnvironmentArgs(inputs)];
 };
 
