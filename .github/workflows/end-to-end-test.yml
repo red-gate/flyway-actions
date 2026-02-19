@@ -98,7 +98,7 @@ jobs:
         uses: ./migrations/checks
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          fail-on-code-review: 'false'
+          skip-code-review: 'true' # Bundled SqlFluff is Enterprise-only, so -code fails without an external install
           working-directory: sample-project
       - name: Run deploy
         id: deploy
