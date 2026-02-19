@@ -112,7 +112,7 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-code");
-    expect(args).toContain("-check.failOnError=true");
+    expect(args).toContain("-check.code.failOnError=true");
     expect(args).not.toContain("-check.failOnDrift=true");
   });
 

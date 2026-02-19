@@ -21,7 +21,7 @@ const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
     core.info('Skipping code review: "skip-code-review" set to true');
     return [];
   }
-  return ["-code", ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : [])];
+  return ["-code", ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : [])];
 };
 
 const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
