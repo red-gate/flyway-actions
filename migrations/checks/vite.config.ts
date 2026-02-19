@@ -1,8 +1,9 @@
 /* eslint-disable no-restricted-exports */
-import { builtinModules } from "node:module";
+import { builtinModules, createRequire } from "node:module";
 import checker from "vite-plugin-checker";
 import { defineConfig } from "vitest/config";
 
+const require = createRequire(import.meta.url);
 const nodeBuiltins = builtinModules.flatMap((m) => [m, `node:${m}`]);
 
 // noinspection JSUnusedGlobalSymbols
@@ -21,7 +22,15 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
   },
-  resolve: { conditions: ["node"] },
+  resolve: {
+    conditions: ["node"],
+    // Rollup's CommonJS plugin can't resolve these transitive deps of @actions/artifact
+    // through Yarn PnP, so we alias them explicitly to ensure they get bundled.
+    alias: {
+      "@protobuf-ts/runtime": require.resolve("@protobuf-ts/runtime"),
+      "@protobuf-ts/runtime-rpc": require.resolve("@protobuf-ts/runtime-rpc"),
+    },
+  },
   plugins: [checker({ typescript: { root: "." } })],
   test: {
     globals: true,
