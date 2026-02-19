@@ -13,17 +13,14 @@ const run = async (): Promise<void> => {
     const inputs = getInputs();
     if (!inputs.targetEnvironment && !inputs.targetUrl) {
       core.setFailed(
-        'Either "target-url" or "target-environment" must be provided for Flyway to connect to a database.',
+        'Either "target-environment" or "target-url" must be provided for Flyway to connect to a database.',
       );
       return;
     }
 
     maskSecrets(inputs);
 
-    const exitCode = await runChecks(inputs, flywayDetails.edition);
-    if (exitCode !== 0) {
-      core.setFailed("Flyway checks failed");
-    }
+    await runChecks(inputs, flywayDetails.edition);
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

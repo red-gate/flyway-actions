@@ -34,13 +34,16 @@ const setupFlywayVersionMock = (edition: string) => {
   });
 };
 
-const setupChecksMock = (edition: string, checkExitCode = 0) => {
+const setupChecksMock = (edition: string, checkExitCode = 0, errorOutput?: string) => {
   let callCount = 0;
   exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
     callCount++;
     if (callCount === 1) {
       options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
       return Promise.resolve(0);
+    }
+    if (errorOutput) {
+      options?.listeners?.stdout?.(Buffer.from(errorOutput));
     }
     return Promise.resolve(checkExitCode);
   });
@@ -74,7 +77,7 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(setFailed).toHaveBeenCalledWith(
-      expect.stringContaining('Either "target-url" or "target-environment" must be provided'),
+      expect.stringContaining('Either "target-environment" or "target-url" must be provided'),
     );
   });
 
@@ -89,6 +92,8 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args[0]).toBe("check");
+    expect(args).toContain("-outputType=json");
+    expect(args).toContain("-outputLogsInJson=true");
     expect(args).toContain("-dryrun");
     expect(args).toContain("-url=jdbc:sqlite:test.db");
     expect(setFailed).not.toHaveBeenCalled();
