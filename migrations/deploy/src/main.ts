@@ -6,8 +6,8 @@ import { getInputs, maskSecrets } from "./inputs.js";
 
 const run = async (): Promise<void> => {
   try {
-    const flyway = await getFlywayDetails();
-    if (!flyway.installed) {
+    const flywayDetails = await getFlywayDetails();
+    if (!flywayDetails.installed) {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
@@ -21,7 +21,7 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    if (flyway.edition === "enterprise") {
+    if (flywayDetails.edition === "enterprise") {
       if (inputs.skipDriftCheck) {
         core.info('Skipping drift check: "skip-drift-check" set to true');
       } else {
@@ -33,7 +33,7 @@ const run = async (): Promise<void> => {
       }
       inputs.saveSnapshot = true;
     } else {
-      core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flyway.edition}).`);
+      core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
 
     await migrate(inputs);
