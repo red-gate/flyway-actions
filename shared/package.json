@@ -10,6 +10,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
   },
   "dependencies": {
+    "@actions/artifact": "2.3.2",
     "@actions/core": "3.0.0",
     "@actions/exec": "3.0.0"
   },
