@@ -61,14 +61,9 @@ jobs:
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
-      - name: Upload Flyway pre-deployment report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: flyway-report
-          path: my-flyway-project/report.html
-          retention-days: 1
 ```
+
+The checks action automatically uploads the HTML report as a workflow artifact named `flyway-report`. See [Report Upload](#report-upload) for customization options.
 
 ### Manual review between checks and deployment (Flyway Enterprise)
 
@@ -105,13 +100,6 @@ jobs:
           build-user: "${{ secrets.FLYWAY_BUILD_USER }}"
           build-password: "${{ secrets.FLYWAY_BUILD_PASSWORD }}"
           working-directory: my-flyway-project
-      - name: Upload Flyway pre-deployment report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: flyway-report
-          path: my-flyway-project/report.html
-          retention-days: 1
   deploy:
     needs: checks
     runs-on: ubuntu-latest
@@ -179,6 +167,54 @@ jobs:
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
+```
+
+## Report Upload
+
+The `migrations/checks` action automatically uploads the Flyway HTML report as a workflow artifact after checks complete. The report is uploaded even if checks fail, so you can always inspect the results.
+
+| Input                      | Description                                          | Default          |
+|----------------------------|------------------------------------------------------|------------------|
+| `report-name`              | Name for the report artifact                         | `flyway-report`  |
+| `report-retention-days`    | Number of days to retain the report artifact         | `7`              |
+| `skip-html-report-upload`  | Skip uploading the HTML report                       | `false`          |
+
+### Customizing the report artifact
+
+```yaml
+- uses: red-gate/flyway-actions/migrations/checks@v1
+  with:
+    target-environment: production
+    working-directory: my-flyway-project
+    report-name: flyway-report-production
+    report-retention-days: '7'
+```
+
+### Disabling the report upload
+
+```yaml
+- uses: red-gate/flyway-actions/migrations/checks@v1
+  with:
+    target-environment: production
+    working-directory: my-flyway-project
+    skip-html-report-upload: 'true'
+```
+
+### Matrix jobs
+
+When running checks across multiple OSes in a matrix, use a unique `report-name` per job to avoid artifact name conflicts:
+
+```yaml
+strategy:
+  matrix:
+    os: [ubuntu-latest, windows-latest]
+runs-on: ${{ matrix.os }}
+steps:
+  - uses: red-gate/flyway-actions/migrations/checks@v1
+    with:
+      target-environment: production
+      working-directory: my-flyway-project
+      report-name: flyway-report-${{ matrix.os }}
 ```
 
 ## Best Practices for Secrets
