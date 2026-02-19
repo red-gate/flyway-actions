@@ -62,6 +62,15 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-project
+          report-name: flyway-checks-report
+          report-retention-days: '1'
+      - name: Verify report artifact uploaded
+        uses: actions/download-artifact@v4
+        with:
+          name: flyway-checks-report
+      - name: Verify report exists
+        shell: bash
+        run: test -s report.html
 
   migrations-checks-fail-on-drift:
     strategy:
@@ -100,6 +109,14 @@ jobs:
           target-url: jdbc:sqlite:database/drift.db
           fail-on-code-review: 'false'
           working-directory: sample-project
+          report-name: flyway-drift-report
+      - name: Verify report artifact uploaded
+        uses: actions/download-artifact@v4
+        with:
+          name: flyway-drift-report
+      - name: Verify report exists
+        shell: bash
+        run: test -s report.html
       - name: Verify checks failed due to drift
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"
@@ -140,6 +157,7 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
+          skip-html-report-upload: 'true'
       - name: Verify checks failed due to code review
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"
