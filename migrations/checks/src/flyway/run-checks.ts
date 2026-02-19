@@ -1,28 +1,39 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { getBaseArgs, getTargetEnvironmentArgs, getBuildEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
+import { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
+
+const getCheckDryrunArgs = (): string[] => ["-dryrun"];
+
+const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => [
+  "-code",
+  ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : []),
+];
+
+const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs): string[] => [
+  "-drift",
+  ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : []),
+];
+
+const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  if (!hasBuildInputs(inputs)) {
+    core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
+    return [];
+  }
+
+  return ["-changes", ...getBuildEnvironmentArgs(inputs)];
+};
 
 const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
-  const args = ["check", "-dryrun", "-code", "-drift"];
-
-  if (hasBuildInputs(inputs)) {
-    args.push("-changes");
-  } else {
-    core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
-  }
-
-  if (inputs.failOnCodeReview) {
-    args.push("-check.failOnError=true");
-  }
-
-  if (inputs.failOnDrift) {
-    args.push("-check.failOnDrift=true");
-  }
-
-  args.push(...getTargetEnvironmentArgs(inputs));
-  args.push(...getBuildEnvironmentArgs(inputs));
-  args.push(...getBaseArgs(inputs));
+  const args = [
+    "check",
+    ...getCheckDryrunArgs(),
+    ...getCheckCodeArgs(inputs),
+    ...getCheckDriftArgs(inputs),
+    ...getCheckChangesArgs(inputs),
+    ...getTargetEnvironmentArgs(inputs),
+    ...getBaseArgs(inputs),
+  ];
 
   if (inputs.targetMigrationVersion) {
     args.push(`-target=${inputs.targetMigrationVersion}`);
