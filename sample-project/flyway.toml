@@ -3,7 +3,7 @@ name = "Sqlite sample project"
 id = "671efxy0-121a-56e9-mn14-57y43f63d874"
 
 [flyway]
-locations = [ "filesystem:sql" ]
+locations = [ "filesystem:migrations" ]
 
 [redgateCompare]
 filterFile = "filter.rgf"
