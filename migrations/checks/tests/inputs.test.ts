@@ -67,6 +67,42 @@ describe("getInputs", () => {
     expect(inputs.workingDirectory).toBe(path.resolve("/app/db"));
   });
 
+  it("should return skip-code-review input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.skipCodeReview).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("skip-code-review");
+  });
+
+  it("should return skip-drift-check input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.skipDriftCheck).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("skip-drift-check");
+  });
+
+  it("should return skip-deployment-changes-report input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.skipDeploymentChangesReport).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("skip-deployment-changes-report");
+  });
+
+  it("should return skip-deployment-script-review input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.skipDeploymentScriptReview).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("skip-deployment-script-review");
+  });
+
   it("should return fail-on-code-review input", () => {
     getBooleanInput.mockReturnValue(true);
 

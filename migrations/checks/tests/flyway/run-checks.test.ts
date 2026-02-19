@@ -21,13 +21,13 @@ const { getCheckArgs, runChecks } = await import("../../src/flyway/run-checks.js
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
 describe("getCheckArgs", () => {
-  it("should always include check -dryrun -code -drift", () => {
+  it("should include check -dryrun -code -drift by default", () => {
     const args = getCheckArgs(baseInputs);
 
     expect(args[0]).toBe("check");
-    expect(args[1]).toBe("-dryrun");
-    expect(args[2]).toBe("-code");
-    expect(args[3]).toBe("-drift");
+    expect(args).toContain("-dryrun");
+    expect(args).toContain("-code");
+    expect(args).toContain("-drift");
   });
 
   it("should include -check.failOnError when failOnCodeReview is true", () => {
@@ -130,6 +130,76 @@ describe("getCheckArgs", () => {
 
     expect(args).toContain("-target=5.0");
     expect(args).toContain("-cherryPick=3.0,4.0");
+  });
+
+  it("should omit -code when skipCodeReview is true", () => {
+    const args = getCheckArgs({ ...baseInputs, skipCodeReview: true });
+
+    expect(args).not.toContain("-code");
+  });
+
+  it("should omit -failOnError when skipCodeReview is true even if failOnCodeReview is true", () => {
+    const args = getCheckArgs({ ...baseInputs, skipCodeReview: true, failOnCodeReview: true });
+
+    expect(args).not.toContain("-check.failOnError=true");
+  });
+
+  it("should omit -drift when skipDriftCheck is true", () => {
+    const args = getCheckArgs({ ...baseInputs, skipDriftCheck: true });
+
+    expect(args).not.toContain("-drift");
+  });
+
+  it("should omit -failOnDrift when skipDriftCheck is true even if failOnDrift is true", () => {
+    const args = getCheckArgs({ ...baseInputs, skipDriftCheck: true, failOnDrift: true });
+
+    expect(args).not.toContain("-check.failOnDrift=true");
+  });
+
+  it("should omit -dryrun when skipDeploymentScriptReview is true", () => {
+    const args = getCheckArgs({ ...baseInputs, skipDeploymentScriptReview: true });
+
+    expect(args).not.toContain("-dryrun");
+  });
+
+  it("should omit -changes and build args when skipDeploymentChangesReport is true", () => {
+    const args = getCheckArgs({
+      ...baseInputs,
+      skipDeploymentChangesReport: true,
+      buildUrl: "jdbc:sqlite:build.db",
+    });
+
+    expect(args).not.toContain("-changes");
+    expect(args).not.toContain("-buildEnvironment=default_build");
+    expect(args).not.toContain("-environments.default_build.url=jdbc:sqlite:build.db");
+  });
+
+  it("should log info when skipDeploymentScriptReview is true", () => {
+    coreInfo.mockClear();
+    getCheckArgs({ ...baseInputs, skipDeploymentScriptReview: true, buildUrl: "jdbc:sqlite:build.db" });
+
+    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment script review"));
+  });
+
+  it("should log info when skipCodeReview is true and build inputs exist", () => {
+    coreInfo.mockClear();
+    getCheckArgs({ ...baseInputs, skipCodeReview: true, buildUrl: "jdbc:sqlite:build.db" });
+
+    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping code review"));
+  });
+
+  it("should log info when skipDriftCheck is true and build inputs exist", () => {
+    coreInfo.mockClear();
+    getCheckArgs({ ...baseInputs, skipDriftCheck: true, buildUrl: "jdbc:sqlite:build.db" });
+
+    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping drift check"));
+  });
+
+  it("should log info when skipDeploymentChangesReport is true and build inputs exist", () => {
+    coreInfo.mockClear();
+    getCheckArgs({ ...baseInputs, skipDeploymentChangesReport: true, buildUrl: "jdbc:sqlite:build.db" });
+
+    expect(coreInfo).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
   });
 });
 

@@ -179,6 +179,96 @@ describe("run", () => {
     expect(args).not.toContain("-changes");
   });
 
+  it("should omit -code when skip-code-review is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-code-review": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-code");
+    expect(args).toContain("-dryrun");
+    expect(args).toContain("-drift");
+  });
+
+  it("should omit -drift when skip-drift-check is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-drift-check": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-drift");
+    expect(args).toContain("-dryrun");
+    expect(args).toContain("-code");
+  });
+
+  it("should omit -dryrun when skip-deployment-script-review is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-deployment-script-review": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-dryrun");
+    expect(args).toContain("-code");
+    expect(args).toContain("-drift");
+  });
+
+  it("should omit -changes and build args when skip-deployment-changes-report is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock(
+      { "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" },
+      { "skip-deployment-changes-report": true },
+    );
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-changes");
+    expect(args).not.toContain("-environments.default_build.url=jdbc:sqlite:build.db");
+  });
+
+  it("should suppress -failOnError when skip-code-review is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-code-review": true, "fail-on-code-review": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-code");
+    expect(args).not.toContain("-check.failOnError=true");
+  });
+
+  it("should suppress -failOnDrift when skip-drift-check is true", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-drift-check": true, "fail-on-drift": true });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const checkCall = exec.mock.calls[1];
+    const args = checkCall[1] as string[];
+
+    expect(args).not.toContain("-drift");
+    expect(args).not.toContain("-check.failOnDrift=true");
+  });
+
   it("should fail when check exits with non-zero code", async () => {
     setupChecksMock("Enterprise", 1);
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });

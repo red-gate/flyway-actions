@@ -16,6 +16,10 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const buildPassword = core.getInput("build-password") || undefined;
   const buildSchemas = core.getInput("build-schemas") || undefined;
   const buildOkToErase = core.getBooleanInput("build-ok-to-erase");
+  const skipCodeReview = core.getBooleanInput("skip-code-review");
+  const skipDriftCheck = core.getBooleanInput("skip-drift-check");
+  const skipDeploymentChangesReport = core.getBooleanInput("skip-deployment-changes-report");
+  const skipDeploymentScriptReview = core.getBooleanInput("skip-deployment-script-review");
   const failOnCodeReview = core.getBooleanInput("fail-on-code-review");
   const failOnDrift = core.getBooleanInput("fail-on-drift");
   const rawWorkingDirectory = core.getInput("working-directory");
@@ -36,6 +40,10 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
     buildPassword,
     buildSchemas,
     buildOkToErase,
+    skipCodeReview,
+    skipDriftCheck,
+    skipDeploymentChangesReport,
+    skipDeploymentScriptReview,
     failOnCodeReview,
     failOnDrift,
     workingDirectory,
