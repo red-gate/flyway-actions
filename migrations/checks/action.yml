@@ -48,6 +48,22 @@ inputs:
     description: 'Allow Flyway to erase the build database. This will delete all schema and data objects'
     required: false
     default: 'false'
+  skip-code-review:
+    description: 'Skip the code review check'
+    required: false
+    default: 'false'
+  skip-drift-check:
+    description: 'Skip the drift check'
+    required: false
+    default: 'false'
+  skip-deployment-changes-report:
+    description: 'Skip the deployment changes report'
+    required: false
+    default: 'false'
+  skip-deployment-script-review:
+    description: 'Skip the deployment script review (dry run)'
+    required: false
+    default: 'false'
   fail-on-code-review:
     description: 'Whether to fail the action when code review violations are found'
     required: false

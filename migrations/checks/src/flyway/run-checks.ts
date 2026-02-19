@@ -3,19 +3,39 @@ import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
 
-const getCheckDryrunArgs = (): string[] => ["-dryrun"];
+const getCheckDryrunArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  if (inputs.skipDeploymentScriptReview) {
+    core.info('Skipping deployment script review: "skip-deployment-script-review" set to true');
+    return [];
+  }
 
-const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => [
-  "-code",
-  ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : []),
-];
+  return ["-dryrun"];
+};
 
-const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs): string[] => [
-  "-drift",
-  ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : []),
-];
+const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  if (inputs.skipCodeReview) {
+    core.info('Skipping code review: "skip-code-review" set to true');
+    return [];
+  }
+
+  return ["-code", ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : [])];
+};
+
+const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  if (inputs.skipDriftCheck) {
+    core.info('Skipping drift check: "skip-drift-check" set to true');
+    return [];
+  }
+
+  return ["-drift", ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : [])];
+};
 
 const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  if (inputs.skipDeploymentChangesReport && hasBuildInputs(inputs)) {
+    core.info('Skipping deployment changes report: "skip-deployment-changes-report" set to true');
+    return [];
+  }
+
   if (!hasBuildInputs(inputs)) {
     core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
     return [];
@@ -27,7 +47,7 @@ const getCheckChangesArgs = (inputs: FlywayMigrationsChecksInputs): string[] => 
 const getCheckArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args = [
     "check",
-    ...getCheckDryrunArgs(),
+    ...getCheckDryrunArgs(inputs),
     ...getCheckCodeArgs(inputs),
     ...getCheckDriftArgs(inputs),
     ...getCheckChangesArgs(inputs),
