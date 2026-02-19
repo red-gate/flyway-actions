@@ -192,6 +192,54 @@ jobs:
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"
 
+  migrations-deploy-h2:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run migrations deploy
+        id: deploy
+        uses: ./migrations/deploy
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:h2:mem:test
+          working-directory: sample-project-h2
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.deploy.outputs.drift-detected }}"
+          echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
+          echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          test "${{ steps.deploy.outputs.exit-code }}" = "0"
+          test "${{ steps.deploy.outputs.drift-detected }}" = ""
+          test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
+          test "${{ steps.deploy.outputs.schema-version }}" = "3"
+
   migrations-deploy-drift:
     strategy:
       matrix:

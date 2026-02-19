@@ -1,0 +1,5 @@
+name = "H2 sample project"
+id = "a23bc456-789d-01ef-gh23-45i67j89k012"
+
+[flyway]
+locations = [ "filesystem:migrations" ]
