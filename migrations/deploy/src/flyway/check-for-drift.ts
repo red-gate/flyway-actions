@@ -7,9 +7,9 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] =
   "check",
   "-drift",
   "-check.failOnDrift=true",
-  ...getCommonArgs(inputs),
   "-outputType=json",
   "-outputLogsInJson=true",
+  ...getCommonArgs(inputs),
 ];
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
@@ -18,17 +18,10 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     const driftArgs = getCheckDriftArgs(inputs);
     const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-    const exitCode = result.exitCode;
-    let driftDetected = false;
-    if (exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
-
-      if (errorOutput?.error?.message?.includes("Drift detected")) {
-        driftDetected = true;
-      }
-    }
-
-    setDriftOutput(exitCode, driftDetected);
+    const errorOutput = parseErrorOutput(result.stdout);
+    const driftDetected =
+      result.exitCode === 0 ? false : (errorOutput?.error?.message?.includes("Drift detected") ?? false);
+    setDriftOutput(result.exitCode, driftDetected);
 
     return driftDetected;
   } finally {
