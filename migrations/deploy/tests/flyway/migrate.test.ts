@@ -2,10 +2,11 @@ import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
 
 const setOutput = vi.fn();
+const info = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
-  info: vi.fn(),
+  info,
   error: vi.fn(),
   startGroup: vi.fn(),
   endGroup: vi.fn(),
@@ -30,6 +31,46 @@ describe("migrate", () => {
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("migrations-applied", "3");
     expect(setOutput).toHaveBeenCalledWith("schema-version", "2.0");
+  });
+
+  it("should log and not error when database has no licensed comparison capability", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+              message: "No licensed comparison capability found for database type",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    await migrate({ targetUrl: "jdbc:h2:mem:test" });
+
+    expect(info).toHaveBeenCalledWith(
+      "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
+    );
+  });
+
+  it("should throw when migrate fails with an unrecognised error", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "FAULT",
+              message: "Something went wrong",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    await expect(migrate({ targetUrl: "jdbc:h2:mem:test" })).rejects.toThrow("Flyway migrate failed with exit code 1");
   });
 });
 
