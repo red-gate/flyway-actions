@@ -27,7 +27,7 @@ jobs:
         run: yarn build
       - name: Check dist is up to date
         run: |
-          git diff --exit-code '**/dist/' || (
+          git diff --exit-code ':(glob)**/dist/**' || (
             echo "Error: build is out of date. Run 'yarn build' and commit the changes."
             exit 1
           )
