@@ -2,6 +2,7 @@ import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
+import { parseCheckOutput } from "../outputs.js";
 import { getBaseArgs, getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
@@ -47,14 +48,6 @@ const setDriftOutputs = (output: FlywayCheckOutput | undefined): void => {
   if (driftResults?.length) {
     const drift = driftResults.some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
     core.setOutput("drift-detected", drift.toString());
-  }
-};
-
-const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as FlywayCheckOutput;
-  } catch {
-    return undefined;
   }
 };
 

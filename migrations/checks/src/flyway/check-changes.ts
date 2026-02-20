@@ -2,6 +2,7 @@ import type { Changes, FlywayCheckOutput, FlywayMigrationsChecksInputs } from ".
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
+import { parseCheckOutput } from "../outputs.js";
 import {
   getBaseArgs,
   getBuildEnvironmentArgs,
@@ -70,14 +71,6 @@ const setChangesOutputs = (output: FlywayCheckOutput | undefined): void => {
       0,
     );
     core.setOutput("changed-object-count", changes.toString());
-  }
-};
-
-const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as FlywayCheckOutput;
-  } catch {
-    return undefined;
   }
 };
 

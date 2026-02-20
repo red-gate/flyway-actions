@@ -1,7 +1,8 @@
-import type { FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
+import type { FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
+import { parseCheckOutput } from "../outputs.js";
 import { getBaseArgs, getCheckCommandArgs, getTargetAndVersionArgs } from "./arg-builders.js";
 
 const getDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
@@ -31,14 +32,6 @@ const runDryrunCheck = async (inputs: FlywayMigrationsChecksInputs, edition: Fly
     };
   } finally {
     core.endGroup();
-  }
-};
-
-const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as FlywayCheckOutput;
-  } catch {
-    return undefined;
   }
 };
 

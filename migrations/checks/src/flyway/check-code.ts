@@ -1,6 +1,7 @@
 import type { Code, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
+import { parseCheckOutput } from "../outputs.js";
 import { getBaseArgs, getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined => {
@@ -44,14 +45,6 @@ const setCodeOutputs = (output: FlywayCheckOutput | undefined): void => {
     const codes = violations.map((v) => v.code).filter((c): c is string => !!c);
     core.setOutput("code-violation-count", codes.length.toString());
     core.setOutput("code-violation-codes", [...new Set(codes)].join(","));
-  }
-};
-
-const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as FlywayCheckOutput;
-  } catch {
-    return undefined;
   }
 };
 
