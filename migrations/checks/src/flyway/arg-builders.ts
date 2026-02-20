@@ -3,6 +3,34 @@ import { parseExtraArgs } from "@flyway-actions/shared";
 
 const DEFAULT_BUILD_ENVIRONMENT = "default_build";
 
+const getCheckCommandArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  const args: string[] = ["check", "-outputType=json", "-outputLogsInJson=true"];
+
+  if (inputs.workingDirectory) {
+    args.push(`-workingDirectory=${inputs.workingDirectory}`);
+  }
+
+  if (inputs.extraArgs) {
+    args.push(...parseExtraArgs(inputs.extraArgs));
+  }
+
+  return args;
+};
+
+const getTargetArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  const args = [...getTargetEnvironmentArgs(inputs)];
+
+  if (inputs.targetMigrationVersion) {
+    args.push(`-target=${inputs.targetMigrationVersion}`);
+  }
+
+  if (inputs.cherryPick) {
+    args.push(`-cherryPick=${inputs.cherryPick}`);
+  }
+
+  return args;
+};
+
 const getTargetEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args: string[] = [];
 
@@ -27,20 +55,6 @@ const getTargetEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[
 
   if (inputs.targetSchemas) {
     args.push(`${targetPrefix}schemas=${inputs.targetSchemas}`);
-  }
-
-  return args;
-};
-
-const getBaseArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
-  const args: string[] = [];
-
-  if (inputs.workingDirectory) {
-    args.push(`-workingDirectory=${inputs.workingDirectory}`);
-  }
-
-  if (inputs.extraArgs) {
-    args.push(...parseExtraArgs(inputs.extraArgs));
   }
 
   return args;
@@ -82,27 +96,4 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
 const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
   !!(inputs.buildEnvironment || inputs.buildUrl);
 
-const getCheckCommandArgs = (): string[] => ["check", "-outputType=json", "-outputLogsInJson=true"];
-
-const getTargetAndVersionArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
-  const args = [...getTargetEnvironmentArgs(inputs)];
-
-  if (inputs.targetMigrationVersion) {
-    args.push(`-target=${inputs.targetMigrationVersion}`);
-  }
-
-  if (inputs.cherryPick) {
-    args.push(`-cherryPick=${inputs.cherryPick}`);
-  }
-
-  return args;
-};
-
-export {
-  getBaseArgs,
-  getBuildEnvironmentArgs,
-  getCheckCommandArgs,
-  getTargetAndVersionArgs,
-  getTargetEnvironmentArgs,
-  hasBuildInputs,
-};
+export { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, getTargetEnvironmentArgs, hasBuildInputs };

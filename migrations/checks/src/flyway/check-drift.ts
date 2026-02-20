@@ -3,7 +3,7 @@ import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
-import { getBaseArgs, getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
+import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
   if (edition !== "enterprise") {
@@ -15,11 +15,10 @@ const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEditi
     return undefined;
   }
   return [
-    ...getCheckCommandArgs(),
+    ...getCheckCommandArgs(inputs),
     "-drift",
-    ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : []),
     ...getTargetEnvironmentArgs(inputs),
-    ...getBaseArgs(inputs),
+    ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : []),
   ];
 };
 

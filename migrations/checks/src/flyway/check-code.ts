@@ -2,7 +2,7 @@ import type { Code, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../t
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
-import { getBaseArgs, getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
+import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined => {
   if (inputs.skipCodeReview) {
@@ -10,11 +10,10 @@ const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined
     return undefined;
   }
   return [
-    ...getCheckCommandArgs(),
+    ...getCheckCommandArgs(inputs),
     "-code",
-    ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
     ...getTargetEnvironmentArgs(inputs),
-    ...getBaseArgs(inputs),
+    ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
   ];
 };
 

@@ -2,8 +2,7 @@ import type { FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
-import { parseCheckOutput } from "../outputs.js";
-import { getBaseArgs, getCheckCommandArgs, getTargetAndVersionArgs } from "./arg-builders.js";
+import { getCheckCommandArgs, getTargetArgs } from "./arg-builders.js";
 
 const getDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
   if (edition === "community") {
@@ -14,7 +13,7 @@ const getDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdit
     core.info('Skipping deployment script review: "skip-deployment-script-review" set to true');
     return undefined;
   }
-  return [...getCheckCommandArgs(), "-dryrun", ...getTargetAndVersionArgs(inputs), ...getBaseArgs(inputs)];
+  return [...getCheckCommandArgs(inputs), "-dryrun", ...getTargetArgs(inputs)];
 };
 
 const runCheckDryrun = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {

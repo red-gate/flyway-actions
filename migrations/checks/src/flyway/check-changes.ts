@@ -3,13 +3,7 @@ import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
-import {
-  getBaseArgs,
-  getBuildEnvironmentArgs,
-  getCheckCommandArgs,
-  getTargetAndVersionArgs,
-  hasBuildInputs,
-} from "./arg-builders.js";
+import { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, hasBuildInputs } from "./arg-builders.js";
 
 const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
   if (edition !== "enterprise") {
@@ -26,13 +20,7 @@ const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdi
     core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
     return undefined;
   }
-  return [
-    ...getCheckCommandArgs(),
-    "-changes",
-    ...getBuildEnvironmentArgs(inputs),
-    ...getTargetAndVersionArgs(inputs),
-    ...getBaseArgs(inputs),
-  ];
+  return [...getCheckCommandArgs(inputs), "-changes", ...getTargetArgs(inputs), ...getBuildEnvironmentArgs(inputs)];
 };
 
 const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
