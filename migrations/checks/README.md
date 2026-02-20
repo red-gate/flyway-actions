@@ -198,6 +198,9 @@ A build database is required for the deployment changes report. If no build data
 | `code-violation-count` | Number of code review violations found                 |
 | `code-violation-codes` | Comma-separated list of code review violation codes    |
 
+There is currently a limitation where `code-violation-count` and `code-violation-codes` aree not set on the output when 
+`fail-on-code-review` is set to `true`. This will be fixed in an upcoming release. 
+
 ### Using Outputs
 
 ```yaml
