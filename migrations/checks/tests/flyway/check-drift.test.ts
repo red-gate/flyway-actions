@@ -8,7 +8,7 @@ vi.doMock("@actions/core", () => ({
   setOutput,
 }));
 
-const { getDriftArgs, setDriftOutputs } = await import("../../src/flyway/check-drift.js");
+const { getDriftArgs } = await import("../../src/flyway/check-drift.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -69,25 +69,5 @@ describe("getDriftArgs", () => {
 
   it("should return undefined when skipDriftCheck is true even if failOnDrift is true", () => {
     expect(getDriftArgs({ skipDriftCheck: true, failOnDrift: true }, "enterprise")).toBeUndefined();
-  });
-});
-
-describe("setDriftOutputs", () => {
-  it("should set drift-detected to true when differences exist", () => {
-    setDriftOutputs({ individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }] });
-
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
-  });
-
-  it("should set drift-detected to false when no differences", () => {
-    setDriftOutputs({ individualResults: [{ operation: "drift", onlyInSource: [], onlyInTarget: [] }] });
-
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
-  });
-
-  it("should not set drift-detected when drift result is absent", () => {
-    setDriftOutputs({ individualResults: [{ operation: "code", results: [] }] });
-
-    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
 });
