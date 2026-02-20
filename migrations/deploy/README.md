@@ -2,6 +2,35 @@
 
 A GitHub Action to deploy your Flyway migrations to a target database.
 
+## Behavior under different editions
+
+### Flyway Enterprise
+
+When running under Flyway enterprise the following steps will be run by default
+
+#### Drift detection
+
+Compares your target database against the expected state, ensuring that nothing has changed since your last deployment. Note that this will only be able to flag up drift after your first deployment, once a snapshot of the database has been captured.
+This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
+For more information, see [the associated Flyway documentation](https://documentation.red-gate.com/flyway/flyway-concepts/drift-analysis).
+
+#### Deployment
+
+Deploys your [Flyway migrations](https://documentation.red-gate.com/flyway/flyway-concepts/migrations) using the [migrate command](https://documentation.red-gate.com/flyway/reference/commands/migrate).
+
+#### Stores a snapshot
+
+Captures a snapshot after deployment and stores it in the Flyway snapshot history table, enabling drift checks the next time you deploy, as well as allowing for [ad hoc rollbacks](https://documentation.red-gate.com/flyway/deploying-database-changes-using-flyway/implementing-a-roll-back-strategy)
+This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
+
+### Flyway Teams
+
+Only the deployment will be performed
+
+### Flyway Community
+
+Only the deployment will be performed
+
 ## Prerequisites
 
 This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](https://github.com/red-gate/setup-flyway) before this action:
@@ -109,6 +138,8 @@ This action supports all databases supported by Flyway:
 - Snowflake
 - BigQuery
 - [And more](https://documentation.red-gate.com/flyway/getting-started-with-flyway/system-requirements/supported-databases-and-versions)
+
+However, the drift check and snapshot generation are only supported for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
 
 ## License
 
