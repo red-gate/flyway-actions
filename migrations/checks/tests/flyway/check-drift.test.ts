@@ -90,9 +90,7 @@ describe("runDriftCheck", () => {
 
   it("should set drift-detected to false when exit code is 0 and no drift in output", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })),
-      );
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
       return Promise.resolve(0);
     });
 

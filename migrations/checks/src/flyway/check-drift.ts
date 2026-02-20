@@ -1,7 +1,7 @@
 import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
-import { FlywayEdition, parseErrorOutput } from "@flyway-actions/shared";
+import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
-import { runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
@@ -51,8 +51,9 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   }
 };
 
-const isDriftDetected = (output:FlywayCheckOutput | undefined): boolean => !!output?.individualResults
-  ?.filter((r): r is Drift => r.operation === "drift")
-  .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
+const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
+  !!output?.individualResults
+    ?.filter((r): r is Drift => r.operation === "drift")
+    .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
 export { getDriftArgs, runCheckDrift };
