@@ -25,13 +25,8 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
   core.startGroup("Running Flyway check: code review");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    const output = parseCheckOutput(result.stdout);
-    setCodeOutputs(output);
-    return {
-      exitCode: result.exitCode,
-      output,
-      stdout: result.stdout,
-    };
+    setCodeOutputs(parseCheckOutput(result.stdout));
+    return { exitCode: result.exitCode };
   } finally {
     core.endGroup();
   }

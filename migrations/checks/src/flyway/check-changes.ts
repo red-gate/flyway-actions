@@ -31,8 +31,7 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
   core.startGroup("Running Flyway check: deployment changes report");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    const output = parseCheckOutput(result.stdout);
-    setChangesOutputs(output);
+    setChangesOutputs(parseCheckOutput(result.stdout));
     if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
       if (errorOutput?.error?.message?.includes("configure a provisioner") && !inputs.buildOkToErase) {
@@ -41,11 +40,7 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
         );
       }
     }
-    return {
-      exitCode: result.exitCode,
-      output,
-      stdout: result.stdout,
-    };
+    return { exitCode: result.exitCode };
   } finally {
     core.endGroup();
   }

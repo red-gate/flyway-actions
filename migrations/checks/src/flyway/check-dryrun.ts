@@ -24,11 +24,7 @@ const runCheckDryrun = async (inputs: FlywayMigrationsChecksInputs, edition: Fly
   core.startGroup("Running Flyway check: deployment script review");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    return {
-      exitCode: result.exitCode,
-      output: parseCheckOutput(result.stdout),
-      stdout: result.stdout,
-    };
+    return { exitCode: result.exitCode };
   } finally {
     core.endGroup();
   }
