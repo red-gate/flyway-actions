@@ -85,7 +85,7 @@ outputs:
   drift-detected:
     description: 'Whether drift was detected (empty if skipped)'
   changed-object-count:
-    description: 'Number of changed objects found (empty if skipped)'
+    description: 'Number of changed objects in the deployment (empty if skipped)'
   code-violation-count:
     description: 'Number of code review violations found (empty if skipped)'
   code-violation-codes:
