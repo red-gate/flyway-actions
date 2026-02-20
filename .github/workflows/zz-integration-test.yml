@@ -123,7 +123,7 @@ jobs:
           echo "Exit code: ${{ steps.checks.outputs.exit-code }}"
           echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
           test "${{ steps.checks.outputs.exit-code }}" = "1"
-          test "${{ steps.checks.outputs.drift-detected }}" = ""
+          test "${{ steps.checks.outputs.drift-detected }}" = "true"
 
   migrations-checks-fail-on-code-review:
     strategy:

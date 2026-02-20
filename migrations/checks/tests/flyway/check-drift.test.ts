@@ -1,14 +1,23 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
+import type { ExecOptions } from "@actions/exec";
 
 const info = vi.fn();
 const setOutput = vi.fn();
+const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
+  error: vi.fn(),
   setOutput,
+  startGroup: vi.fn(),
+  endGroup: vi.fn(),
 }));
 
-const { getDriftArgs, setDriftOutputs } = await import("../../src/flyway/check-drift.js");
+vi.doMock("@actions/exec", () => ({
+  exec,
+}));
+
+const { getDriftArgs, runCheckDrift } = await import("../../src/flyway/check-drift.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -72,22 +81,64 @@ describe("getDriftArgs", () => {
   });
 });
 
-describe("setDriftOutputs", () => {
-  it("should set drift-detected to true when differences exist", () => {
-    setDriftOutputs({ individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }] });
+describe("runDriftCheck", () => {
+  it("should return undefined when edition is not enterprise", async () => {
+    const result = await runCheckDrift(baseInputs, "community");
 
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(result).toBeUndefined();
   });
 
-  it("should set drift-detected to false when no differences", () => {
-    setDriftOutputs({ individualResults: [{ operation: "drift", onlyInSource: [], onlyInTarget: [] }] });
+  it("should set drift-detected to false when exit code is 0 and no drift in output", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
+      return Promise.resolve(0);
+    });
+
+    await runCheckDrift(baseInputs, "enterprise");
 
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
-  it("should not set drift-detected when drift result is absent", () => {
-    setDriftOutputs({ individualResults: [{ operation: "code", results: [] }] });
+  it("should set drift-detected to true when exit code is 0 and drift detected in output", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
+          }),
+        ),
+      );
+      return Promise.resolve(0);
+    });
 
-    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+    await runCheckDrift(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+  });
+
+  it("should set drift-detected to true when exit code is non-zero and error contains Drift detected", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Drift detected" } })),
+      );
+      return Promise.resolve(1);
+    });
+
+    await runCheckDrift(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+  });
+
+  it("should set drift-detected to false when exit code is non-zero and error does not contain Drift detected", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Something else failed" } })),
+      );
+      return Promise.resolve(1);
+    });
+
+    await runCheckDrift(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 });

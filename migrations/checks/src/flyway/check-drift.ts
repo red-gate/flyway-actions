@@ -1,7 +1,7 @@
 import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
-import { runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
@@ -30,19 +30,30 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   core.startGroup("Running Flyway check: drift");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    setDriftOutputs(parseCheckOutput(result.stdout));
-    return { exitCode: result.exitCode };
+
+    const exitCode = result.exitCode;
+    let driftDetected = false;
+    if (exitCode === 0) {
+      const output = parseCheckOutput(result.stdout);
+      driftDetected = isDriftDetected(output);
+    } else {
+      const errorOutput = parseErrorOutput(result.stdout);
+
+      if (errorOutput?.error?.message?.includes("Drift detected")) {
+        driftDetected = true;
+      }
+    }
+
+    core.setOutput("drift-detected", driftDetected.toString());
+    return { exitCode };
   } finally {
     core.endGroup();
   }
 };
 
-const setDriftOutputs = (output: FlywayCheckOutput | undefined): void => {
-  const driftResults = output?.individualResults?.filter((r): r is Drift => r.operation === "drift");
-  if (driftResults?.length) {
-    const drift = driftResults.some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
-    core.setOutput("drift-detected", drift.toString());
-  }
-};
+const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
+  !!output?.individualResults
+    ?.filter((r): r is Drift => r.operation === "drift")
+    .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
-export { getDriftArgs, runCheckDrift, setDriftOutputs };
+export { getDriftArgs, runCheckDrift };
