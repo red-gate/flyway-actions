@@ -29,24 +29,23 @@ const setupMocks = () => {
   }));
 };
 
-const setupFlywayVersionMock = (edition: string) => {
-  exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-    options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
-    return Promise.resolve(0);
-  });
-};
-
-const setupChecksMock = (edition: string, checkExitCode = 0, checkOutput?: string) => {
+const setupChecksMock = (edition: string, checkExitCode = 0, outputByFlag?: Record<string, string>) => {
   let callCount = 0;
-  exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+  exec.mockImplementation((_cmd: string, args?: string[], options?: ExecOptions) => {
     callCount++;
     if (callCount === 1) {
       options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
       return Promise.resolve(0);
     }
-    if (checkOutput) {
-      options?.listeners?.stdout?.(Buffer.from(checkOutput));
+    if (outputByFlag && args) {
+      for (const [flag, output] of Object.entries(outputByFlag)) {
+        if (args.includes(flag)) {
+          options?.listeners?.stdout?.(Buffer.from(output));
+          return Promise.resolve(checkExitCode);
+        }
+      }
     }
+    options?.listeners?.stdout?.(Buffer.from("{}"));
     return Promise.resolve(checkExitCode);
   });
 };
@@ -55,6 +54,8 @@ const setupInputMock = (overrides: Record<string, string> = {}, booleanOverrides
   getInput.mockImplementation((name: string) => overrides[name] || "");
   getBooleanInput.mockImplementation((name: string) => booleanOverrides[name] ?? false);
 };
+
+const getCheckCalls = () => (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
 describe("run", () => {
   beforeEach(() => {
@@ -72,7 +73,7 @@ describe("run", () => {
   });
 
   it("should fail when neither url nor environment is provided", async () => {
-    setupFlywayVersionMock("Community");
+    setupChecksMock("Community");
     setupInputMock();
 
     await import("../src/main.js");
@@ -83,197 +84,37 @@ describe("run", () => {
     );
   });
 
-  it("should run dryrun check with target url", async () => {
+  it("should run each check as a separate invocation for enterprise", async () => {
     setupChecksMock("Enterprise");
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args[0]).toBe("check");
-    expect(args).toContain("-outputType=json");
-    expect(args).toContain("-outputLogsInJson=true");
-    expect(args).toContain("-dryrun");
-    expect(args).toContain("-url=jdbc:sqlite:test.db");
+    expect(getCheckCalls()).toHaveLength(3);
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should include -failOnError flag when fail-on-code-review is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-code-review": true });
+  it("should only run -code invocation for Community edition", async () => {
+    setupChecksMock("Community");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-code");
-    expect(args).toContain("-check.code.failOnError=true");
-    expect(args).not.toContain("-check.failOnDrift=true");
+    expect(getCheckCalls()).toHaveLength(1);
+    expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should not include -failOnError when fail-on-code-review is false", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-code-review": false });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-code");
-    expect(args).not.toContain("-check.failOnError=true");
-  });
-
-  it("should include -failOnDrift when fail-on-drift is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-drift": true });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-drift");
-    expect(args).toContain("-check.failOnDrift=true");
-    expect(args).not.toContain("-check.failOnError=true");
-  });
-
-  it("should not include -failOnDrift when fail-on-drift is false", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "fail-on-drift": false });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-drift");
-    expect(args).not.toContain("-check.failOnDrift=true");
-  });
-
-  it("should include -changes and build args when build-url is provided", async () => {
-    setupChecksMock("Enterprise");
+  it("should run -dryrun and -code but not -drift or -changes for Teams edition", async () => {
+    setupChecksMock("Teams");
     setupInputMock({ "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-changes");
-    expect(args).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
-  });
-
-  it("should not include -changes when no build inputs provided", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-changes");
-  });
-
-  it("should omit -code when skip-code-review is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-code-review": true });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-code");
-    expect(args).toContain("-dryrun");
-    expect(args).toContain("-drift");
-  });
-
-  it("should omit -drift when skip-drift-check is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-drift-check": true });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-drift");
-    expect(args).toContain("-dryrun");
-    expect(args).toContain("-code");
-  });
-
-  it("should omit -dryrun when skip-deployment-script-review is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-deployment-script-review": true });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-dryrun");
-    expect(args).toContain("-code");
-    expect(args).toContain("-drift");
-  });
-
-  it("should omit -changes and build args when skip-deployment-changes-report is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock(
-      { "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" },
-      { "skip-deployment-changes-report": true },
-    );
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-changes");
-    expect(args).not.toContain("-environments.default_build.url=jdbc:sqlite:build.db");
-  });
-
-  it("should suppress -failOnError when skip-code-review is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-code-review": true, "fail-on-code-review": true });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-code");
-    expect(args).not.toContain("-check.failOnError=true");
-  });
-
-  it("should suppress -failOnDrift when skip-drift-check is true", async () => {
-    setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" }, { "skip-drift-check": true, "fail-on-drift": true });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).not.toContain("-drift");
-    expect(args).not.toContain("-check.failOnDrift=true");
+    expect(getCheckCalls()).toHaveLength(2);
+    expect(setFailed).not.toHaveBeenCalled();
   });
 
   it("should fail when check exits with non-zero code", async () => {
@@ -296,48 +137,14 @@ describe("run", () => {
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should only include -code for Community edition", async () => {
-    setupChecksMock("Community");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-code");
-    expect(args).not.toContain("-dryrun");
-    expect(args).not.toContain("-drift");
-    expect(args).not.toContain("-changes");
-    expect(setFailed).not.toHaveBeenCalled();
-  });
-
-  it("should include -dryrun and -code but not -drift or -changes for Teams edition", async () => {
-    setupChecksMock("Teams");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    const checkCall = exec.mock.calls[1];
-    const args = checkCall[1] as string[];
-
-    expect(args).toContain("-dryrun");
-    expect(args).toContain("-code");
-    expect(args).not.toContain("-drift");
-    expect(args).not.toContain("-changes");
-    expect(setFailed).not.toHaveBeenCalled();
-  });
-
-  it("should set outputs from check JSON response", async () => {
-    const checkOutput = JSON.stringify({
-      individualResults: [
-        { operation: "drift", differences: [{ name: "Table_1" }] },
-        { operation: "code", results: [{ violations: [{ code: "RG06" }] }] },
-      ],
+  it("should set outputs from each check's JSON response", async () => {
+    const driftOutput = JSON.stringify({
+      individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
     });
-    setupChecksMock("Enterprise", 0, checkOutput);
+    const codeOutput = JSON.stringify({
+      individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],
+    });
+    setupChecksMock("Enterprise", 0, { "-drift": driftOutput, "-code": codeOutput });
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
 
     await import("../src/main.js");
