@@ -22,6 +22,14 @@ type FlywayMigrationsChecksInputs = {
   extraArgs?: string;
 };
 
-type ErrorOutput = { error?: { errorCode?: string; message?: string } };
+type Drift = { operation?: "drift"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
 
-export type { ErrorOutput, FlywayMigrationsChecksInputs };
+type Changes = { operation?: "changes"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
+
+type Code = { operation?: "code"; results?: { violations?: { code?: string }[] }[] };
+
+type Dryrun = { operation?: "dryrun" };
+
+type FlywayCheckOutput = { individualResults?: (Drift | Changes | Code | Dryrun)[] };
+
+export type { Changes, Code, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };

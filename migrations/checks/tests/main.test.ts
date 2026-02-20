@@ -3,6 +3,7 @@ import type { ExecOptions } from "@actions/exec";
 const getInput = vi.fn();
 const getBooleanInput = vi.fn();
 const setFailed = vi.fn();
+const setOutput = vi.fn();
 const setSecret = vi.fn();
 const info = vi.fn();
 const error = vi.fn();
@@ -15,6 +16,7 @@ const setupMocks = () => {
     getInput,
     getBooleanInput,
     setFailed,
+    setOutput,
     setSecret,
     info,
     error,
@@ -34,7 +36,7 @@ const setupFlywayVersionMock = (edition: string) => {
   });
 };
 
-const setupChecksMock = (edition: string, checkExitCode = 0, errorOutput?: string) => {
+const setupChecksMock = (edition: string, checkExitCode = 0, checkOutput?: string) => {
   let callCount = 0;
   exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
     callCount++;
@@ -42,8 +44,8 @@ const setupChecksMock = (edition: string, checkExitCode = 0, errorOutput?: strin
       options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
       return Promise.resolve(0);
     }
-    if (errorOutput) {
-      options?.listeners?.stdout?.(Buffer.from(errorOutput));
+    if (checkOutput) {
+      options?.listeners?.stdout?.(Buffer.from(checkOutput));
     }
     return Promise.resolve(checkExitCode);
   });
@@ -110,7 +112,7 @@ describe("run", () => {
     const args = checkCall[1] as string[];
 
     expect(args).toContain("-code");
-    expect(args).toContain("-check.failOnError=true");
+    expect(args).toContain("-check.code.failOnError=true");
     expect(args).not.toContain("-check.failOnDrift=true");
   });
 
@@ -326,5 +328,24 @@ describe("run", () => {
     expect(args).not.toContain("-drift");
     expect(args).not.toContain("-changes");
     expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should set outputs from check JSON response", async () => {
+    const checkOutput = JSON.stringify({
+      individualResults: [
+        { operation: "drift", differences: [{ name: "Table_1" }] },
+        { operation: "code", results: [{ violations: [{ code: "RG06" }] }] },
+      ],
+    });
+    setupChecksMock("Enterprise", 0, checkOutput);
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "1");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06");
   });
 });

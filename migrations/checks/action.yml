@@ -79,6 +79,18 @@ inputs:
     description: 'Additional Flyway CLI arguments (e.g. -sqlMigrationPrefix=M)'
     required: false
 
+outputs:
+  exit-code:
+    description: 'Flyway exit code'
+  drift-detected:
+    description: 'Whether drift was detected (empty if skipped)'
+  changed-object-count:
+    description: 'Number of changed objects found (empty if skipped)'
+  code-violation-count:
+    description: 'Number of code review violations found (empty if skipped)'
+  code-violation-codes:
+    description: 'Comma-separated list of code review violation codes (empty if skipped)'
+
 runs:
   using: 'node24'
   main: 'dist/index.js'

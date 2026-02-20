@@ -69,10 +69,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
-          echo "Drift detected: ${{ steps.deploy.outputs.drift-detected }}"
+          echo "Checks exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Checks drift detected: ${{ steps.checks.outputs.drift-detected }}"
+          echo "Changed object count: ${{ steps.checks.outputs.changed-object-count }}"
+          echo "Code violation count: ${{ steps.checks.outputs.code-violation-count }}"
+          echo "Code violation codes: ${{ steps.checks.outputs.code-violation-codes }}"
+          echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Deploy drift detected: ${{ steps.deploy.outputs.drift-detected }}"
           echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          test "${{ steps.checks.outputs.exit-code }}" = "0"
+          test "${{ steps.checks.outputs.drift-detected }}" = "false"
+          test "${{ steps.checks.outputs.changed-object-count }}" = "2"
+          test "${{ steps.checks.outputs.code-violation-count }}" = "${{ matrix.os != 'macos-latest' && '1'    || '0' }}"
+          test "${{ steps.checks.outputs.code-violation-codes }}" = "${{ matrix.os != 'macos-latest' && 'AM04' || ''  }}"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.deploy.outputs.drift-detected }}" = "false"
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
@@ -110,9 +120,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Checks exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
           echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          test "${{ steps.checks.outputs.exit-code }}" = "0"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"

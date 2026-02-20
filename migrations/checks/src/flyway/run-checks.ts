@@ -1,7 +1,7 @@
-import type { ErrorOutput, FlywayMigrationsChecksInputs } from "../types.js";
+import type { Changes, Code, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
-import { runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs } from "./arg-builders.js";
 
 const getCheckDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
@@ -21,7 +21,7 @@ const getCheckCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
     core.info('Skipping code review: "skip-code-review" set to true');
     return [];
   }
-  return ["-code", ...(inputs.failOnCodeReview ? ["-check.failOnError=true"] : [])];
+  return ["-code", ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : [])];
 };
 
 const getCheckDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] => {
@@ -84,17 +84,16 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
     const args = getCheckArgs(inputs, edition);
     const result = await runFlyway(args, inputs.workingDirectory);
 
+    const checkOutput = parseCheckOutput(result.stdout);
+    setOutputs(checkOutput, result.exitCode);
+
     if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
-
       if (errorOutput?.error?.message?.includes("configure a provisioner") && !inputs.buildOkToErase) {
         core.error(
           'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.',
         );
-      } else if (errorOutput?.error?.message) {
-        core.error(errorOutput.error.message);
       }
-
       throw new Error("Flyway checks failed");
     }
   } finally {
@@ -102,12 +101,40 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
   }
 };
 
-const parseErrorOutput = (stdout: string): ErrorOutput | undefined => {
+const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
   try {
-    return JSON.parse(stdout) as ErrorOutput;
+    return JSON.parse(stdout) as FlywayCheckOutput;
   } catch {
     return undefined;
   }
 };
 
-export { getCheckArgs, parseErrorOutput, runChecks };
+const setOutputs = (output: FlywayCheckOutput | undefined, exitCode: number): void => {
+  core.setOutput("exit-code", exitCode.toString());
+
+  const driftResults = output?.individualResults?.filter((r): r is Drift => r.operation === "drift");
+  const changesResults = output?.individualResults?.filter((r): r is Changes => r.operation === "changes");
+  const codeResults = output?.individualResults?.filter((r): r is Code => r.operation === "code");
+
+  if (driftResults?.length) {
+    const drift = driftResults.some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
+    core.setOutput("drift-detected", drift.toString());
+  }
+
+  if (changesResults?.length) {
+    const changes = changesResults.reduce(
+      (acc, r) => acc + (r.onlyInSource?.length ?? 0) + (r.onlyInTarget?.length ?? 0) + (r.differences?.length ?? 0),
+      0,
+    );
+    core.setOutput("changed-object-count", changes.toString());
+  }
+
+  if (codeResults?.length) {
+    const violations = codeResults.flatMap((r) => r.results?.flatMap((v) => v.violations ?? []) ?? []);
+    const codes = violations.map((v) => v.code).filter((c): c is string => !!c);
+    core.setOutput("code-violation-count", codes.length.toString());
+    core.setOutput("code-violation-codes", [...new Set(codes)].join(","));
+  }
+};
+
+export { getCheckArgs, parseCheckOutput, runChecks, setOutputs };

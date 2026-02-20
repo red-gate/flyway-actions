@@ -20,7 +20,6 @@ jobs:
         run: |
           set -euo pipefail
           echo "Actions: ${{ steps.list.outputs.actions }}"
-          echo '${{ steps.list.outputs.actions }}' | jq -e '. | length > 0'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/checks") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
 
@@ -62,6 +61,20 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-project
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
+          echo "Changed object count: ${{ steps.checks.outputs.changed-object-count }}"
+          echo "Code violation count: ${{ steps.checks.outputs.code-violation-count }}"
+          echo "Code violation codes: ${{ steps.checks.outputs.code-violation-codes }}"
+          test "${{ steps.checks.outputs.exit-code }}" = "0"
+          test "${{ steps.checks.outputs.drift-detected }}" = "false"
+          test "${{ steps.checks.outputs.changed-object-count }}" = "2"
+          test "${{ steps.checks.outputs.code-violation-count }}" = "1"
+          test "${{ steps.checks.outputs.code-violation-codes }}" = "AM04"
 
   migrations-checks-fail-on-drift:
     strategy:
@@ -103,6 +116,14 @@ jobs:
       - name: Verify checks failed due to drift
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
+          test "${{ steps.checks.outputs.exit-code }}" = "1"
+          test "${{ steps.checks.outputs.drift-detected }}" = ""
 
   migrations-checks-fail-on-code-review:
     strategy:
@@ -143,6 +164,16 @@ jobs:
       - name: Verify checks failed due to code review
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Code violation count: ${{ steps.checks.outputs.code-violation-count }}"
+          echo "Code violation codes: ${{ steps.checks.outputs.code-violation-codes }}"
+          test "${{ steps.checks.outputs.exit-code }}" = "1"
+          test "${{ steps.checks.outputs.code-violation-count }}" = ""
+          test "${{ steps.checks.outputs.code-violation-codes }}" = ""
 
   migrations-deploy-no-drift:
     strategy:

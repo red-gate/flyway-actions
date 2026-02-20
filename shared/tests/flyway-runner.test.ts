@@ -14,7 +14,8 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } = await import("../src/flyway-runner.js");
+const { parseErrorOutput, parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } =
+  await import("../src/flyway-runner.js");
 
 describe("parseExtraArgs", () => {
   it("should parse simple space-separated args", () => {
@@ -136,6 +137,38 @@ describe("maskArgsForLog", () => {
   });
 });
 
+describe("parseErrorOutput", () => {
+  it("should return the error message from valid error output", () => {
+    const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Migration validation failed" } });
+
+    const errorOutput = parseErrorOutput(stdout);
+
+    expect(errorOutput?.error?.errorCode).toBe("FAULT");
+    expect(errorOutput?.error?.message).toBe("Migration validation failed");
+  });
+
+  it("should return undefined for invalid JSON", () => {
+    expect(parseErrorOutput("not json")).toBeUndefined();
+  });
+
+  it("should return undefined when error has no message", () => {
+    const stdout = JSON.stringify({ error: { errorCode: "FAULT" } });
+
+    const errorOutput = parseErrorOutput(stdout);
+
+    expect(errorOutput?.error?.errorCode).toBe("FAULT");
+    expect(errorOutput?.error?.message).toBeUndefined();
+  });
+
+  it("should return undefined when error field is missing", () => {
+    const stdout = JSON.stringify({ something: "else" });
+
+    const errorOutput = parseErrorOutput(stdout);
+
+    expect(errorOutput?.error).toBeUndefined();
+  });
+});
+
 describe("runFlyway", () => {
   it("should execute flyway with provided arguments", async () => {
     exec.mockResolvedValue(0);
@@ -207,6 +240,41 @@ describe("runFlyway", () => {
 
     expect(info).toHaveBeenCalledWith("Migrate running");
     expect(error).toHaveBeenCalledWith("Migrate failed");
+  });
+
+  it("should log objects on stdout in JSON output mode", async () => {
+    const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Checks failed" } });
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(stdout));
+      return Promise.resolve(1);
+    });
+
+    await runFlyway(["check", "-outputType=json"]);
+
+    expect(info).toHaveBeenCalledWith(stdout);
+    expect(error).toHaveBeenCalledWith("Checks failed");
+  });
+
+  it("should log stderr as error in non-JSON output mode", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stderr?.(Buffer.from("Something went wrong"));
+      return Promise.resolve(1);
+    });
+
+    await runFlyway(["migrate"]);
+
+    expect(error).toHaveBeenCalledWith("Something went wrong");
+  });
+
+  it("should not log stderr as error in JSON output mode", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stderr?.(Buffer.from("Something went wrong"));
+      return Promise.resolve(1);
+    });
+
+    await runFlyway(["migrate", "-outputType=json"]);
+
+    expect(error).not.toHaveBeenCalledWith("Something went wrong");
   });
 });
 
