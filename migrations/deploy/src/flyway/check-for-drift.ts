@@ -1,6 +1,6 @@
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
-import { runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [
@@ -8,6 +8,8 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] =
   "-drift",
   "-check.failOnDrift=true",
   ...getCommonArgs(inputs),
+  "-outputType=json",
+  "-outputLogsInJson=true",
 ];
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
@@ -16,8 +18,17 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     const driftArgs = getCheckDriftArgs(inputs);
     const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-    const driftDetected = result.exitCode !== 0;
-    setDriftOutput(result.exitCode, driftDetected);
+    const exitCode = result.exitCode;
+    let driftDetected = false;
+    if (exitCode !== 0) {
+      const errorOutput = parseErrorOutput(result.stdout);
+
+      if (errorOutput?.error?.message?.includes("Drift detected")) {
+        driftDetected = true;
+      }
+    }
+
+    setDriftOutput(exitCode, driftDetected);
 
     return driftDetected;
   } finally {
