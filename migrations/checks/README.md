@@ -6,31 +6,39 @@ A GitHub Action to run pre-deployment checks on your Flyway migrations and targe
 
 ### Flyway Enterprise
 
-When running under Flyway enterprise the following validation steps will be run by default
+When running under Flyway Enterprise the following validation steps will be run by default
 
 #### Drift detection
-Compares your target database against the expected state. Note that this will only be able to flag up drift after your first deployment, once a snapshot of the database has been captured.
+
+Compares your target database against the expected state.
+Note that this will only be able to flag up drift after your first deployment, once a snapshot of the database has been captured.
 This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
 For more information, see [the associated Flyway documentation](https://documentation.red-gate.com/flyway/flyway-concepts/drift-analysis).
 
 #### Code review
-Scan your SQL migrations for potential issues, anti-patterns, or policy violations. This will incorporate Redgate rules aimed at identifying data loss and security issues.
+
+Scan your SQL migrations for potential issues, antipatterns, or policy violations.
+This will incorporate Redgate rules aimed at identifying data loss and security issues.
 For more information, see [the associated Flyway documentation](https://documentation.red-gate.com/flyway/flyway-concepts/code-analysis).
 
 #### Deployment report
+
 A report will be generated which includes:
 * the full list of drifted objects, if any
 * the full list of code review violations, if any
-* a detailed preview of what will change in your database, by object (requires a [build environment](https://documentation.red-gate.com/flyway/flyway-concepts/environments/shadow-and-build-environments) to be configured). 
-* a representation of the deployment script that will be run against your database when you run the deploy action (see [dry runs](https://documentation.red-gate.com/flyway/flyway-concepts/migrations/migration-command-dry-runs))
+* a detailed preview of what will change in your database, by object (requires a [build environment](https://documentation.red-gate.com/flyway/flyway-concepts/environments/shadow-and-build-environments) to be configured)
+* a representation of the deployment script that will be run against your database when you run the 'migrations/deploy' action (see [dry runs](https://documentation.red-gate.com/flyway/flyway-concepts/migrations/migration-command-dry-runs))
+
 The drift report and deployment changes report are only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
 
 ### Flyway Teams
+
 The code review will run, but without Redgate rules. You will need to configure SQLFluff manually.
 The deployment report will contain the code review output and the deployment script.
 The drift checks and the deployment changes report will not run.
 
 ### Flyway Community
+
 The code review will run, but without Redgate rules. You will need to configure SQLFluff manually.
 The deployment report will contain the code review output only.
 The drift checks, the deployment changes report, and the deployment script generation will not run.
@@ -148,28 +156,28 @@ This action runs the following pre-deployment checks:
 
 ### Target Database
 
-| Input                      | Description                                         | Required                                 | Default     |
-|----------------------------|-----------------------------------------------------|------------------------------------------|-------------|
-| `target-environment`       | Flyway TOML environment name                        | Required if `target-url` not set         | `default`   |
-| `target-url`               | JDBC URL for the target database                    | Required if `target-environment` not set |             |
-| `target-user`              | Database user for the target database               | No                                       |             |
-| `target-password`          | Database password for the target database           | No                                       |             |
-| `target-schemas`           | Comma-separated list of schemas                     | No                                       |             |
-| `target-migration-version` | Migrate up to this version for dry run              | No                                       |             |
-| `cherry-pick`              | Comma-separated list of migration versions          | No                                       |             |
+| Input                      | Description                                | Required                                 | Default     |
+|----------------------------|--------------------------------------------|------------------------------------------|-------------|
+| `target-environment`       | Target database to check                   | Required if `target-url` not set         | `default`   |
+| `target-url`               | JDBC URL for the target database           | Required if `target-environment` not set |             |
+| `target-user`              | Database user for the target database      | No                                       |             |
+| `target-password`          | Database password for the target database  | No                                       |             |
+| `target-schemas`           | Comma-separated list of schemas            | No                                       |             |
+| `target-migration-version` | Migrate up to this version for dry run     | No                                       |             |
+| `cherry-pick`              | Comma-separated list of migration versions | No                                       |             |
 
 ### Build Database
 
 A build database is required for the deployment changes report. If no build database is configured, this step will be skipped.
 
-| Input               | Description                                                                    | Required                                                                                                                              | Default |
-|---------------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|---------|
-| `build-environment` | Flyway TOML environment name for the build database                            | No                                                                                                                                    |         |
-| `build-url`         | JDBC URL for the build database                                                | No                                                                                                                                    |         |
-| `build-user`        | Database user for the build database                                           | No                                                                                                                                    |         |
-| `build-password`    | Database password for the build database                                       | No                                                                                                                                    |         |
-| `build-schemas`     | Comma-separated list of schemas for the build database                         | No                                                                                                                                    |         |
-| `build-ok-to-erase` | Allow Flyway to erase the build database. This will delete all schema and data | Required if build database is configured but `build-environment` not set or build environment does not have a provisioner configured. | `false` |
+| Input               | Description                                                                            | Required                                                                                                                              | Default |
+|---------------------|----------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `build-environment` | Build database for generating a deployment changes report                              | No                                                                                                                                    |         |
+| `build-url`         | JDBC URL for the build database                                                        | No                                                                                                                                    |         |
+| `build-user`        | Database user for the build database                                                   | No                                                                                                                                    |         |
+| `build-password`    | Database password for the build database                                               | No                                                                                                                                    |         |
+| `build-schemas`     | Comma-separated list of schemas for the build database                                 | No                                                                                                                                    |         |
+| `build-ok-to-erase` | Allow Flyway to erase the build database. This will delete all schema and data objects | Required if build database is configured but `build-environment` not set or build environment does not have a provisioner configured. | `false` |
 
 ### Check Options
 
@@ -191,15 +199,16 @@ A build database is required for the deployment changes report. If no build data
 
 ## Outputs
 
-| Output                 | Description                                            |
-|------------------------|--------------------------------------------------------|
-| `changed-object-count` | Number of changed objects in the deployment            |
-| `drift-detected`       | Whether drift was detected (empty if skipped)          |
-| `code-violation-count` | Number of code review violations found                 |
-| `code-violation-codes` | Comma-separated list of code review violation codes    |
+| Output                 | Description                                                            |
+|------------------------|------------------------------------------------------------------------|
+| `exit-code`            | Flyway exit code                                                       |
+| `drift-detected`       | Whether drift was detected (empty if skipped)                          |
+| `changed-object-count` | Number of changed objects in the deployment (empty if skipped)         |
+| `code-violation-count` | Number of code review violations found (empty if skipped)              |
+| `code-violation-codes` | Comma-separated list of code review violation codes (empty if skipped) |
 
-There is currently a limitation where `code-violation-count` and `code-violation-codes` aree not set on the output when 
-`fail-on-code-review` is set to `true`. This will be fixed in an upcoming release. 
+There is currently a limitation where `code-violation-count` and `code-violation-codes` are not set on the output when `fail-on-code-review` is set to `true`.
+This will be fixed in an upcoming release.
 
 ### Using Outputs
 
@@ -210,9 +219,9 @@ There is currently a limitation where `code-violation-count` and `code-violation
     target-environment: production
     fail-on-drift: false
     fail-on-code-review: false
-
-- run: echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
-- run: echo "Code violations: ${{ steps.checks.outputs.code-violation-count }}"
+- run: |
+    echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
+    echo "Code violations: ${{ steps.checks.outputs.code-violation-count }}"
 ```
 
 ## Secrets
