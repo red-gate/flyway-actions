@@ -1,4 +1,5 @@
 import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
+import type { ExecOptions } from "@actions/exec";
 
 const setOutput = vi.fn();
 const exec = vi.fn();
@@ -26,8 +27,13 @@ describe("checkForDrift", () => {
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
-  it("should set drift-detected output to true when exit code is non-zero", async () => {
-    exec.mockResolvedValue(1);
+  it("should set drift-detected output to true when drift is detected", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Drift detected" } })),
+      );
+      return Promise.resolve(1);
+    });
 
     await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
@@ -44,6 +50,13 @@ describe("getCheckDriftArgs", () => {
     expect(args[0]).toBe("check");
     expect(args[1]).toBe("-drift");
     expect(args[2]).toBe("-check.failOnDrift=true");
+  });
+
+  it("should include JSON output flags", () => {
+    const args = getCheckDriftArgs({});
+
+    expect(args).toContain("-outputType=json");
+    expect(args).toContain("-outputLogsInJson=true");
   });
 
   describe("target params", () => {
