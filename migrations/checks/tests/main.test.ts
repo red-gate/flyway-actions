@@ -29,17 +29,23 @@ const setupMocks = () => {
   }));
 };
 
-const setupChecksMock = (edition: string, checkExitCode = 0, checkOutput?: string) => {
+const setupChecksMock = (edition: string, checkExitCode = 0, outputByFlag?: Record<string, string>) => {
   let callCount = 0;
-  exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+  exec.mockImplementation((_cmd: string, args?: string[], options?: ExecOptions) => {
     callCount++;
     if (callCount === 1) {
       options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
       return Promise.resolve(0);
     }
-    if (checkOutput) {
-      options?.listeners?.stdout?.(Buffer.from(checkOutput));
+    if (outputByFlag && args) {
+      for (const [flag, output] of Object.entries(outputByFlag)) {
+        if (args.includes(flag)) {
+          options?.listeners?.stdout?.(Buffer.from(output));
+          return Promise.resolve(checkExitCode);
+        }
+      }
     }
+    options?.listeners?.stdout?.(Buffer.from("{}"));
     return Promise.resolve(checkExitCode);
   });
 };
@@ -48,6 +54,8 @@ const setupInputMock = (overrides: Record<string, string> = {}, booleanOverrides
   getInput.mockImplementation((name: string) => overrides[name] || "");
   getBooleanInput.mockImplementation((name: string) => booleanOverrides[name] ?? false);
 };
+
+const getCheckCalls = () => (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
 describe("run", () => {
   beforeEach(() => {
@@ -76,6 +84,39 @@ describe("run", () => {
     );
   });
 
+  it("should run each check as a separate invocation for enterprise", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getCheckCalls()).toHaveLength(3);
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should only run -code invocation for Community edition", async () => {
+    setupChecksMock("Community");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getCheckCalls()).toHaveLength(1);
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should run -dryrun and -code but not -drift or -changes for Teams edition", async () => {
+    setupChecksMock("Teams");
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "build-url": "jdbc:sqlite:build.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getCheckCalls()).toHaveLength(2);
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
   it("should fail when check exits with non-zero code", async () => {
     setupChecksMock("Enterprise", 1);
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
@@ -96,14 +137,14 @@ describe("run", () => {
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should set outputs from check JSON response", async () => {
-    const checkOutput = JSON.stringify({
-      individualResults: [
-        { operation: "drift", differences: [{ name: "Table_1" }] },
-        { operation: "code", results: [{ violations: [{ code: "RG06" }] }] },
-      ],
+  it("should set outputs from each check's JSON response", async () => {
+    const driftOutput = JSON.stringify({
+      individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
     });
-    setupChecksMock("Enterprise", 0, checkOutput);
+    const codeOutput = JSON.stringify({
+      individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],
+    });
+    setupChecksMock("Enterprise", 0, { "-drift": driftOutput, "-code": codeOutput });
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
 
     await import("../src/main.js");

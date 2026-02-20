@@ -82,4 +82,27 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
 const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
   !!(inputs.buildEnvironment || inputs.buildUrl);
 
-export { getBaseArgs, getBuildEnvironmentArgs, getTargetEnvironmentArgs, hasBuildInputs };
+const getCheckCommandArgs = (): string[] => ["check", "-outputType=json", "-outputLogsInJson=true"];
+
+const getTargetAndVersionArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  const args = [...getTargetEnvironmentArgs(inputs)];
+
+  if (inputs.targetMigrationVersion) {
+    args.push(`-target=${inputs.targetMigrationVersion}`);
+  }
+
+  if (inputs.cherryPick) {
+    args.push(`-cherryPick=${inputs.cherryPick}`);
+  }
+
+  return args;
+};
+
+export {
+  getBaseArgs,
+  getBuildEnvironmentArgs,
+  getCheckCommandArgs,
+  getTargetAndVersionArgs,
+  getTargetEnvironmentArgs,
+  hasBuildInputs,
+};

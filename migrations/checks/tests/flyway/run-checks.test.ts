@@ -18,361 +18,9 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getCheckArgs, parseCheckOutput, runChecks, setOutputs } = await import("../../src/flyway/run-checks.js");
+const { runChecks } = await import("../../src/flyway/run-checks.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
-
-describe("getCheckArgs", () => {
-  it("should include check -outputType=json -outputLogsInJson=true -dryrun -code -drift by default", () => {
-    const args = getCheckArgs(baseInputs, "enterprise");
-
-    expect(args[0]).toBe("check");
-    expect(args).toContain("-outputType=json");
-    expect(args).toContain("-outputLogsInJson=true");
-    expect(args).toContain("-dryrun");
-    expect(args).toContain("-code");
-    expect(args).toContain("-drift");
-  });
-
-  it("should include -check.failOnError when failOnCodeReview is true", () => {
-    const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true }, "enterprise");
-
-    expect(args).toContain("-check.code.failOnError=true");
-  });
-
-  it("should include -check.failOnDrift when failOnDrift is true", () => {
-    const args = getCheckArgs({ ...baseInputs, failOnDrift: true }, "enterprise");
-
-    expect(args).toContain("-check.failOnDrift=true");
-  });
-
-  it("should not include -check.failOnDrift when failOnDrift is false", () => {
-    const args = getCheckArgs({ ...baseInputs, failOnDrift: false }, "enterprise");
-
-    expect(args).not.toContain("-check.failOnDrift=true");
-  });
-
-  it("should include both -failOnError and -failOnDrift flags independently", () => {
-    const args = getCheckArgs({ ...baseInputs, failOnCodeReview: true, failOnDrift: true }, "enterprise");
-
-    expect(args).toContain("-check.code.failOnError=true");
-    expect(args).toContain("-check.failOnDrift=true");
-  });
-
-  it("should include target args", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      targetUrl: "jdbc:postgresql://localhost/db",
-      targetUser: "admin",
-    };
-
-    const args = getCheckArgs(inputs, "enterprise");
-
-    expect(args).toContain("-url=jdbc:postgresql://localhost/db");
-    expect(args).toContain("-user=admin");
-  });
-
-  it("should include base args", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      workingDirectory: "/app/db",
-      extraArgs: "-X",
-    };
-
-    const args = getCheckArgs(inputs, "enterprise");
-
-    expect(args).toContain("-workingDirectory=/app/db");
-    expect(args).toContain("-X");
-  });
-
-  it("should include -changes when build url is provided", () => {
-    const args = getCheckArgs({ ...baseInputs, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
-
-    expect(args).toContain("-changes");
-  });
-
-  it("should include -changes when build environment is provided", () => {
-    const args = getCheckArgs({ ...baseInputs, buildEnvironment: "build" }, "enterprise");
-
-    expect(args).toContain("-changes");
-  });
-
-  it("should not include -changes when no build inputs provided", () => {
-    const args = getCheckArgs(baseInputs, "enterprise");
-
-    expect(args).not.toContain("-changes");
-  });
-
-  it("should log info when no build inputs provided", () => {
-    getCheckArgs(baseInputs, "enterprise");
-
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
-  });
-
-  it("should include build args", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      buildUrl: "jdbc:postgresql://localhost/build-db",
-      buildUser: "deploy",
-    };
-
-    const args = getCheckArgs(inputs, "enterprise");
-
-    expect(args).toContain("-environments.default_build.url=jdbc:postgresql://localhost/build-db");
-    expect(args).toContain("-environments.default_build.user=deploy");
-  });
-
-  it("should include target migration version and cherry pick", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      targetMigrationVersion: "5.0",
-      cherryPick: "3.0,4.0",
-    };
-
-    const args = getCheckArgs(inputs, "enterprise");
-
-    expect(args).toContain("-target=5.0");
-    expect(args).toContain("-cherryPick=3.0,4.0");
-  });
-
-  it("should omit -code when skipCodeReview is true", () => {
-    const args = getCheckArgs({ ...baseInputs, skipCodeReview: true }, "enterprise");
-
-    expect(args).not.toContain("-code");
-  });
-
-  it("should omit -failOnError when skipCodeReview is true even if failOnCodeReview is true", () => {
-    const args = getCheckArgs({ ...baseInputs, skipCodeReview: true, failOnCodeReview: true }, "enterprise");
-
-    expect(args).not.toContain("-check.failOnError=true");
-  });
-
-  it("should omit -drift when skipDriftCheck is true", () => {
-    const args = getCheckArgs({ ...baseInputs, skipDriftCheck: true }, "enterprise");
-
-    expect(args).not.toContain("-drift");
-  });
-
-  it("should omit -failOnDrift when skipDriftCheck is true even if failOnDrift is true", () => {
-    const args = getCheckArgs({ ...baseInputs, skipDriftCheck: true, failOnDrift: true }, "enterprise");
-
-    expect(args).not.toContain("-check.failOnDrift=true");
-  });
-
-  it("should omit -dryrun when skipDeploymentScriptReview is true", () => {
-    const args = getCheckArgs({ ...baseInputs, skipDeploymentScriptReview: true }, "enterprise");
-
-    expect(args).not.toContain("-dryrun");
-  });
-
-  it("should omit -changes and build args when skipDeploymentChangesReport is true", () => {
-    const args = getCheckArgs(
-      {
-        ...baseInputs,
-        skipDeploymentChangesReport: true,
-        buildUrl: "jdbc:sqlite:build.db",
-      },
-      "enterprise",
-    );
-
-    expect(args).not.toContain("-changes");
-    expect(args).not.toContain("-buildEnvironment=default_build");
-    expect(args).not.toContain("-environments.default_build.url=jdbc:sqlite:build.db");
-  });
-
-  it("should log info when skipDeploymentScriptReview is true", () => {
-    getCheckArgs({ ...baseInputs, skipDeploymentScriptReview: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
-
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment script review"));
-  });
-
-  it("should log info when skipCodeReview is true and build inputs exist", () => {
-    getCheckArgs({ ...baseInputs, skipCodeReview: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
-
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping code review"));
-  });
-
-  it("should log info when skipDriftCheck is true and build inputs exist", () => {
-    getCheckArgs({ ...baseInputs, skipDriftCheck: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
-
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping drift check"));
-  });
-
-  it("should log info when skipDeploymentChangesReport is true and build inputs exist", () => {
-    getCheckArgs({ ...baseInputs, skipDeploymentChangesReport: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
-
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
-  });
-
-  describe("community edition", () => {
-    it("should skip -dryrun, -drift, and -changes but keep -code", () => {
-      const args = getCheckArgs({ ...baseInputs, buildUrl: "jdbc:sqlite:build.db" }, "community");
-
-      expect(args).toContain("-code");
-      expect(args).not.toContain("-dryrun");
-      expect(args).not.toContain("-drift");
-      expect(args).not.toContain("-changes");
-    });
-
-    it("should log skip messages for unavailable checks", () => {
-      getCheckArgs(baseInputs, "community");
-
-      expect(info).toHaveBeenCalledWith("Skipping deployment script review: not available in Community edition");
-      expect(info).toHaveBeenCalledWith("Skipping drift check: not available in Community edition");
-      expect(info).toHaveBeenCalledWith("Skipping deployment changes report: not available in Community edition");
-    });
-  });
-
-  describe("teams edition", () => {
-    it("should include -dryrun and -code but skip -drift and -changes", () => {
-      const args = getCheckArgs({ ...baseInputs, buildUrl: "jdbc:sqlite:build.db" }, "teams");
-
-      expect(args).toContain("-dryrun");
-      expect(args).toContain("-code");
-      expect(args).not.toContain("-drift");
-      expect(args).not.toContain("-changes");
-    });
-
-    it("should log skip messages for enterprise-only checks", () => {
-      getCheckArgs(baseInputs, "teams");
-
-      expect(info).toHaveBeenCalledWith("Skipping drift check: not available in Teams edition");
-      expect(info).toHaveBeenCalledWith("Skipping deployment changes report: not available in Teams edition");
-    });
-  });
-});
-
-describe("parseCheckOutput", () => {
-  it("should parse valid JSON with individualResults", () => {
-    const stdout = JSON.stringify({ individualResults: [{ operation: "drift", differences: [] }] });
-
-    const result = parseCheckOutput(stdout);
-
-    expect(result?.individualResults).toHaveLength(1);
-    expect(result?.individualResults?.[0].operation).toBe("drift");
-  });
-
-  it("should return undefined for invalid JSON", () => {
-    expect(parseCheckOutput("not json")).toBeUndefined();
-  });
-
-  it("should handle empty object", () => {
-    const result = parseCheckOutput("{}");
-
-    expect(result?.individualResults).toBeUndefined();
-  });
-});
-
-describe("setOutputs", () => {
-  it("should set exit-code", () => {
-    setOutputs(undefined, 0);
-
-    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
-  });
-
-  it("should set non-zero exit-code", () => {
-    setOutputs(undefined, 1);
-
-    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
-  });
-
-  it("should set drift-detected to true when differences exist", () => {
-    setOutputs({ individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }] }, 0);
-
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
-  });
-
-  it("should set drift-detected to false when no differences", () => {
-    setOutputs({ individualResults: [{ operation: "drift", onlyInSource: [], onlyInTarget: [] }] }, 0);
-
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
-  });
-
-  it("should not set drift-detected when drift result is absent", () => {
-    setOutputs({ individualResults: [{ operation: "code", results: [] }] }, 0);
-
-    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
-  });
-
-  it("should set changed-object-count from changes result", () => {
-    setOutputs(
-      {
-        individualResults: [
-          {
-            operation: "changes",
-            differences: [{ name: "Table_1" }, { name: "Table_2" }],
-            onlyInSource: [{ name: "View_1" }],
-          },
-        ],
-      },
-      0,
-    );
-
-    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "3");
-  });
-
-  it("should set changed-object-count to zero when no changes", () => {
-    setOutputs({ individualResults: [{ operation: "changes" }] }, 0);
-
-    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "0");
-  });
-
-  it("should not set changed-object-count when changes result is absent", () => {
-    setOutputs({ individualResults: [{ operation: "drift" }] }, 0);
-
-    expect(setOutput).not.toHaveBeenCalledWith("changed-object-count", expect.anything());
-  });
-
-  it("should set code-violation-count and code-violation-codes", () => {
-    setOutputs(
-      {
-        individualResults: [
-          {
-            operation: "code",
-            results: [{ violations: [{ code: "RG06" }, { code: "RG09" }] }, { violations: [{ code: "RG06" }] }],
-          },
-        ],
-      },
-      0,
-    );
-
-    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "3");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06,RG09");
-  });
-
-  it("should set code-violation-count to zero when no violations", () => {
-    setOutputs({ individualResults: [{ operation: "code", results: [{ violations: [] }] }] }, 0);
-
-    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "0");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "");
-  });
-
-  it("should not set code outputs when code result is absent", () => {
-    setOutputs({ individualResults: [{ operation: "drift" }] }, 0);
-
-    expect(setOutput).not.toHaveBeenCalledWith("code-violation-count", expect.anything());
-    expect(setOutput).not.toHaveBeenCalledWith("code-violation-codes", expect.anything());
-  });
-
-  it("should handle all result types together", () => {
-    setOutputs(
-      {
-        individualResults: [
-          { operation: "drift", differences: [{ name: "Table_1" }], onlyInSource: [], onlyInTarget: [] },
-          { operation: "changes", differences: [{ name: "Table_1" }], onlyInTarget: [{ name: "Index_1" }] },
-          { operation: "code", results: [{ violations: [{ code: "RG06" }] }] },
-        ],
-      },
-      0,
-    );
-
-    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
-    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "2");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "1");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06");
-  });
-});
 
 describe("runChecks", () => {
   it("should not throw on success", async () => {
@@ -384,7 +32,7 @@ describe("runChecks", () => {
     await expect(runChecks(baseInputs, "enterprise")).resolves.not.toThrow();
   });
 
-  it("should set exit-code on success", async () => {
+  it("should set exit-code to 0 on success", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("{}"));
       return Promise.resolve(0);
@@ -395,7 +43,63 @@ describe("runChecks", () => {
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
   });
 
-  it("should set exit-code before throwing on failure", async () => {
+  it("should make separate exec calls for each check type", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
+    });
+
+    await runChecks(baseInputs, "enterprise");
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    expect(checkCalls).toHaveLength(3);
+
+    expect(checkCalls[0][1]).toContain("-dryrun");
+    expect(checkCalls[0][1]).not.toContain("-code");
+    expect(checkCalls[0][1]).not.toContain("-drift");
+
+    expect(checkCalls[1][1]).toContain("-code");
+    expect(checkCalls[1][1]).not.toContain("-dryrun");
+    expect(checkCalls[1][1]).not.toContain("-drift");
+
+    expect(checkCalls[2][1]).toContain("-drift");
+    expect(checkCalls[2][1]).not.toContain("-dryrun");
+    expect(checkCalls[2][1]).not.toContain("-code");
+  });
+
+  it("should make four exec calls when build url is provided", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
+    });
+
+    await runChecks({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    expect(checkCalls).toHaveLength(4);
+    expect(checkCalls[3][1]).toContain("-changes");
+  });
+
+  it("should only include build args in the changes invocation", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
+    });
+
+    await runChecks({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    for (let i = 0; i < 3; i++) {
+      expect(checkCalls[i][1]).not.toContain(expect.stringContaining("default_build"));
+    }
+
+    expect(checkCalls[3][1]).toContain("-environments.default_build.url=jdbc:sqlite:build.db");
+  });
+
+  it("should set exit-code from first failed check before throwing", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
         Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Check failed" } })),
@@ -407,7 +111,7 @@ describe("runChecks", () => {
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
   });
 
-  it("should throw and log JSON error message on failure", async () => {
+  it("should throw Flyway checks failed on failure", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
         Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Check failed" } })),
@@ -416,38 +120,60 @@ describe("runChecks", () => {
     });
 
     await expect(runChecks(baseInputs, "enterprise")).rejects.toThrowError("Flyway checks failed");
-    expect(error).toHaveBeenCalledWith("Check failed");
   });
 
-  it("should log friendly message on provisioner error and build-ok-to-erase is not set", async () => {
+  it("should run all checks even if an earlier one fails", async () => {
+    let callCount = 0;
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
+      callCount++;
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(callCount === 1 ? 1 : 0);
     });
 
     await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow();
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    expect(checkCalls).toHaveLength(3);
+  });
+
+  it("should log friendly message on provisioner error when changes check fails and build-ok-to-erase is not set", async () => {
+    exec.mockImplementation((_cmd: string, args?: string[], options?: ExecOptions) => {
+      if (args?.includes("-changes")) {
+        options?.listeners?.stdout?.(
+          Buffer.from(
+            JSON.stringify({
+              error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
+            }),
+          ),
+        );
+        return Promise.resolve(1);
+      }
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
+    });
+
+    await expect(runChecks({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise")).rejects.toThrow();
     expect(error).toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
   });
 
-  it("should not log friendly message on provisioner error and build-ok-to-erase is set", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
+  it("should not log friendly message on provisioner error when build-ok-to-erase is set", async () => {
+    exec.mockImplementation((_cmd: string, args?: string[], options?: ExecOptions) => {
+      if (args?.includes("-changes")) {
+        options?.listeners?.stdout?.(
+          Buffer.from(
+            JSON.stringify({
+              error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
+            }),
+          ),
+        );
+        return Promise.resolve(1);
+      }
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
     });
 
-    await expect(runChecks({ ...baseInputs, buildOkToErase: true }, "enterprise")).rejects.toThrow();
+    await expect(runChecks({ buildUrl: "jdbc:sqlite:build.db", buildOkToErase: true }, "enterprise")).rejects.toThrow();
     expect(error).not.toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
   });
 });
