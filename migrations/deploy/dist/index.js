@@ -13324,15 +13324,14 @@ const na = () => {
   "check",
   "-drift",
   "-check.failOnDrift=true",
-  ...Ui(A),
   "-outputType=json",
-  "-outputLogsInJson=true"
+  "-outputLogsInJson=true",
+  ...Ui(A)
 ], ca = async (A) => {
   mi("Checking for drift");
   try {
-    const r = Qa(A), t = await Si(r, A.workingDirectory), g = t.exitCode;
-    let e = !1;
-    return g !== 0 && bi(t.stdout)?.error?.message?.includes("Drift detected") && (e = !0), Ba(g, e), e;
+    const r = Qa(A), t = await Si(r, A.workingDirectory), g = bi(t.stdout), e = t.exitCode === 0 ? !1 : g?.error?.message?.includes("Drift detected") ?? !1;
+    return Ba(t.exitCode, e), e;
   } finally {
     Ni();
   }
