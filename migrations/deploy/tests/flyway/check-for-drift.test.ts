@@ -2,10 +2,11 @@ import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
 
 const setOutput = vi.fn();
+const info = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
-  info: vi.fn(),
+  info,
   error: vi.fn(),
   startGroup: vi.fn(),
   endGroup: vi.fn(),
@@ -54,6 +55,31 @@ describe("checkForDrift", () => {
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+  });
+
+  it("should return false when database does not support comparison", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+              message: "No comparison capability found that supports both types",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    const result = await checkForDrift({ targetUrl: "jdbc:h2:mem:test" });
+
+    expect(result).toBe(false);
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+    expect(info).toHaveBeenCalledWith(
+      "Drift check could not be run because advanced comparison features are not supported for this database type.",
+    );
   });
 });
 
