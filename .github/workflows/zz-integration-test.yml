@@ -26,7 +26,7 @@ jobs:
   migrations-checks:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -79,7 +79,7 @@ jobs:
   migrations-checks-fail-on-drift:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -128,7 +128,7 @@ jobs:
   migrations-checks-fail-on-code-review:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read

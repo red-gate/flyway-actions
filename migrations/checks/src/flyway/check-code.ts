@@ -2,7 +2,7 @@ import type { Code, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../t
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
-import { getBaseArgs, getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
+import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined => {
   if (inputs.skipCodeReview) {
@@ -10,15 +10,14 @@ const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined
     return undefined;
   }
   return [
-    ...getCheckCommandArgs(),
+    ...getCheckCommandArgs(inputs),
     "-code",
-    ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
     ...getTargetEnvironmentArgs(inputs),
-    ...getBaseArgs(inputs),
+    ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
   ];
 };
 
-const runCodeCheck = async (inputs: FlywayMigrationsChecksInputs) => {
+const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
   const args = getCodeArgs(inputs);
   if (!args) {
     return undefined;
@@ -26,13 +25,8 @@ const runCodeCheck = async (inputs: FlywayMigrationsChecksInputs) => {
   core.startGroup("Running Flyway check: code review");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    const output = parseCheckOutput(result.stdout);
-    setCodeOutputs(output);
-    return {
-      exitCode: result.exitCode,
-      output,
-      stdout: result.stdout,
-    };
+    setCodeOutputs(parseCheckOutput(result.stdout));
+    return { exitCode: result.exitCode };
   } finally {
     core.endGroup();
   }
@@ -48,4 +42,4 @@ const setCodeOutputs = (output: FlywayCheckOutput | undefined): void => {
   }
 };
 
-export { getCodeArgs, runCodeCheck, setCodeOutputs };
+export { getCodeArgs, runCheckCode, setCodeOutputs };

@@ -3,13 +3,7 @@ import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
-import {
-  getBaseArgs,
-  getBuildEnvironmentArgs,
-  getCheckCommandArgs,
-  getTargetAndVersionArgs,
-  hasBuildInputs,
-} from "./arg-builders.js";
+import { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, hasBuildInputs } from "./arg-builders.js";
 
 const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
   if (edition !== "enterprise") {
@@ -26,16 +20,10 @@ const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdi
     core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
     return undefined;
   }
-  return [
-    ...getCheckCommandArgs(),
-    "-changes",
-    ...getBuildEnvironmentArgs(inputs),
-    ...getTargetAndVersionArgs(inputs),
-    ...getBaseArgs(inputs),
-  ];
+  return [...getCheckCommandArgs(inputs), "-changes", ...getTargetArgs(inputs), ...getBuildEnvironmentArgs(inputs)];
 };
 
-const runChangesCheck = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
+const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
   const args = getChangesArgs(inputs, edition);
   if (!args) {
     return undefined;
@@ -43,8 +31,7 @@ const runChangesCheck = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
   core.startGroup("Running Flyway check: deployment changes report");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    const output = parseCheckOutput(result.stdout);
-    setChangesOutputs(output);
+    setChangesOutputs(parseCheckOutput(result.stdout));
     if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
       if (errorOutput?.error?.message?.includes("configure a provisioner") && !inputs.buildOkToErase) {
@@ -53,11 +40,7 @@ const runChangesCheck = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
         );
       }
     }
-    return {
-      exitCode: result.exitCode,
-      output,
-      stdout: result.stdout,
-    };
+    return { exitCode: result.exitCode };
   } finally {
     core.endGroup();
   }
@@ -74,4 +57,4 @@ const setChangesOutputs = (output: FlywayCheckOutput | undefined): void => {
   }
 };
 
-export { getChangesArgs, runChangesCheck, setChangesOutputs };
+export { getChangesArgs, runCheckChanges, setChangesOutputs };

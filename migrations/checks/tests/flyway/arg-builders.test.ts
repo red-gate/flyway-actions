@@ -11,7 +11,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getTargetEnvironmentArgs, getBaseArgs, getBuildEnvironmentArgs } =
+const { getTargetEnvironmentArgs, getCheckCommandArgs, getBuildEnvironmentArgs } =
   await import("../../src/flyway/arg-builders.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
@@ -152,29 +152,23 @@ describe("getBuildEnvironmentArgs", () => {
   });
 });
 
-describe("getBaseArgs", () => {
-  it("should return empty array when no base inputs", () => {
-    expect(getBaseArgs(baseInputs)).toEqual([]);
+describe("getCheckCommandArgs", () => {
+  it("should return default args when no base inputs", () => {
+    expect(getCheckCommandArgs(baseInputs)).toEqual(["check", "-outputType=json", "-outputLogsInJson=true"]);
   });
 
   it("should include working directory", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      workingDirectory: "/app/db",
-    };
+    const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, workingDirectory: "/app/db" };
 
-    const args = getBaseArgs(inputs);
+    const args = getCheckCommandArgs(inputs);
 
     expect(args).toContain("-workingDirectory=/app/db");
   });
 
   it("should include extra args", () => {
-    const inputs: FlywayMigrationsChecksInputs = {
-      ...baseInputs,
-      extraArgs: "-X -custom=value",
-    };
+    const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, extraArgs: "-X -custom=value" };
 
-    const args = getBaseArgs(inputs);
+    const args = getCheckCommandArgs(inputs);
 
     expect(args).toContain("-X");
     expect(args).toContain("-custom=value");

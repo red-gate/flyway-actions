@@ -3,7 +3,7 @@ import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
-import { getBaseArgs, getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
+import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
   if (edition !== "enterprise") {
@@ -15,15 +15,14 @@ const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEditi
     return undefined;
   }
   return [
-    ...getCheckCommandArgs(),
+    ...getCheckCommandArgs(inputs),
     "-drift",
-    ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : []),
     ...getTargetEnvironmentArgs(inputs),
-    ...getBaseArgs(inputs),
+    ...(inputs.failOnDrift ? ["-check.failOnDrift=true"] : []),
   ];
 };
 
-const runDriftCheck = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
+const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
   const args = getDriftArgs(inputs, edition);
   if (!args) {
     return undefined;
@@ -31,13 +30,8 @@ const runDriftCheck = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   core.startGroup("Running Flyway check: drift");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    const output = parseCheckOutput(result.stdout);
-    setDriftOutputs(output);
-    return {
-      exitCode: result.exitCode,
-      output,
-      stdout: result.stdout,
-    };
+    setDriftOutputs(parseCheckOutput(result.stdout));
+    return { exitCode: result.exitCode };
   } finally {
     core.endGroup();
   }
@@ -51,4 +45,4 @@ const setDriftOutputs = (output: FlywayCheckOutput | undefined): void => {
   }
 };
 
-export { getDriftArgs, runDriftCheck, setDriftOutputs };
+export { getDriftArgs, runCheckDrift, setDriftOutputs };
