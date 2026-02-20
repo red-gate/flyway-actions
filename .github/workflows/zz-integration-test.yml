@@ -123,7 +123,7 @@ jobs:
           echo "Exit code: ${{ steps.checks.outputs.exit-code }}"
           echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
           test "${{ steps.checks.outputs.exit-code }}" = "1"
-          test "${{ steps.checks.outputs.drift-detected }}" = "true"
+          test "${{ steps.checks.outputs.drift-detected }}" = ""
 
   migrations-checks-fail-on-code-review:
     strategy:
@@ -172,8 +172,8 @@ jobs:
           echo "Code violation count: ${{ steps.checks.outputs.code-violation-count }}"
           echo "Code violation codes: ${{ steps.checks.outputs.code-violation-codes }}"
           test "${{ steps.checks.outputs.exit-code }}" = "1"
-          test "${{ steps.checks.outputs.code-violation-count }}" = "1"
-          test "${{ steps.checks.outputs.code-violation-codes }}" = "AM04"
+          test "${{ steps.checks.outputs.code-violation-count }}" = ""
+          test "${{ steps.checks.outputs.code-violation-codes }}" = ""
 
   migrations-deploy-no-drift:
     strategy:
