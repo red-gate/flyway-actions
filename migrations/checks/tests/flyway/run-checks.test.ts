@@ -141,11 +141,7 @@ describe("runChecks", () => {
     exec.mockImplementation((_cmd: string, args?: string[], options?: ExecOptions) => {
       if (args?.includes("-changes")) {
         options?.listeners?.stdout?.(
-          Buffer.from(
-            JSON.stringify({
-              error: { errorCode: "FAULT", message: "You need to configure a provisioner for the build environment" },
-            }),
-          ),
+          Buffer.from(JSON.stringify({ error: { errorCode: "CHECK_BUILD_NO_PROVISIONER" } })),
         );
         return Promise.resolve(1);
       }
