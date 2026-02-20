@@ -18,7 +18,7 @@ const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined
   ];
 };
 
-const runCodeCheck = async (inputs: FlywayMigrationsChecksInputs) => {
+const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
   const args = getCodeArgs(inputs);
   if (!args) {
     return undefined;
@@ -48,4 +48,4 @@ const setCodeOutputs = (output: FlywayCheckOutput | undefined): void => {
   }
 };
 
-export { getCodeArgs, runCodeCheck, setCodeOutputs };
+export { getCodeArgs, runCheckCode, setCodeOutputs };

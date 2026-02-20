@@ -35,7 +35,7 @@ const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdi
   ];
 };
 
-const runChangesCheck = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
+const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
   const args = getChangesArgs(inputs, edition);
   if (!args) {
     return undefined;
@@ -74,4 +74,4 @@ const setChangesOutputs = (output: FlywayCheckOutput | undefined): void => {
   }
 };
 
-export { getChangesArgs, runChangesCheck, setChangesOutputs };
+export { getChangesArgs, runCheckChanges, setChangesOutputs };

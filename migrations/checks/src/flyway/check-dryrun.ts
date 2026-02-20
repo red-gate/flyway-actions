@@ -17,7 +17,7 @@ const getDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdit
   return [...getCheckCommandArgs(), "-dryrun", ...getTargetAndVersionArgs(inputs), ...getBaseArgs(inputs)];
 };
 
-const runDryrunCheck = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
+const runCheckDryrun = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
   const args = getDryrunArgs(inputs, edition);
   if (!args) {
     return undefined;
@@ -35,4 +35,4 @@ const runDryrunCheck = async (inputs: FlywayMigrationsChecksInputs, edition: Fly
   }
 };
 
-export { getDryrunArgs, runDryrunCheck };
+export { getDryrunArgs, runCheckDryrun };

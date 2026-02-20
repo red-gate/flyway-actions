@@ -23,7 +23,7 @@ const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEditi
   ];
 };
 
-const runDriftCheck = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
+const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
   const args = getDriftArgs(inputs, edition);
   if (!args) {
     return undefined;
@@ -51,4 +51,4 @@ const setDriftOutputs = (output: FlywayCheckOutput | undefined): void => {
   }
 };
 
-export { getDriftArgs, runDriftCheck, setDriftOutputs };
+export { getDriftArgs, runCheckDrift, setDriftOutputs };
