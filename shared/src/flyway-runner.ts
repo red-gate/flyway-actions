@@ -52,16 +52,15 @@ const maskArgsForLog = (args: string[]): string[] => {
 const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
   const { listeners, getOutput } = createStdoutStderrListeners();
   const jsonStderrListener = createJsonStderrListener();
-  const isJsonOutput = args.includes("-outputType=json");
 
   core.info(`Running: flyway ${maskArgsForLog(args).join(" ")}`);
 
   const options: exec.ExecOptions = {
-    silent: isJsonOutput,
+    silent: true,
     ignoreReturnCode: true,
     listeners: {
       stdout: listeners.stdout,
-      stderr: (data: Buffer) => (isJsonOutput ? jsonStderrListener(data) : listeners.stderr(data)),
+      stderr: (data: Buffer) => jsonStderrListener(data),
     },
     cwd: cwd || undefined,
   };
@@ -69,15 +68,10 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
 
   const { stdout, stderr } = getOutput();
 
-  if (isJsonOutput) {
-    core.info(stdout);
-    if (exitCode !== 0) {
-      const errorOutput = parseErrorOutput(stdout);
-      errorOutput?.error?.message && core.error(errorOutput.error.message);
-    }
-  }
-  if (!isJsonOutput && stderr) {
-    core.error(stderr);
+  core.info(stdout);
+  if (exitCode !== 0) {
+    const errorOutput = parseErrorOutput(stdout);
+    errorOutput?.error?.message && core.error(errorOutput.error.message);
   }
 
   return { exitCode, stdout, stderr };

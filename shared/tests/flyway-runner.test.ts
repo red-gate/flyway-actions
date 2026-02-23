@@ -178,10 +178,9 @@ describe("runFlyway", () => {
     expect(exec).toHaveBeenCalledWith("flyway", ["migrate", "-url=jdbc:sqlite:test.db"], expect.any(Object));
   });
 
-  it("should return exit code, stdout, and stderr", async () => {
+  it("should return exit code and stdout", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from("success output"));
-      options?.listeners?.stderr?.(Buffer.from("warning output"));
       return Promise.resolve(0);
     });
 
@@ -189,7 +188,6 @@ describe("runFlyway", () => {
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toBe("success output");
-    expect(result.stderr).toBe("warning output");
   });
 
   it("should return non-zero exit code on failure", async () => {
@@ -253,17 +251,6 @@ describe("runFlyway", () => {
 
     expect(info).toHaveBeenCalledWith(stdout);
     expect(error).toHaveBeenCalledWith("Checks failed");
-  });
-
-  it("should log stderr as error in non-JSON output mode", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stderr?.(Buffer.from("Something went wrong"));
-      return Promise.resolve(1);
-    });
-
-    await runFlyway(["migrate"]);
-
-    expect(error).toHaveBeenCalledWith("Something went wrong");
   });
 
   it("should not log stderr as error in JSON output mode", async () => {
