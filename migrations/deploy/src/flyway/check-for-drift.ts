@@ -7,8 +7,6 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] =
   "check",
   "-drift",
   "-check.failOnDrift=true",
-  "-outputType=json",
-  "-outputLogsInJson=true",
   ...getCommonArgs(inputs),
 ];
 

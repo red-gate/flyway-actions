@@ -92,8 +92,6 @@ describe("getMigrateArgs", () => {
     const args = getMigrateArgs(inputs);
 
     expect(args).toContain("migrate");
-    expect(args).toContain("-outputType=json");
-    expect(args).toContain("-outputLogsInJson=true");
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
   });
 

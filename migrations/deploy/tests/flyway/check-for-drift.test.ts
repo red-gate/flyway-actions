@@ -52,13 +52,6 @@ describe("getCheckDriftArgs", () => {
     expect(args[2]).toBe("-check.failOnDrift=true");
   });
 
-  it("should include JSON output flags", () => {
-    const args = getCheckDriftArgs({});
-
-    expect(args).toContain("-outputType=json");
-    expect(args).toContain("-outputLogsInJson=true");
-  });
-
   describe("target params", () => {
     it("should use flat params with no environment", () => {
       const inputs: FlywayMigrationsDeploymentInputs = {
