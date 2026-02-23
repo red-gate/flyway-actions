@@ -87,7 +87,7 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
   }
 
   if (inputs.buildOkToErase) {
-    args.push(`-environments.${environmentName}.provisioner=clean`);
+    args.push(`-environments.${environmentName}.flyway.cleanDisabled=false`);
   }
 
   return args;

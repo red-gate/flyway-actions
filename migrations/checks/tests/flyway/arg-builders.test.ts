@@ -124,7 +124,7 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-environments.build.provisioner=clean");
+    expect(args).toContain("-environments.build.flyway.cleanDisabled=false");
   });
 
   it("should not set clean provisioner when buildOkToErase is false", () => {
@@ -148,7 +148,7 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-environments.default_build.provisioner=clean");
+    expect(args).toContain("-environments.default_build.flyway.cleanDisabled=false");
   });
 });
 

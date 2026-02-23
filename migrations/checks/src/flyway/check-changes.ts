@@ -34,7 +34,7 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
     setChangesOutputs(parseCheckOutput(result.stdout));
     if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
-      if (errorOutput?.error?.message?.includes("configure a provisioner") && !inputs.buildOkToErase) {
+      if (errorOutput?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !inputs.buildOkToErase) {
         core.error(
           'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.',
         );
