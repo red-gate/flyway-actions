@@ -154,7 +154,7 @@ describe("getBuildEnvironmentArgs", () => {
 
 describe("getCheckCommandArgs", () => {
   it("should return default args when no base inputs", () => {
-    expect(getCheckCommandArgs(baseInputs)).toEqual(["check", "-outputType=json", "-outputLogsInJson=true"]);
+    expect(getCheckCommandArgs(baseInputs)).toEqual(["check"]);
   });
 
   it("should include working directory", () => {

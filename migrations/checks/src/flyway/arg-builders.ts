@@ -4,7 +4,7 @@ import { parseExtraArgs } from "@flyway-actions/shared";
 const DEFAULT_BUILD_ENVIRONMENT = "default_build";
 
 const getCheckCommandArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
-  const args: string[] = ["check", "-outputType=json", "-outputLogsInJson=true"];
+  const args: string[] = ["check"];
 
   if (inputs.workingDirectory) {
     args.push(`-workingDirectory=${inputs.workingDirectory}`);

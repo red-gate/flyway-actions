@@ -16,8 +16,6 @@ describe("getDryrunArgs", () => {
 
     expect(args).toBeDefined();
     expect(args![0]).toBe("check");
-    expect(args).toContain("-outputType=json");
-    expect(args).toContain("-outputLogsInJson=true");
     expect(args).toContain("-dryrun");
   });
 
