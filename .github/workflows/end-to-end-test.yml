@@ -58,13 +58,6 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
-      - name: Upload Flyway report
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: flyway-report-${{ matrix.os }}
-          path: sample-project/report.html
-          retention-days: 1
       - name: Test outputs
         shell: bash
         run: |
