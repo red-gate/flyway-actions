@@ -129,7 +129,7 @@ describe("runDriftCheck", () => {
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
 
-  it("should set drift-detected to false when exit code is non-zero and error does not contain Drift detected", async () => {
+  it("should not set drift-detected when exit code is non-zero and error does not contain Drift detected", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
         Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Something else failed" } })),
@@ -139,6 +139,6 @@ describe("runDriftCheck", () => {
 
     await runCheckDrift(baseInputs, "enterprise");
 
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
+    expect(setOutput).not.toHaveBeenCalled();
   });
 });
