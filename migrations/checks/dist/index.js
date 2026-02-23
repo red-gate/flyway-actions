@@ -13489,7 +13489,11 @@ const ga = () => {
   };
 }, Sa = (A) => {
   A.targetPassword && ci(A.targetPassword), A.buildPassword && ci(A.buildPassword);
-}, ba = async () => {
+};
+if (process.env.FLYWAY_INPUTS)
+  for (const [A, r] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS)))
+    r && (process.env[`INPUT_${A.toUpperCase()}`] = r);
+const ba = async () => {
   try {
     const A = await Ia();
     if (!A.installed) {
