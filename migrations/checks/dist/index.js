@@ -3636,7 +3636,7 @@ function re() {
   }, Nt;
 }
 var St, Jn;
-function he() {
+function le() {
   return Jn || (Jn = 1, St = {
     kUrl: /* @__PURE__ */ Symbol("url"),
     kHeaders: /* @__PURE__ */ Symbol("headers"),
@@ -3649,7 +3649,7 @@ var bt, vn;
 function fi() {
   if (vn) return bt;
   vn = 1;
-  const { Blob: A, File: r } = se, { kState: t } = he(), { webidl: g } = XA();
+  const { Blob: A, File: r } = se, { kState: t } = le(), { webidl: g } = XA();
   class e {
     constructor(Q, l, B = {}) {
       const n = l, i = B.type, C = B.lastModified ?? Date.now();
@@ -3698,7 +3698,7 @@ var Ut, Hn;
 function _e() {
   if (Hn) return Ut;
   Hn = 1;
-  const { isBlobLike: A, iteratorMixin: r } = re(), { kState: t } = he(), { kEnumerableProperty: g } = UA(), { FileLike: e, isFileLike: s } = fi(), { webidl: a } = XA(), { File: Q } = se, l = $A, B = globalThis.File ?? Q;
+  const { isBlobLike: A, iteratorMixin: r } = re(), { kState: t } = le(), { kEnumerableProperty: g } = UA(), { FileLike: e, isFileLike: s } = fi(), { webidl: a } = XA(), { File: Q } = se, l = $A, B = globalThis.File ?? Q;
   class n {
     constructor(I) {
       if (a.util.markAsUncloneable(this), I !== void 0)
@@ -3959,7 +3959,7 @@ function Ne() {
     fullyReadBody: a,
     extractMimeType: Q,
     utf8DecodeBytes: l
-  } = re(), { FormData: B } = _e(), { kState: n } = he(), { webidl: i } = XA(), { Blob: C } = se, I = HA, { isErrored: c, isDisturbed: u } = te, { isArrayBuffer: p } = Ci, { serializeAMimeType: m } = Ae(), { multipartFormDataParser: S } = ho();
+  } = re(), { FormData: B } = _e(), { kState: n } = le(), { webidl: i } = XA(), { Blob: C } = se, I = HA, { isErrored: c, isDisturbed: u } = te, { isArrayBuffer: p } = Ci, { serializeAMimeType: m } = Ae(), { multipartFormDataParser: S } = ho();
   let M;
   try {
     const G = require("node:crypto");
@@ -8262,7 +8262,7 @@ function At() {
   } = re(), {
     redirectStatusSet: h,
     nullBodyStatus: D
-  } = Xe(), { kState: o, kHeaders: f } = he(), { webidl: w } = XA(), { FormData: d } = _e(), { URLSerializer: y } = Ae(), { kConstruct: R } = WA(), L = HA, { types: T } = $A, Y = new TextEncoder("utf-8");
+  } = Xe(), { kState: o, kHeaders: f } = le(), { webidl: w } = XA(), { FormData: d } = _e(), { URLSerializer: y } = Ae(), { kConstruct: R } = WA(), L = HA, { types: T } = $A, Y = new TextEncoder("utf-8");
   class G {
     // Creates network error Response.
     static error() {
@@ -8575,7 +8575,7 @@ function Le() {
     requestCredentials: E,
     requestCache: h,
     requestDuplex: D
-  } = Xe(), { kEnumerableProperty: o, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: R, kDispatcher: L } = he(), { webidl: T } = XA(), { URLSerializer: Y } = Ae(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new i(({ signal: x, abort: z }) => {
+  } = Xe(), { kEnumerableProperty: o, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: R, kDispatcher: L } = le(), { webidl: T } = XA(), { URLSerializer: Y } = Ae(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new i(({ signal: x, abort: z }) => {
     x.removeEventListener("abort", z);
   }), pA = /* @__PURE__ */ new WeakMap();
   function yA(x) {
@@ -9129,7 +9129,7 @@ function et() {
     buildContentRange: lA,
     createInflate: CA,
     extractMimeType: IA
-  } = re(), { kState: pA, kDispatcher: yA } = he(), j = HA, { safelyExtractBody: P, extractBody: rA } = Ne(), {
+  } = re(), { kState: pA, kDispatcher: yA } = le(), j = HA, { safelyExtractBody: P, extractBody: rA } = Ne(), {
     redirectStatusSet: v,
     nullBodyStatus: O,
     safeMethodsSet: x,
@@ -9596,7 +9596,7 @@ function et() {
             for (let oe = 0; oe < jA.length; oe += 2)
               Ge.append(mA(jA[oe]), jA[oe + 1].toString("latin1"), !0);
             Be = Ge.get("location", !0), this.body = new iA({ read: at });
-            const ue = [], Hi = Be && W.redirect === "follow" && v.has(ZA);
+            const he = [], Hi = Be && W.redirect === "follow" && v.has(ZA);
             if (W.method !== "HEAD" && W.method !== "CONNECT" && !O.includes(ZA) && !Hi) {
               const oe = Ge.get("content-encoding", !0), Je = oe ? oe.toLowerCase().split(",") : [], Bn = 5;
               if (Je.length > Bn)
@@ -9604,7 +9604,7 @@ function et() {
               for (let gt = Je.length - 1; gt >= 0; --gt) {
                 const ve = Je[gt].trim();
                 if (ve === "x-gzip" || ve === "gzip")
-                  ue.push(l.createGunzip({
+                  he.push(l.createGunzip({
                     // Be less strict when decoding compressed responses, since sometimes
                     // servers send slightly invalid responses that are still accepted
                     // by common browsers.
@@ -9613,17 +9613,17 @@ function et() {
                     finishFlush: l.constants.Z_SYNC_FLUSH
                   }));
                 else if (ve === "deflate")
-                  ue.push(CA({
+                  he.push(CA({
                     flush: l.constants.Z_SYNC_FLUSH,
                     finishFlush: l.constants.Z_SYNC_FLUSH
                   }));
                 else if (ve === "br")
-                  ue.push(l.createBrotliDecompress({
+                  he.push(l.createBrotliDecompress({
                     flush: l.constants.BROTLI_OPERATION_FLUSH,
                     finishFlush: l.constants.BROTLI_OPERATION_FLUSH
                   }));
                 else {
-                  ue.length = 0;
+                  he.length = 0;
                   break;
                 }
               }
@@ -9633,7 +9633,7 @@ function et() {
               status: ZA,
               statusText: Ye,
               headersList: Ge,
-              body: ue.length ? fA(this.body, ...ue, (oe) => {
+              body: he.length ? fA(this.body, ...he, (oe) => {
                 oe && this.onError(oe);
               }).on("error", cn) : this.body.on("error", cn)
             }), !0;
@@ -10331,7 +10331,7 @@ var Nr, Hs;
 function qo() {
   if (Hs) return Nr;
   Hs = 1;
-  const { kConstruct: A } = nn(), { urlEquals: r, getFieldValues: t } = Wo(), { kEnumerableProperty: g, isDisturbed: e } = UA(), { webidl: s } = XA(), { Response: a, cloneResponse: Q, fromInnerResponse: l } = At(), { Request: B, fromInnerRequest: n } = Le(), { kState: i } = he(), { fetching: C } = et(), { urlIsHttpHttpsScheme: I, createDeferredPromise: c, readAllBytes: u } = re(), p = HA;
+  const { kConstruct: A } = nn(), { urlEquals: r, getFieldValues: t } = Wo(), { kEnumerableProperty: g, isDisturbed: e } = UA(), { webidl: s } = XA(), { Response: a, cloneResponse: Q, fromInnerResponse: l } = At(), { Request: B, fromInnerRequest: n } = Le(), { kState: i } = le(), { fetching: C } = et(), { urlIsHttpHttpsScheme: I, createDeferredPromise: c, readAllBytes: u } = re(), p = HA;
   class m {
     /**
      * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
@@ -12756,7 +12756,7 @@ var Li = function(A, r, t, g) {
     B((g = g.apply(A, r || [])).next());
   });
 };
-const { chmod: lg, copyFile: hg, lstat: ug, mkdir: dg, open: fg, readdir: ta, rename: wg, rm: yg, rmdir: Dg, stat: Kr, symlink: pg, unlink: kg } = qe.promises, de = process.platform === "win32";
+const { chmod: lg, copyFile: hg, lstat: ug, mkdir: dg, open: fg, readdir: ta, rename: wg, rm: yg, rmdir: Dg, stat: Kr, symlink: pg, unlink: kg } = qe.promises, ue = process.platform === "win32";
 qe.constants.O_RDONLY;
 function ra(A) {
   return Li(this, void 0, void 0, function* () {
@@ -12773,7 +12773,7 @@ function ra(A) {
 function Ti(A) {
   if (A = na(A), !A)
     throw new Error('isRooted() parameter "p" cannot be empty');
-  return de ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
+  return ue ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
 }
 function ai(A, r) {
   return Li(this, void 0, void 0, function* () {
@@ -12784,7 +12784,7 @@ function ai(A, r) {
       e.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${e}`);
     }
     if (t && t.isFile()) {
-      if (de) {
+      if (ue) {
         const e = Qe.extname(A).toUpperCase();
         if (r.some((s) => s.toUpperCase() === e))
           return A;
@@ -12800,7 +12800,7 @@ function ai(A, r) {
         s.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${s}`);
       }
       if (t && t.isFile()) {
-        if (de) {
+        if (ue) {
           try {
             const s = Qe.dirname(A), a = Qe.basename(A).toUpperCase();
             for (const Q of yield ta(s))
@@ -12820,7 +12820,7 @@ function ai(A, r) {
   });
 }
 function na(A) {
-  return A = A || "", de ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
+  return A = A || "", ue ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
 }
 function gi(A) {
   return (A.mode & 1) > 0 || (A.mode & 8) > 0 && process.getgid !== void 0 && A.gid === process.getgid() || (A.mode & 64) > 0 && process.getuid !== void 0 && A.uid === process.getuid();
@@ -12859,7 +12859,7 @@ function Gi(A, r) {
     if (r) {
       const g = yield Gi(A, !1);
       if (!g)
-        throw de ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+        throw ue ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
       return g;
     }
     const t = yield sa(A);
@@ -12871,7 +12871,7 @@ function sa(A) {
     if (!A)
       throw new Error("parameter 'tool' is required");
     const r = [];
-    if (de && process.env.PATHEXT)
+    if (ue && process.env.PATHEXT)
       for (const e of process.env.PATHEXT.split(Qe.delimiter))
         e && r.push(e);
     if (Ti(A)) {
@@ -13224,9 +13224,9 @@ function De(A, r) {
   process.stdout.write(ge.EOL), Ze("set-output", { name: A }, Re(r));
 }
 function We(A) {
-  process.exitCode = zr.Failure, le(A);
+  process.exitCode = zr.Failure, de(A);
 }
-function le(A, r = {}) {
+function de(A, r = {}) {
   Ze("error", no(r), A instanceof Error ? A.toString() : A);
 }
 function ne(A) {
@@ -13263,7 +13263,7 @@ const ga = () => {
     for (const g of t)
       try {
         const e = JSON.parse(g.trim());
-        e.message && (e.level === "ERROR" ? le(e.message) : ne(e.message));
+        e.message && (e.level === "ERROR" ? de(e.message) : ne(e.message));
       } catch {
       }
   };
@@ -13286,28 +13286,25 @@ const ga = () => {
     return t;
   });
 }, it = async (A, r) => {
-  const { listeners: t, getOutput: g } = Qa(), e = ca(), s = A.includes("-outputType=json");
-  ne(`Running: flyway ${Ea(A).join(" ")}`);
+  const { listeners: t, getOutput: g } = Qa(), e = ca(), s = [...A, "-outputType=json", "-outputLogsInJson=true"];
+  ne(`Running: flyway ${Ea(s).join(" ")}`);
   const a = {
-    silent: s,
+    silent: !0,
     ignoreReturnCode: !0,
-    listeners: {
-      stdout: t.stdout,
-      stderr: (n) => s ? e(n) : t.stderr(n)
-    },
+    listeners: { stdout: t.stdout, stderr: e },
     cwd: r || void 0
-  }, Q = await Ji("flyway", A, a), { stdout: l, stderr: B } = g();
-  if (s && (ne(l), Q !== 0)) {
+  }, Q = await Ji("flyway", s, a), { stdout: l, stderr: B } = g();
+  if (ne(l), Q !== 0) {
     const n = an(l);
-    n?.error?.message && le(n.error.message);
+    n?.error?.message && de(n.error.message);
   }
-  return !s && B && le(B), { exitCode: Q, stdout: l, stderr: B };
+  return { exitCode: Q, stdout: l, stderr: B };
 }, Ia = async () => {
   const { listener: A, getOutput: r } = ga();
   try {
     return await Ji("flyway", ["version", "-outputType=json"], { silent: !0, listeners: { stdout: A } }), { installed: !0, edition: JSON.parse(r()).edition?.toLowerCase() ?? "community" };
   } catch (t) {
-    return t instanceof Error ? le(t.message) : le(String(t)), { installed: !1 };
+    return t instanceof Error ? de(t.message) : de(String(t)), { installed: !1 };
   }
 }, an = (A) => {
   try {
@@ -13322,7 +13319,7 @@ const ga = () => {
     return;
   }
 }, Ca = "default_build", ot = (A) => {
-  const r = ["check", "-outputType=json", "-outputLogsInJson=true"];
+  const r = ["check"];
   return A.workingDirectory && r.push(`-workingDirectory=${A.workingDirectory}`), A.extraArgs && r.push(...Ba(A.extraArgs)), r;
 }, vi = (A) => {
   const r = [...Qn(A)];
@@ -13359,7 +13356,7 @@ const ga = () => {
     nt("Running Flyway check: deployment changes report");
     try {
       const g = await it(t, A.workingDirectory);
-      return da(gn(g.stdout)), g.exitCode !== 0 && an(g.stdout)?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !A.buildOkToErase && le(
+      return da(gn(g.stdout)), g.exitCode !== 0 && an(g.stdout)?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !A.buildOkToErase && de(
         'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.'
       ), { exitCode: g.exitCode };
     } finally {
@@ -13418,8 +13415,6 @@ const ga = () => {
     ...Qn(A),
     ...A.failOnDrift ? ["-check.failOnDrift=true"] : []
   ];
-}, Bi = (A) => {
-  De("drift-detected", A.toString());
 }, pa = async (A, r) => {
   const t = Da(A, r);
   if (t) {
@@ -13436,7 +13431,9 @@ const ga = () => {
       st();
     }
   }
-}, ka = (A) => !!A?.individualResults?.filter((r) => r.operation === "drift").some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length), Ra = (A, r) => {
+}, ka = (A) => !!A?.individualResults?.filter((r) => r.operation === "drift").some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length), Bi = (A) => {
+  De("drift-detected", A.toString());
+}, Ra = (A, r) => {
   if (r === "community") {
     ne("Skipping deployment script review: not available in Community edition");
     return;

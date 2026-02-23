@@ -2021,10 +2021,10 @@ function Ke() {
   }
   return lt = B, lt;
 }
-var ht = {}, de = {}, fn;
+var ht = {}, fe = {}, fn;
 function oo() {
-  if (fn) return de;
-  fn = 1, Object.defineProperty(de, "__esModule", { value: !0 }), de.enumToMap = void 0;
+  if (fn) return fe;
+  fn = 1, Object.defineProperty(fe, "__esModule", { value: !0 }), fe.enumToMap = void 0;
   function A(r) {
     const t = {};
     return Object.keys(r).forEach((g) => {
@@ -2032,7 +2032,7 @@ function oo() {
       typeof e == "number" && (t[g] = e);
     }), t;
   }
-  return de.enumToMap = A, de;
+  return fe.enumToMap = A, fe;
 }
 var dn;
 function ao() {
@@ -7921,7 +7921,7 @@ function So() {
   }, cr;
 }
 var Br, fs;
-function ue() {
+function he() {
   if (fs) return Br;
   fs = 1;
   const { kConstruct: A } = WA(), { kEnumerableProperty: r } = UA(), {
@@ -8250,7 +8250,7 @@ var Er, ds;
 function $e() {
   if (ds) return Er;
   ds = 1;
-  const { Headers: A, HeadersList: r, fill: t, getHeadersGuard: g, setHeadersGuard: e, setHeadersList: s } = ue(), { extractBody: a, cloneBody: Q, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: n, bodyUnusable: i } = Ne(), C = UA(), I = jA, { kEnumerableProperty: c } = C, {
+  const { Headers: A, HeadersList: r, fill: t, getHeadersGuard: g, setHeadersGuard: e, setHeadersList: s } = he(), { extractBody: a, cloneBody: Q, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: n, bodyUnusable: i } = Ne(), C = UA(), I = jA, { kEnumerableProperty: c } = C, {
     isValidReasonPhrase: u,
     isCancelled: p,
     isAborted: m,
@@ -8562,7 +8562,7 @@ var Cr, ys;
 function Le() {
   if (ys) return Cr;
   ys = 1;
-  const { extractBody: A, mixinBody: r, cloneBody: t, bodyUnusable: g } = Ne(), { Headers: e, fill: s, HeadersList: a, setHeadersGuard: Q, getHeadersGuard: l, setHeadersList: B, getHeadersList: n } = ue(), { FinalizationRegistry: i } = bo()(), C = UA(), I = jA, {
+  const { extractBody: A, mixinBody: r, cloneBody: t, bodyUnusable: g } = Ne(), { Headers: e, fill: s, HeadersList: a, setHeadersGuard: Q, getHeadersGuard: l, setHeadersList: B, getHeadersList: n } = he(), { FinalizationRegistry: i } = bo()(), C = UA(), I = jA, {
     isValidHTTPToken: c,
     sameOrigin: u,
     environmentSettingsObject: p
@@ -9095,7 +9095,7 @@ function At() {
     filterResponse: t,
     makeResponse: g,
     fromInnerResponse: e
-  } = $e(), { HeadersList: s } = ue(), { Request: a, cloneRequest: Q } = Le(), l = Or, {
+  } = $e(), { HeadersList: s } = he(), { Request: a, cloneRequest: Q } = Le(), l = Or, {
     bytesMatch: B,
     makePolicyContainer: n,
     clonePolicyContainer: i,
@@ -11041,7 +11041,7 @@ var Nr, Ys;
 function Vo() {
   if (Ys) return Nr;
   Ys = 1;
-  const { parseSetCookie: A } = Ho(), { stringify: r } = di(), { webidl: t } = XA(), { Headers: g } = ue();
+  const { parseSetCookie: A } = Ho(), { stringify: r } = di(), { webidl: t } = XA(), { Headers: g } = he();
   function e(l) {
     t.argumentLengthCheck(arguments, 1, "getCookies"), t.brandCheck(l, g, { strict: !1 });
     const B = l.get("cookie"), n = {};
@@ -11355,7 +11355,7 @@ function Te() {
   }, Sr;
 }
 var br, Js;
-function fe() {
+function ue() {
   if (Js) return br;
   Js = 1;
   const A = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", r = {
@@ -11418,7 +11418,7 @@ var Mr, Hs;
 function tt() {
   if (Hs) return Mr;
   Hs = 1;
-  const { kReadyState: A, kController: r, kResponse: t, kBinaryType: g, kWebSocketURL: e } = et(), { states: s, opcodes: a } = fe(), { ErrorEvent: Q, createFastMessageEvent: l } = Te(), { isUtf8: B } = re, { collectASequenceOfCodePointsFast: n, removeHTTPWhitespace: i } = $A();
+  const { kReadyState: A, kController: r, kResponse: t, kBinaryType: g, kWebSocketURL: e } = et(), { states: s, opcodes: a } = ue(), { ErrorEvent: Q, createFastMessageEvent: l } = Te(), { isUtf8: B } = re, { collectASequenceOfCodePointsFast: n, removeHTTPWhitespace: i } = $A();
   function C(M) {
     return M[A] === s.CONNECTING;
   }
@@ -11553,7 +11553,7 @@ var Lr, Vs;
 function $r() {
   if (Vs) return Lr;
   Vs = 1;
-  const { maxUnsigned16Bit: A } = fe(), r = 16386;
+  const { maxUnsigned16Bit: A } = ue(), r = 16386;
   let t, g = null, e = r;
   try {
     t = require("node:crypto");
@@ -11597,13 +11597,13 @@ var Tr, xs;
 function wi() {
   if (xs) return Tr;
   xs = 1;
-  const { uid: A, states: r, sentCloseFrameState: t, emptyBuffer: g, opcodes: e } = fe(), {
+  const { uid: A, states: r, sentCloseFrameState: t, emptyBuffer: g, opcodes: e } = ue(), {
     kReadyState: s,
     kSentClose: a,
     kByteParser: Q,
     kReceivedClose: l,
     kResponse: B
-  } = et(), { fireEvent: n, failWebsocketConnection: i, isClosing: C, isClosed: I, isEstablished: c, parseExtensions: u } = tt(), { channels: p } = Fe(), { CloseEvent: m } = Te(), { makeRequest: S } = Le(), { fetching: L } = At(), { Headers: U, getHeadersList: b } = ue(), { getDecodeSplit: E } = te(), { WebsocketFrameSend: h } = $r();
+  } = et(), { fireEvent: n, failWebsocketConnection: i, isClosing: C, isClosed: I, isEstablished: c, parseExtensions: u } = tt(), { channels: p } = Fe(), { CloseEvent: m } = Te(), { makeRequest: S } = Le(), { fetching: L } = At(), { Headers: U, getHeadersList: b } = he(), { getDecodeSplit: E } = te(), { WebsocketFrameSend: h } = $r();
   let D;
   try {
     D = require("node:crypto");
@@ -11753,7 +11753,7 @@ var Gr, qs;
 function Wo() {
   if (qs) return Gr;
   qs = 1;
-  const { Writable: A } = ee, r = HA, { parserStates: t, opcodes: g, states: e, emptyBuffer: s, sentCloseFrameState: a } = fe(), { kReadyState: Q, kSentClose: l, kResponse: B, kReceivedClose: n } = et(), { channels: i } = Fe(), {
+  const { Writable: A } = ee, r = HA, { parserStates: t, opcodes: g, states: e, emptyBuffer: s, sentCloseFrameState: a } = ue(), { kReadyState: Q, kSentClose: l, kResponse: B, kReceivedClose: n } = et(), { channels: i } = Fe(), {
     isValidStatusCode: C,
     isValidOpcode: I,
     failWebsocketConnection: c,
@@ -11959,7 +11959,7 @@ var Jr, Os;
 function qo() {
   if (Os) return Jr;
   Os = 1;
-  const { WebsocketFrameSend: A } = $r(), { opcodes: r, sendHints: t } = fe(), g = Qi(), e = Buffer[Symbol.species];
+  const { WebsocketFrameSend: A } = $r(), { opcodes: r, sendHints: t } = ue(), g = Qi(), e = Buffer[Symbol.species];
   class s {
     /**
      * @type {FixedQueue}
@@ -12028,7 +12028,7 @@ var vr, Ps;
 function Oo() {
   if (Ps) return vr;
   Ps = 1;
-  const { webidl: A } = XA(), { URLSerializer: r } = $A(), { environmentSettingsObject: t } = te(), { staticPropertyDescriptors: g, states: e, sentCloseFrameState: s, sendHints: a } = fe(), {
+  const { webidl: A } = XA(), { URLSerializer: r } = $A(), { environmentSettingsObject: t } = te(), { staticPropertyDescriptors: g, states: e, sentCloseFrameState: s, sendHints: a } = ue(), {
     kWebSocketURL: Q,
     kReadyState: l,
     kController: B,
@@ -12699,7 +12699,7 @@ function Ko() {
     } catch (pA) {
       throw pA && typeof pA == "object" && Error.captureStackTrace(pA), pA;
     }
-  }, DA.Headers = ue().Headers, DA.Response = $e().Response, DA.Request = Le().Request, DA.FormData = Xe().FormData, DA.File = globalThis.File ?? re.File, DA.FileReader = To().FileReader;
+  }, DA.Headers = he().Headers, DA.Response = $e().Response, DA.Request = Le().Request, DA.FormData = Xe().FormData, DA.File = globalThis.File ?? re.File, DA.FileReader = To().FileReader;
   const { setGlobalOrigin: o, getGlobalOrigin: d } = ai();
   DA.setGlobalOrigin = o, DA.getGlobalOrigin = d;
   const { CacheStorage: w } = Jo(), { kConstruct: f } = jr();
@@ -13218,15 +13218,15 @@ function ra(A, r) {
   throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${A}
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 }
-function ye(A, r) {
+function we(A, r) {
   if (process.env.GITHUB_OUTPUT || "")
     return eo("OUTPUT", to(A, r));
   process.stdout.write(ae.EOL), Pe("set-output", { name: A }, ke(r));
 }
-function we(A) {
-  process.exitCode = qr.Failure, he(A);
+function de(A) {
+  process.exitCode = qr.Failure, ye(A);
 }
-function he(A, r = {}) {
+function ye(A, r = {}) {
   Pe("error", _i(r), A instanceof Error ? A.toString() : A);
 }
 function De(A) {
@@ -13263,7 +13263,7 @@ const na = () => {
     for (const g of t)
       try {
         const e = JSON.parse(g.trim());
-        e.message && (e.level === "ERROR" ? he(e.message) : De(e.message));
+        e.message && (e.level === "ERROR" ? ye(e.message) : De(e.message));
       } catch {
       }
   };
@@ -13286,28 +13286,25 @@ const na = () => {
     return t;
   });
 }, Si = async (A, r) => {
-  const { listeners: t, getOutput: g } = sa(), e = ia(), s = A.includes("-outputType=json");
-  De(`Running: flyway ${aa(A).join(" ")}`);
+  const { listeners: t, getOutput: g } = sa(), e = ia(), s = [...A, "-outputType=json", "-outputLogsInJson=true"];
+  De(`Running: flyway ${aa(s).join(" ")}`);
   const a = {
-    silent: s,
+    silent: !0,
     ignoreReturnCode: !0,
-    listeners: {
-      stdout: t.stdout,
-      stderr: (n) => s ? e(n) : t.stderr(n)
-    },
+    listeners: { stdout: t.stdout, stderr: e },
     cwd: r || void 0
-  }, Q = await Fi("flyway", A, a), { stdout: l, stderr: B } = g();
-  if (s && (De(l), Q !== 0)) {
+  }, Q = await Fi("flyway", s, a), { stdout: l, stderr: B } = g();
+  if (De(l), Q !== 0) {
     const n = bi(l);
-    n?.error?.message && he(n.error.message);
+    n?.error?.message && ye(n.error.message);
   }
-  return !s && B && he(B), { exitCode: Q, stdout: l, stderr: B };
+  return { exitCode: Q, stdout: l, stderr: B };
 }, ga = async () => {
   const { listener: A, getOutput: r } = na();
   try {
     return await Fi("flyway", ["version", "-outputType=json"], { silent: !0, listeners: { stdout: A } }), { installed: !0, edition: JSON.parse(r()).edition?.toLowerCase() ?? "community" };
   } catch (t) {
-    return t instanceof Error ? he(t.message) : he(String(t)), { installed: !1 };
+    return t instanceof Error ? ye(t.message) : ye(String(t)), { installed: !1 };
   }
 }, bi = (A) => {
   try {
@@ -13324,8 +13321,6 @@ const na = () => {
   "check",
   "-drift",
   "-check.failOnDrift=true",
-  "-outputType=json",
-  "-outputLogsInJson=true",
   ...Ui(A)
 ], ca = async (A) => {
   mi("Checking for drift");
@@ -13336,9 +13331,9 @@ const na = () => {
     Ni();
   }
 }, Ba = (A, r) => {
-  ye("exit-code", A.toString()), ye("drift-detected", r.toString());
+  we("exit-code", A.toString()), we("drift-detected", r.toString());
 }, Ea = (A) => {
-  const r = ["migrate", "-outputType=json", "-outputLogsInJson=true", ...Ui(A)];
+  const r = ["migrate", ...Ui(A)];
   return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-migrate.saveSnapshot=true"), r;
 }, Ia = async (A) => {
   mi("Running migrations");
@@ -13350,7 +13345,7 @@ const na = () => {
     Ni();
   }
 }, Ca = (A) => {
-  ye("exit-code", A.exitCode.toString()), ye("migrations-applied", A.migrationsApplied.toString()), ye("schema-version", A.schemaVersion);
+  we("exit-code", A.exitCode.toString()), we("migrations-applied", A.migrationsApplied.toString()), we("schema-version", A.schemaVersion);
 }, la = (A) => {
   try {
     const r = JSON.parse(A);
@@ -13378,12 +13373,12 @@ const na = () => {
   try {
     const A = await ga();
     if (!A.installed) {
-      we("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
+      de("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
     const r = ha();
     if (!r.targetEnvironment && !r.targetUrl) {
-      we(
+      de(
         'Either "target-environment" or "target-url" must be provided for Flyway to connect to a database.'
       );
       return;
@@ -13392,7 +13387,7 @@ const na = () => {
       if (r.skipDriftCheck)
         De('Skipping drift check: "skip-drift-check" set to true');
       else if (await ca(r)) {
-        we("Drift detected. Aborting deployment.");
+        de("Drift detected. Aborting deployment.");
         return;
       }
       r.saveSnapshot = !0;
@@ -13400,7 +13395,7 @@ const na = () => {
       De(`Skipping drift check as edition is not Enterprise (actual edition: ${A.edition}).`);
     await Ia(r);
   } catch (A) {
-    A instanceof Error ? we(A.message) : we(String(A));
+    A instanceof Error ? de(A.message) : de(String(A));
   }
 };
 await fa();

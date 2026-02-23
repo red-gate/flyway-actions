@@ -8,7 +8,7 @@ import { runFlyway } from "@flyway-actions/shared";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
-  const args: string[] = ["migrate", "-outputType=json", "-outputLogsInJson=true", ...getCommonArgs(inputs)];
+  const args: string[] = ["migrate", ...getCommonArgs(inputs)];
 
   if (inputs.targetMigrationVersion) {
     args.push(`-target=${inputs.targetMigrationVersion}`);
