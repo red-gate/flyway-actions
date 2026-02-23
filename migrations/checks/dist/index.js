@@ -3636,7 +3636,7 @@ function re() {
   }, Nt;
 }
 var St, Gn;
-function he() {
+function le() {
   return Gn || (Gn = 1, St = {
     kUrl: /* @__PURE__ */ Symbol("url"),
     kHeaders: /* @__PURE__ */ Symbol("headers"),
@@ -3649,7 +3649,7 @@ var bt, Jn;
 function ui() {
   if (Jn) return bt;
   Jn = 1;
-  const { Blob: A, File: r } = se, { kState: t } = he(), { webidl: g } = XA();
+  const { Blob: A, File: r } = se, { kState: t } = le(), { webidl: g } = XA();
   class e {
     constructor(Q, l, B = {}) {
       const n = l, i = B.type, C = B.lastModified ?? Date.now();
@@ -3698,7 +3698,7 @@ var Ut, vn;
 function _e() {
   if (vn) return Ut;
   vn = 1;
-  const { isBlobLike: A, iteratorMixin: r } = re(), { kState: t } = he(), { kEnumerableProperty: g } = UA(), { FileLike: e, isFileLike: s } = ui(), { webidl: a } = XA(), { File: Q } = se, l = $A, B = globalThis.File ?? Q;
+  const { isBlobLike: A, iteratorMixin: r } = re(), { kState: t } = le(), { kEnumerableProperty: g } = UA(), { FileLike: e, isFileLike: s } = ui(), { webidl: a } = XA(), { File: Q } = se, l = $A, B = globalThis.File ?? Q;
   class n {
     constructor(I) {
       if (a.util.markAsUncloneable(this), I !== void 0)
@@ -3959,7 +3959,7 @@ function Ne() {
     fullyReadBody: a,
     extractMimeType: Q,
     utf8DecodeBytes: l
-  } = re(), { FormData: B } = _e(), { kState: n } = he(), { webidl: i } = XA(), { Blob: C } = se, I = HA, { isErrored: c, isDisturbed: u } = te, { isArrayBuffer: p } = Ei, { serializeAMimeType: m } = Ae(), { multipartFormDataParser: S } = lo();
+  } = re(), { FormData: B } = _e(), { kState: n } = le(), { webidl: i } = XA(), { Blob: C } = se, I = HA, { isErrored: c, isDisturbed: u } = te, { isArrayBuffer: p } = Ei, { serializeAMimeType: m } = Ae(), { multipartFormDataParser: S } = lo();
   let M;
   try {
     const G = require("node:crypto");
@@ -8262,7 +8262,7 @@ function At() {
   } = re(), {
     redirectStatusSet: h,
     nullBodyStatus: D
-  } = Xe(), { kState: o, kHeaders: f } = he(), { webidl: w } = XA(), { FormData: d } = _e(), { URLSerializer: y } = Ae(), { kConstruct: k } = WA(), L = HA, { types: T } = $A, Y = new TextEncoder("utf-8");
+  } = Xe(), { kState: o, kHeaders: f } = le(), { webidl: w } = XA(), { FormData: d } = _e(), { URLSerializer: y } = Ae(), { kConstruct: k } = WA(), L = HA, { types: T } = $A, Y = new TextEncoder("utf-8");
   class G {
     // Creates network error Response.
     static error() {
@@ -8575,7 +8575,7 @@ function Le() {
     requestCredentials: E,
     requestCache: h,
     requestDuplex: D
-  } = Xe(), { kEnumerableProperty: o, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: k, kDispatcher: L } = he(), { webidl: T } = XA(), { URLSerializer: Y } = Ae(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new i(({ signal: x, abort: z }) => {
+  } = Xe(), { kEnumerableProperty: o, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: k, kDispatcher: L } = le(), { webidl: T } = XA(), { URLSerializer: Y } = Ae(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new i(({ signal: x, abort: z }) => {
     x.removeEventListener("abort", z);
   }), pA = /* @__PURE__ */ new WeakMap();
   function yA(x) {
@@ -9129,7 +9129,7 @@ function et() {
     buildContentRange: lA,
     createInflate: CA,
     extractMimeType: IA
-  } = re(), { kState: pA, kDispatcher: yA } = he(), j = HA, { safelyExtractBody: P, extractBody: rA } = Ne(), {
+  } = re(), { kState: pA, kDispatcher: yA } = le(), j = HA, { safelyExtractBody: P, extractBody: rA } = Ne(), {
     redirectStatusSet: v,
     nullBodyStatus: O,
     safeMethodsSet: x,
@@ -9596,7 +9596,7 @@ function et() {
             for (let oe = 0; oe < jA.length; oe += 2)
               Ge.append(mA(jA[oe]), jA[oe + 1].toString("latin1"), !0);
             Be = Ge.get("location", !0), this.body = new iA({ read: at });
-            const ue = [], vi = Be && W.redirect === "follow" && v.has(ZA);
+            const he = [], vi = Be && W.redirect === "follow" && v.has(ZA);
             if (W.method !== "HEAD" && W.method !== "CONNECT" && !O.includes(ZA) && !vi) {
               const oe = Ge.get("content-encoding", !0), Je = oe ? oe.toLowerCase().split(",") : [], cn = 5;
               if (Je.length > cn)
@@ -9604,7 +9604,7 @@ function et() {
               for (let gt = Je.length - 1; gt >= 0; --gt) {
                 const ve = Je[gt].trim();
                 if (ve === "x-gzip" || ve === "gzip")
-                  ue.push(l.createGunzip({
+                  he.push(l.createGunzip({
                     // Be less strict when decoding compressed responses, since sometimes
                     // servers send slightly invalid responses that are still accepted
                     // by common browsers.
@@ -9613,17 +9613,17 @@ function et() {
                     finishFlush: l.constants.Z_SYNC_FLUSH
                   }));
                 else if (ve === "deflate")
-                  ue.push(CA({
+                  he.push(CA({
                     flush: l.constants.Z_SYNC_FLUSH,
                     finishFlush: l.constants.Z_SYNC_FLUSH
                   }));
                 else if (ve === "br")
-                  ue.push(l.createBrotliDecompress({
+                  he.push(l.createBrotliDecompress({
                     flush: l.constants.BROTLI_OPERATION_FLUSH,
                     finishFlush: l.constants.BROTLI_OPERATION_FLUSH
                   }));
                 else {
-                  ue.length = 0;
+                  he.length = 0;
                   break;
                 }
               }
@@ -9633,7 +9633,7 @@ function et() {
               status: ZA,
               statusText: Ye,
               headersList: Ge,
-              body: ue.length ? fA(this.body, ...ue, (oe) => {
+              body: he.length ? fA(this.body, ...he, (oe) => {
                 oe && this.onError(oe);
               }).on("error", Qn) : this.body.on("error", Qn)
             }), !0;
@@ -10331,7 +10331,7 @@ var Nr, vs;
 function Wo() {
   if (vs) return Nr;
   vs = 1;
-  const { kConstruct: A } = nn(), { urlEquals: r, getFieldValues: t } = xo(), { kEnumerableProperty: g, isDisturbed: e } = UA(), { webidl: s } = XA(), { Response: a, cloneResponse: Q, fromInnerResponse: l } = At(), { Request: B, fromInnerRequest: n } = Le(), { kState: i } = he(), { fetching: C } = et(), { urlIsHttpHttpsScheme: I, createDeferredPromise: c, readAllBytes: u } = re(), p = HA;
+  const { kConstruct: A } = nn(), { urlEquals: r, getFieldValues: t } = xo(), { kEnumerableProperty: g, isDisturbed: e } = UA(), { webidl: s } = XA(), { Response: a, cloneResponse: Q, fromInnerResponse: l } = At(), { Request: B, fromInnerRequest: n } = Le(), { kState: i } = le(), { fetching: C } = et(), { urlIsHttpHttpsScheme: I, createDeferredPromise: c, readAllBytes: u } = re(), p = HA;
   class m {
     /**
      * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
@@ -12756,7 +12756,7 @@ var Ui = function(A, r, t, g) {
     B((g = g.apply(A, r || [])).next());
   });
 };
-const { chmod: Cg, copyFile: lg, lstat: hg, mkdir: ug, open: dg, readdir: ea, rename: fg, rm: wg, rmdir: yg, stat: Kr, symlink: Dg, unlink: pg } = qe.promises, de = process.platform === "win32";
+const { chmod: Cg, copyFile: lg, lstat: hg, mkdir: ug, open: dg, readdir: ea, rename: fg, rm: wg, rmdir: yg, stat: Kr, symlink: Dg, unlink: pg } = qe.promises, ue = process.platform === "win32";
 qe.constants.O_RDONLY;
 function ta(A) {
   return Ui(this, void 0, void 0, function* () {
@@ -12773,7 +12773,7 @@ function ta(A) {
 function Mi(A) {
   if (A = ra(A), !A)
     throw new Error('isRooted() parameter "p" cannot be empty');
-  return de ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
+  return ue ? A.startsWith("\\") || /^[A-Z]:/i.test(A) : A.startsWith("/");
 }
 function oi(A, r) {
   return Ui(this, void 0, void 0, function* () {
@@ -12784,7 +12784,7 @@ function oi(A, r) {
       e.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${e}`);
     }
     if (t && t.isFile()) {
-      if (de) {
+      if (ue) {
         const e = Qe.extname(A).toUpperCase();
         if (r.some((s) => s.toUpperCase() === e))
           return A;
@@ -12800,7 +12800,7 @@ function oi(A, r) {
         s.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${A}': ${s}`);
       }
       if (t && t.isFile()) {
-        if (de) {
+        if (ue) {
           try {
             const s = Qe.dirname(A), a = Qe.basename(A).toUpperCase();
             for (const Q of yield ea(s))
@@ -12820,7 +12820,7 @@ function oi(A, r) {
   });
 }
 function ra(A) {
-  return A = A || "", de ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
+  return A = A || "", ue ? (A = A.replace(/\//g, "\\"), A.replace(/\\\\+/g, "\\")) : A.replace(/\/\/+/g, "/");
 }
 function ai(A) {
   return (A.mode & 1) > 0 || (A.mode & 8) > 0 && process.getgid !== void 0 && A.gid === process.getgid() || (A.mode & 64) > 0 && process.getuid !== void 0 && A.uid === process.getuid();
@@ -12859,7 +12859,7 @@ function Ti(A, r) {
     if (r) {
       const g = yield Ti(A, !1);
       if (!g)
-        throw de ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+        throw ue ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
       return g;
     }
     const t = yield na(A);
@@ -12871,7 +12871,7 @@ function na(A) {
     if (!A)
       throw new Error("parameter 'tool' is required");
     const r = [];
-    if (de && process.env.PATHEXT)
+    if (ue && process.env.PATHEXT)
       for (const e of process.env.PATHEXT.split(Qe.delimiter))
         e && r.push(e);
     if (Mi(A)) {
@@ -13224,9 +13224,9 @@ function De(A, r) {
   process.stdout.write(ge.EOL), Ze("set-output", { name: A }, ke(r));
 }
 function We(A) {
-  process.exitCode = zr.Failure, le(A);
+  process.exitCode = zr.Failure, de(A);
 }
-function le(A, r = {}) {
+function de(A, r = {}) {
   Ze("error", ro(r), A instanceof Error ? A.toString() : A);
 }
 function ne(A) {
@@ -13263,7 +13263,7 @@ const aa = () => {
     for (const g of t)
       try {
         const e = JSON.parse(g.trim());
-        e.message && (e.level === "ERROR" ? le(e.message) : ne(e.message));
+        e.message && (e.level === "ERROR" ? de(e.message) : ne(e.message));
       } catch {
       }
   };
@@ -13286,28 +13286,28 @@ const aa = () => {
     return t;
   });
 }, it = async (A, r) => {
-  const { listeners: t, getOutput: g } = ga(), e = Qa(), s = A.includes("-outputType=json");
+  const { listeners: t, getOutput: g } = ga(), e = Qa();
   ne(`Running: flyway ${Ba(A).join(" ")}`);
-  const a = {
-    silent: s,
+  const s = {
+    silent: !0,
     ignoreReturnCode: !0,
     listeners: {
       stdout: t.stdout,
-      stderr: (n) => s ? e(n) : t.stderr(n)
+      stderr: (B) => e(B)
     },
     cwd: r || void 0
-  }, Q = await Yi("flyway", A, a), { stdout: l, stderr: B } = g();
-  if (s && (ne(l), Q !== 0)) {
-    const n = Gi(l);
-    n?.error?.message && le(n.error.message);
+  }, a = await Yi("flyway", A, s), { stdout: Q, stderr: l } = g();
+  if (ne(Q), a !== 0) {
+    const B = Gi(Q);
+    B?.error?.message && de(B.error.message);
   }
-  return !s && B && le(B), { exitCode: Q, stdout: l, stderr: B };
+  return { exitCode: a, stdout: Q, stderr: l };
 }, Ea = async () => {
   const { listener: A, getOutput: r } = aa();
   try {
     return await Yi("flyway", ["version", "-outputType=json"], { silent: !0, listeners: { stdout: A } }), { installed: !0, edition: JSON.parse(r()).edition?.toLowerCase() ?? "community" };
   } catch (t) {
-    return t instanceof Error ? le(t.message) : le(String(t)), { installed: !1 };
+    return t instanceof Error ? de(t.message) : de(String(t)), { installed: !1 };
   }
 }, Gi = (A) => {
   try {
@@ -13359,7 +13359,7 @@ const aa = () => {
     nt("Running Flyway check: deployment changes report");
     try {
       const g = await it(t, A.workingDirectory);
-      return ua(an(g.stdout)), g.exitCode !== 0 && Gi(g.stdout)?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !A.buildOkToErase && le(
+      return ua(an(g.stdout)), g.exitCode !== 0 && Gi(g.stdout)?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !A.buildOkToErase && de(
         'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.'
       ), { exitCode: g.exitCode };
     } finally {
