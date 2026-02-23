@@ -22,10 +22,6 @@ const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEditi
   ];
 };
 
-const setOutput = (driftDetected: boolean) => {
-  core.setOutput("drift-detected", driftDetected.toString());
-};
-
 const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition) => {
   const args = getDriftArgs(inputs, edition);
   if (!args) {
@@ -41,7 +37,6 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
       setOutput(isDriftDetected(output));
     } else {
       const errorOutput = parseErrorOutput(result.stdout);
-
       if (errorOutput?.error?.message?.includes("Drift detected")) {
         setOutput(true);
       }
@@ -56,5 +51,9 @@ const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
   !!output?.individualResults
     ?.filter((r): r is Drift => r.operation === "drift")
     .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
+
+const setOutput = (driftDetected: boolean) => {
+  core.setOutput("drift-detected", driftDetected.toString());
+};
 
 export { getDriftArgs, runCheckDrift };
