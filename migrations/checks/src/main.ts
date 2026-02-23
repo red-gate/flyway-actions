@@ -3,6 +3,14 @@ import { getFlywayDetails } from "@flyway-actions/shared";
 import { runChecks } from "./flyway/run-checks.js";
 import { getInputs, maskSecrets } from "./inputs.js";
 
+if (process.env.FLYWAY_INPUTS) {
+  for (const [key, value] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS) as Record<string, string>)) {
+    if (value) {
+      process.env[`INPUT_${key.toUpperCase()}`] = value;
+    }
+  }
+}
+
 const run = async (): Promise<void> => {
   try {
     const flywayDetails = await getFlywayDetails();

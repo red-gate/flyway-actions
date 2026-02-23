@@ -62,13 +62,6 @@ jobs:
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
-      - name: Upload Flyway pre-deployment report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: flyway-report
-          path: my-flyway-project/report.html
-          retention-days: 1
 ```
 
 ### Manual review between checks and deployment (Flyway Enterprise)
@@ -106,13 +99,6 @@ jobs:
           build-user: "${{ secrets.FLYWAY_BUILD_USER }}"
           build-password: "${{ secrets.FLYWAY_BUILD_PASSWORD }}"
           working-directory: my-flyway-project
-      - name: Upload Flyway pre-deployment report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: flyway-report
-          path: my-flyway-project/report.html
-          retention-days: 1
   deploy:
     needs: checks
     runs-on: ubuntu-latest
