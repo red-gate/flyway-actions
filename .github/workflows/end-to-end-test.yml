@@ -50,6 +50,7 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-project
+          extra-args: '-reportFilename=reports/custom-report'
           pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
@@ -66,7 +67,7 @@ jobs:
           name: flyway-pre-deployment-report-${{ matrix.os }}
       - name: Verify report exists
         shell: bash
-        run: test -s report.html
+        run: test -s custom-report.html
       - name: Test outputs
         shell: bash
         run: |

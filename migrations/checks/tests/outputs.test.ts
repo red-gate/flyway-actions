@@ -18,4 +18,14 @@ describe("parseCheckOutput", () => {
 
     expect(result?.individualResults).toBeUndefined();
   });
+
+  it("should parse htmlReport field", () => {
+    const stdout = JSON.stringify({
+      htmlReport: "custom-report.html",
+      individualResults: [{ operation: "drift" }],
+    });
+    const result = parseCheckOutput(stdout);
+
+    expect(result?.htmlReport).toBe("custom-report.html");
+  });
 });

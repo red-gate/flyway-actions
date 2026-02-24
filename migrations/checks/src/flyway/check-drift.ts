@@ -35,11 +35,11 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     if (exitCode === 0) {
       const output = parseCheckOutput(result.stdout);
       setOutput(isDriftDetected(output));
-    } else {
-      const errorOutput = parseErrorOutput(result.stdout);
-      if (errorOutput?.error?.message?.includes("Drift detected")) {
-        setOutput(true);
-      }
+      return { exitCode, reportPath: output?.htmlReport };
+    }
+    const errorOutput = parseErrorOutput(result.stdout);
+    if (errorOutput?.error?.message?.includes("Drift detected")) {
+      setOutput(true);
     }
     return { exitCode };
   } finally {

@@ -2,6 +2,7 @@ import type { FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as core from "@actions/core";
 import { runFlyway } from "@flyway-actions/shared";
+import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetArgs } from "./arg-builders.js";
 
 const getDryrunArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
@@ -24,7 +25,8 @@ const runCheckDryrun = async (inputs: FlywayMigrationsChecksInputs, edition: Fly
   core.startGroup("Running Flyway check: deployment script review");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    return { exitCode: result.exitCode };
+    const output = parseCheckOutput(result.stdout);
+    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
   }

@@ -30,6 +30,6 @@ type Code = { operation?: "code"; results?: { violations?: { code?: string }[] }
 
 type Dryrun = { operation?: "dryrun" };
 
-type FlywayCheckOutput = { individualResults?: (Drift | Changes | Code | Dryrun)[] };
+type FlywayCheckOutput = { htmlReport?: string; individualResults?: (Drift | Changes | Code | Dryrun)[] };
 
 export type { Changes, Code, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };
