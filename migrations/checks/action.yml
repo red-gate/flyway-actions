@@ -82,14 +82,14 @@ inputs:
     description: 'Skip uploading the pre-deployment report as a workflow artifact'
     required: false
     default: 'false'
-  pre-deployment-report-retention-days:
-    description: 'Number of days to retain the pre-deployment report artifact'
-    required: false
-    default: '7'
   pre-deployment-report-name:
     description: 'Name for the pre-deployment report artifact'
     required: false
     default: 'flyway-pre-deployment-report'
+  pre-deployment-report-retention-days:
+    description: 'Number of days to retain the pre-deployment report artifact'
+    required: false
+    default: '7'
 
 outputs:
   exit-code:
@@ -117,7 +117,6 @@ runs:
       shell: bash
       env:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
-
     - name: Upload pre-deployment report
       if: inputs.skip-pre-deployment-report-upload == 'false' && always()
       uses: actions/upload-artifact@v4
