@@ -1,5 +1,6 @@
 import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
+import * as path from "node:path";
 import * as core from "@actions/core";
 import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
@@ -41,7 +42,7 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     }
 
     const output = parseCheckOutput(result.stdout);
-    setOutput(isDriftDetected(output));
+    setOutput(isDriftDetected(output), getDriftResolutionFolder(inputs, output));
     return { exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
@@ -53,8 +54,22 @@ const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
     ?.filter((r): r is Drift => r.operation === "drift")
     .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
-const setOutput = (driftDetected: boolean) => {
+const getDriftResolutionFolder = (inputs: FlywayMigrationsChecksInputs, output: FlywayCheckOutput | undefined) => {
+  const folder = output?.individualResults?.find(
+    (r): r is Drift => r.operation === "drift" && !!r.driftResolutionFolder,
+  )?.driftResolutionFolder;
+  if (!folder) {
+    return undefined;
+  }
+  if (path.isAbsolute(folder)) {
+    return folder;
+  }
+  return inputs.workingDirectory ? path.join(inputs.workingDirectory, folder) : folder;
+};
+
+const setOutput = (driftDetected: boolean, driftResolutionFolder?: string) => {
   core.setOutput("drift-detected", driftDetected.toString());
+  driftResolutionFolder && core.setOutput("drift-resolution-folder", driftResolutionFolder);
 };
 
 export { getDriftArgs, runCheckDrift };
