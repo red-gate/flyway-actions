@@ -30,18 +30,19 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   core.startGroup("Running Flyway check: drift");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-
     const exitCode = result.exitCode;
-    if (exitCode === 0) {
-      const output = parseCheckOutput(result.stdout);
-      setOutput(isDriftDetected(output));
-      return { exitCode, reportPath: output?.htmlReport };
+
+    if (exitCode !== 0) {
+      const errorOutput = parseErrorOutput(result.stdout);
+      if (errorOutput?.error?.message?.includes("Drift detected")) {
+        setOutput(true);
+      }
+      return { exitCode };
     }
-    const errorOutput = parseErrorOutput(result.stdout);
-    if (errorOutput?.error?.message?.includes("Drift detected")) {
-      setOutput(true);
-    }
-    return { exitCode };
+
+    const output = parseCheckOutput(result.stdout);
+    setOutput(isDriftDetected(output));
+    return { exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
   }
