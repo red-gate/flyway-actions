@@ -16,10 +16,11 @@ Supports 50+ databases including PostgreSQL, MySQL, SQL Server, and Oracle.
 
 ## Actions
 
-| Action                                    | Description                                                 |
-|-------------------------------------------|-------------------------------------------------------------|
-| [`migrations/checks`](migrations/checks)  | Run pre-deployment checks on migrations and target database |
-| [`migrations/deploy`](migrations/deploy)  | Deploy pending migrations against target database           |
+| Action                                                     | Description                                                 |
+|------------------------------------------------------------|-------------------------------------------------------------|
+| [`setup-flyway`](https://github.com/red-gate/setup-flyway) | Install Flyway CLI in your GitHub Actions workflow          |
+| [`migrations/checks`](migrations/checks)                   | Run pre-deployment checks on migrations and target database |
+| [`migrations/deploy`](migrations/deploy)                   | Deploy pending migrations against target database           |
 
 ## Usage
 
