@@ -18,18 +18,18 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
 
     const errorOutput = parseErrorOutput(result.stdout);
     const driftDetected =
-      result.exitCode === 0 ? false : (errorOutput?.error?.message?.includes("Drift detected") ?? false);
+      result.exitCode === 0 ? false : errorOutput?.error?.message?.includes("Drift detected") || undefined;
     setDriftOutput(result.exitCode, driftDetected);
 
-    return driftDetected;
+    return !!driftDetected;
   } finally {
     core.endGroup();
   }
 };
 
-const setDriftOutput = (exitCode: number, driftDetected: boolean): void => {
+const setDriftOutput = (exitCode: number, driftDetected: boolean | undefined): void => {
   core.setOutput("exit-code", exitCode.toString());
-  core.setOutput("drift-detected", driftDetected.toString());
+  driftDetected !== undefined && core.setOutput("drift-detected", driftDetected.toString());
 };
 
 export { checkForDrift, getCheckDriftArgs };

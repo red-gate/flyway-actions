@@ -24,6 +24,7 @@ describe("checkForDrift", () => {
 
     await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
@@ -37,7 +38,22 @@ describe("checkForDrift", () => {
 
     await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+  });
+
+  it("should not set drift-detected output when non-drift error occurs", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Something else failed" } })),
+      );
+      return Promise.resolve(1);
+    });
+
+    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
 });
 
