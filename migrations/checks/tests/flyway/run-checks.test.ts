@@ -1,5 +1,6 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
+import * as path from "node:path";
 
 const info = vi.fn();
 const error = vi.fn();
@@ -203,7 +204,7 @@ describe("runChecks", () => {
 
     await runChecks({ workingDirectory: "my-project" }, "enterprise");
 
-    expect(setOutput).toHaveBeenCalledWith("report-path", "my-project/custom-report.html");
+    expect(setOutput).toHaveBeenCalledWith("report-path", path.join("my-project", "custom-report.html"));
   });
 
   it("should not prepend working directory when htmlReport is absolute", async () => {

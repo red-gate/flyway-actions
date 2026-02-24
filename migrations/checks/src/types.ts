@@ -22,7 +22,13 @@ type FlywayMigrationsChecksInputs = {
   extraArgs?: string;
 };
 
-type Drift = { operation?: "drift"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
+type Drift = {
+  operation?: "drift";
+  onlyInSource?: unknown[];
+  onlyInTarget?: unknown[];
+  differences?: unknown[];
+  driftResolutionFolder?: string;
+};
 
 type Changes = { operation?: "changes"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
 

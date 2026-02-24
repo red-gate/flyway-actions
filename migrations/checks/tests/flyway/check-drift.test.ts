@@ -1,5 +1,6 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
+import * as path from "node:path";
 
 const info = vi.fn();
 const setOutput = vi.fn();
@@ -167,5 +168,67 @@ describe("runDriftCheck", () => {
     const result = await runCheckDrift(baseInputs, "enterprise");
 
     expect(result?.reportPath).toBeUndefined();
+  });
+
+  it("should set drift-resolution-folder output when present in drift result", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
+          }),
+        ),
+      );
+      return Promise.resolve(0);
+    });
+
+    await runCheckDrift(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "drift-scripts");
+  });
+
+  it("should not set drift-resolution-folder output when not present", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
+      return Promise.resolve(0);
+    });
+
+    await runCheckDrift(baseInputs, "enterprise");
+
+    expect(setOutput).not.toHaveBeenCalledWith("drift-resolution-folder", expect.anything());
+  });
+
+  it("should prepend working directory to drift-resolution-folder", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
+          }),
+        ),
+      );
+      return Promise.resolve(0);
+    });
+
+    await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", path.join("my-project", "drift-scripts"));
+  });
+
+  it("should not prepend working directory when drift-resolution-folder is absolute", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            individualResults: [{ operation: "drift", driftResolutionFolder: "/tmp/drift-scripts" }],
+          }),
+        ),
+      );
+      return Promise.resolve(0);
+    });
+
+    await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/tmp/drift-scripts");
   });
 });

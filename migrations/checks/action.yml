@@ -90,6 +90,18 @@ inputs:
     description: 'Number of days to retain the pre-deployment report artifact'
     required: false
     default: '7'
+  skip-drift-resolution-upload:
+    description: 'Skip uploading drift resolution scripts as a workflow artifact'
+    required: false
+    default: 'false'
+  drift-resolution-scripts-name:
+    description: 'Name for the drift resolution scripts artifact'
+    required: false
+    default: 'flyway-drift-resolution-scripts'
+  drift-resolution-scripts-retention-days:
+    description: 'Number of days to retain the drift resolution scripts artifact'
+    required: false
+    default: '7'
 
 outputs:
   exit-code:
@@ -124,4 +136,12 @@ runs:
         name: ${{ inputs.pre-deployment-report-name }}
         path: ${{ steps.checks.outputs.report-path }}
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
+        if-no-files-found: ignore
+    - name: Upload drift resolution scripts
+      if: inputs.skip-drift-resolution-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.drift-resolution-scripts-name }}
+        path: ${{ steps.checks.outputs.drift-resolution-folder }}
+        retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
         if-no-files-found: ignore
