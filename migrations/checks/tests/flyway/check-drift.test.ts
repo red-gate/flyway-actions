@@ -139,4 +139,33 @@ describe("runDriftCheck", () => {
 
     expect(setOutput).not.toHaveBeenCalled();
   });
+
+  it("should return reportPath from parsed output", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            htmlReport: "custom-report.html",
+            individualResults: [{ operation: "drift" }],
+          }),
+        ),
+      );
+      return Promise.resolve(0);
+    });
+
+    const result = await runCheckDrift(baseInputs, "enterprise");
+
+    expect(result?.reportPath).toBe("custom-report.html");
+  });
+
+  it("should return undefined reportPath when output has no htmlReport", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
+      return Promise.resolve(0);
+    });
+
+    const result = await runCheckDrift(baseInputs, "enterprise");
+
+    expect(result?.reportPath).toBeUndefined();
+  });
 });

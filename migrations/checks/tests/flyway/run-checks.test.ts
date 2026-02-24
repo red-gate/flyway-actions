@@ -172,4 +172,58 @@ describe("runChecks", () => {
     await expect(runChecks({ buildUrl: "jdbc:sqlite:build.db", buildOkToErase: true }, "enterprise")).rejects.toThrow();
     expect(error).not.toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
   });
+
+  it("should set report-path to report.html when no htmlReport in output", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from("{}"));
+      return Promise.resolve(0);
+    });
+
+    await runChecks(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("report-path", "report.html");
+  });
+
+  it("should set report-path from htmlReport in check output", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "custom-report.html" })));
+      return Promise.resolve(0);
+    });
+
+    await runChecks(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("report-path", "custom-report.html");
+  });
+
+  it("should prepend working directory to report-path", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "custom-report.html" })));
+      return Promise.resolve(0);
+    });
+
+    await runChecks({ workingDirectory: "my-project" }, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("report-path", "my-project/custom-report.html");
+  });
+
+  it("should not prepend working directory when htmlReport is absolute", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "/tmp/reports/custom-report.html" })));
+      return Promise.resolve(0);
+    });
+
+    await runChecks({ workingDirectory: "my-project" }, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("report-path", "/tmp/reports/custom-report.html");
+  });
+
+  it("should set report-path before throwing on failure", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "custom-report.html" })));
+      return Promise.resolve(1);
+    });
+
+    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow();
+    expect(setOutput).toHaveBeenCalledWith("report-path", "custom-report.html");
+  });
 });

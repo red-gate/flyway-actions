@@ -123,6 +123,6 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.pre-deployment-report-name }}
-        path: ${{ inputs.working-directory && format('{0}/report.html', inputs.working-directory) || 'report.html' }}
+        path: ${{ steps.checks.outputs.report-path }}
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
         if-no-files-found: ignore

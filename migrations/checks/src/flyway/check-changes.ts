@@ -31,7 +31,8 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
   core.startGroup("Running Flyway check: deployment changes report");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    setChangesOutputs(parseCheckOutput(result.stdout));
+    const output = parseCheckOutput(result.stdout);
+    setChangesOutputs(output);
     if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !inputs.buildOkToErase) {
@@ -40,7 +41,7 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
         );
       }
     }
-    return { exitCode: result.exitCode };
+    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
   }
