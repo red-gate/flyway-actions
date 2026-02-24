@@ -13325,13 +13325,13 @@ const na = () => {
 ], ca = async (A) => {
   mi("Checking for drift");
   try {
-    const r = Qa(A), t = await Si(r, A.workingDirectory), g = bi(t.stdout), e = t.exitCode === 0 ? !1 : g?.error?.message?.includes("Drift detected") ?? !1;
-    return Ba(t.exitCode, e), e;
+    const r = Qa(A), t = await Si(r, A.workingDirectory), g = bi(t.stdout), e = t.exitCode === 0 ? !1 : g?.error?.message?.includes("Drift detected") || void 0;
+    return Ba(t.exitCode, e), !!e;
   } finally {
     Ni();
   }
 }, Ba = (A, r) => {
-  we("exit-code", A.toString()), we("drift-detected", r.toString());
+  we("exit-code", A.toString()), r !== void 0 && we("drift-detected", r.toString());
 }, Ea = (A) => {
   const r = ["migrate", ...Ui(A)];
   return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-migrate.saveSnapshot=true"), r;
