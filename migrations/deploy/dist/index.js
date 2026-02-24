@@ -12728,7 +12728,7 @@ var js;
 })(js || (js = {}));
 oe.MovedPermanently, oe.ResourceMoved, oe.SeeOther, oe.TemporaryRedirect, oe.PermanentRedirect;
 oe.BadGateway, oe.ServiceUnavailable, oe.GatewayTimeout;
-const { access: Ag, appendFile: eg, writeFile: tg } = Ti;
+const { access: tg, appendFile: rg, writeFile: ng } = Ti;
 var Di = function(A, r, t, g) {
   function e(s) {
     return s instanceof t ? s : new t(function(a) {
@@ -12756,7 +12756,7 @@ var Di = function(A, r, t, g) {
     B((g = g.apply(A, r || [])).next());
   });
 };
-const { chmod: rg, copyFile: ng, lstat: sg, mkdir: ig, open: og, readdir: zo, rename: ag, rm: gg, rmdir: Qg, stat: Wr, symlink: cg, unlink: Bg } = We.promises, le = process.platform === "win32";
+const { chmod: sg, copyFile: ig, lstat: og, mkdir: ag, open: gg, readdir: zo, rename: Qg, rm: cg, rmdir: Bg, stat: Wr, symlink: Eg, unlink: Ig } = We.promises, le = process.platform === "win32";
 We.constants.O_RDONLY;
 function Xo(A) {
   return Di(this, void 0, void 0, function* () {
@@ -13325,34 +13325,35 @@ const na = () => {
 ], ca = async (A) => {
   mi("Checking for drift");
   try {
-    const r = Qa(A), t = await Si(r, A.workingDirectory), g = t.exitCode;
-    let e;
-    return g === 0 ? e = !1 : bi(t.stdout)?.error?.message?.includes("Drift detected") && (e = !0), we("exit-code", g.toString()), e !== void 0 && we("drift-detected", e.toString()), !!e;
+    const r = Qa(A), t = await Si(r, A.workingDirectory), g = Ba(t.exitCode, t.stdout);
+    return Ea(t.exitCode, g), !!g;
   } finally {
     Ni();
   }
-}, Ba = (A) => {
+}, Ba = (A, r) => A !== 0 ? bi(r)?.error?.message?.includes("Drift detected") ? !0 : void 0 : !1, Ea = (A, r) => {
+  we("exit-code", A.toString()), r !== void 0 && we("drift-detected", r.toString());
+}, Ia = (A) => {
   const r = ["migrate", ...Ui(A)];
   return A.targetMigrationVersion && r.push(`-target=${A.targetMigrationVersion}`), A.cherryPick && r.push(`-cherryPick=${A.cherryPick}`), A.saveSnapshot && r.push("-migrate.saveSnapshot=true"), r;
-}, Ea = async (A) => {
+}, Ca = async (A) => {
   mi("Running migrations");
   try {
-    const r = Ba(A), t = await Si(r, A.workingDirectory), { migrationsApplied: g, schemaVersion: e } = Ca(t.stdout);
-    if (Ia({ exitCode: t.exitCode, migrationsApplied: g, schemaVersion: e }), t.exitCode !== 0)
+    const r = Ia(A), t = await Si(r, A.workingDirectory), { migrationsApplied: g, schemaVersion: e } = ha(t.stdout);
+    if (la({ exitCode: t.exitCode, migrationsApplied: g, schemaVersion: e }), t.exitCode !== 0)
       throw new Error(`Flyway migrate failed with exit code ${t.exitCode}`);
   } finally {
     Ni();
   }
-}, Ia = (A) => {
+}, la = (A) => {
   we("exit-code", A.exitCode.toString()), we("migrations-applied", A.migrationsApplied.toString()), we("schema-version", A.schemaVersion);
-}, Ca = (A) => {
+}, ha = (A) => {
   try {
     const r = JSON.parse(A);
     return { migrationsApplied: r.migrationsExecuted ?? 0, schemaVersion: r.targetSchemaVersion ?? "unknown" };
   } catch {
     return { migrationsApplied: 0, schemaVersion: "unknown" };
   }
-}, la = () => {
+}, ua = () => {
   const A = ie("target-environment") || void 0, r = ie("target-url") || void 0, t = ie("target-user") || void 0, g = ie("target-password") || void 0, e = ie("target-schemas") || void 0, s = ie("target-migration-version") || void 0, a = ie("cherry-pick") || void 0, Q = ra("skip-drift-check"), l = ie("working-directory"), B = l ? ge.resolve(l) : void 0, n = ie("extra-args") || void 0;
   return {
     targetEnvironment: A,
@@ -13366,23 +13367,23 @@ const na = () => {
     workingDirectory: B,
     extraArgs: n
   };
-}, ha = (A) => {
+}, fa = (A) => {
   A.targetPassword && ta(A.targetPassword);
-}, ua = async () => {
+}, da = async () => {
   try {
     const A = await ga();
     if (!A.installed) {
       de("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
-    const r = la();
+    const r = ua();
     if (!r.targetEnvironment && !r.targetUrl) {
       de(
         'Either "target-environment" or "target-url" must be provided for Flyway to connect to a database.'
       );
       return;
     }
-    if (ha(r), A.edition === "enterprise") {
+    if (fa(r), A.edition === "enterprise") {
       if (r.skipDriftCheck)
         De('Skipping drift check: "skip-drift-check" set to true');
       else if (await ca(r)) {
@@ -13392,9 +13393,9 @@ const na = () => {
       r.saveSnapshot = !0;
     } else
       De(`Skipping drift check as edition is not Enterprise (actual edition: ${A.edition}).`);
-    await Ea(r);
+    await Ca(r);
   } catch (A) {
     A instanceof Error ? de(A.message) : de(String(A));
   }
 };
-await ua();
+await da();
