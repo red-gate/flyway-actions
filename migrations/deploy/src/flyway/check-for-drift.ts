@@ -16,20 +16,26 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     const driftArgs = getCheckDriftArgs(inputs);
     const result = await runFlyway(driftArgs, inputs.workingDirectory);
 
-    const errorOutput = parseErrorOutput(result.stdout);
-    const driftDetected =
-      result.exitCode === 0 ? false : (errorOutput?.error?.message?.includes("Drift detected") ?? false);
-    setDriftOutput(result.exitCode, driftDetected);
+    const exitCode = result.exitCode;
+    let driftDetected: boolean | undefined;
+    if (exitCode === 0) {
+      driftDetected = false;
+    } else {
+      const errorOutput = parseErrorOutput(result.stdout);
+      if (errorOutput?.error?.message?.includes("Drift detected")) {
+        driftDetected = true;
+      }
+    }
 
-    return driftDetected;
+    core.setOutput("exit-code", exitCode.toString());
+    if (driftDetected !== undefined) {
+      core.setOutput("drift-detected", driftDetected.toString());
+    }
+
+    return !!driftDetected;
   } finally {
     core.endGroup();
   }
-};
-
-const setDriftOutput = (exitCode: number, driftDetected: boolean): void => {
-  core.setOutput("exit-code", exitCode.toString());
-  core.setOutput("drift-detected", driftDetected.toString());
 };
 
 export { checkForDrift, getCheckDriftArgs };
