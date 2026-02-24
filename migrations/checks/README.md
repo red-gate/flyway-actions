@@ -194,11 +194,11 @@ A build database is required for the deployment changes report. If no build data
 
 The pre-deployment report is automatically uploaded as a workflow artifact after checks complete (even if checks fail).
 
-| Input                                  | Description                                            | Required | Default                        |
-|----------------------------------------|--------------------------------------------------------|----------|--------------------------------|
-| `pre-deployment-report-name`           | Name for the pre-deployment report artifact            | No       | `flyway-pre-deployment-report` |
-| `pre-deployment-report-retention-days` | Number of days to retain the pre-deployment report artifact | No  | `7`                            |
-| `skip-pre-deployment-report-upload`    | Skip uploading the pre-deployment report               | No       | `false`                        |
+| Input                                  | Description                                                 | Required | Default                        |
+|----------------------------------------|-------------------------------------------------------------|----------|--------------------------------|
+| `pre-deployment-report-name`           | Name for the pre-deployment report artifact                 | No       | `flyway-pre-deployment-report` |
+| `pre-deployment-report-retention-days` | Number of days to retain the pre-deployment report artifact | No       | `7`                            |
+| `skip-pre-deployment-report-upload`    | Skip uploading the pre-deployment report                    | No       | `false`                        |
 
 If the checks action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `pre-deployment-report-name` for each run to avoid artifact name conflicts:
 
@@ -212,6 +212,30 @@ steps:
       target-environment: ${{ matrix.target }}
       working-directory: my-flyway-project
       pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.target }}
+```
+
+### Drift Resolution Script Upload
+
+When drift is detected, Flyway generates resolution scripts that can be used to bring the target database back in line with the expected state. These scripts are automatically uploaded as a workflow artifact.
+
+| Input                                    | Description                                                    | Required | Default                            |
+|------------------------------------------|----------------------------------------------------------------|----------|------------------------------------|
+| `drift-resolution-scripts-name`          | Name for the drift resolution scripts artifact                 | No       | `flyway-drift-resolution-scripts`  |
+| `drift-resolution-scripts-retention-days`| Number of days to retain the drift resolution scripts artifact | No       | `7`                                |
+| `skip-drift-resolution-upload`           | Skip uploading drift resolution scripts                        | No       | `false`                            |
+
+If the checks action runs more than once in the same workflow, use a unique `drift-resolution-scripts-name` for each run to avoid artifact name conflicts:
+
+```yaml
+strategy:
+  matrix:
+    target: [staging, production]
+steps:
+  - uses: red-gate/flyway-actions/migrations/checks@v1
+    with:
+      target-environment: ${{ matrix.target }}
+      working-directory: my-flyway-project
+      drift-resolution-scripts-name: flyway-drift-resolution-scripts-${{ matrix.target }}
 ```
 
 ### Other
