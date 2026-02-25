@@ -29,6 +29,10 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to deploy'
     required: false
+  baseline-on-migrate:
+    description: 'Whether to automatically baseline the target database on migrate'
+    required: false
+    default: 'true'
   skip-drift-check:
     description: 'Skip the drift check'
     required: false
