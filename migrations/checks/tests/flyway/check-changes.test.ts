@@ -1,14 +1,24 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
+import type { ExecOptions } from "@actions/exec";
 
 const info = vi.fn();
+const error = vi.fn();
 const setOutput = vi.fn();
+const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
+  error,
   setOutput,
+  startGroup: vi.fn(),
+  endGroup: vi.fn(),
 }));
 
-const { getChangesArgs, setChangesOutputs } = await import("../../src/flyway/check-changes.js");
+vi.doMock("@actions/exec", () => ({
+  exec,
+}));
+
+const { getChangesArgs, runCheckChanges, setChangesOutputs } = await import("../../src/flyway/check-changes.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -78,6 +88,31 @@ describe("getChangesArgs", () => {
       getChangesArgs({ skipDeploymentChangesReport: true, buildUrl: "jdbc:sqlite:build.db" }, "enterprise"),
     ).toBeUndefined();
     expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
+  });
+});
+
+describe("runCheckChanges", () => {
+  it("should return exit code 0 when database does not support comparison", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+              message: "No comparison capability found that supports both types",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    const result = await runCheckChanges({ buildUrl: "jdbc:h2:mem:build" }, "enterprise");
+
+    expect(result?.exitCode).toBe(0);
+    expect(info).toHaveBeenCalledWith(
+      "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
+    );
   });
 });
 
