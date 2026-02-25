@@ -128,6 +128,30 @@ describe("runDriftCheck", () => {
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
 
+  it("should return exit code 0 when database does not support comparison", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+              message: "No comparison capability found that supports both types",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    const result = await runCheckDrift(baseInputs, "enterprise");
+
+    expect(result?.exitCode).toBe(0);
+    expect(setOutput).not.toHaveBeenCalled();
+    expect(info).toHaveBeenCalledWith(
+      "Drift check could not be run because advanced comparison features are not supported for this database type.",
+    );
+  });
+
   it("should not set drift-detected when exit code is non-zero and error code is not CHECK_DRIFT_DETECTED", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
