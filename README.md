@@ -14,6 +14,8 @@
 These actions allow you to safely deploy database schema changes to your databases using [Redgate Flyway](https://www.red-gate.com/products/flyway/).
 Supports 50+ databases including PostgreSQL, MySQL, SQL Server, and Oracle.
 
+These actions can be used both for database deployment pipelines, and for validation of your PRs.
+
 ## Actions
 
 | Action                                                     | Description                                                 |
