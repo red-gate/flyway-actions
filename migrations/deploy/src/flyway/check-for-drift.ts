@@ -24,6 +24,8 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
       const errorOutput = parseErrorOutput(result.stdout);
       if (errorOutput?.error?.message?.includes("Drift detected")) {
         driftDetected = true;
+      } else {
+        errorOutput?.error?.message && core.error(errorOutput.error.message);
       }
     }
 

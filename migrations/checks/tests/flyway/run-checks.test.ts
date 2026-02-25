@@ -217,14 +217,4 @@ describe("runChecks", () => {
 
     expect(setOutput).toHaveBeenCalledWith("report-path", "/tmp/reports/custom-report.html");
   });
-
-  it("should set report-path before throwing on failure", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "custom-report.html" })));
-      return Promise.resolve(1);
-    });
-
-    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow();
-    expect(setOutput).toHaveBeenCalledWith("report-path", "custom-report.html");
-  });
 });

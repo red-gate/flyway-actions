@@ -244,7 +244,7 @@ describe("runFlyway", () => {
     expect(error).toHaveBeenCalledWith("Migrate failed");
   });
 
-  it("should log stdout and error message on failure", async () => {
+  it("should log stdout on failure without parsing error", async () => {
     const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Checks failed" } });
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(Buffer.from(stdout));
@@ -254,7 +254,7 @@ describe("runFlyway", () => {
     await runFlyway(["check"]);
 
     expect(info).toHaveBeenCalledWith(stdout);
-    expect(error).toHaveBeenCalledWith("Checks failed");
+    expect(error).not.toHaveBeenCalled();
   });
 
   it("should not log raw stderr as error", async () => {

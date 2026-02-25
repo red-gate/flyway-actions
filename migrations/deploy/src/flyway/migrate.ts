@@ -4,7 +4,7 @@ import type {
   FlywayMigrationsDeploymentOutputs,
 } from "../types.js";
 import * as core from "@actions/core";
-import { runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
@@ -31,12 +31,14 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
     const args = getMigrateArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
-    const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
-    setOutputs({ exitCode: result.exitCode, migrationsApplied, schemaVersion });
-
     if (result.exitCode !== 0) {
+      const errorOutput = parseErrorOutput(result.stdout);
+      errorOutput?.error?.message && core.error(errorOutput.error.message);
       throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
     }
+
+    const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
+    setOutputs({ exitCode: result.exitCode, migrationsApplied, schemaVersion });
   } finally {
     core.endGroup();
   }

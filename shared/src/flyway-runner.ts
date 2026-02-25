@@ -67,10 +67,6 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
   const { stdout, stderr } = getOutput();
 
   core.info(stdout);
-  if (exitCode !== 0) {
-    const errorOutput = parseErrorOutput(stdout);
-    errorOutput?.error?.message && core.error(errorOutput.error.message);
-  }
 
   return { exitCode, stdout, stderr };
 };
