@@ -2,6 +2,8 @@
 
 A GitHub Action to run pre-deployment checks on your Flyway migrations and target database.
 
+This action can be used both as a validation step in deployment pipelines, and on its own for validation of your PRs.
+
 ## Behavior under different editions
 
 ### Flyway Enterprise
