@@ -6,6 +6,7 @@ type FlywayMigrationsDeploymentInputs = {
   targetSchemas?: string;
   targetMigrationVersion?: string;
   cherryPick?: string;
+  baselineOnMigrate?: boolean;
   skipDriftCheck?: boolean;
   workingDirectory?: string;
   extraArgs?: string;

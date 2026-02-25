@@ -10,6 +10,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const targetSchemas = core.getInput("target-schemas") || undefined;
   const targetMigrationVersion = core.getInput("target-migration-version") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
+  const baselineOnMigrate = core.getBooleanInput("baseline-on-migrate");
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
@@ -23,6 +24,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
     targetSchemas,
     targetMigrationVersion,
     cherryPick,
+    baselineOnMigrate,
     skipDriftCheck,
     workingDirectory,
     extraArgs,

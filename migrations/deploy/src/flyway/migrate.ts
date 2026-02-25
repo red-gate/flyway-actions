@@ -18,6 +18,10 @@ const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
     args.push(`-cherryPick=${inputs.cherryPick}`);
   }
 
+  if (inputs.baselineOnMigrate) {
+    args.push("-baselineOnMigrate=true");
+  }
+
   if (inputs.saveSnapshot) {
     args.push("-migrate.saveSnapshot=true");
   }

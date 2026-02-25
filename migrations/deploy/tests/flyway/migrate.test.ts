@@ -171,6 +171,27 @@ describe("getMigrateArgs", () => {
     expect(args).toContain("-cherryPick=2.0,2.1");
   });
 
+  it("should include -baselineOnMigrate=true when baselineOnMigrate is true", () => {
+    const inputs: FlywayMigrationsDeploymentInputs = {
+      targetUrl: "jdbc:postgresql://localhost/db",
+      baselineOnMigrate: true,
+    };
+
+    const args = getMigrateArgs(inputs);
+
+    expect(args).toContain("-baselineOnMigrate=true");
+  });
+
+  it("should omit -baselineOnMigrate when baselineOnMigrate is not set", () => {
+    const inputs: FlywayMigrationsDeploymentInputs = {
+      targetUrl: "jdbc:postgresql://localhost/db",
+    };
+
+    const args = getMigrateArgs(inputs);
+
+    expect(args.some((a) => a.includes("baselineOnMigrate"))).toBe(false);
+  });
+
   it("should include -migrate.saveSnapshot=true when saveSnapshot is true", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
