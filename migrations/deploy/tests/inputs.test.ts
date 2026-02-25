@@ -95,8 +95,16 @@ describe("getInputs", () => {
     expect(inputs.cherryPick).toBe("3.0,4.0");
   });
 
+  it("should get baseline-on-migrate input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "baseline-on-migrate");
+
+    const inputs = getInputs();
+
+    expect(inputs.baselineOnMigrate).toBe(true);
+  });
+
   it("should get skip-drift-check input", () => {
-    getBooleanInput.mockReturnValue(true);
+    getBooleanInput.mockImplementation((name: string) => name === "skip-drift-check");
 
     const inputs = getInputs();
 
