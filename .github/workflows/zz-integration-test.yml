@@ -64,7 +64,7 @@ jobs:
           pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Download report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: flyway-pre-deployment-report-${{ matrix.os }}
       - name: Verify report exists
@@ -125,7 +125,7 @@ jobs:
           pre-deployment-report-name: flyway-drift-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Download report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: flyway-drift-report-${{ matrix.os }}
       - name: Verify report exists
