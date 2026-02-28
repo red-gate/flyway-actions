@@ -135,9 +135,9 @@ runs:
       with:
         name: ${{ inputs.pre-deployment-report-name }}
         path: ${{ steps.checks.outputs.report-path }}
+        archive: false
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
         if-no-files-found: ignore
-        archive: false
     - name: Upload drift resolution scripts
       if: inputs.skip-drift-resolution-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
