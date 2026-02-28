@@ -50,7 +50,6 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-project
-          extra-args: '-reportFilename=reports/custom-report'
           pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
@@ -62,12 +61,12 @@ jobs:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-project
       - name: Download report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
-          name: flyway-pre-deployment-report-${{ matrix.os }}
+          name: flyway-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s custom-report.html
+        run: test -s flyway-pre-deployment-report-${{ matrix.os }}.html
       - name: Test outputs
         shell: bash
         run: |

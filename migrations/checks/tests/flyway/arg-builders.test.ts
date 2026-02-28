@@ -165,6 +165,23 @@ describe("getCheckCommandArgs", () => {
     expect(args).toContain("-workingDirectory=/app/db");
   });
 
+  it("should include report filename when preDeploymentReportName is set", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      preDeploymentReportName: "deployment-report",
+    };
+
+    const args = getCheckCommandArgs(inputs);
+
+    expect(args).toContain("-reportFilename=deployment-report");
+  });
+
+  it("should not include report filename when preDeploymentReportName is not set", () => {
+    const args = getCheckCommandArgs(baseInputs);
+
+    expect(args.some((a) => a.startsWith("-reportFilename="))).toBe(false);
+  });
+
   it("should include extra args", () => {
     const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, extraArgs: "-X -custom=value" };
 
@@ -172,5 +189,20 @@ describe("getCheckCommandArgs", () => {
 
     expect(args).toContain("-X");
     expect(args).toContain("-custom=value");
+  });
+
+  it("should place extra args after report filename", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      extraArgs: "-reportFilename=override-name",
+      preDeploymentReportName: "deployment-report",
+    };
+
+    const args = getCheckCommandArgs(inputs);
+
+    const reportNameIndex = args.indexOf("-reportFilename=deployment-report");
+    const extraArgIndex = args.indexOf("-reportFilename=override-name");
+
+    expect(extraArgIndex).toBeGreaterThan(reportNameIndex);
   });
 });

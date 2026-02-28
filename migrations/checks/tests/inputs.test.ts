@@ -130,6 +130,19 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
   });
 
+  it("should return pre-deployment report name", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "pre-deployment-report-name") {
+        return "my-deployment-report";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.preDeploymentReportName).toBe("my-deployment-report");
+  });
+
   it("should return extra args", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "extra-args") {
@@ -181,6 +194,7 @@ describe("getInputs", () => {
     expect(inputs.buildSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
+    expect(inputs.preDeploymentReportName).toBeUndefined();
   });
 });
 

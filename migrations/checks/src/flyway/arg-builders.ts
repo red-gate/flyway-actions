@@ -10,6 +10,10 @@ const getCheckCommandArgs = (inputs: FlywayMigrationsChecksInputs): string[] => 
     args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }
 
+  if (inputs.preDeploymentReportName) {
+    args.push(`-reportFilename=${inputs.preDeploymentReportName}`);
+  }
+
   if (inputs.extraArgs) {
     args.push(...parseExtraArgs(inputs.extraArgs));
   }

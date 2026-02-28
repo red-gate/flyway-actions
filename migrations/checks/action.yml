@@ -131,15 +131,16 @@ runs:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
     - name: Upload pre-deployment report
       if: inputs.skip-pre-deployment-report-upload == 'false' && always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.pre-deployment-report-name }}
         path: ${{ steps.checks.outputs.report-path }}
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
         if-no-files-found: ignore
+        archive: false
     - name: Upload drift resolution scripts
       if: inputs.skip-drift-resolution-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.drift-resolution-scripts-name }}
         path: ${{ steps.checks.outputs.drift-resolution-folder }}

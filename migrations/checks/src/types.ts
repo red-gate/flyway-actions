@@ -19,6 +19,7 @@ type FlywayMigrationsChecksInputs = {
   failOnCodeReview?: boolean;
   failOnDrift?: boolean;
   workingDirectory?: string;
+  preDeploymentReportName?: string;
   extraArgs?: string;
 };
 

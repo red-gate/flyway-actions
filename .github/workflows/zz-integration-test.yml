@@ -64,12 +64,12 @@ jobs:
           pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Download report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
-          name: flyway-pre-deployment-report-${{ matrix.os }}
+          name: flyway-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s report.html
+        run: test -s flyway-pre-deployment-report-${{ matrix.os }}.html
       - name: Test outputs
         shell: bash
         run: |
@@ -125,12 +125,12 @@ jobs:
           pre-deployment-report-name: flyway-drift-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Download report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
-          name: flyway-drift-report-${{ matrix.os }}
+          name: flyway-drift-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s report.html
+        run: test -s flyway-drift-report-${{ matrix.os }}.html
       - name: Verify checks failed due to drift
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"
