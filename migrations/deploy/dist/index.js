@@ -13327,7 +13327,7 @@ const na = () => {
       e = !1;
     else {
       const n = Ui(t.stdout);
-      n?.error?.message?.includes("Drift detected") ? e = !0 : n?.error?.message && he(n.error.message);
+      n?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? e = !0 : n?.error?.message && he(n.error.message);
     }
     return ye("exit-code", g.toString()), e !== void 0 && ye("drift-detected", e.toString()), !!e;
   } finally {
