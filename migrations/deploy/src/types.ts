@@ -10,6 +10,7 @@ type FlywayMigrationsDeploymentInputs = {
   skipDriftCheck?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
+  driftReportName?: string;
   saveSnapshot?: boolean;
 };
 

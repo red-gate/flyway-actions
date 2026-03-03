@@ -15,6 +15,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
+  const driftReportName = core.getInput("drift-report-name") || undefined;
 
   return {
     targetEnvironment,
@@ -28,6 +29,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
     skipDriftCheck,
     workingDirectory,
     extraArgs,
+    driftReportName,
   };
 };
 
