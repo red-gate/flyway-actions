@@ -60,7 +60,7 @@ jobs:
           build-url: jdbc:sqlite:database/build.db
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
           pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Download report
@@ -121,7 +121,7 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/drift.db
           fail-on-code-review: 'false'
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
           pre-deployment-report-name: flyway-drift-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-drift-resolution-${{ matrix.os }}
@@ -187,7 +187,7 @@ jobs:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
           skip-pre-deployment-report-upload: 'true'
       - name: Verify checks failed due to code review
         shell: bash
@@ -237,7 +237,7 @@ jobs:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
       - name: Test outputs
         shell: bash
         run: |
@@ -286,7 +286,7 @@ jobs:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
           drift-report-name: flyway-deploy-drift-report-${{ matrix.os }}
           drift-report-retention-days: '1'
       - name: Download drift report
