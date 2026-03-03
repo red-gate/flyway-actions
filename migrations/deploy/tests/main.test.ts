@@ -53,7 +53,7 @@ describe("run", () => {
       }
       if (hasDriftCheck && callCount === 2) {
         options?.listeners?.stdout?.(
-          Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Drift detected" } })),
+          Buffer.from(JSON.stringify({ error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } })),
         );
         return Promise.resolve(driftExitCode);
       }

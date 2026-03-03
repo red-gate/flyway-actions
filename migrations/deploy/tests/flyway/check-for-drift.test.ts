@@ -28,10 +28,10 @@ describe("checkForDrift", () => {
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
-  it("should set drift-detected output to true when drift is detected", async () => {
+  it("should set drift-detected output to true when error code is CHECK_DRIFT_DETECTED", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Drift detected" } })),
+        Buffer.from(JSON.stringify({ error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } })),
       );
       return Promise.resolve(1);
     });
