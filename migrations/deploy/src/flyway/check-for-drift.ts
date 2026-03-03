@@ -1,6 +1,6 @@
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
+import { parseDriftErrorOutput, resolvePath, runFlyway } from "@flyway-actions/shared";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [
@@ -8,6 +8,7 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] =
   "-drift",
   "-check.failOnDrift=true",
   ...getCommonArgs(inputs),
+  ...(inputs.driftReportName ? [`-reportFilename=${inputs.driftReportName}`] : []),
 ];
 
 type DriftCheckResult = {
@@ -24,12 +25,13 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
     let exitCode = result.exitCode;
     let driftDetected: boolean | undefined;
     let comparisonSupported = true;
-    if (exitCode === 0) {
-      driftDetected = false;
-    } else {
-      const errorOutput = parseErrorOutput(result.stdout);
+
+    if (exitCode !== 0) {
+      const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
         driftDetected = true;
+        const reportPath = resolvePath(errorOutput.error.htmlReport, inputs.workingDirectory);
+        reportPath && core.setOutput("report-path", reportPath);
       } else if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
@@ -39,6 +41,8 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
       } else {
         errorOutput?.error?.message && core.error(errorOutput.error.message);
       }
+    } else {
+      driftDetected = false;
     }
 
     core.setOutput("exit-code", exitCode.toString());

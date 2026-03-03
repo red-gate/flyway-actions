@@ -1,4 +1,5 @@
 import type { JsonLogModel } from "./types.js";
+import * as path from "node:path";
 import * as core from "@actions/core";
 
 const createStdoutListener = (): { listener: (data: Buffer) => void; getOutput: () => string } => {
@@ -41,4 +42,14 @@ const createJsonStderrListener = (): ((data: Buffer) => void) => {
   };
 };
 
-export { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners };
+const resolvePath = (relativePath: string | undefined, workingDirectory: string | undefined): string | undefined => {
+  if (!relativePath) {
+    return undefined;
+  }
+  if (path.isAbsolute(relativePath)) {
+    return relativePath;
+  }
+  return workingDirectory ? path.join(workingDirectory, relativePath) : relativePath;
+};
+
+export { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners, resolvePath };
