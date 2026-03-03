@@ -1,4 +1,4 @@
-import type { ExecOptions } from "@actions/exec";
+import { mockExec } from "../src/test-utils.js";
 
 const info = vi.fn();
 const error = vi.fn();
@@ -183,10 +183,7 @@ describe("runFlyway", () => {
   });
 
   it("should return exit code and stdout", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("success output"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: "success output" }));
 
     const result = await runFlyway(["migrate"]);
 
@@ -232,11 +229,11 @@ describe("runFlyway", () => {
   });
 
   it("should log JSON log messages", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stderr?.(Buffer.from(`${JSON.stringify({ level: "INFO", message: "Migrate running" })}\n`));
-      options?.listeners?.stderr?.(Buffer.from(`${JSON.stringify({ level: "ERROR", message: "Migrate failed" })}\n`));
-      return Promise.resolve(1);
-    });
+    const stderr = `${[
+      JSON.stringify({ level: "INFO", message: "Migrate running" }),
+      JSON.stringify({ level: "ERROR", message: "Migrate failed" }),
+    ].join("\n")}\n`;
+    exec.mockImplementation(mockExec({ stderr, exitCode: 1 }));
 
     await runFlyway(["migrate"]);
 
@@ -246,10 +243,7 @@ describe("runFlyway", () => {
 
   it("should log stdout on failure without parsing error", async () => {
     const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Checks failed" } });
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(stdout));
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(mockExec({ stdout, exitCode: 1 }));
 
     await runFlyway(["check"]);
 
@@ -258,10 +252,7 @@ describe("runFlyway", () => {
   });
 
   it("should not log raw stderr as error", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stderr?.(Buffer.from("Something went wrong"));
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(mockExec({ stderr: "Something went wrong", exitCode: 1 }));
 
     await runFlyway(["migrate"]);
 
@@ -280,10 +271,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Community edition", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "COMMUNITY", version: "10.0.0" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "10.0.0" } }));
 
     const result = await getFlywayDetails();
 
@@ -291,10 +279,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Teams edition", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "TEAMS", version: "10.5.0" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { edition: "TEAMS", version: "10.5.0" } }));
 
     const result = await getFlywayDetails();
 
@@ -302,10 +287,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Enterprise edition", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "ENTERPRISE", version: "11.0.0" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { edition: "ENTERPRISE", version: "11.0.0" } }));
 
     const result = await getFlywayDetails();
 
@@ -313,10 +295,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should return installed false for unparseable output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("Something unexpected\n"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: "Something unexpected\n" }));
 
     const result = await getFlywayDetails();
 
@@ -325,10 +304,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should pass version command with json output type", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "COMMUNITY", version: "10.0.0" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "10.0.0" } }));
 
     await getFlywayDetails();
 

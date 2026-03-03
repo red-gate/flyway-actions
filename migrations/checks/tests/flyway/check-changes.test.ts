@@ -1,5 +1,5 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
-import type { ExecOptions } from "@actions/exec";
+import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const error = vi.fn();
@@ -93,19 +93,17 @@ describe("getChangesArgs", () => {
 
 describe("runCheckChanges", () => {
   it("should return exit code 0 when database does not support comparison", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
-              message: "No comparison capability found that supports both types",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+            message: "No comparison capability found that supports both types",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     const result = await runCheckChanges({ buildUrl: "jdbc:h2:mem:build" }, "enterprise");
 

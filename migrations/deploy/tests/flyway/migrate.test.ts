@@ -1,5 +1,5 @@
 import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
-import type { ExecOptions } from "@actions/exec";
+import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const setOutput = vi.fn();
 const info = vi.fn();
@@ -21,10 +21,7 @@ const { getMigrateArgs, migrate, parseFlywayOutput } = await import("../../src/f
 
 describe("migrate", () => {
   it("should set all outputs on success", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ migrationsExecuted: 3, targetSchemaVersion: "2.0" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { migrationsExecuted: 3, targetSchemaVersion: "2.0" } }));
 
     await migrate({ targetUrl: "jdbc:sqlite:test.db" });
 
@@ -34,19 +31,17 @@ describe("migrate", () => {
   });
 
   it("should log and not error when database has no licensed comparison capability", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
-              message: "No licensed comparison capability found for database type",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+            message: "No licensed comparison capability found for database type",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     await migrate({ targetUrl: "jdbc:h2:mem:test" });
 
@@ -56,19 +51,17 @@ describe("migrate", () => {
   });
 
   it("should throw when migrate fails with an unrecognised error", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "FAULT",
-              message: "Something went wrong",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "FAULT",
+            message: "Something went wrong",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     await expect(migrate({ targetUrl: "jdbc:h2:mem:test" })).rejects.toThrow("Flyway migrate failed with exit code 1");
   });
