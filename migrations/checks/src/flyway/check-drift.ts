@@ -30,28 +30,27 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   core.startGroup("Running Flyway check: drift");
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
-    let exitCode = result.exitCode;
 
-    if (exitCode !== 0) {
+    if (result.exitCode !== 0) {
       const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
         setOutput(true, resolvePath(errorOutput.error.driftResolutionFolderPath, inputs.workingDirectory));
-        return { exitCode, reportPath: errorOutput.error.htmlReport };
-      } else if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
+        return { exitCode: result.exitCode, reportPath: errorOutput.error.htmlReport };
+      }
+      if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
         );
-        exitCode = 0;
-      } else {
-        errorOutput?.error?.message && core.error(errorOutput.error.message);
+        return { exitCode: 0 };
       }
-      return { exitCode };
+      errorOutput?.error?.message && core.error(errorOutput.error.message);
+      return { exitCode: result.exitCode };
     }
 
     const output = parseCheckOutput(result.stdout);
     const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
     setOutput(isDriftDetected(output), resolvePath(driftResult?.driftResolutionFolder, inputs.workingDirectory));
-    return { exitCode, reportPath: output?.htmlReport };
+    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
   }
@@ -64,7 +63,7 @@ const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
 
 const setOutput = (driftDetected: boolean, driftResolutionFolder?: string) => {
   core.setOutput("drift-detected", driftDetected.toString());
-  driftResolutionFolder && core.setOutput("drift-resolution-folder", driftResolutionFolder);
+  driftResolutionFolder !== undefined && core.setOutput("drift-resolution-folder", driftResolutionFolder);
 };
 
 export { getDriftArgs, runCheckDrift };
