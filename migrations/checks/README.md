@@ -41,7 +41,8 @@ The drift checks and the deployment changes report will not run.
 
 ### Flyway Community
 
-The code review will run, but without Redgate rules. You will need to configure SQLFluff manually.
+The code review will run, but without Redgate rules.
+You will need to [install SQLFluff](#installing-sqlfluff-for-community-and-teams) and configure it manually for the code review to work.
 The deployment report will contain the code review output only.
 The drift checks, the deployment changes report, and the deployment script generation will not run.
 
@@ -67,6 +68,28 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
     build-ok-to-erase: true
     working-directory: my-flyway-project
 ```
+
+### Installing SQLFluff for Community edition
+
+SQLFluff is required for performing the code review step.
+Flyway bundles SQLFluff in the enterprise edition but not in the community edition.
+If running in community edition, you need to install it in your workflow before running the checks action, otherwise the code review step will fail.
+If you prefer not to install SQLFluff, you can skip the code review by setting `skip-code-review: true`.
+
+Add these steps to your workflow before the checks action:
+
+```yaml
+- name: Set up Python
+  uses: actions/setup-python@v5
+  with:
+    python-version: '3.x'
+- name: Install SQLFluff
+  run: pip install sqlfluff
+```
+
+You can optionally add a `.sqlfluff` configuration file to your Flyway project to customize the rules and dialect.
+See the [SQLFluff documentation](https://docs.sqlfluff.com/en/stable/configuration/overview.html) for more configuration options.
+
 
 ## Usage
 
