@@ -29,6 +29,8 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
         driftDetected = true;
         const reportPath = resolvePath(errorOutput.error.htmlReport, inputs.workingDirectory);
         reportPath && core.setOutput("report-path", reportPath);
+        const resolutionFolder = resolvePath(errorOutput.error.driftResolutionFolderPath, inputs.workingDirectory);
+        resolutionFolder && core.setOutput("drift-resolution-folder", resolutionFolder);
       } else if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",

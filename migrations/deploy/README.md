@@ -125,6 +125,29 @@ steps:
       drift-report-name: flyway-drift-report-${{ matrix.target }}
 ```
 
+### Drift Resolution Scripts Upload
+
+When drift is detected, Flyway generates SQL scripts that can be used to resolve the drift. The action uploads these as a workflow artifact.
+
+| Input                                     | Description                                                    | Required | Default                           |
+|-------------------------------------------|----------------------------------------------------------------|----------|-----------------------------------|
+| `drift-resolution-scripts-name`           | Name for the drift resolution scripts artifact                 | No       | `flyway-drift-resolution-scripts` |
+| `drift-resolution-scripts-retention-days` | Number of days to retain the drift resolution scripts artifact | No       | `7`                               |
+| `skip-drift-resolution-upload`            | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                           |
+
+As with drift reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
+
+```yaml
+strategy:
+  matrix:
+    target: [staging, production]
+steps:
+  - uses: red-gate/flyway-actions/migrations/deploy@v1
+    with:
+      target-environment: ${{ matrix.target }}
+      drift-resolution-scripts-name: flyway-drift-resolution-${{ matrix.target }}
+```
+
 ## Outputs
 
 | Output               | Description                                   |
