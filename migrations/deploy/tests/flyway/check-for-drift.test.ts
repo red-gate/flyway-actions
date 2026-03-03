@@ -1,4 +1,5 @@
 import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
+import type { ExecOptions } from "@actions/exec";
 import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const setOutput = vi.fn();
