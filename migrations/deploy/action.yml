@@ -47,13 +47,23 @@ inputs:
 outputs:
   exit-code:
     description: 'Flyway exit code'
+    value: ${{ steps.deploy.outputs.exit-code }}
   drift-detected:
     description: 'Whether drift was detected (empty if skipped)'
+    value: ${{ steps.deploy.outputs.drift-detected }}
   migrations-applied:
     description: 'Number of migrations applied'
+    value: ${{ steps.deploy.outputs.migrations-applied }}
   schema-version:
     description: 'Schema version after deployment'
+    value: ${{ steps.deploy.outputs.schema-version }}
 
 runs:
-  using: 'node24'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Run Flyway deploy
+      id: deploy
+      run: node "${{ github.action_path }}/dist/index.js"
+      shell: bash
+      env:
+        FLYWAY_INPUTS: ${{ toJSON(inputs) }}
