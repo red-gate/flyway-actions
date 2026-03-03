@@ -1,8 +1,7 @@
 import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared";
-import * as path from "node:path";
 import * as core from "@actions/core";
-import { parseDriftErrorOutput, runFlyway } from "@flyway-actions/shared";
+import { parseDriftErrorOutput, resolvePath, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
@@ -36,7 +35,7 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     if (exitCode !== 0) {
       const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-        setOutput(true, resolveDriftResolutionFolder(inputs, errorOutput.error.driftResolutionFolderPath));
+        setOutput(true, resolvePath(errorOutput.error.driftResolutionFolderPath, inputs.workingDirectory));
         return { exitCode, reportPath: errorOutput.error.htmlReport };
       } else if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
@@ -51,7 +50,7 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
 
     const output = parseCheckOutput(result.stdout);
     const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
-    setOutput(isDriftDetected(output), resolveDriftResolutionFolder(inputs, driftResult?.driftResolutionFolder));
+    setOutput(isDriftDetected(output), resolvePath(driftResult?.driftResolutionFolder, inputs.workingDirectory));
     return { exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
@@ -62,16 +61,6 @@ const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
   !!output?.individualResults
     ?.filter((r): r is Drift => r.operation === "drift")
     .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
-
-const resolveDriftResolutionFolder = (inputs: FlywayMigrationsChecksInputs, folder: string | undefined) => {
-  if (!folder) {
-    return undefined;
-  }
-  if (path.isAbsolute(folder)) {
-    return folder;
-  }
-  return inputs.workingDirectory ? path.join(inputs.workingDirectory, folder) : folder;
-};
 
 const setOutput = (driftDetected: boolean, driftResolutionFolder?: string) => {
   core.setOutput("drift-detected", driftDetected.toString());
