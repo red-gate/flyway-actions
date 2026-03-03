@@ -8,13 +8,11 @@ type FlywayVersionOutput = { edition?: string };
 
 type JsonLogModel = { level?: "DEBUG" | "INFO" | "WARN" | "ERROR" | "NOTICE"; message?: string };
 
-type ErrorCode = "CHECK_BUILD_NO_PROVISIONER" | string;
+type ErrorCode = "CHECK_BUILD_NO_PROVISIONER" | "CHECK_DRIFT_DETECTED" | "COMPARISON_DATABASE_NOT_SUPPORTED";
 
 type ErrorOutput = { error?: { errorCode?: ErrorCode; message?: string } };
 
-type DriftErrorOutput = {
-  error: { errorCode?: string; message?: string; htmlReport?: string; driftResolutionFolderPath?: string };
-};
+type DriftErrorOutput = { error?: ErrorOutput["error"] & { htmlReport?: string; driftResolutionFolderPath?: string } };
 
 export type {
   DriftErrorOutput,
