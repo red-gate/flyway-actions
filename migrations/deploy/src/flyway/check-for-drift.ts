@@ -10,7 +10,12 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] =
   ...getCommonArgs(inputs),
 ];
 
-const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<boolean> => {
+type DriftCheckResult = {
+  driftDetected: boolean;
+  comparisonSupported: boolean;
+};
+
+const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<DriftCheckResult> => {
   core.startGroup("Checking for drift");
   try {
     const driftArgs = getCheckDriftArgs(inputs);
@@ -18,6 +23,7 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
 
     let exitCode = result.exitCode;
     let driftDetected: boolean | undefined;
+    let comparisonSupported = true;
     if (exitCode === 0) {
       driftDetected = false;
     } else {
@@ -29,6 +35,7 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
         );
         exitCode = 0;
+        comparisonSupported = false;
       } else {
         errorOutput?.error?.message && core.error(errorOutput.error.message);
       }
@@ -39,7 +46,7 @@ const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<
       core.setOutput("drift-detected", driftDetected.toString());
     }
 
-    return !!driftDetected;
+    return { driftDetected: !!driftDetected, comparisonSupported };
   } finally {
     core.endGroup();
   }

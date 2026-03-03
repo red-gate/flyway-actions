@@ -23,8 +23,9 @@ describe("checkForDrift", () => {
   it("should set drift-detected to false and exit-code to 0 when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
@@ -37,8 +38,9 @@ describe("checkForDrift", () => {
       return Promise.resolve(1);
     });
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
+    expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
@@ -57,7 +59,7 @@ describe("checkForDrift", () => {
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
 
-  it("should return false when database does not support comparison", async () => {
+  it("should return no drift and comparison not supported when database does not support comparison", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
         Buffer.from(
@@ -74,7 +76,7 @@ describe("checkForDrift", () => {
 
     const result = await checkForDrift({ targetUrl: "jdbc:h2:mem:test" });
 
-    expect(result).toBe(false);
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: false });
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(info).toHaveBeenCalledWith(

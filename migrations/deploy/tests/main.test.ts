@@ -32,6 +32,7 @@ const setupMocks = () => {
 type SetupFlywayMockOptions = {
   edition: string;
   driftExitCode?: number;
+  driftOutput?: string;
   migrateExitCode: number;
   migrateOutput?: string;
 };
@@ -42,9 +43,18 @@ describe("run", () => {
     setupMocks();
   });
 
-  const setupFlywayMock = ({ edition, driftExitCode, migrateExitCode, migrateOutput = "" }: SetupFlywayMockOptions) => {
+  const setupFlywayMock = ({
+    edition,
+    driftExitCode,
+    driftOutput,
+    migrateExitCode,
+    migrateOutput = "",
+  }: SetupFlywayMockOptions) => {
     let callCount = 0;
     const hasDriftCheck = driftExitCode !== undefined && edition.toLowerCase() === "enterprise";
+    const defaultDriftOutput = JSON.stringify({
+      error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" },
+    });
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       callCount++;
       if (callCount === 1) {
@@ -52,9 +62,7 @@ describe("run", () => {
         return Promise.resolve(0);
       }
       if (hasDriftCheck && callCount === 2) {
-        options?.listeners?.stdout?.(
-          Buffer.from(JSON.stringify({ error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } })),
-        );
+        options?.listeners?.stdout?.(Buffer.from(driftOutput ?? defaultDriftOutput));
         return Promise.resolve(driftExitCode);
       }
       if (migrateOutput) {
@@ -205,6 +213,36 @@ describe("run", () => {
     expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping drift check"));
     expect(setFailed).not.toHaveBeenCalled();
     expect(exec).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not include saveSnapshot when drift check indicates no comparison support", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      driftExitCode: 1,
+      driftOutput: JSON.stringify({
+        error: {
+          errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+          message: "No comparison capability found that supports both types",
+        },
+      }),
+      migrateExitCode: 0,
+      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
+    });
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-url") {
+        return "jdbc:h2:mem:test";
+      }
+      return "";
+    });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(exec).not.toHaveBeenCalledWith(
+      "flyway",
+      expect.arrayContaining(["-migrate.saveSnapshot=true"]),
+      expect.any(Object),
+    );
   });
 
   it("should proceed with migration when no drift detected for enterprise edition", async () => {
