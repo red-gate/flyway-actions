@@ -14,12 +14,6 @@ type FlywayMigrationsDeploymentInputs = {
   saveSnapshot?: boolean;
 };
 
-type FlywayMigrationsDeploymentOutputs = {
-  exitCode: number;
-  migrationsApplied: number;
-  schemaVersion: string;
-};
-
 type FlywayMigrateOutput = { migrationsExecuted?: number; targetSchemaVersion?: string };
 
-export type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs, FlywayMigrationsDeploymentOutputs };
+export type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs };

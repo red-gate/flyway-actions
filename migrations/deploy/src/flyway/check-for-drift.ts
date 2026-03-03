@@ -11,10 +11,7 @@ const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] =
   ...(inputs.driftReportName ? [`-reportFilename=${inputs.driftReportName}`] : []),
 ];
 
-type DriftCheckResult = {
-  driftDetected: boolean;
-  comparisonSupported: boolean;
-};
+type DriftCheckResult = { driftDetected: boolean; comparisonSupported: boolean };
 
 const checkForDrift = async (inputs: FlywayMigrationsDeploymentInputs): Promise<DriftCheckResult> => {
   core.startGroup("Checking for drift");
