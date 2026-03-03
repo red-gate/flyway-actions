@@ -48,26 +48,26 @@ function io(A) {
   } : {};
 }
 function Ke(A, r, t) {
-  const g = new oo(A, r, t);
-  process.stdout.write(g.toString() + ge.EOL);
+  const a = new oo(A, r, t);
+  process.stdout.write(a.toString() + ge.EOL);
 }
 function di(A, r = "") {
   Ke(A, {}, r);
 }
 const In = "::";
 class oo {
-  constructor(r, t, g) {
-    r || (r = "missing.command"), this.command = r, this.properties = t, this.message = g;
+  constructor(r, t, a) {
+    r || (r = "missing.command"), this.command = r, this.properties = t, this.message = a;
   }
   toString() {
     let r = In + this.command;
     if (this.properties && Object.keys(this.properties).length > 0) {
       r += " ";
       let t = !0;
-      for (const g in this.properties)
-        if (this.properties.hasOwnProperty(g)) {
-          const e = this.properties[g];
-          e && (t ? t = !1 : r += ",", r += `${g}=${go(e)}`);
+      for (const a in this.properties)
+        if (this.properties.hasOwnProperty(a)) {
+          const e = this.properties[a];
+          e && (t ? t = !1 : r += ",", r += `${a}=${go(e)}`);
         }
     }
     return r += `${In}${ao(this.message)}`, r;
@@ -90,38 +90,38 @@ function Qo(A, r) {
   });
 }
 function co(A, r) {
-  const t = `ghadelimiter_${Wi.randomUUID()}`, g = ke(r);
+  const t = `ghadelimiter_${Wi.randomUUID()}`, a = ke(r);
   if (A.includes(t))
     throw new Error(`Unexpected input: name should not contain the delimiter "${t}"`);
-  if (g.includes(t))
+  if (a.includes(t))
     throw new Error(`Unexpected input: value should not contain the delimiter "${t}"`);
-  return `${A}<<${t}${ge.EOL}${g}${ge.EOL}${t}`;
+  return `${A}<<${t}${ge.EOL}${a}${ge.EOL}${t}`;
 }
 var Cn = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, Ie = {}, ln;
 function Bo() {
   if (ln) return Ie;
   ln = 1;
-  var A = Zi, r = Oi, t = Pi, g = Ki, e = zi;
-  Ie.httpOverHttp = n, Ie.httpsOverHttp = i, Ie.httpOverHttps = Q, Ie.httpsOverHttps = l;
-  function n(c) {
-    var u = new B(c);
+  var A = Zi, r = Oi, t = Pi, a = Ki, e = zi;
+  Ie.httpOverHttp = n, Ie.httpsOverHttp = i, Ie.httpOverHttps = c, Ie.httpsOverHttps = l;
+  function n(Q) {
+    var u = new B(Q);
     return u.request = r.request, u;
   }
-  function i(c) {
-    var u = new B(c);
+  function i(Q) {
+    var u = new B(Q);
     return u.request = r.request, u.createSocket = s, u.defaultPort = 443, u;
   }
-  function Q(c) {
-    var u = new B(c);
+  function c(Q) {
+    var u = new B(Q);
     return u.request = t.request, u;
   }
-  function l(c) {
-    var u = new B(c);
+  function l(Q) {
+    var u = new B(Q);
     return u.request = t.request, u.createSocket = s, u.defaultPort = 443, u;
   }
-  function B(c) {
+  function B(Q) {
     var u = this;
-    u.options = c || {}, u.proxyOptions = u.options.proxy || {}, u.maxSockets = u.options.maxSockets || r.Agent.defaultMaxSockets, u.requests = [], u.sockets = [], u.on("free", function(F, S, M, U) {
+    u.options = Q || {}, u.proxyOptions = u.options.proxy || {}, u.maxSockets = u.options.maxSockets || r.Agent.defaultMaxSockets, u.requests = [], u.sockets = [], u.on("free", function(F, S, M, U) {
       for (var b = o(S, M, U), E = 0, h = u.requests.length; E < h; ++E) {
         var D = u.requests[E];
         if (D.host === b.host && D.port === b.port) {
@@ -132,7 +132,7 @@ function Bo() {
       F.destroy(), u.removeSocket(F);
     });
   }
-  e.inherits(B, g.EventEmitter), B.prototype.addRequest = function(u, p, F, S) {
+  e.inherits(B, a.EventEmitter), B.prototype.addRequest = function(u, p, F, S) {
     var M = this, U = C({ request: u }, M.options, o(p, F, S));
     if (M.sockets.length >= this.maxSockets) {
       M.requests.push(U);
@@ -161,21 +161,21 @@ function Bo() {
     u.localAddress && (M.localAddress = u.localAddress), M.proxyAuth && (M.headers = M.headers || {}, M.headers["Proxy-Authorization"] = "Basic " + new Buffer(M.proxyAuth).toString("base64")), I("making CONNECT request");
     var U = F.request(M);
     U.useChunkedEncodingByDefault = !1, U.once("response", b), U.once("upgrade", E), U.once("connect", h), U.once("error", D), U.end();
-    function b(a) {
-      a.upgrade = !0;
+    function b(g) {
+      g.upgrade = !0;
     }
-    function E(a, f, w) {
+    function E(g, f, w) {
       process.nextTick(function() {
-        h(a, f, w);
+        h(g, f, w);
       });
     }
-    function h(a, f, w) {
-      if (U.removeAllListeners(), f.removeAllListeners(), a.statusCode !== 200) {
+    function h(g, f, w) {
+      if (U.removeAllListeners(), f.removeAllListeners(), g.statusCode !== 200) {
         I(
           "tunneling socket could not be established, statusCode=%d",
-          a.statusCode
+          g.statusCode
         ), f.destroy();
-        var d = new Error("tunneling socket could not be established, statusCode=" + a.statusCode);
+        var d = new Error("tunneling socket could not be established, statusCode=" + g.statusCode);
         d.code = "ECONNRESET", u.request.emit("error", d), F.removeSocket(S);
         return;
       }
@@ -187,14 +187,14 @@ function Bo() {
       }
       return I("tunneling connection has established"), F.sockets[F.sockets.indexOf(S)] = f, p(f);
     }
-    function D(a) {
+    function D(g) {
       U.removeAllListeners(), I(
         `tunneling socket could not be established, cause=%s
 `,
-        a.message,
-        a.stack
+        g.message,
+        g.stack
       );
-      var f = new Error("tunneling socket could not be established, cause=" + a.message);
+      var f = new Error("tunneling socket could not be established, cause=" + g.message);
       f.code = "ECONNRESET", u.request.emit("error", f), F.removeSocket(S);
     }
   }, B.prototype.removeSocket = function(u) {
@@ -207,38 +207,38 @@ function Bo() {
       });
     }
   };
-  function s(c, u) {
+  function s(Q, u) {
     var p = this;
-    B.prototype.createSocket.call(p, c, function(F) {
-      var S = c.request.getHeader("host"), M = C({}, p.options, {
+    B.prototype.createSocket.call(p, Q, function(F) {
+      var S = Q.request.getHeader("host"), M = C({}, p.options, {
         socket: F,
-        servername: S ? S.replace(/:.*$/, "") : c.host
+        servername: S ? S.replace(/:.*$/, "") : Q.host
       }), U = A.connect(0, M);
       p.sockets[p.sockets.indexOf(F)] = U, u(U);
     });
   }
-  function o(c, u, p) {
-    return typeof c == "string" ? {
-      host: c,
+  function o(Q, u, p) {
+    return typeof Q == "string" ? {
+      host: Q,
       port: u,
       localAddress: p
-    } : c;
+    } : Q;
   }
-  function C(c) {
+  function C(Q) {
     for (var u = 1, p = arguments.length; u < p; ++u) {
       var F = arguments[u];
       if (typeof F == "object")
         for (var S = Object.keys(F), M = 0, U = S.length; M < U; ++M) {
           var b = S[M];
-          F[b] !== void 0 && (c[b] = F[b]);
+          F[b] !== void 0 && (Q[b] = F[b]);
         }
     }
-    return c;
+    return Q;
   }
   var I;
   return process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG) ? I = function() {
-    var c = Array.prototype.slice.call(arguments);
-    typeof c[0] == "string" ? c[0] = "TUNNEL: " + c[0] : c.unshift("TUNNEL:"), console.error.apply(console, c);
+    var Q = Array.prototype.slice.call(arguments);
+    typeof Q[0] == "string" ? Q[0] = "TUNNEL: " + Q[0] : Q.unshift("TUNNEL:"), console.error.apply(console, Q);
   } : I = function() {
   }, Ie.debug = I, Ie;
 }
@@ -332,7 +332,7 @@ function JA() {
     [A] = !0;
   }
   const t = /* @__PURE__ */ Symbol.for("undici.error.UND_ERR_CONNECT_TIMEOUT");
-  class g extends r {
+  class a extends r {
     constructor(v) {
       super(v), this.name = "ConnectTimeoutError", this.message = v || "Connect Timeout Error", this.code = "UND_ERR_CONNECT_TIMEOUT";
     }
@@ -352,7 +352,7 @@ function JA() {
     [e] = !0;
   }
   const i = /* @__PURE__ */ Symbol.for("undici.error.UND_ERR_HEADERS_OVERFLOW");
-  class Q extends r {
+  class c extends r {
     constructor(v) {
       super(v), this.name = "HeadersOverflowError", this.message = v || "Headers Overflow Error", this.code = "UND_ERR_HEADERS_OVERFLOW";
     }
@@ -391,15 +391,15 @@ function JA() {
     }
     [C] = !0;
   }
-  const c = /* @__PURE__ */ Symbol.for("undici.error.UND_ERR_INVALID_RETURN_VALUE");
+  const Q = /* @__PURE__ */ Symbol.for("undici.error.UND_ERR_INVALID_RETURN_VALUE");
   class u extends r {
     constructor(v) {
       super(v), this.name = "InvalidReturnValueError", this.message = v || "Invalid Return Value Error", this.code = "UND_ERR_INVALID_RETURN_VALUE";
     }
     static [Symbol.hasInstance](v) {
-      return v && v[c] === !0;
+      return v && v[Q] === !0;
     }
-    [c] = !0;
+    [Q] = !0;
   }
   const p = /* @__PURE__ */ Symbol.for("undici.error.UND_ERR_ABORT");
   class F extends r {
@@ -442,7 +442,7 @@ function JA() {
     [E] = !0;
   }
   const D = /* @__PURE__ */ Symbol.for("undici.error.UND_ERR_RES_CONTENT_LENGTH_MISMATCH");
-  class a extends r {
+  class g extends r {
     constructor(v) {
       super(v), this.name = "ResponseContentLengthMismatchError", this.message = v || "Response body length does not match content-length header", this.code = "UND_ERR_RES_CONTENT_LENGTH_MISMATCH";
     }
@@ -556,10 +556,10 @@ function JA() {
     HTTPParserError: QA,
     UndiciError: r,
     HeadersTimeoutError: n,
-    HeadersOverflowError: Q,
+    HeadersOverflowError: c,
     BodyTimeoutError: B,
     RequestContentLengthMismatchError: h,
-    ConnectTimeoutError: g,
+    ConnectTimeoutError: a,
     ResponseStatusCodeError: o,
     InvalidArgumentError: I,
     InvalidReturnValueError: u,
@@ -569,7 +569,7 @@ function JA() {
     InformationalError: b,
     SocketError: L,
     NotSupportedError: Y,
-    ResponseContentLengthMismatchError: a,
+    ResponseContentLengthMismatchError: g,
     BalancedPoolMissingUpstreamError: tA,
     ResponseExceededMaxSizeError: lA,
     RequestRetryError: IA,
@@ -679,8 +679,8 @@ function An() {
     "X-XSS-Protection"
   ];
   for (let t = 0; t < r.length; ++t) {
-    const g = r[t], e = g.toLowerCase();
-    A[g] = A[e] = e;
+    const a = r[t], e = a.toLowerCase();
+    A[a] = A[e] = e;
   }
   return Object.setPrototypeOf(A, null), Ct = {
     wellknownHeaderNames: r,
@@ -711,18 +711,18 @@ function Io() {
      * @param {any} value
      * @param {number} index
      */
-    constructor(i, Q, l) {
+    constructor(i, c, l) {
       if (l === void 0 || l >= i.length)
         throw new TypeError("Unreachable");
       if ((this.code = i.charCodeAt(l)) > 127)
         throw new TypeError("key must be ascii string");
-      i.length !== ++l ? this.middle = new t(i, Q, l) : this.value = Q;
+      i.length !== ++l ? this.middle = new t(i, c, l) : this.value = c;
     }
     /**
      * @param {string} key
      * @param {any} value
      */
-    add(i, Q) {
+    add(i, c) {
       const l = i.length;
       if (l === 0)
         throw new TypeError("Unreachable");
@@ -733,25 +733,25 @@ function Io() {
           throw new TypeError("key must be ascii string");
         if (s.code === o)
           if (l === ++B) {
-            s.value = Q;
+            s.value = c;
             break;
           } else if (s.middle !== null)
             s = s.middle;
           else {
-            s.middle = new t(i, Q, B);
+            s.middle = new t(i, c, B);
             break;
           }
         else if (s.code < o)
           if (s.left !== null)
             s = s.left;
           else {
-            s.left = new t(i, Q, B);
+            s.left = new t(i, c, B);
             break;
           }
         else if (s.right !== null)
           s = s.right;
         else {
-          s.right = new t(i, Q, B);
+          s.right = new t(i, c, B);
           break;
         }
       }
@@ -761,13 +761,13 @@ function Io() {
      * @return {TstNode | null}
      */
     search(i) {
-      const Q = i.length;
+      const c = i.length;
       let l = 0, B = this;
-      for (; B !== null && l < Q; ) {
+      for (; B !== null && l < c; ) {
         let s = i[l];
         for (s <= 90 && s >= 65 && (s |= 32); B !== null; ) {
           if (s === B.code) {
-            if (Q === ++l)
+            if (c === ++l)
               return B;
             B = B.middle;
             break;
@@ -778,15 +778,15 @@ function Io() {
       return null;
     }
   }
-  class g {
+  class a {
     /** @type {TstNode | null} */
     node = null;
     /**
      * @param {string} key
      * @param {any} value
      * */
-    insert(i, Q) {
-      this.node === null ? this.node = new t(i, Q, 0) : this.node.add(i, Q);
+    insert(i, c) {
+      this.node === null ? this.node = new t(i, c, 0) : this.node.add(i, c);
     }
     /**
      * @param {Uint8Array} key
@@ -796,13 +796,13 @@ function Io() {
       return this.node?.search(i)?.value ?? null;
     }
   }
-  const e = new g();
+  const e = new a();
   for (let n = 0; n < A.length; ++n) {
     const i = r[A[n]];
     e.insert(i, i);
   }
   return lt = {
-    TernarySearchTree: g,
+    TernarySearchTree: a,
     tree: e
   }, lt;
 }
@@ -810,7 +810,7 @@ var ht, yn;
 function UA() {
   if (yn) return ht;
   yn = 1;
-  const A = HA, { kDestroyed: r, kBodyUsed: t, kListeners: g, kBody: e } = WA(), { IncomingMessage: n } = Ze, i = re, Q = Pe, { Blob: l } = se, B = Ae, { stringify: s } = Xi, { EventEmitter: o } = pe, { InvalidArgumentError: C } = JA(), { headerNameLowerCasedRecord: I } = An(), { tree: c } = Io(), [u, p] = process.versions.node.split(".").map((R) => Number(R));
+  const A = HA, { kDestroyed: r, kBodyUsed: t, kListeners: a, kBody: e } = WA(), { IncomingMessage: n } = Ze, i = re, c = Pe, { Blob: l } = se, B = Ae, { stringify: s } = Xi, { EventEmitter: o } = pe, { InvalidArgumentError: C } = JA(), { headerNameLowerCasedRecord: I } = An(), { tree: Q } = Io(), [u, p] = process.versions.node.split(".").map((R) => Number(R));
   class F {
     constructor(Z) {
       this[e] = Z, this[t] = !1;
@@ -856,7 +856,7 @@ function UA() {
   function D(R) {
     return R != null && R[0] === "h" && R[1] === "t" && R[2] === "t" && R[3] === "p" && (R[4] === ":" || R[4] === "s" && R[5] === ":");
   }
-  function a(R) {
+  function g(R) {
     if (typeof R == "string") {
       if (R = new URL(R), !D(R.origin || R.protocol))
         throw new C("Invalid URL protocol: the URL must start with `http:` or `https:`.");
@@ -886,7 +886,7 @@ function UA() {
     return R;
   }
   function f(R) {
-    if (R = a(R), R.pathname !== "/" || R.search || R.hash)
+    if (R = g(R), R.pathname !== "/" || R.search || R.hash)
       throw new C("invalid url");
     return R;
   }
@@ -903,7 +903,7 @@ function UA() {
       return null;
     A(typeof R == "string");
     const Z = w(R);
-    return Q.isIP(Z) ? "" : Z;
+    return c.isIP(Z) ? "" : Z;
   }
   function y(R) {
     return JSON.parse(JSON.stringify(R));
@@ -942,10 +942,10 @@ function UA() {
     return Z ? parseInt(Z[1], 10) * 1e3 : null;
   }
   function QA(R) {
-    return typeof R == "string" ? I[R] ?? R.toLowerCase() : c.lookup(R) ?? R.toString("latin1").toLowerCase();
+    return typeof R == "string" ? I[R] ?? R.toLowerCase() : Q.lookup(R) ?? R.toString("latin1").toLowerCase();
   }
   function aA(R) {
-    return c.lookup(R) ?? R.toString("latin1").toLowerCase();
+    return Q.lookup(R) ?? R.toString("latin1").toLowerCase();
   }
   function lA(R, Z) {
     Z === void 0 && (Z = {});
@@ -1098,12 +1098,12 @@ function UA() {
     } : null;
   }
   function FA(R, Z, oA) {
-    return (R[g] ??= []).push([Z, oA]), R.on(Z, oA), R;
+    return (R[a] ??= []).push([Z, oA]), R.on(Z, oA), R;
   }
   function dA(R) {
-    for (const [Z, oA] of R[g] ?? [])
+    for (const [Z, oA] of R[a] ?? [])
       R.removeListener(Z, oA);
-    R[g] = null;
+    R[a] = null;
   }
   function qA(R, Z, oA) {
     try {
@@ -1142,7 +1142,7 @@ function UA() {
     isUSVString: iA,
     isBlobLike: b,
     parseOrigin: f,
-    parseURL: a,
+    parseURL: g,
     getServerName: d,
     isStream: U,
     isIterable: L,
@@ -1184,7 +1184,7 @@ var ut, Dn;
 function me() {
   if (Dn) return ut;
   Dn = 1;
-  const A = _i, r = Ae, t = r.debuglog("undici"), g = r.debuglog("fetch"), e = r.debuglog("websocket");
+  const A = _i, r = Ae, t = r.debuglog("undici"), a = r.debuglog("fetch"), e = r.debuglog("websocket");
   let n = !1;
   const i = {
     // Client
@@ -1205,13 +1205,13 @@ function me() {
     ping: A.channel("undici:websocket:ping"),
     pong: A.channel("undici:websocket:pong")
   };
-  if (t.enabled || g.enabled) {
-    const Q = g.enabled ? g : t;
+  if (t.enabled || a.enabled) {
+    const c = a.enabled ? a : t;
     A.channel("undici:client:beforeConnect").subscribe((l) => {
       const {
         connectParams: { version: B, protocol: s, port: o, host: C }
       } = l;
-      Q(
+      c(
         "connecting to %s using %s%s",
         `${C}${o ? `:${o}` : ""}`,
         s,
@@ -1221,7 +1221,7 @@ function me() {
       const {
         connectParams: { version: B, protocol: s, port: o, host: C }
       } = l;
-      Q(
+      c(
         "connected to %s using %s%s",
         `${C}${o ? `:${o}` : ""}`,
         s,
@@ -1232,7 +1232,7 @@ function me() {
         connectParams: { version: B, protocol: s, port: o, host: C },
         error: I
       } = l;
-      Q(
+      c(
         "connection to %s using %s%s errored - %s",
         `${C}${o ? `:${o}` : ""}`,
         s,
@@ -1243,13 +1243,13 @@ function me() {
       const {
         request: { method: B, path: s, origin: o }
       } = l;
-      Q("sending request to %s %s/%s", B, o, s);
+      c("sending request to %s %s/%s", B, o, s);
     }), A.channel("undici:request:headers").subscribe((l) => {
       const {
         request: { method: B, path: s, origin: o },
         response: { statusCode: C }
       } = l;
-      Q(
+      c(
         "received response to %s %s/%s - HTTP %d",
         B,
         o,
@@ -1260,13 +1260,13 @@ function me() {
       const {
         request: { method: B, path: s, origin: o }
       } = l;
-      Q("trailers received from %s %s/%s", B, o, s);
+      c("trailers received from %s %s/%s", B, o, s);
     }), A.channel("undici:request:error").subscribe((l) => {
       const {
         request: { method: B, path: s, origin: o },
         error: C
       } = l;
-      Q(
+      c(
         "request to %s %s/%s errored - %s",
         B,
         o,
@@ -1277,12 +1277,12 @@ function me() {
   }
   if (e.enabled) {
     if (!n) {
-      const Q = t.enabled ? t : e;
+      const c = t.enabled ? t : e;
       A.channel("undici:client:beforeConnect").subscribe((l) => {
         const {
           connectParams: { version: B, protocol: s, port: o, host: C }
         } = l;
-        Q(
+        c(
           "connecting to %s%s using %s%s",
           C,
           o ? `:${o}` : "",
@@ -1293,7 +1293,7 @@ function me() {
         const {
           connectParams: { version: B, protocol: s, port: o, host: C }
         } = l;
-        Q(
+        c(
           "connected to %s%s using %s%s",
           C,
           o ? `:${o}` : "",
@@ -1305,7 +1305,7 @@ function me() {
           connectParams: { version: B, protocol: s, port: o, host: C },
           error: I
         } = l;
-        Q(
+        c(
           "connection to %s%s using %s%s errored - %s",
           C,
           o ? `:${o}` : "",
@@ -1317,27 +1317,27 @@ function me() {
         const {
           request: { method: B, path: s, origin: o }
         } = l;
-        Q("sending request to %s %s/%s", B, o, s);
+        c("sending request to %s %s/%s", B, o, s);
       });
     }
-    A.channel("undici:websocket:open").subscribe((Q) => {
+    A.channel("undici:websocket:open").subscribe((c) => {
       const {
         address: { address: l, port: B }
-      } = Q;
+      } = c;
       e("connection opened %s%s", l, B ? `:${B}` : "");
-    }), A.channel("undici:websocket:close").subscribe((Q) => {
-      const { websocket: l, code: B, reason: s } = Q;
+    }), A.channel("undici:websocket:close").subscribe((c) => {
+      const { websocket: l, code: B, reason: s } = c;
       e(
         "closed connection to %s - %s %s",
         l.url,
         B,
         s
       );
-    }), A.channel("undici:websocket:socket_error").subscribe((Q) => {
-      e("connection errored - %s", Q.message);
-    }), A.channel("undici:websocket:ping").subscribe((Q) => {
+    }), A.channel("undici:websocket:socket_error").subscribe((c) => {
+      e("connection errored - %s", c.message);
+    }), A.channel("undici:websocket:ping").subscribe((c) => {
       e("ping received");
-    }), A.channel("undici:websocket:pong").subscribe((Q) => {
+    }), A.channel("undici:websocket:pong").subscribe((c) => {
       e("pong received");
     });
   }
@@ -1353,24 +1353,24 @@ function Co() {
     InvalidArgumentError: A,
     NotSupportedError: r
   } = JA(), t = HA, {
-    isValidHTTPToken: g,
+    isValidHTTPToken: a,
     isValidHeaderValue: e,
     isStream: n,
     destroy: i,
-    isBuffer: Q,
+    isBuffer: c,
     isFormDataLike: l,
     isIterable: B,
     isBlobLike: s,
     buildURL: o,
     validateHandler: C,
     getServerName: I,
-    normalizedMethodRecords: c
+    normalizedMethodRecords: Q
   } = UA(), { channels: u } = me(), { headerNameLowerCasedRecord: p } = An(), F = /[^\u0021-\u00ff]/, S = /* @__PURE__ */ Symbol("handler");
   class M {
     constructor(E, {
       path: h,
       method: D,
-      body: a,
+      body: g,
       headers: f,
       query: w,
       idempotent: d,
@@ -1391,7 +1391,7 @@ function Co() {
         throw new A("invalid request path");
       if (typeof D != "string")
         throw new A("method must be a string");
-      if (c[D] === void 0 && !g(D))
+      if (Q[D] === void 0 && !a(D))
         throw new A("invalid request method");
       if (k && typeof k != "string")
         throw new A("upgrade must be a string");
@@ -1403,26 +1403,26 @@ function Co() {
         throw new A("invalid reset");
       if (tA != null && typeof tA != "boolean")
         throw new A("invalid expectContinue");
-      if (this.headersTimeout = L, this.bodyTimeout = T, this.throwOnError = G === !0, this.method = D, this.abort = null, a == null)
+      if (this.headersTimeout = L, this.bodyTimeout = T, this.throwOnError = G === !0, this.method = D, this.abort = null, g == null)
         this.body = null;
-      else if (n(a)) {
-        this.body = a;
+      else if (n(g)) {
+        this.body = g;
         const aA = this.body._readableState;
         (!aA || !aA.autoDestroy) && (this.endHandler = function() {
           i(this);
         }, this.body.on("end", this.endHandler)), this.errorHandler = (lA) => {
           this.abort ? this.abort(lA) : this.error = lA;
         }, this.body.on("error", this.errorHandler);
-      } else if (Q(a))
-        this.body = a.byteLength ? a : null;
-      else if (ArrayBuffer.isView(a))
-        this.body = a.buffer.byteLength ? Buffer.from(a.buffer, a.byteOffset, a.byteLength) : null;
-      else if (a instanceof ArrayBuffer)
-        this.body = a.byteLength ? Buffer.from(a) : null;
-      else if (typeof a == "string")
-        this.body = a.length ? Buffer.from(a) : null;
-      else if (l(a) || B(a) || s(a))
-        this.body = a;
+      } else if (c(g))
+        this.body = g.byteLength ? g : null;
+      else if (ArrayBuffer.isView(g))
+        this.body = g.buffer.byteLength ? Buffer.from(g.buffer, g.byteOffset, g.byteLength) : null;
+      else if (g instanceof ArrayBuffer)
+        this.body = g.byteLength ? Buffer.from(g) : null;
+      else if (typeof g == "string")
+        this.body = g.length ? Buffer.from(g) : null;
+      else if (l(g) || B(g) || s(g))
+        this.body = g;
       else
         throw new A("body must be a string, a Buffer, a Readable stream, an iterable, or an async iterable");
       if (this.completed = !1, this.aborted = !1, this.upgrade = k || null, this.path = w ? o(h, w) : h, this.origin = E, this.idempotent = d ?? (D === "HEAD" || D === "GET"), this.blocking = y ?? !1, this.reset = Y ?? null, this.host = null, this.contentLength = null, this.contentType = null, this.headers = [], this.expectContinue = tA ?? !1, Array.isArray(f)) {
@@ -1471,10 +1471,10 @@ function Co() {
     onResponseStarted() {
       return this[S].onResponseStarted?.();
     }
-    onHeaders(E, h, D, a) {
-      t(!this.aborted), t(!this.completed), u.headers.hasSubscribers && u.headers.publish({ request: this, response: { statusCode: E, headers: h, statusText: a } });
+    onHeaders(E, h, D, g) {
+      t(!this.aborted), t(!this.completed), u.headers.hasSubscribers && u.headers.publish({ request: this, response: { statusCode: E, headers: h, statusText: g } });
       try {
-        return this[S].onHeaders(E, h, D, a);
+        return this[S].onHeaders(E, h, D, g);
       } catch (f) {
         this.abort(f);
       }
@@ -1515,23 +1515,23 @@ function Co() {
     if (h === void 0)
       return;
     let D = p[E];
-    if (D === void 0 && (D = E.toLowerCase(), p[D] === void 0 && !g(D)))
+    if (D === void 0 && (D = E.toLowerCase(), p[D] === void 0 && !a(D)))
       throw new A("invalid header key");
     if (Array.isArray(h)) {
-      const a = [];
+      const g = [];
       for (let f = 0; f < h.length; f++)
         if (typeof h[f] == "string") {
           if (!e(h[f]))
             throw new A(`invalid ${E} header`);
-          a.push(h[f]);
+          g.push(h[f]);
         } else if (h[f] === null)
-          a.push("");
+          g.push("");
         else {
           if (typeof h[f] == "object")
             throw new A(`invalid ${E} header`);
-          a.push(`${h[f]}`);
+          g.push(`${h[f]}`);
         }
-      h = a;
+      h = g;
     } else if (typeof h == "string") {
       if (!e(h))
         throw new A(`invalid ${E} header`);
@@ -1549,10 +1549,10 @@ function Co() {
       if (D === "transfer-encoding" || D === "keep-alive" || D === "upgrade")
         throw new A(`invalid ${D} header`);
       if (D === "connection") {
-        const a = typeof h == "string" ? h.toLowerCase() : null;
-        if (a !== "close" && a !== "keep-alive")
+        const g = typeof h == "string" ? h.toLowerCase() : null;
+        if (g !== "close" && g !== "keep-alive")
           throw new A("invalid connection header");
-        a === "close" && (b.reset = !0);
+        g === "close" && (b.reset = !0);
       } else {
         if (D === "expect")
           throw new r("expect header not supported");
@@ -1580,11 +1580,11 @@ function ze() {
     compose(...e) {
       const n = Array.isArray(e[0]) ? e[0] : e;
       let i = this.dispatch.bind(this);
-      for (const Q of n)
-        if (Q != null) {
-          if (typeof Q != "function")
-            throw new TypeError(`invalid interceptor, expected function received ${typeof Q}`);
-          if (i = Q(i), i == null || typeof i != "function" || i.length !== 2)
+      for (const c of n)
+        if (c != null) {
+          if (typeof c != "function")
+            throw new TypeError(`invalid interceptor, expected function received ${typeof c}`);
+          if (i = c(i), i == null || typeof i != "function" || i.length !== 2)
             throw new TypeError("invalid interceptor");
         }
       return new t(this, i);
@@ -1615,14 +1615,14 @@ function Fe() {
   const A = ze(), {
     ClientDestroyedError: r,
     ClientClosedError: t,
-    InvalidArgumentError: g
-  } = JA(), { kDestroy: e, kClose: n, kClosed: i, kDestroyed: Q, kDispatch: l, kInterceptors: B } = WA(), s = /* @__PURE__ */ Symbol("onDestroyed"), o = /* @__PURE__ */ Symbol("onClosed"), C = /* @__PURE__ */ Symbol("Intercepted Dispatch");
+    InvalidArgumentError: a
+  } = JA(), { kDestroy: e, kClose: n, kClosed: i, kDestroyed: c, kDispatch: l, kInterceptors: B } = WA(), s = /* @__PURE__ */ Symbol("onDestroyed"), o = /* @__PURE__ */ Symbol("onClosed"), C = /* @__PURE__ */ Symbol("Intercepted Dispatch");
   class I extends A {
     constructor() {
-      super(), this[Q] = !1, this[s] = null, this[i] = !1, this[o] = [];
+      super(), this[c] = !1, this[s] = null, this[i] = !1, this[o] = [];
     }
     get destroyed() {
-      return this[Q];
+      return this[c];
     }
     get closed() {
       return this[i];
@@ -1634,7 +1634,7 @@ function Fe() {
       if (u) {
         for (let p = u.length - 1; p >= 0; p--)
           if (typeof this[B][p] != "function")
-            throw new g("interceptor must be an function");
+            throw new a("interceptor must be an function");
       }
       this[B] = u;
     }
@@ -1644,8 +1644,8 @@ function Fe() {
           this.close((M, U) => M ? S(M) : F(U));
         });
       if (typeof u != "function")
-        throw new g("invalid callback");
-      if (this[Q]) {
+        throw new a("invalid callback");
+      if (this[c]) {
         queueMicrotask(() => u(new r(), null));
         return;
       }
@@ -1673,12 +1673,12 @@ function Fe() {
           ) : S(b));
         });
       if (typeof p != "function")
-        throw new g("invalid callback");
-      if (this[Q]) {
+        throw new a("invalid callback");
+      if (this[c]) {
         this[s] ? this[s].push(p) : queueMicrotask(() => p(null, null));
         return;
       }
-      u || (u = new r()), this[Q] = !0, this[s] = this[s] || [], this[s].push(p);
+      u || (u = new r()), this[c] = !0, this[s] = this[s] || [], this[s].push(p);
       const F = () => {
         const S = this[s];
         this[s] = null;
@@ -1699,18 +1699,18 @@ function Fe() {
     }
     dispatch(u, p) {
       if (!p || typeof p != "object")
-        throw new g("handler must be an object");
+        throw new a("handler must be an object");
       try {
         if (!u || typeof u != "object")
-          throw new g("opts must be an object.");
-        if (this[Q] || this[s])
+          throw new a("opts must be an object.");
+        if (this[c] || this[s])
           throw new r();
         if (this[i])
           throw new t();
         return this[C](u, p);
       } catch (F) {
         if (typeof p.onError != "function")
-          throw new g("invalid onError method");
+          throw new a("invalid onError method");
         return p.onError(F), !1;
       }
     }
@@ -1723,19 +1723,19 @@ function fi() {
   mn = 1;
   let A = 0;
   const r = 1e3, t = (r >> 1) - 1;
-  let g;
-  const e = /* @__PURE__ */ Symbol("kFastTimer"), n = [], i = -2, Q = -1, l = 0, B = 1;
+  let a;
+  const e = /* @__PURE__ */ Symbol("kFastTimer"), n = [], i = -2, c = -1, l = 0, B = 1;
   function s() {
     A += t;
-    let I = 0, c = n.length;
-    for (; I < c; ) {
+    let I = 0, Q = n.length;
+    for (; I < Q; ) {
       const u = n[I];
-      u._state === l ? (u._idleStart = A - t, u._state = B) : u._state === B && A >= u._idleStart + u._idleTimeout && (u._state = Q, u._idleStart = -1, u._onTimeout(u._timerArg)), u._state === Q ? (u._state = i, --c !== 0 && (n[I] = n[c])) : ++I;
+      u._state === l ? (u._idleStart = A - t, u._state = B) : u._state === B && A >= u._idleStart + u._idleTimeout && (u._state = c, u._idleStart = -1, u._onTimeout(u._timerArg)), u._state === c ? (u._state = i, --Q !== 0 && (n[I] = n[Q])) : ++I;
     }
-    n.length = c, n.length !== 0 && o();
+    n.length = Q, n.length !== 0 && o();
   }
   function o() {
-    g ? g.refresh() : (clearTimeout(g), g = setTimeout(s, t), g.unref && g.unref());
+    a ? a.refresh() : (clearTimeout(a), a = setTimeout(s, t), a.unref && a.unref());
   }
   class C {
     [e] = !0;
@@ -1787,8 +1787,8 @@ function fi() {
      * before the specified function or code is executed.
      * @param {*} arg
      */
-    constructor(c, u, p) {
-      this._onTimeout = c, this._idleTimeout = u, this._timerArg = p, this.refresh();
+    constructor(Q, u, p) {
+      this._onTimeout = Q, this._idleTimeout = u, this._timerArg = p, this.refresh();
     }
     /**
      * Sets the timer's start time to the current time, and reschedules the timer
@@ -1800,7 +1800,7 @@ function fi() {
      * @returns {void}
      */
     refresh() {
-      this._state === i && n.push(this), (!g || n.length === 1) && o(), this._state = l;
+      this._state === i && n.push(this), (!a || n.length === 1) && o(), this._state = l;
     }
     /**
      * The `clear` method cancels the timer, preventing it from executing.
@@ -1809,7 +1809,7 @@ function fi() {
      * @private
      */
     clear() {
-      this._state = Q, this._idleStart = -1;
+      this._state = c, this._idleStart = -1;
     }
   }
   return yt = {
@@ -1824,8 +1824,8 @@ function fi() {
      * when the timer expires.
      * @returns {NodeJS.Timeout|FastTimer}
      */
-    setTimeout(I, c, u) {
-      return c <= r ? setTimeout(I, c, u) : new C(I, c, u);
+    setTimeout(I, Q, u) {
+      return Q <= r ? setTimeout(I, Q, u) : new C(I, Q, u);
     },
     /**
      * The clearTimeout method cancels an instantiated Timer previously created
@@ -1847,8 +1847,8 @@ function fi() {
      * when the timer expires.
      * @returns {FastTimer}
      */
-    setFastTimeout(I, c, u) {
-      return new C(I, c, u);
+    setFastTimeout(I, Q, u) {
+      return new C(I, Q, u);
     },
     /**
      * The clearTimeout method cancels an instantiated FastTimer previously
@@ -1884,7 +1884,7 @@ function fi() {
      * @deprecated
      */
     reset() {
-      A = 0, n.length = 0, clearTimeout(g), g = null;
+      A = 0, n.length = 0, clearTimeout(a), a = null;
     },
     /**
      * Exporting for testing purposes only.
@@ -1898,25 +1898,25 @@ var Dt, Fn;
 function Xe() {
   if (Fn) return Dt;
   Fn = 1;
-  const A = Pe, r = HA, t = UA(), { InvalidArgumentError: g, ConnectTimeoutError: e } = JA(), n = fi();
+  const A = Pe, r = HA, t = UA(), { InvalidArgumentError: a, ConnectTimeoutError: e } = JA(), n = fi();
   function i() {
   }
-  let Q, l;
+  let c, l;
   Cn.FinalizationRegistry && !(process.env.NODE_V8_COVERAGE || process.env.UNDICI_NO_FG) ? l = class {
     constructor(I) {
-      this._maxCachedSessions = I, this._sessionCache = /* @__PURE__ */ new Map(), this._sessionRegistry = new Cn.FinalizationRegistry((c) => {
+      this._maxCachedSessions = I, this._sessionCache = /* @__PURE__ */ new Map(), this._sessionRegistry = new Cn.FinalizationRegistry((Q) => {
         if (this._sessionCache.size < this._maxCachedSessions)
           return;
-        const u = this._sessionCache.get(c);
-        u !== void 0 && u.deref() === void 0 && this._sessionCache.delete(c);
+        const u = this._sessionCache.get(Q);
+        u !== void 0 && u.deref() === void 0 && this._sessionCache.delete(Q);
       });
     }
     get(I) {
-      const c = this._sessionCache.get(I);
-      return c ? c.deref() : null;
+      const Q = this._sessionCache.get(I);
+      return Q ? Q.deref() : null;
     }
-    set(I, c) {
-      this._maxCachedSessions !== 0 && (this._sessionCache.set(I, new WeakRef(c)), this._sessionRegistry.register(c, I));
+    set(I, Q) {
+      this._maxCachedSessions !== 0 && (this._sessionCache.set(I, new WeakRef(Q)), this._sessionRegistry.register(Q, I));
     }
   } : l = class {
     constructor(I) {
@@ -1925,32 +1925,32 @@ function Xe() {
     get(I) {
       return this._sessionCache.get(I);
     }
-    set(I, c) {
+    set(I, Q) {
       if (this._maxCachedSessions !== 0) {
         if (this._sessionCache.size >= this._maxCachedSessions) {
           const { value: u } = this._sessionCache.keys().next();
           this._sessionCache.delete(u);
         }
-        this._sessionCache.set(I, c);
+        this._sessionCache.set(I, Q);
       }
     }
   };
-  function B({ allowH2: C, maxCachedSessions: I, socketPath: c, timeout: u, session: p, ...F }) {
+  function B({ allowH2: C, maxCachedSessions: I, socketPath: Q, timeout: u, session: p, ...F }) {
     if (I != null && (!Number.isInteger(I) || I < 0))
-      throw new g("maxCachedSessions must be a positive integer or zero");
-    const S = { path: c, ...F }, M = new l(I ?? 100);
-    return u = u ?? 1e4, C = C ?? !1, function({ hostname: b, host: E, protocol: h, port: D, servername: a, localAddress: f, httpSocket: w }, d) {
+      throw new a("maxCachedSessions must be a positive integer or zero");
+    const S = { path: Q, ...F }, M = new l(I ?? 100);
+    return u = u ?? 1e4, C = C ?? !1, function({ hostname: b, host: E, protocol: h, port: D, servername: g, localAddress: f, httpSocket: w }, d) {
       let y;
       if (h === "https:") {
-        Q || (Q = ji), a = a || S.servername || t.getServerName(E) || null;
-        const L = a || b;
+        c || (c = ji), g = g || S.servername || t.getServerName(E) || null;
+        const L = g || b;
         r(L);
         const T = p || M.get(L) || null;
-        D = D || 443, y = Q.connect({
+        D = D || 443, y = c.connect({
           highWaterMark: 16384,
           // TLS in node can't have bigger HWM anyway...
           ...S,
-          servername: a,
+          servername: g,
           session: T,
           localAddress: f,
           // TODO(HTTP/2): Add support for h2c
@@ -1992,33 +1992,33 @@ function Xe() {
   const s = process.platform === "win32" ? (C, I) => {
     if (!I.timeout)
       return i;
-    let c = null, u = null;
+    let Q = null, u = null;
     const p = n.setFastTimeout(() => {
-      c = setImmediate(() => {
+      Q = setImmediate(() => {
         u = setImmediate(() => o(C.deref(), I));
       });
     }, I.timeout);
     return () => {
-      n.clearFastTimeout(p), clearImmediate(c), clearImmediate(u);
+      n.clearFastTimeout(p), clearImmediate(Q), clearImmediate(u);
     };
   } : (C, I) => {
     if (!I.timeout)
       return i;
-    let c = null;
+    let Q = null;
     const u = n.setFastTimeout(() => {
-      c = setImmediate(() => {
+      Q = setImmediate(() => {
         o(C.deref(), I);
       });
     }, I.timeout);
     return () => {
-      n.clearFastTimeout(u), clearImmediate(c);
+      n.clearFastTimeout(u), clearImmediate(Q);
     };
   };
   function o(C, I) {
     if (C == null)
       return;
-    let c = "Connect Timeout Error";
-    Array.isArray(C.autoSelectFamilyAttemptedAddresses) ? c += ` (attempted addresses: ${C.autoSelectFamilyAttemptedAddresses.join(", ")},` : c += ` (attempted address: ${I.hostname}:${I.port},`, c += ` timeout: ${I.timeout}ms)`, t.destroy(C, new e(c));
+    let Q = "Connect Timeout Error";
+    Array.isArray(C.autoSelectFamilyAttemptedAddresses) ? Q += ` (attempted addresses: ${C.autoSelectFamilyAttemptedAddresses.join(", ")},` : Q += ` (attempted address: ${I.hostname}:${I.port},`, Q += ` timeout: ${I.timeout}ms)`, t.destroy(C, new e(Q));
   }
   return Dt = B, Dt;
 }
@@ -2028,9 +2028,9 @@ function lo() {
   Nn = 1, Object.defineProperty(De, "__esModule", { value: !0 }), De.enumToMap = void 0;
   function A(r) {
     const t = {};
-    return Object.keys(r).forEach((g) => {
-      const e = r[g];
-      typeof e == "number" && (t[g] = e);
+    return Object.keys(r).forEach((a) => {
+      const e = r[a];
+      typeof e == "number" && (t[a] = e);
     }), t;
   }
   return De.enumToMap = A, De;
@@ -2213,15 +2213,15 @@ function ho() {
     for (let e = 32; e <= 255; e++)
       e !== 127 && A.HEADER_CHARS.push(e);
     A.CONNECTION_TOKEN_CHARS = A.HEADER_CHARS.filter((e) => e !== 44), A.MAJOR = A.NUM_MAP, A.MINOR = A.MAJOR;
-    var g;
+    var a;
     (function(e) {
       e[e.GENERAL = 0] = "GENERAL", e[e.CONNECTION = 1] = "CONNECTION", e[e.CONTENT_LENGTH = 2] = "CONTENT_LENGTH", e[e.TRANSFER_ENCODING = 3] = "TRANSFER_ENCODING", e[e.UPGRADE = 4] = "UPGRADE", e[e.CONNECTION_KEEP_ALIVE = 5] = "CONNECTION_KEEP_ALIVE", e[e.CONNECTION_CLOSE = 6] = "CONNECTION_CLOSE", e[e.CONNECTION_UPGRADE = 7] = "CONNECTION_UPGRADE", e[e.TRANSFER_ENCODING_CHUNKED = 8] = "TRANSFER_ENCODING_CHUNKED";
-    })(g = A.HEADER_STATE || (A.HEADER_STATE = {})), A.SPECIAL_HEADERS = {
-      connection: g.CONNECTION,
-      "content-length": g.CONTENT_LENGTH,
-      "proxy-connection": g.CONNECTION,
-      "transfer-encoding": g.TRANSFER_ENCODING,
-      upgrade: g.UPGRADE
+    })(a = A.HEADER_STATE || (A.HEADER_STATE = {})), A.SPECIAL_HEADERS = {
+      connection: a.CONNECTION,
+      "content-length": a.CONTENT_LENGTH,
+      "proxy-connection": a.CONNECTION,
+      "transfer-encoding": a.TRANSFER_ENCODING,
+      upgrade: a.UPGRADE
     };
   })(pt)), pt;
 }
@@ -2249,10 +2249,10 @@ function _e() {
   ), r = new Set(A), t = (
     /** @type {const} */
     [101, 204, 205, 304]
-  ), g = (
+  ), a = (
     /** @type {const} */
     [301, 302, 303, 307, 308]
-  ), e = new Set(g), n = (
+  ), e = new Set(a), n = (
     /** @type {const} */
     [
       "1",
@@ -2338,7 +2338,7 @@ function _e() {
       "6697",
       "10080"
     ]
-  ), i = new Set(n), Q = (
+  ), i = new Set(n), c = (
     /** @type {const} */
     [
       "",
@@ -2351,7 +2351,7 @@ function _e() {
       "strict-origin-when-cross-origin",
       "unsafe-url"
     ]
-  ), l = new Set(Q), B = (
+  ), l = new Set(c), B = (
     /** @type {const} */
     ["follow", "manual", "error"]
   ), s = (
@@ -2363,7 +2363,7 @@ function _e() {
   ), I = (
     /** @type {const} */
     ["omit", "same-origin", "include"]
-  ), c = (
+  ), Q = (
     /** @type {const} */
     [
       "default",
@@ -2415,12 +2415,12 @@ function _e() {
     subresource: M,
     forbiddenMethods: F,
     requestBodyHeader: u,
-    referrerPolicy: Q,
+    referrerPolicy: c,
     requestRedirect: B,
     requestMode: C,
     requestCredentials: I,
-    requestCache: c,
-    redirectStatus: g,
+    requestCache: Q,
+    redirectStatus: a,
     corsSafeListedMethods: A,
     nullBodyStatus: t,
     safeMethods: s,
@@ -2443,8 +2443,8 @@ function wi() {
   function r() {
     return globalThis[A];
   }
-  function t(g) {
-    if (g === void 0) {
+  function t(a) {
+    if (a === void 0) {
       Object.defineProperty(globalThis, A, {
         value: void 0,
         writable: !0,
@@ -2453,7 +2453,7 @@ function wi() {
       });
       return;
     }
-    const e = new URL(g);
+    const e = new URL(a);
     if (e.protocol !== "http:" && e.protocol !== "https:")
       throw new TypeError(`Only http & https urls are allowed, received ${e.protocol}`);
     Object.defineProperty(globalThis, A, {
@@ -2472,10 +2472,10 @@ var Nt, Yn;
 function ee() {
   if (Yn) return Nt;
   Yn = 1;
-  const A = HA, r = new TextEncoder(), t = /^[!#$%&'*+\-.^_|~A-Za-z0-9]+$/, g = /[\u000A\u000D\u0009\u0020]/, e = /[\u0009\u000A\u000C\u000D\u0020]/g, n = /^[\u0009\u0020-\u007E\u0080-\u00FF]+$/;
-  function i(a) {
-    A(a.protocol === "data:");
-    let f = Q(a, !0);
+  const A = HA, r = new TextEncoder(), t = /^[!#$%&'*+\-.^_|~A-Za-z0-9]+$/, a = /[\u000A\u000D\u0009\u0020]/, e = /[\u0009\u000A\u000C\u000D\u0020]/g, n = /^[\u0009\u0020-\u007E\u0080-\u00FF]+$/;
+  function i(g) {
+    A(g.protocol === "data:");
+    let f = c(g, !0);
     f = f.slice(5);
     const w = { position: 0 };
     let d = B(
@@ -2496,60 +2496,60 @@ function ee() {
       d = d.slice(0, -6), d = d.replace(/(\u0020)+$/, ""), d = d.slice(0, -1);
     }
     d.startsWith(";") && (d = "text/plain" + d);
-    let T = c(d);
-    return T === "failure" && (T = c("text/plain;charset=US-ASCII")), { mimeType: T, body: L };
+    let T = Q(d);
+    return T === "failure" && (T = Q("text/plain;charset=US-ASCII")), { mimeType: T, body: L };
   }
-  function Q(a, f = !1) {
+  function c(g, f = !1) {
     if (!f)
-      return a.href;
-    const w = a.href, d = a.hash.length, y = d === 0 ? w : w.substring(0, w.length - d);
+      return g.href;
+    const w = g.href, d = g.hash.length, y = d === 0 ? w : w.substring(0, w.length - d);
     return !d && w.endsWith("#") ? y.slice(0, -1) : y;
   }
-  function l(a, f, w) {
+  function l(g, f, w) {
     let d = "";
-    for (; w.position < f.length && a(f[w.position]); )
+    for (; w.position < f.length && g(f[w.position]); )
       d += f[w.position], w.position++;
     return d;
   }
-  function B(a, f, w) {
-    const d = f.indexOf(a, w.position), y = w.position;
+  function B(g, f, w) {
+    const d = f.indexOf(g, w.position), y = w.position;
     return d === -1 ? (w.position = f.length, f.slice(y)) : (w.position = d, f.slice(y, w.position));
   }
-  function s(a) {
-    const f = r.encode(a);
+  function s(g) {
+    const f = r.encode(g);
     return I(f);
   }
-  function o(a) {
-    return a >= 48 && a <= 57 || a >= 65 && a <= 70 || a >= 97 && a <= 102;
+  function o(g) {
+    return g >= 48 && g <= 57 || g >= 65 && g <= 70 || g >= 97 && g <= 102;
   }
-  function C(a) {
+  function C(g) {
     return (
       // 0-9
-      a >= 48 && a <= 57 ? a - 48 : (a & 223) - 55
+      g >= 48 && g <= 57 ? g - 48 : (g & 223) - 55
     );
   }
-  function I(a) {
-    const f = a.length, w = new Uint8Array(f);
+  function I(g) {
+    const f = g.length, w = new Uint8Array(f);
     let d = 0;
     for (let y = 0; y < f; ++y) {
-      const k = a[y];
-      k !== 37 ? w[d++] = k : k === 37 && !(o(a[y + 1]) && o(a[y + 2])) ? w[d++] = 37 : (w[d++] = C(a[y + 1]) << 4 | C(a[y + 2]), y += 2);
+      const k = g[y];
+      k !== 37 ? w[d++] = k : k === 37 && !(o(g[y + 1]) && o(g[y + 2])) ? w[d++] = 37 : (w[d++] = C(g[y + 1]) << 4 | C(g[y + 2]), y += 2);
     }
     return f === d ? w : w.subarray(0, d);
   }
-  function c(a) {
-    a = M(a, !0, !0);
+  function Q(g) {
+    g = M(g, !0, !0);
     const f = { position: 0 }, w = B(
       "/",
-      a,
+      g,
       f
     );
-    if (w.length === 0 || !t.test(w) || f.position > a.length)
+    if (w.length === 0 || !t.test(w) || f.position > g.length)
       return "failure";
     f.position++;
     let d = B(
       ";",
-      a,
+      g,
       f
     );
     if (d = M(d, !1, !0), d.length === 0 || !t.test(d))
@@ -2562,35 +2562,35 @@ function ee() {
       // https://mimesniff.spec.whatwg.org/#mime-type-essence
       essence: `${y}/${k}`
     };
-    for (; f.position < a.length; ) {
+    for (; f.position < g.length; ) {
       f.position++, l(
         // https://fetch.spec.whatwg.org/#http-whitespace
-        (G) => g.test(G),
-        a,
+        (G) => a.test(G),
+        g,
         f
       );
       let T = l(
         (G) => G !== ";" && G !== "=",
-        a,
+        g,
         f
       );
-      if (T = T.toLowerCase(), f.position < a.length) {
-        if (a[f.position] === ";")
+      if (T = T.toLowerCase(), f.position < g.length) {
+        if (g[f.position] === ";")
           continue;
         f.position++;
       }
-      if (f.position > a.length)
+      if (f.position > g.length)
         break;
       let Y = null;
-      if (a[f.position] === '"')
-        Y = p(a, f, !0), B(
+      if (g[f.position] === '"')
+        Y = p(g, f, !0), B(
           ";",
-          a,
+          g,
           f
         );
       else if (Y = B(
         ";",
-        a,
+        g,
         f
       ), Y = M(Y, !1, !0), Y.length === 0)
         continue;
@@ -2598,75 +2598,75 @@ function ee() {
     }
     return L;
   }
-  function u(a) {
-    a = a.replace(e, "");
-    let f = a.length;
-    if (f % 4 === 0 && a.charCodeAt(f - 1) === 61 && (--f, a.charCodeAt(f - 1) === 61 && --f), f % 4 === 1 || /[^+/0-9A-Za-z]/.test(a.length === f ? a : a.substring(0, f)))
+  function u(g) {
+    g = g.replace(e, "");
+    let f = g.length;
+    if (f % 4 === 0 && g.charCodeAt(f - 1) === 61 && (--f, g.charCodeAt(f - 1) === 61 && --f), f % 4 === 1 || /[^+/0-9A-Za-z]/.test(g.length === f ? g : g.substring(0, f)))
       return "failure";
-    const w = Buffer.from(a, "base64");
+    const w = Buffer.from(g, "base64");
     return new Uint8Array(w.buffer, w.byteOffset, w.byteLength);
   }
-  function p(a, f, w) {
+  function p(g, f, w) {
     const d = f.position;
     let y = "";
-    for (A(a[f.position] === '"'), f.position++; y += l(
+    for (A(g[f.position] === '"'), f.position++; y += l(
       (L) => L !== '"' && L !== "\\",
-      a,
+      g,
       f
-    ), !(f.position >= a.length); ) {
-      const k = a[f.position];
+    ), !(f.position >= g.length); ) {
+      const k = g[f.position];
       if (f.position++, k === "\\") {
-        if (f.position >= a.length) {
+        if (f.position >= g.length) {
           y += "\\";
           break;
         }
-        y += a[f.position], f.position++;
+        y += g[f.position], f.position++;
       } else {
         A(k === '"');
         break;
       }
     }
-    return w ? y : a.slice(d, f.position);
+    return w ? y : g.slice(d, f.position);
   }
-  function F(a) {
-    A(a !== "failure");
-    const { parameters: f, essence: w } = a;
+  function F(g) {
+    A(g !== "failure");
+    const { parameters: f, essence: w } = g;
     let d = w;
     for (let [y, k] of f.entries())
       d += ";", d += y, d += "=", t.test(k) || (k = k.replace(/(\\|")/g, "\\$1"), k = '"' + k, k += '"'), d += k;
     return d;
   }
-  function S(a) {
-    return a === 13 || a === 10 || a === 9 || a === 32;
+  function S(g) {
+    return g === 13 || g === 10 || g === 9 || g === 32;
   }
-  function M(a, f = !0, w = !0) {
-    return E(a, f, w, S);
+  function M(g, f = !0, w = !0) {
+    return E(g, f, w, S);
   }
-  function U(a) {
-    return a === 13 || a === 10 || a === 9 || a === 12 || a === 32;
+  function U(g) {
+    return g === 13 || g === 10 || g === 9 || g === 12 || g === 32;
   }
-  function b(a, f = !0, w = !0) {
-    return E(a, f, w, U);
+  function b(g, f = !0, w = !0) {
+    return E(g, f, w, U);
   }
-  function E(a, f, w, d) {
-    let y = 0, k = a.length - 1;
+  function E(g, f, w, d) {
+    let y = 0, k = g.length - 1;
     if (f)
-      for (; y < a.length && d(a.charCodeAt(y)); ) y++;
+      for (; y < g.length && d(g.charCodeAt(y)); ) y++;
     if (w)
-      for (; k > 0 && d(a.charCodeAt(k)); ) k--;
-    return y === 0 && k === a.length - 1 ? a : a.slice(y, k + 1);
+      for (; k > 0 && d(g.charCodeAt(k)); ) k--;
+    return y === 0 && k === g.length - 1 ? g : g.slice(y, k + 1);
   }
-  function h(a) {
-    const f = a.length;
+  function h(g) {
+    const f = g.length;
     if (65535 > f)
-      return String.fromCharCode.apply(null, a);
+      return String.fromCharCode.apply(null, g);
     let w = "", d = 0, y = 65535;
     for (; d < f; )
-      d + y > f && (y = f - d), w += String.fromCharCode.apply(null, a.subarray(d, d += y));
+      d + y > f && (y = f - d), w += String.fromCharCode.apply(null, g.subarray(d, d += y));
     return w;
   }
-  function D(a) {
-    switch (a.essence) {
+  function D(g) {
+    switch (g.essence) {
       case "application/ecmascript":
       case "application/javascript":
       case "application/x-ecmascript":
@@ -2693,15 +2693,15 @@ function ee() {
       case "application/xml":
         return "application/xml";
     }
-    return a.subtype.endsWith("+json") ? "application/json" : a.subtype.endsWith("+xml") ? "application/xml" : "";
+    return g.subtype.endsWith("+json") ? "application/json" : g.subtype.endsWith("+xml") ? "application/xml" : "";
   }
   return Nt = {
     dataURLProcessor: i,
-    URLSerializer: Q,
+    URLSerializer: c,
     collectASequenceOfCodePoints: l,
     collectASequenceOfCodePointsFast: B,
     stringPercentDecode: s,
-    parseMIMEType: c,
+    parseMIMEType: Q,
     collectAnHTTPQuotedString: p,
     serializeAMimeType: F,
     removeChars: E,
@@ -2715,22 +2715,22 @@ var St, Gn;
 function _A() {
   if (Gn) return St;
   Gn = 1;
-  const { types: A, inspect: r } = Ae, { markAsUncloneable: t } = ui, { toUSVString: g } = UA(), e = {};
+  const { types: A, inspect: r } = Ae, { markAsUncloneable: t } = ui, { toUSVString: a } = UA(), e = {};
   return e.converters = {}, e.util = {}, e.errors = {}, e.errors.exception = function(n) {
     return new TypeError(`${n.header}: ${n.message}`);
   }, e.errors.conversionFailed = function(n) {
-    const i = n.types.length === 1 ? "" : " one of", Q = `${n.argument} could not be converted to${i}: ${n.types.join(", ")}.`;
+    const i = n.types.length === 1 ? "" : " one of", c = `${n.argument} could not be converted to${i}: ${n.types.join(", ")}.`;
     return e.errors.exception({
       header: n.prefix,
-      message: Q
+      message: c
     });
   }, e.errors.invalidArgument = function(n) {
     return e.errors.exception({
       header: n.prefix,
       message: `"${n.value}" is an invalid ${n.type}.`
     });
-  }, e.brandCheck = function(n, i, Q) {
-    if (Q?.strict !== !1) {
+  }, e.brandCheck = function(n, i, c) {
+    if (c?.strict !== !1) {
       if (!(n instanceof i)) {
         const l = new TypeError("Illegal invocation");
         throw l.code = "ERR_INVALID_THIS", l;
@@ -2739,11 +2739,11 @@ function _A() {
       const l = new TypeError("Illegal invocation");
       throw l.code = "ERR_INVALID_THIS", l;
     }
-  }, e.argumentLengthCheck = function({ length: n }, i, Q) {
+  }, e.argumentLengthCheck = function({ length: n }, i, c) {
     if (n < i)
       throw e.errors.exception({
         message: `${i} argument${i !== 1 ? "s" : ""} required, but${n ? " only" : ""} ${n} found.`,
-        header: Q
+        header: c
       });
   }, e.illegalConstructor = function() {
     throw e.errors.exception({
@@ -2769,9 +2769,9 @@ function _A() {
         return n === null ? "Null" : "Object";
     }
   }, e.util.markAsUncloneable = t || (() => {
-  }), e.util.ConvertToInt = function(n, i, Q, l) {
+  }), e.util.ConvertToInt = function(n, i, c, l) {
     let B, s;
-    i === 64 ? (B = Math.pow(2, 53) - 1, Q === "unsigned" ? s = 0 : s = Math.pow(-2, 53) + 1) : Q === "unsigned" ? (s = 0, B = Math.pow(2, i) - 1) : (s = Math.pow(-2, i) - 1, B = Math.pow(2, i - 1) - 1);
+    i === 64 ? (B = Math.pow(2, 53) - 1, c === "unsigned" ? s = 0 : s = Math.pow(-2, 53) + 1) : c === "unsigned" ? (s = 0, B = Math.pow(2, i) - 1) : (s = Math.pow(-2, i) - 1, B = Math.pow(2, i - 1) - 1);
     let o = Number(n);
     if (o === 0 && (o = 0), l?.enforceRange === !0) {
       if (Number.isNaN(o) || o === Number.POSITIVE_INFINITY || o === Number.NEGATIVE_INFINITY)
@@ -2786,7 +2786,7 @@ function _A() {
         });
       return o;
     }
-    return !Number.isNaN(o) && l?.clamp === !0 ? (o = Math.min(Math.max(o, s), B), Math.floor(o) % 2 === 0 ? o = Math.floor(o) : o = Math.ceil(o), o) : Number.isNaN(o) || o === 0 && Object.is(0, o) || o === Number.POSITIVE_INFINITY || o === Number.NEGATIVE_INFINITY ? 0 : (o = e.util.IntegerPart(o), o = o % Math.pow(2, i), Q === "signed" && o >= Math.pow(2, i) - 1 ? o - Math.pow(2, i) : o);
+    return !Number.isNaN(o) && l?.clamp === !0 ? (o = Math.min(Math.max(o, s), B), Math.floor(o) % 2 === 0 ? o = Math.floor(o) : o = Math.ceil(o), o) : Number.isNaN(o) || o === 0 && Object.is(0, o) || o === Number.POSITIVE_INFINITY || o === Number.NEGATIVE_INFINITY ? 0 : (o = e.util.IntegerPart(o), o = o % Math.pow(2, i), c === "signed" && o >= Math.pow(2, i) - 1 ? o - Math.pow(2, i) : o);
   }, e.util.IntegerPart = function(n) {
     const i = Math.floor(Math.abs(n));
     return n < 0 ? -1 * i : i;
@@ -2802,83 +2802,83 @@ function _A() {
         return `${n}`;
     }
   }, e.sequenceConverter = function(n) {
-    return (i, Q, l, B) => {
+    return (i, c, l, B) => {
       if (e.util.Type(i) !== "Object")
         throw e.errors.exception({
-          header: Q,
+          header: c,
           message: `${l} (${e.util.Stringify(i)}) is not iterable.`
         });
       const s = typeof B == "function" ? B() : i?.[Symbol.iterator]?.(), o = [];
       let C = 0;
       if (s === void 0 || typeof s.next != "function")
         throw e.errors.exception({
-          header: Q,
+          header: c,
           message: `${l} is not iterable.`
         });
       for (; ; ) {
-        const { done: I, value: c } = s.next();
+        const { done: I, value: Q } = s.next();
         if (I)
           break;
-        o.push(n(c, Q, `${l}[${C++}]`));
+        o.push(n(Q, c, `${l}[${C++}]`));
       }
       return o;
     };
   }, e.recordConverter = function(n, i) {
-    return (Q, l, B) => {
-      if (e.util.Type(Q) !== "Object")
+    return (c, l, B) => {
+      if (e.util.Type(c) !== "Object")
         throw e.errors.exception({
           header: l,
-          message: `${B} ("${e.util.Type(Q)}") is not an Object.`
+          message: `${B} ("${e.util.Type(c)}") is not an Object.`
         });
       const s = {};
-      if (!A.isProxy(Q)) {
-        const C = [...Object.getOwnPropertyNames(Q), ...Object.getOwnPropertySymbols(Q)];
+      if (!A.isProxy(c)) {
+        const C = [...Object.getOwnPropertyNames(c), ...Object.getOwnPropertySymbols(c)];
         for (const I of C) {
-          const c = n(I, l, B), u = i(Q[I], l, B);
-          s[c] = u;
+          const Q = n(I, l, B), u = i(c[I], l, B);
+          s[Q] = u;
         }
         return s;
       }
-      const o = Reflect.ownKeys(Q);
+      const o = Reflect.ownKeys(c);
       for (const C of o)
-        if (Reflect.getOwnPropertyDescriptor(Q, C)?.enumerable) {
-          const c = n(C, l, B), u = i(Q[C], l, B);
-          s[c] = u;
+        if (Reflect.getOwnPropertyDescriptor(c, C)?.enumerable) {
+          const Q = n(C, l, B), u = i(c[C], l, B);
+          s[Q] = u;
         }
       return s;
     };
   }, e.interfaceConverter = function(n) {
-    return (i, Q, l, B) => {
+    return (i, c, l, B) => {
       if (B?.strict !== !1 && !(i instanceof n))
         throw e.errors.exception({
-          header: Q,
+          header: c,
           message: `Expected ${l} ("${e.util.Stringify(i)}") to be an instance of ${n.name}.`
         });
       return i;
     };
   }, e.dictionaryConverter = function(n) {
-    return (i, Q, l) => {
+    return (i, c, l) => {
       const B = e.util.Type(i), s = {};
       if (B === "Null" || B === "Undefined")
         return s;
       if (B !== "Object")
         throw e.errors.exception({
-          header: Q,
+          header: c,
           message: `Expected ${i} to be one of: Null, Undefined, Object.`
         });
       for (const o of n) {
-        const { key: C, defaultValue: I, required: c, converter: u } = o;
-        if (c === !0 && !Object.hasOwn(i, C))
+        const { key: C, defaultValue: I, required: Q, converter: u } = o;
+        if (Q === !0 && !Object.hasOwn(i, C))
           throw e.errors.exception({
-            header: Q,
+            header: c,
             message: `Missing required key "${C}".`
           });
         let p = i[C];
         const F = Object.hasOwn(o, "defaultValue");
-        if (F && p !== null && (p ??= I()), c || F || p !== void 0) {
-          if (p = u(p, Q, `${l}.${C}`), o.allowedValues && !o.allowedValues.includes(p))
+        if (F && p !== null && (p ??= I()), Q || F || p !== void 0) {
+          if (p = u(p, c, `${l}.${C}`), o.allowedValues && !o.allowedValues.includes(p))
             throw e.errors.exception({
-              header: Q,
+              header: c,
               message: `${p} is not an accepted type. Expected one of ${o.allowedValues.join(", ")}.`
             });
           s[C] = p;
@@ -2887,41 +2887,41 @@ function _A() {
       return s;
     };
   }, e.nullableConverter = function(n) {
-    return (i, Q, l) => i === null ? i : n(i, Q, l);
-  }, e.converters.DOMString = function(n, i, Q, l) {
+    return (i, c, l) => i === null ? i : n(i, c, l);
+  }, e.converters.DOMString = function(n, i, c, l) {
     if (n === null && l?.legacyNullToEmptyString)
       return "";
     if (typeof n == "symbol")
       throw e.errors.exception({
         header: i,
-        message: `${Q} is a symbol, which cannot be converted to a DOMString.`
+        message: `${c} is a symbol, which cannot be converted to a DOMString.`
       });
     return String(n);
-  }, e.converters.ByteString = function(n, i, Q) {
-    const l = e.converters.DOMString(n, i, Q);
+  }, e.converters.ByteString = function(n, i, c) {
+    const l = e.converters.DOMString(n, i, c);
     for (let B = 0; B < l.length; B++)
       if (l.charCodeAt(B) > 255)
         throw new TypeError(
           `Cannot convert argument to a ByteString because the character at index ${B} has a value of ${l.charCodeAt(B)} which is greater than 255.`
         );
     return l;
-  }, e.converters.USVString = g, e.converters.boolean = function(n) {
+  }, e.converters.USVString = a, e.converters.boolean = function(n) {
     return !!n;
   }, e.converters.any = function(n) {
     return n;
-  }, e.converters["long long"] = function(n, i, Q) {
-    return e.util.ConvertToInt(n, 64, "signed", void 0, i, Q);
-  }, e.converters["unsigned long long"] = function(n, i, Q) {
-    return e.util.ConvertToInt(n, 64, "unsigned", void 0, i, Q);
-  }, e.converters["unsigned long"] = function(n, i, Q) {
-    return e.util.ConvertToInt(n, 32, "unsigned", void 0, i, Q);
-  }, e.converters["unsigned short"] = function(n, i, Q, l) {
-    return e.util.ConvertToInt(n, 16, "unsigned", l, i, Q);
-  }, e.converters.ArrayBuffer = function(n, i, Q, l) {
+  }, e.converters["long long"] = function(n, i, c) {
+    return e.util.ConvertToInt(n, 64, "signed", void 0, i, c);
+  }, e.converters["unsigned long long"] = function(n, i, c) {
+    return e.util.ConvertToInt(n, 64, "unsigned", void 0, i, c);
+  }, e.converters["unsigned long"] = function(n, i, c) {
+    return e.util.ConvertToInt(n, 32, "unsigned", void 0, i, c);
+  }, e.converters["unsigned short"] = function(n, i, c, l) {
+    return e.util.ConvertToInt(n, 16, "unsigned", l, i, c);
+  }, e.converters.ArrayBuffer = function(n, i, c, l) {
     if (e.util.Type(n) !== "Object" || !A.isAnyArrayBuffer(n))
       throw e.errors.conversionFailed({
         prefix: i,
-        argument: `${Q} ("${e.util.Stringify(n)}")`,
+        argument: `${c} ("${e.util.Stringify(n)}")`,
         types: ["ArrayBuffer"]
       });
     if (l?.allowShared === !1 && A.isSharedArrayBuffer(n))
@@ -2935,10 +2935,10 @@ function _A() {
         message: "Received a resizable ArrayBuffer."
       });
     return n;
-  }, e.converters.TypedArray = function(n, i, Q, l, B) {
+  }, e.converters.TypedArray = function(n, i, c, l, B) {
     if (e.util.Type(n) !== "Object" || !A.isTypedArray(n) || n.constructor.name !== i.name)
       throw e.errors.conversionFailed({
-        prefix: Q,
+        prefix: c,
         argument: `${l} ("${e.util.Stringify(n)}")`,
         types: [i.name]
       });
@@ -2953,11 +2953,11 @@ function _A() {
         message: "Received a resizable ArrayBuffer."
       });
     return n;
-  }, e.converters.DataView = function(n, i, Q, l) {
+  }, e.converters.DataView = function(n, i, c, l) {
     if (e.util.Type(n) !== "Object" || !A.isDataView(n))
       throw e.errors.exception({
         header: i,
-        message: `${Q} is not a DataView.`
+        message: `${c} is not a DataView.`
       });
     if (l?.allowShared === !1 && A.isSharedArrayBuffer(n.buffer))
       throw e.errors.exception({
@@ -2970,16 +2970,16 @@ function _A() {
         message: "Received a resizable ArrayBuffer."
       });
     return n;
-  }, e.converters.BufferSource = function(n, i, Q, l) {
+  }, e.converters.BufferSource = function(n, i, c, l) {
     if (A.isAnyArrayBuffer(n))
-      return e.converters.ArrayBuffer(n, i, Q, { ...l, allowShared: !1 });
+      return e.converters.ArrayBuffer(n, i, c, { ...l, allowShared: !1 });
     if (A.isTypedArray(n))
-      return e.converters.TypedArray(n, n.constructor, i, Q, { ...l, allowShared: !1 });
+      return e.converters.TypedArray(n, n.constructor, i, c, { ...l, allowShared: !1 });
     if (A.isDataView(n))
-      return e.converters.DataView(n, i, Q, { ...l, allowShared: !1 });
+      return e.converters.DataView(n, i, c, { ...l, allowShared: !1 });
     throw e.errors.conversionFailed({
       prefix: i,
-      argument: `${Q} ("${e.util.Stringify(n)}")`,
+      argument: `${c} ("${e.util.Stringify(n)}")`,
       types: ["BufferSource"]
     });
   }, e.converters["sequence<ByteString>"] = e.sequenceConverter(
@@ -2997,7 +2997,7 @@ var bt, Jn;
 function ne() {
   if (Jn) return bt;
   Jn = 1;
-  const { Transform: A } = re, r = $r, { redirectStatusSet: t, referrerPolicySet: g, badPortsSet: e } = _e(), { getGlobalOrigin: n } = wi(), { collectASequenceOfCodePoints: i, collectAnHTTPQuotedString: Q, removeChars: l, parseMIMEType: B } = ee(), { performance: s } = $i, { isBlobLike: o, ReadableStreamFrom: C, isValidHTTPToken: I, normalizedMethodRecordsBase: c } = UA(), u = HA, { isUint8Array: p } = hi, { webidl: F } = _A();
+  const { Transform: A } = re, r = $r, { redirectStatusSet: t, referrerPolicySet: a, badPortsSet: e } = _e(), { getGlobalOrigin: n } = wi(), { collectASequenceOfCodePoints: i, collectAnHTTPQuotedString: c, removeChars: l, parseMIMEType: B } = ee(), { performance: s } = $i, { isBlobLike: o, ReadableStreamFrom: C, isValidHTTPToken: I, normalizedMethodRecordsBase: Q } = UA(), u = HA, { isUint8Array: p } = hi, { webidl: F } = _A();
   let S = [], M;
   try {
     M = require("node:crypto");
@@ -3030,7 +3030,7 @@ function ne() {
   function D(N) {
     return N.urlList[N.urlList.length - 1];
   }
-  function a(N) {
+  function g(N) {
     const q = D(N);
     return hA(q) && e.has(q.port) ? "blocked" : "allowed";
   }
@@ -3058,7 +3058,7 @@ function ne() {
     if (V.length > 0)
       for (let W = V.length; W !== 0; W--) {
         const eA = V[W - 1].trim();
-        if (g.has(eA)) {
+        if (a.has(eA)) {
           H = eA;
           break;
         }
@@ -3284,7 +3284,7 @@ function ne() {
     return N.controller.state === "aborted" || N.controller.state === "terminated";
   }
   function wA(N) {
-    return c[N.toLowerCase()] ?? N;
+    return Q[N.toLowerCase()] ?? N;
   }
   function TA(N) {
     const q = JSON.stringify(N);
@@ -3550,7 +3550,7 @@ function ne() {
         m
       ), m.position < q.length)
         if (q.charCodeAt(m.position) === 34) {
-          if (H += Q(
+          if (H += c(
             q,
             m
           ), m.position < q.length)
@@ -3602,7 +3602,7 @@ function ne() {
     createOpaqueTimingInfo: lA,
     setRequestReferrerPolicyOnRedirect: k,
     isValidHTTPToken: I,
-    requestBadPort: a,
+    requestBadPort: g,
     requestCurrentURL: D,
     responseURL: U,
     responseLocationURL: b,
@@ -3650,46 +3650,46 @@ var Mt, Hn;
 function yi() {
   if (Hn) return Mt;
   Hn = 1;
-  const { Blob: A, File: r } = se, { kState: t } = ue(), { webidl: g } = _A();
+  const { Blob: A, File: r } = se, { kState: t } = ue(), { webidl: a } = _A();
   class e {
-    constructor(Q, l, B = {}) {
+    constructor(c, l, B = {}) {
       const s = l, o = B.type, C = B.lastModified ?? Date.now();
       this[t] = {
-        blobLike: Q,
+        blobLike: c,
         name: s,
         type: o,
         lastModified: C
       };
     }
-    stream(...Q) {
-      return g.brandCheck(this, e), this[t].blobLike.stream(...Q);
+    stream(...c) {
+      return a.brandCheck(this, e), this[t].blobLike.stream(...c);
     }
-    arrayBuffer(...Q) {
-      return g.brandCheck(this, e), this[t].blobLike.arrayBuffer(...Q);
+    arrayBuffer(...c) {
+      return a.brandCheck(this, e), this[t].blobLike.arrayBuffer(...c);
     }
-    slice(...Q) {
-      return g.brandCheck(this, e), this[t].blobLike.slice(...Q);
+    slice(...c) {
+      return a.brandCheck(this, e), this[t].blobLike.slice(...c);
     }
-    text(...Q) {
-      return g.brandCheck(this, e), this[t].blobLike.text(...Q);
+    text(...c) {
+      return a.brandCheck(this, e), this[t].blobLike.text(...c);
     }
     get size() {
-      return g.brandCheck(this, e), this[t].blobLike.size;
+      return a.brandCheck(this, e), this[t].blobLike.size;
     }
     get type() {
-      return g.brandCheck(this, e), this[t].blobLike.type;
+      return a.brandCheck(this, e), this[t].blobLike.type;
     }
     get name() {
-      return g.brandCheck(this, e), this[t].name;
+      return a.brandCheck(this, e), this[t].name;
     }
     get lastModified() {
-      return g.brandCheck(this, e), this[t].lastModified;
+      return a.brandCheck(this, e), this[t].lastModified;
     }
     get [Symbol.toStringTag]() {
       return "File";
     }
   }
-  g.converters.Blob = g.interfaceConverter(A);
+  a.converters.Blob = a.interfaceConverter(A);
   function n(i) {
     return i instanceof r || i && (typeof i.stream == "function" || typeof i.arrayBuffer == "function") && i[Symbol.toStringTag] === "File";
   }
@@ -3699,7 +3699,7 @@ var Lt, Vn;
 function je() {
   if (Vn) return Lt;
   Vn = 1;
-  const { isBlobLike: A, iteratorMixin: r } = ne(), { kState: t } = ue(), { kEnumerableProperty: g } = UA(), { FileLike: e, isFileLike: n } = yi(), { webidl: i } = _A(), { File: Q } = se, l = Ae, B = globalThis.File ?? Q;
+  const { isBlobLike: A, iteratorMixin: r } = ne(), { kState: t } = ue(), { kEnumerableProperty: a } = UA(), { FileLike: e, isFileLike: n } = yi(), { webidl: i } = _A(), { File: c } = se, l = Ae, B = globalThis.File ?? c;
   class s {
     constructor(I) {
       if (i.util.markAsUncloneable(this), I !== void 0)
@@ -3710,81 +3710,81 @@ function je() {
         });
       this[t] = [];
     }
-    append(I, c, u = void 0) {
+    append(I, Q, u = void 0) {
       i.brandCheck(this, s);
       const p = "FormData.append";
-      if (i.argumentLengthCheck(arguments, 2, p), arguments.length === 3 && !A(c))
+      if (i.argumentLengthCheck(arguments, 2, p), arguments.length === 3 && !A(Q))
         throw new TypeError(
           "Failed to execute 'append' on 'FormData': parameter 2 is not of type 'Blob'"
         );
-      I = i.converters.USVString(I, p, "name"), c = A(c) ? i.converters.Blob(c, p, "value", { strict: !1 }) : i.converters.USVString(c, p, "value"), u = arguments.length === 3 ? i.converters.USVString(u, p, "filename") : void 0;
-      const F = o(I, c, u);
+      I = i.converters.USVString(I, p, "name"), Q = A(Q) ? i.converters.Blob(Q, p, "value", { strict: !1 }) : i.converters.USVString(Q, p, "value"), u = arguments.length === 3 ? i.converters.USVString(u, p, "filename") : void 0;
+      const F = o(I, Q, u);
       this[t].push(F);
     }
     delete(I) {
       i.brandCheck(this, s);
-      const c = "FormData.delete";
-      i.argumentLengthCheck(arguments, 1, c), I = i.converters.USVString(I, c, "name"), this[t] = this[t].filter((u) => u.name !== I);
+      const Q = "FormData.delete";
+      i.argumentLengthCheck(arguments, 1, Q), I = i.converters.USVString(I, Q, "name"), this[t] = this[t].filter((u) => u.name !== I);
     }
     get(I) {
       i.brandCheck(this, s);
-      const c = "FormData.get";
-      i.argumentLengthCheck(arguments, 1, c), I = i.converters.USVString(I, c, "name");
+      const Q = "FormData.get";
+      i.argumentLengthCheck(arguments, 1, Q), I = i.converters.USVString(I, Q, "name");
       const u = this[t].findIndex((p) => p.name === I);
       return u === -1 ? null : this[t][u].value;
     }
     getAll(I) {
       i.brandCheck(this, s);
-      const c = "FormData.getAll";
-      return i.argumentLengthCheck(arguments, 1, c), I = i.converters.USVString(I, c, "name"), this[t].filter((u) => u.name === I).map((u) => u.value);
+      const Q = "FormData.getAll";
+      return i.argumentLengthCheck(arguments, 1, Q), I = i.converters.USVString(I, Q, "name"), this[t].filter((u) => u.name === I).map((u) => u.value);
     }
     has(I) {
       i.brandCheck(this, s);
-      const c = "FormData.has";
-      return i.argumentLengthCheck(arguments, 1, c), I = i.converters.USVString(I, c, "name"), this[t].findIndex((u) => u.name === I) !== -1;
+      const Q = "FormData.has";
+      return i.argumentLengthCheck(arguments, 1, Q), I = i.converters.USVString(I, Q, "name"), this[t].findIndex((u) => u.name === I) !== -1;
     }
-    set(I, c, u = void 0) {
+    set(I, Q, u = void 0) {
       i.brandCheck(this, s);
       const p = "FormData.set";
-      if (i.argumentLengthCheck(arguments, 2, p), arguments.length === 3 && !A(c))
+      if (i.argumentLengthCheck(arguments, 2, p), arguments.length === 3 && !A(Q))
         throw new TypeError(
           "Failed to execute 'set' on 'FormData': parameter 2 is not of type 'Blob'"
         );
-      I = i.converters.USVString(I, p, "name"), c = A(c) ? i.converters.Blob(c, p, "name", { strict: !1 }) : i.converters.USVString(c, p, "name"), u = arguments.length === 3 ? i.converters.USVString(u, p, "name") : void 0;
-      const F = o(I, c, u), S = this[t].findIndex((M) => M.name === I);
+      I = i.converters.USVString(I, p, "name"), Q = A(Q) ? i.converters.Blob(Q, p, "name", { strict: !1 }) : i.converters.USVString(Q, p, "name"), u = arguments.length === 3 ? i.converters.USVString(u, p, "name") : void 0;
+      const F = o(I, Q, u), S = this[t].findIndex((M) => M.name === I);
       S !== -1 ? this[t] = [
         ...this[t].slice(0, S),
         F,
         ...this[t].slice(S + 1).filter((M) => M.name !== I)
       ] : this[t].push(F);
     }
-    [l.inspect.custom](I, c) {
+    [l.inspect.custom](I, Q) {
       const u = this[t].reduce((F, S) => (F[S.name] ? Array.isArray(F[S.name]) ? F[S.name].push(S.value) : F[S.name] = [F[S.name], S.value] : F[S.name] = S.value, F), { __proto__: null });
-      c.depth ??= I, c.colors ??= !0;
-      const p = l.formatWithOptions(c, u);
+      Q.depth ??= I, Q.colors ??= !0;
+      const p = l.formatWithOptions(Q, u);
       return `FormData ${p.slice(p.indexOf("]") + 2)}`;
     }
   }
   r("FormData", s, t, "name", "value"), Object.defineProperties(s.prototype, {
-    append: g,
-    delete: g,
-    get: g,
-    getAll: g,
-    has: g,
-    set: g,
+    append: a,
+    delete: a,
+    get: a,
+    getAll: a,
+    has: a,
+    set: a,
     [Symbol.toStringTag]: {
       value: "FormData",
       configurable: !0
     }
   });
-  function o(C, I, c) {
+  function o(C, I, Q) {
     if (typeof I != "string") {
-      if (n(I) || (I = I instanceof Blob ? new B([I], "blob", { type: I.type }) : new e(I, "blob", { type: I.type })), c !== void 0) {
+      if (n(I) || (I = I instanceof Blob ? new B([I], "blob", { type: I.type }) : new e(I, "blob", { type: I.type })), Q !== void 0) {
         const u = {
           type: I.type,
           lastModified: I.lastModified
         };
-        I = I instanceof Q ? new B([I], c, u) : new e(I, c, u);
+        I = I instanceof c ? new B([I], Q, u) : new e(I, Q, u);
       }
     }
     return { name: C, value: I };
@@ -3795,9 +3795,9 @@ var Tt, xn;
 function fo() {
   if (xn) return Tt;
   xn = 1;
-  const { isUSVString: A, bufferToLowerCasedHeaderName: r } = UA(), { utf8DecodeBytes: t } = ne(), { HTTP_TOKEN_CODEPOINTS: g, isomorphicDecode: e } = ee(), { isFileLike: n } = yi(), { makeEntry: i } = je(), Q = HA, { File: l } = se, B = globalThis.File ?? l, s = Buffer.from('form-data; name="'), o = Buffer.from("; filename"), C = Buffer.from("--"), I = Buffer.from(`--\r
+  const { isUSVString: A, bufferToLowerCasedHeaderName: r } = UA(), { utf8DecodeBytes: t } = ne(), { HTTP_TOKEN_CODEPOINTS: a, isomorphicDecode: e } = ee(), { isFileLike: n } = yi(), { makeEntry: i } = je(), c = HA, { File: l } = se, B = globalThis.File ?? l, s = Buffer.from('form-data; name="'), o = Buffer.from("; filename"), C = Buffer.from("--"), I = Buffer.from(`--\r
 `);
-  function c(E) {
+  function Q(E) {
     for (let h = 0; h < E.length; ++h)
       if ((E.charCodeAt(h) & -128) !== 0)
         return !1;
@@ -3808,26 +3808,26 @@ function fo() {
     if (h < 27 || h > 70)
       return !1;
     for (let D = 0; D < h; ++D) {
-      const a = E.charCodeAt(D);
-      if (!(a >= 48 && a <= 57 || a >= 65 && a <= 90 || a >= 97 && a <= 122 || a === 39 || a === 45 || a === 95))
+      const g = E.charCodeAt(D);
+      if (!(g >= 48 && g <= 57 || g >= 65 && g <= 90 || g >= 97 && g <= 122 || g === 39 || g === 45 || g === 95))
         return !1;
     }
     return !0;
   }
   function p(E, h) {
-    Q(h !== "failure" && h.essence === "multipart/form-data");
+    c(h !== "failure" && h.essence === "multipart/form-data");
     const D = h.parameters.get("boundary");
     if (D === void 0)
       return "failure";
-    const a = Buffer.from(`--${D}`, "utf8"), f = [], w = { position: 0 };
+    const g = Buffer.from(`--${D}`, "utf8"), f = [], w = { position: 0 };
     for (; E[w.position] === 13 && E[w.position + 1] === 10; )
       w.position += 2;
     let d = E.length;
     for (; E[d - 1] === 10 && E[d - 2] === 13; )
       d -= 2;
     for (d !== E.length && (E = E.subarray(0, d)); ; ) {
-      if (E.subarray(w.position, w.position + a.length).equals(a))
-        w.position += a.length;
+      if (E.subarray(w.position, w.position + g.length).equals(g))
+        w.position += g.length;
       else
         return "failure";
       if (w.position === E.length - 2 && b(E, C, w) || w.position === E.length - 4 && b(E, I, w))
@@ -3842,7 +3842,7 @@ function fo() {
       w.position += 2;
       let G;
       {
-        const sA = E.indexOf(a.subarray(2), w.position);
+        const sA = E.indexOf(g.subarray(2), w.position);
         if (sA === -1)
           return "failure";
         G = E.subarray(w.position, sA - 4), w.position += G.length, Y === "base64" && (G = Buffer.from(G.toString(), "base64"));
@@ -3851,20 +3851,20 @@ function fo() {
         return "failure";
       w.position += 2;
       let tA;
-      L !== null ? (T ??= "text/plain", c(T) || (T = ""), tA = new B([G], L, { type: T })) : tA = t(Buffer.from(G)), Q(A(k)), Q(typeof tA == "string" && A(tA) || n(tA)), f.push(i(k, tA, L));
+      L !== null ? (T ??= "text/plain", Q(T) || (T = ""), tA = new B([G], L, { type: T })) : tA = t(Buffer.from(G)), c(A(k)), c(typeof tA == "string" && A(tA) || n(tA)), f.push(i(k, tA, L));
     }
   }
   function F(E, h) {
-    let D = null, a = null, f = null, w = null;
+    let D = null, g = null, f = null, w = null;
     for (; ; ) {
       if (E[h.position] === 13 && E[h.position + 1] === 10)
-        return D === null ? "failure" : { name: D, filename: a, contentType: f, encoding: w };
+        return D === null ? "failure" : { name: D, filename: g, contentType: f, encoding: w };
       let d = M(
         (y) => y !== 10 && y !== 13 && y !== 58,
         E,
         h
       );
-      if (d = U(d, !0, !0, (y) => y === 9 || y === 32), !g.test(d.toString()) || E[h.position] !== 58)
+      if (d = U(d, !0, !0, (y) => y === 9 || y === 32), !a.test(d.toString()) || E[h.position] !== 58)
         return "failure";
       switch (h.position++, M(
         (y) => y === 32 || y === 9,
@@ -3872,11 +3872,11 @@ function fo() {
         h
       ), r(d)) {
         case "content-disposition": {
-          if (D = a = null, !b(E, s, h) || (h.position += 17, D = S(E, h), D === null))
+          if (D = g = null, !b(E, s, h) || (h.position += 17, D = S(E, h), D === null))
             return "failure";
           if (b(E, o, h)) {
             let y = h.position + o.length;
-            if (E[y] === 42 && (h.position += 1, y += 1), E[y] !== 61 || E[y + 1] !== 34 || (h.position += 12, a = S(E, h), a === null))
+            if (E[y] === 42 && (h.position += 1, y += 1), E[y] !== 61 || E[y + 1] !== 34 || (h.position += 12, g = S(E, h), g === null))
               return "failure";
           }
           break;
@@ -3912,9 +3912,9 @@ function fo() {
     }
   }
   function S(E, h) {
-    Q(E[h.position - 1] === 34);
+    c(E[h.position - 1] === 34);
     let D = M(
-      (a) => a !== 10 && a !== 13 && a !== 34,
+      (g) => g !== 10 && g !== 13 && g !== 34,
       E,
       h
     );
@@ -3922,23 +3922,23 @@ function fo() {
 `).replace(/%0D/ig, "\r").replace(/%22/g, '"'), D);
   }
   function M(E, h, D) {
-    let a = D.position;
-    for (; a < h.length && E(h[a]); )
-      ++a;
-    return h.subarray(D.position, D.position = a);
+    let g = D.position;
+    for (; g < h.length && E(h[g]); )
+      ++g;
+    return h.subarray(D.position, D.position = g);
   }
-  function U(E, h, D, a) {
+  function U(E, h, D, g) {
     let f = 0, w = E.length - 1;
     if (h)
-      for (; f < E.length && a(E[f]); ) f++;
-    for (; w > 0 && a(E[w]); ) w--;
+      for (; f < E.length && g(E[f]); ) f++;
+    for (; w > 0 && g(E[w]); ) w--;
     return f === 0 && w === E.length - 1 ? E : E.subarray(f, w + 1);
   }
   function b(E, h, D) {
     if (E.length < h.length)
       return !1;
-    for (let a = 0; a < h.length; a++)
-      if (h[a] !== E[D.position + a])
+    for (let g = 0; g < h.length; g++)
+      if (h[g] !== E[D.position + g])
         return !1;
     return !0;
   }
@@ -3954,13 +3954,13 @@ function Ne() {
   const A = UA(), {
     ReadableStreamFrom: r,
     isBlobLike: t,
-    isReadableStreamLike: g,
+    isReadableStreamLike: a,
     readableStreamClose: e,
     createDeferredPromise: n,
     fullyReadBody: i,
-    extractMimeType: Q,
+    extractMimeType: c,
     utf8DecodeBytes: l
-  } = ne(), { FormData: B } = je(), { kState: s } = ue(), { webidl: o } = _A(), { Blob: C } = se, I = HA, { isErrored: c, isDisturbed: u } = re, { isArrayBuffer: p } = hi, { serializeAMimeType: F } = ee(), { multipartFormDataParser: S } = fo();
+  } = ne(), { FormData: B } = je(), { kState: s } = ue(), { webidl: o } = _A(), { Blob: C } = se, I = HA, { isErrored: Q, isDisturbed: u } = re, { isArrayBuffer: p } = hi, { serializeAMimeType: F } = ee(), { multipartFormDataParser: S } = fo();
   let M;
   try {
     const G = require("node:crypto");
@@ -3975,7 +3975,7 @@ function Ne() {
   let h;
   E && (h = new FinalizationRegistry((G) => {
     const tA = G.deref();
-    tA && !tA.locked && !u(tA) && !c(tA) && tA.cancel("Response object has been garbage collected").catch(b);
+    tA && !tA.locked && !u(tA) && !Q(tA) && tA.cancel("Response object has been garbage collected").catch(b);
   }));
   function D(G, tA = !1) {
     let sA = null;
@@ -3987,7 +3987,7 @@ function Ne() {
       start() {
       },
       type: "bytes"
-    }), I(g(sA));
+    }), I(a(sA));
     let QA = null, aA = null, lA = null, CA = null;
     if (typeof G == "string")
       aA = G, CA = "text/plain;charset=UTF-8";
@@ -4047,7 +4047,7 @@ Content-Type: ${nA.type || "application/octet-stream"}\r
             queueMicrotask(() => {
               yA.close(), yA.byobRequest?.respond(0);
             });
-          else if (!c(sA)) {
+          else if (!Q(sA)) {
             const rA = new Uint8Array(j);
             rA.byteLength && yA.enqueue(rA);
           }
@@ -4061,7 +4061,7 @@ Content-Type: ${nA.type || "application/octet-stream"}\r
     }
     return [{ stream: sA, source: aA, length: lA }, CA];
   }
-  function a(G, tA = !1) {
+  function g(G, tA = !1) {
     return G instanceof ReadableStream && (I(!A.isDisturbed(G), "The body has already been consumed."), I(!G.locked, "The stream is locked.")), D(G, tA);
   }
   function f(G, tA) {
@@ -4146,12 +4146,12 @@ Content-Type: ${nA.type || "application/octet-stream"}\r
     return JSON.parse(l(G));
   }
   function Y(G) {
-    const tA = G[s].headersList, sA = Q(tA);
+    const tA = G[s].headersList, sA = c(tA);
     return sA === "failure" ? null : sA;
   }
   return Yt = {
     extractBody: D,
-    safelyExtractBody: a,
+    safelyExtractBody: g,
     cloneBody: f,
     mixinBody: y,
     streamRegistry: h,
@@ -4163,11 +4163,11 @@ var Gt, qn;
 function wo() {
   if (qn) return Gt;
   qn = 1;
-  const A = HA, r = UA(), { channels: t } = me(), g = fi(), {
+  const A = HA, r = UA(), { channels: t } = me(), a = fi(), {
     RequestContentLengthMismatchError: e,
     ResponseContentLengthMismatchError: n,
     RequestAbortedError: i,
-    HeadersTimeoutError: Q,
+    HeadersTimeoutError: c,
     HeadersOverflowError: l,
     SocketError: B,
     InformationalError: s,
@@ -4175,7 +4175,7 @@ function wo() {
     HTTPParserError: C,
     ResponseExceededMaxSizeError: I
   } = JA(), {
-    kUrl: c,
+    kUrl: Q,
     kReset: u,
     kClient: p,
     kParser: F,
@@ -4186,7 +4186,7 @@ function wo() {
     kWriting: E,
     kQueue: h,
     kNoRef: D,
-    kKeepAliveDefaultTimeout: a,
+    kKeepAliveDefaultTimeout: g,
     kHostHeader: f,
     kPendingIdx: w,
     kRunningIdx: d,
@@ -4256,7 +4256,7 @@ function wo() {
       A(Number.isFinite(J[Y]) && J[Y] > 0), this.llhttp = X, this.ptr = this.llhttp.llhttp_alloc(P.TYPE.RESPONSE), this.client = J, this.socket = $, this.timeout = null, this.timeoutValue = null, this.timeoutType = null, this.statusCode = null, this.statusText = "", this.upgrade = !1, this.headers = [], this.headersSize = 0, this.headersMaxSize = J[Y], this.shouldKeepAlive = !1, this.paused = !1, this.resume = this.resume.bind(this), this.bytesRead = 0, this.keepAlive = "", this.contentLength = "", this.connection = "", this.maxResponseSize = J[IA];
     }
     setTimeout(J, $) {
-      J !== this.timeoutValue || $ & FA ^ this.timeoutType & FA ? (this.timeout && (g.clearTimeout(this.timeout), this.timeout = null), J && ($ & FA ? this.timeout = g.setFastTimeout(_, J, new WeakRef(this)) : (this.timeout = setTimeout(_, J, new WeakRef(this)), this.timeout.unref())), this.timeoutValue = J) : this.timeout && this.timeout.refresh && this.timeout.refresh(), this.timeoutType = $;
+      J !== this.timeoutValue || $ & FA ^ this.timeoutType & FA ? (this.timeout && (a.clearTimeout(this.timeout), this.timeout = null), J && ($ & FA ? this.timeout = a.setFastTimeout(_, J, new WeakRef(this)) : (this.timeout = setTimeout(_, J, new WeakRef(this)), this.timeout.unref())), this.timeoutValue = J) : this.timeout && this.timeout.refresh && this.timeout.refresh(), this.timeoutType = $;
     }
     resume() {
       this.socket.destroyed || !this.paused || (A(this.ptr != null), A(fA == null), this.llhttp.llhttp_resume(this.ptr), A(this.timeoutType === qA), this.timeout && this.timeout.refresh && this.timeout.refresh(), this.paused = !1, this.execute(this.socket.read() || rA), this.readMore());
@@ -4301,7 +4301,7 @@ function wo() {
       }
     }
     destroy() {
-      A(this.ptr != null), A(fA == null), this.llhttp.llhttp_free(this.ptr), this.ptr = null, this.timeout && g.clearTimeout(this.timeout), this.timeout = null, this.timeoutValue = null, this.timeoutType = null, this.paused = !1;
+      A(this.ptr != null), A(fA == null), this.llhttp.llhttp_free(this.ptr), this.ptr = null, this.timeout && a.clearTimeout(this.timeout), this.timeout = null, this.timeoutValue = null, this.timeoutType = null, this.paused = !1;
     }
     onStatus(J) {
       this.statusText = J.toString();
@@ -4336,7 +4336,7 @@ function wo() {
       const { upgrade: $, client: X, socket: AA, headers: EA, statusCode: kA } = this;
       A($), A(X[L] === AA), A(!AA.destroyed), A(!this.paused), A((EA.length & 1) === 0);
       const bA = X[h][X[d]];
-      A(bA), A(bA.upgrade || bA.method === "CONNECT"), this.statusCode = null, this.statusText = "", this.shouldKeepAlive = null, this.headers = [], this.headersSize = 0, AA.unshift(J), AA[F].destroy(), AA[F] = null, AA[p] = null, AA[y] = null, x(AA), X[L] = null, X[j] = null, X[h][X[d]++] = null, X.emit("disconnect", X[c], [X], new s("upgrade"));
+      A(bA), A(bA.upgrade || bA.method === "CONNECT"), this.statusCode = null, this.statusText = "", this.shouldKeepAlive = null, this.headers = [], this.headersSize = 0, AA.unshift(J), AA[F].destroy(), AA[F] = null, AA[p] = null, AA[y] = null, x(AA), X[L] = null, X[j] = null, X[h][X[d]++] = null, X.emit("disconnect", X[Q], [X], new s("upgrade"));
       try {
         bA.onUpgrade(kA, EA, AA);
       } catch (N) {
@@ -4373,7 +4373,7 @@ function wo() {
           );
           V <= 0 ? EA[u] = !0 : AA[T] = V;
         } else
-          AA[T] = AA[a];
+          AA[T] = AA[g];
       } else
         EA[u] = !0;
       const q = N.onHeaders(J, kA, this.resume, bA) === !1;
@@ -4412,7 +4412,7 @@ function wo() {
   }
   function _(uA) {
     const { socket: J, timeoutType: $, client: X, paused: AA } = uA.deref();
-    $ === dA ? (!J[E] || J.writableNeedDrain || X[M] > 1) && (A(!AA, "cannot be paused while waiting for headers"), r.destroy(J, new Q())) : $ === qA ? AA || r.destroy(J, new o()) : $ === VA && (A(X[M] === 0 && X[T]), r.destroy(J, new s("socket idle timeout")));
+    $ === dA ? (!J[E] || J.writableNeedDrain || X[M] > 1) && (A(!AA, "cannot be paused while waiting for headers"), r.destroy(J, new c())) : $ === qA ? AA || r.destroy(J, new o()) : $ === VA && (A(X[M] === 0 && X[T]), r.destroy(J, new s("socket idle timeout")));
   }
   async function R(uA, J) {
     uA[L] = J, cA || (cA = await iA, iA = null), J[D] = !1, J[E] = !1, J[u] = !1, J[S] = !1, J[F] = new vA(uA, J, cA), O(J, "error", function(X) {
@@ -4448,7 +4448,7 @@ function wo() {
         const kA = X[h][X[d]];
         X[h][X[d]++] = null, r.errorRequest(X, kA, EA);
       }
-      X[w] = X[d], A(X[M] === 0), X.emit("disconnect", X[c], [X], EA), X[yA]();
+      X[w] = X[d], A(X[M] === 0), X.emit("disconnect", X[Q], [X], EA), X[yA]();
     });
     let $ = !1;
     return J.on("close", () => {
@@ -4676,19 +4676,19 @@ function yo() {
   if (On) return Jt;
   On = 1;
   const A = HA, { pipeline: r } = re, t = UA(), {
-    RequestContentLengthMismatchError: g,
+    RequestContentLengthMismatchError: a,
     RequestAbortedError: e,
     SocketError: n,
     InformationalError: i
   } = JA(), {
-    kUrl: Q,
+    kUrl: c,
     kReset: l,
     kClient: B,
     kRunning: s,
     kPending: o,
     kQueue: C,
     kPendingIdx: I,
-    kRunningIdx: c,
+    kRunningIdx: Q,
     kError: u,
     kSocket: p,
     kStrictContentLength: F,
@@ -4699,7 +4699,7 @@ function yo() {
     kSize: E,
     kHTTPContext: h
   } = WA(), D = /* @__PURE__ */ Symbol("open streams");
-  let a, f = !1, w;
+  let g, f = !1, w;
   try {
     w = require("node:http2");
   } catch {
@@ -4730,7 +4730,7 @@ function yo() {
     O[p] = x, f || (f = !0, process.emitWarning("H2 support is experimental, expect them to change at any time.", {
       code: "UNDICI-H2"
     }));
-    const z = w.connect(O[Q], {
+    const z = w.connect(O[c], {
       createConnection: () => x,
       peerMaxConcurrentStreams: O[M]
     });
@@ -4738,7 +4738,7 @@ function yo() {
       const { [B]: cA } = this, { [p]: iA } = cA, fA = this[p][u] || this[u] || new n("closed", t.getSocketInfo(iA));
       if (cA[U] = null, cA.destroyed) {
         A(cA[o] === 0);
-        const LA = cA[C].splice(cA[c]);
+        const LA = cA[C].splice(cA[Q]);
         for (let wA = 0; wA < LA.length; wA++) {
           const TA = LA[wA];
           t.errorRequest(cA, TA, fA);
@@ -4750,7 +4750,7 @@ function yo() {
       t.destroy(this, new n("other side closed", t.getSocketInfo(this)));
     }), t.addListener(x, "close", function() {
       const cA = this[u] || new n("closed", t.getSocketInfo(this));
-      O[p] = null, this[U] != null && this[U].destroy(cA), O[I] = O[c], A(O[s] === 0), O.emit("disconnect", O[Q], [O], cA), O[b]();
+      O[p] = null, this[U] != null && this[U].destroy(cA), O[I] = O[Q], A(O[s] === 0), O.emit("disconnect", O[c], [O], cA), O[b]();
     });
     let nA = !1;
     return x.on("close", () => {
@@ -4794,11 +4794,11 @@ function yo() {
   }
   function IA(O) {
     const x = this[u] || new n(`HTTP/2: "GOAWAY" frame received with code ${O}`, t.getSocketInfo(this)), z = this[B];
-    if (z[p] = null, z[h] = null, this[U] != null && (this[U].destroy(x), this[U] = null), t.destroy(this[p], x), z[c] < z[C].length) {
-      const nA = z[C][z[c]];
-      z[C][z[c]++] = null, t.errorRequest(z, nA, x), z[I] = z[c];
+    if (z[p] = null, z[h] = null, this[U] != null && (this[U].destroy(x), this[U] = null), t.destroy(this[p], x), z[Q] < z[C].length) {
+      const nA = z[C][z[Q]];
+      z[C][z[Q]++] = null, t.errorRequest(z, nA, x), z[I] = z[Q];
     }
-    A(z[s] === 0), z.emit("disconnect", z[Q], [z], x), z[b]();
+    A(z[s] === 0), z.emit("disconnect", z[c], [z], x), z[b]();
   }
   function pA(O) {
     return O !== "GET" && O !== "HEAD" && O !== "OPTIONS" && O !== "TRACE" && O !== "CONNECT";
@@ -4818,10 +4818,10 @@ function yo() {
         FA[hA] = RA;
     }
     let dA;
-    const { hostname: qA, port: VA } = O[Q];
+    const { hostname: qA, port: VA } = O[c];
     FA[d] = iA || `${qA}${VA ? `:${VA}` : ""}`, FA[y] = nA;
     const vA = (BA) => {
-      x.aborted || x.completed || (BA = BA || new e(), t.errorRequest(O, x, BA), dA != null && t.destroy(dA, BA), t.destroy(mA, BA), O[C][O[c]++] = null, O[b]());
+      x.aborted || x.completed || (BA = BA || new e(), t.errorRequest(O, x, BA), dA != null && t.destroy(dA, BA), t.destroy(mA, BA), O[C][O[Q]++] = null, O[b]());
     };
     try {
       x.onConnect(vA);
@@ -4831,8 +4831,8 @@ function yo() {
     if (x.aborted)
       return !1;
     if (nA === "CONNECT")
-      return z.ref(), dA = z.request(FA, { endStream: !1, signal: wA }), dA.id && !dA.pending ? (x.onUpgrade(null, null, dA), ++z[D], O[C][O[c]++] = null) : dA.once("ready", () => {
-        x.onUpgrade(null, null, dA), ++z[D], O[C][O[c]++] = null;
+      return z.ref(), dA = z.request(FA, { endStream: !1, signal: wA }), dA.id && !dA.pending ? (x.onUpgrade(null, null, dA), ++z[D], O[C][O[Q]++] = null) : dA.once("ready", () => {
+        x.onUpgrade(null, null, dA), ++z[D], O[C][O[Q]++] = null;
       }), dA.once("close", () => {
         z[D] -= 1, z[D] === 0 && z.unref();
       }), !0;
@@ -4841,14 +4841,14 @@ function yo() {
     mA && typeof mA.read == "function" && mA.read(0);
     let R = t.bodyLength(mA);
     if (t.isFormDataLike(mA)) {
-      a ??= Ne().extractBody;
-      const [BA, hA] = a(mA);
+      g ??= Ne().extractBody;
+      const [BA, hA] = g(mA);
       FA["content-type"] = hA, mA = BA.stream, R = BA.length;
     }
     if (R == null && (R = x.contentLength), (R === 0 || !_) && (R = null), pA(nA) && R > 0 && x.contentLength != null && x.contentLength !== R) {
       if (O[F])
-        return t.errorRequest(O, x, new g()), !1;
-      process.emitWarning(new g());
+        return t.errorRequest(O, x, new a()), !1;
+      process.emitWarning(new a());
     }
     R != null && (A(mA, "no body must not have content length"), FA[T] = `${R}`), z.ref();
     const Z = nA === "GET" || nA === "HEAD" || mA === null;
@@ -4866,7 +4866,7 @@ function yo() {
         x.onData(GA) === !1 && dA.pause();
       });
     }), dA.once("end", () => {
-      (dA.state?.state == null || dA.state.state < 6) && x.onComplete([]), z[D] === 0 && z.unref(), vA(new i("HTTP/2: stream half-closed (remote)")), O[C][O[c]++] = null, O[I] = O[c], O[b]();
+      (dA.state?.state == null || dA.state.state < 6) && x.onComplete([]), z[D] === 0 && z.unref(), vA(new i("HTTP/2: stream half-closed (remote)")), O[C][O[Q]++] = null, O[I] = O[Q], O[b]();
     }), dA.once("close", () => {
       z[D] -= 1, z[D] === 0 && z.unref();
     }), dA.once("error", function(BA) {
@@ -4957,7 +4957,7 @@ function yo() {
     A(fA === z.size, "blob body must have content length");
     try {
       if (fA != null && fA !== z.size)
-        throw new g();
+        throw new a();
       const wA = Buffer.from(await z.arrayBuffer());
       x.cork(), x.write(wA), x.uncork(), x.end(), cA.onBodySent(wA), cA.onRequestSent(), LA || (iA[l] = !0), nA[b]();
     } catch (wA) {
@@ -4997,8 +4997,8 @@ var vt, Pn;
 function en() {
   if (Pn) return vt;
   Pn = 1;
-  const A = UA(), { kBodyUsed: r } = WA(), t = HA, { InvalidArgumentError: g } = JA(), e = pe, n = [300, 301, 302, 303, 307, 308], i = /* @__PURE__ */ Symbol("body");
-  class Q {
+  const A = UA(), { kBodyUsed: r } = WA(), t = HA, { InvalidArgumentError: a } = JA(), e = pe, n = [300, 301, 302, 303, 307, 308], i = /* @__PURE__ */ Symbol("body");
+  class c {
     constructor(I) {
       this[i] = I, this[r] = !1;
     }
@@ -5007,31 +5007,31 @@ function en() {
     }
   }
   class l {
-    constructor(I, c, u, p) {
-      if (c != null && (!Number.isInteger(c) || c < 0))
-        throw new g("maxRedirections must be a positive number");
-      A.validateHandler(p, u.method, u.upgrade), this.dispatch = I, this.location = null, this.abort = null, this.opts = { ...u, maxRedirections: 0 }, this.maxRedirections = c, this.handler = p, this.history = [], this.redirectionLimitReached = !1, A.isStream(this.opts.body) ? (A.bodyLength(this.opts.body) === 0 && this.opts.body.on("data", function() {
+    constructor(I, Q, u, p) {
+      if (Q != null && (!Number.isInteger(Q) || Q < 0))
+        throw new a("maxRedirections must be a positive number");
+      A.validateHandler(p, u.method, u.upgrade), this.dispatch = I, this.location = null, this.abort = null, this.opts = { ...u, maxRedirections: 0 }, this.maxRedirections = Q, this.handler = p, this.history = [], this.redirectionLimitReached = !1, A.isStream(this.opts.body) ? (A.bodyLength(this.opts.body) === 0 && this.opts.body.on("data", function() {
         t(!1);
       }), typeof this.opts.body.readableDidRead != "boolean" && (this.opts.body[r] = !1, e.prototype.on.call(this.opts.body, "data", function() {
         this[r] = !0;
-      }))) : this.opts.body && typeof this.opts.body.pipeTo == "function" ? this.opts.body = new Q(this.opts.body) : this.opts.body && typeof this.opts.body != "string" && !ArrayBuffer.isView(this.opts.body) && A.isIterable(this.opts.body) && (this.opts.body = new Q(this.opts.body));
+      }))) : this.opts.body && typeof this.opts.body.pipeTo == "function" ? this.opts.body = new c(this.opts.body) : this.opts.body && typeof this.opts.body != "string" && !ArrayBuffer.isView(this.opts.body) && A.isIterable(this.opts.body) && (this.opts.body = new c(this.opts.body));
     }
     onConnect(I) {
       this.abort = I, this.handler.onConnect(I, { history: this.history });
     }
-    onUpgrade(I, c, u) {
-      this.handler.onUpgrade(I, c, u);
+    onUpgrade(I, Q, u) {
+      this.handler.onUpgrade(I, Q, u);
     }
     onError(I) {
       this.handler.onError(I);
     }
-    onHeaders(I, c, u, p) {
-      if (this.location = this.history.length >= this.maxRedirections || A.isDisturbed(this.opts.body) ? null : B(I, c), this.opts.throwOnMaxRedirect && this.history.length >= this.maxRedirections) {
+    onHeaders(I, Q, u, p) {
+      if (this.location = this.history.length >= this.maxRedirections || A.isDisturbed(this.opts.body) ? null : B(I, Q), this.opts.throwOnMaxRedirect && this.history.length >= this.maxRedirections) {
         this.request && this.request.abort(new Error("max redirects")), this.redirectionLimitReached = !0, this.abort(new Error("max redirects"));
         return;
       }
       if (this.opts.origin && this.history.push(new URL(this.opts.path, this.opts.origin)), !this.location)
-        return this.handler.onHeaders(I, c, u, p);
+        return this.handler.onHeaders(I, Q, u, p);
       const { origin: F, pathname: S, search: M } = A.parseURL(new URL(this.location, this.opts.origin && new URL(this.opts.path, this.opts.origin))), U = M ? `${S}${M}` : S;
       this.opts.headers = o(this.opts.headers, I === 303, this.opts.origin !== F), this.opts.path = U, this.opts.origin = F, this.opts.maxRedirections = 0, this.opts.query = null, I === 303 && this.opts.method !== "HEAD" && (this.opts.method = "GET", this.opts.body = null);
     }
@@ -5048,29 +5048,29 @@ function en() {
   function B(C, I) {
     if (n.indexOf(C) === -1)
       return null;
-    for (let c = 0; c < I.length; c += 2)
-      if (I[c].length === 8 && A.headerNameToString(I[c]) === "location")
-        return I[c + 1];
+    for (let Q = 0; Q < I.length; Q += 2)
+      if (I[Q].length === 8 && A.headerNameToString(I[Q]) === "location")
+        return I[Q + 1];
   }
-  function s(C, I, c) {
+  function s(C, I, Q) {
     if (C.length === 4)
       return A.headerNameToString(C) === "host";
     if (I && A.headerNameToString(C).startsWith("content-"))
       return !0;
-    if (c && (C.length === 13 || C.length === 6 || C.length === 19)) {
+    if (Q && (C.length === 13 || C.length === 6 || C.length === 19)) {
       const u = A.headerNameToString(C);
       return u === "authorization" || u === "cookie" || u === "proxy-authorization";
     }
     return !1;
   }
-  function o(C, I, c) {
+  function o(C, I, Q) {
     const u = [];
     if (Array.isArray(C))
       for (let p = 0; p < C.length; p += 2)
-        s(C[p], I, c) || u.push(C[p], C[p + 1]);
+        s(C[p], I, Q) || u.push(C[p], C[p + 1]);
     else if (C && typeof C == "object")
       for (const p of Object.keys(C))
-        s(p, I, c) || u.push(p, C[p]);
+        s(p, I, Q) || u.push(p, C[p]);
     else
       t(C == null, "headers must be an object or an array");
     return u;
@@ -5083,12 +5083,12 @@ function tn() {
   Zn = 1;
   const A = en();
   function r({ maxRedirections: t }) {
-    return (g) => function(n, i) {
-      const { maxRedirections: Q = t } = n;
-      if (!Q)
-        return g(n, i);
-      const l = new A(g, Q, n, i);
-      return n = { ...n, maxRedirections: 0 }, g(n, l);
+    return (a) => function(n, i) {
+      const { maxRedirections: c = t } = n;
+      if (!c)
+        return a(n, i);
+      const l = new A(a, c, n, i);
+      return n = { ...n, maxRedirections: 0 }, a(n, l);
     };
   }
   return Ht = r, Ht;
@@ -5097,15 +5097,15 @@ var Vt, Kn;
 function Se() {
   if (Kn) return Vt;
   Kn = 1;
-  const A = HA, r = Pe, t = Ze, g = UA(), { channels: e } = me(), n = Co(), i = Fe(), {
-    InvalidArgumentError: Q,
+  const A = HA, r = Pe, t = Ze, a = UA(), { channels: e } = me(), n = Co(), i = Fe(), {
+    InvalidArgumentError: c,
     InformationalError: l,
     ClientDestroyedError: B
   } = JA(), s = Xe(), {
     kUrl: o,
     kServerName: C,
     kClient: I,
-    kBusy: c,
+    kBusy: Q,
     kConnect: u,
     kResuming: p,
     kRunning: F,
@@ -5116,7 +5116,7 @@ function Se() {
     kConnecting: E,
     kNeedDrain: h,
     kKeepAliveDefaultTimeout: D,
-    kHostHeader: a,
+    kHostHeader: g,
     kPendingIdx: f,
     kRunningIdx: w,
     kError: d,
@@ -5186,47 +5186,47 @@ function Se() {
       allowH2: YA
     } = {}) {
       if (super(), uA !== void 0)
-        throw new Q("unsupported keepAlive, use pipelining=0 instead");
+        throw new c("unsupported keepAlive, use pipelining=0 instead");
       if (hA !== void 0)
-        throw new Q("unsupported socketTimeout, use headersTimeout & bodyTimeout instead");
+        throw new c("unsupported socketTimeout, use headersTimeout & bodyTimeout instead");
       if (RA !== void 0)
-        throw new Q("unsupported requestTimeout, use headersTimeout & bodyTimeout instead");
+        throw new c("unsupported requestTimeout, use headersTimeout & bodyTimeout instead");
       if (KA !== void 0)
-        throw new Q("unsupported idleTimeout, use keepAliveTimeout instead");
+        throw new c("unsupported idleTimeout, use keepAliveTimeout instead");
       if ($ !== void 0)
-        throw new Q("unsupported maxKeepAliveTimeout, use keepAliveMaxTimeout instead");
+        throw new c("unsupported maxKeepAliveTimeout, use keepAliveMaxTimeout instead");
       if (oA != null && !Number.isFinite(oA))
-        throw new Q("invalid maxHeaderSize");
+        throw new c("invalid maxHeaderSize");
       if (EA != null && typeof EA != "string")
-        throw new Q("invalid socketPath");
+        throw new c("invalid socketPath");
       if (GA != null && (!Number.isFinite(GA) || GA < 0))
-        throw new Q("invalid connectTimeout");
+        throw new c("invalid connectTimeout");
       if (J != null && (!Number.isFinite(J) || J <= 0))
-        throw new Q("invalid keepAliveTimeout");
+        throw new c("invalid keepAliveTimeout");
       if (X != null && (!Number.isFinite(X) || X <= 0))
-        throw new Q("invalid keepAliveMaxTimeout");
+        throw new c("invalid keepAliveMaxTimeout");
       if (AA != null && !Number.isFinite(AA))
-        throw new Q("invalid keepAliveTimeoutThreshold");
+        throw new c("invalid keepAliveTimeoutThreshold");
       if (BA != null && (!Number.isInteger(BA) || BA < 0))
-        throw new Q("headersTimeout must be a positive integer or zero");
+        throw new c("headersTimeout must be a positive integer or zero");
       if (PA != null && (!Number.isInteger(PA) || PA < 0))
-        throw new Q("bodyTimeout must be a positive integer or zero");
+        throw new c("bodyTimeout must be a positive integer or zero");
       if (V != null && typeof V != "function" && typeof V != "object")
-        throw new Q("connect must be a function or an object");
+        throw new c("connect must be a function or an object");
       if (m != null && (!Number.isInteger(m) || m < 0))
-        throw new Q("maxRedirections must be a positive number");
+        throw new c("maxRedirections must be a positive number");
       if (H != null && (!Number.isInteger(H) || H < 0))
-        throw new Q("maxRequestsPerClient must be a positive number");
+        throw new c("maxRequestsPerClient must be a positive number");
       if (W != null && (typeof W != "string" || r.isIP(W) === 0))
-        throw new Q("localAddress must be valid string IP address");
+        throw new c("localAddress must be valid string IP address");
       if (eA != null && (!Number.isInteger(eA) || eA < -1))
-        throw new Q("maxResponseSize must be a positive number");
+        throw new c("maxResponseSize must be a positive number");
       if (gA != null && (!Number.isInteger(gA) || gA < -1))
-        throw new Q("autoSelectFamilyAttemptTimeout must be a positive number");
+        throw new c("autoSelectFamilyAttemptTimeout must be a positive number");
       if (YA != null && typeof YA != "boolean")
-        throw new Q("allowH2 must be a valid boolean value");
+        throw new c("allowH2 must be a valid boolean value");
       if (NA != null && (typeof NA != "number" || NA < 1))
-        throw new Q("maxConcurrentStreams must be a positive integer, greater than 0");
+        throw new c("maxConcurrentStreams must be a positive integer, greater than 0");
       typeof V != "function" && (V = s({
         ...bA,
         maxCachedSessions: q,
@@ -5237,7 +5237,7 @@ function Se() {
         ...V
       })), Z?.Client && Array.isArray(Z.Client) ? (this[j] = Z.Client, iA || (iA = !0, process.emitWarning("Client.Options#interceptor is deprecated. Use Dispatcher#compose instead.", {
         code: "UNDICI-CLIENT-INTERCEPTOR-DEPRECATED"
-      }))) : this[j] = [mA({ maxRedirections: m })], this[o] = g.parseOrigin(R), this[QA] = V, this[y] = kA ?? 1, this[L] = oA || t.maxHeaderSize, this[D] = J ?? 4e3, this[T] = X ?? 6e5, this[Y] = AA ?? 2e3, this[k] = this[D], this[C] = null, this[P] = W ?? null, this[p] = 0, this[h] = 0, this[a] = `host: ${this[o].hostname}${this[o].port ? `:${this[o].port}` : ""}\r
+      }))) : this[j] = [mA({ maxRedirections: m })], this[o] = a.parseOrigin(R), this[QA] = V, this[y] = kA ?? 1, this[L] = oA || t.maxHeaderSize, this[D] = J ?? 4e3, this[T] = X ?? 6e5, this[Y] = AA ?? 2e3, this[k] = this[D], this[C] = null, this[P] = W ?? null, this[p] = 0, this[h] = 0, this[g] = `host: ${this[o].hostname}${this[o].port ? `:${this[o].port}` : ""}\r
 `, this[tA] = PA ?? 3e5, this[G] = BA ?? 3e5, this[sA] = N ?? !0, this[aA] = m, this[lA] = H, this[fA] = null, this[rA] = eA > -1 ? eA : -1, this[x] = NA ?? 100, this[O] = null, this[U] = [], this[w] = 0, this[f] = 0, this[z] = (MA) => VA(this, MA), this[v] = (MA) => FA(this, MA);
     }
     get pipelining() {
@@ -5258,7 +5258,7 @@ function Se() {
     get [b]() {
       return !!this[O] && !this[E] && !this[O].destroyed;
     }
-    get [c]() {
+    get [Q]() {
       return !!(this[O]?.busy(null) || this[M] >= (wA(this) || 1) || this[S] > 0);
     }
     /* istanbul ignore: only used for test */
@@ -5267,7 +5267,7 @@ function Se() {
     }
     [yA](R, Z) {
       const oA = R.origin || this[o].origin, BA = new n(oA, R, Z);
-      return this[U].push(BA), this[p] || (g.bodyLength(BA.body) == null && g.isIterable(BA.body) ? (this[p] = 1, queueMicrotask(() => VA(this))) : this[z](!0)), this[p] && this[h] !== 2 && this[c] && (this[h] = 2), this[h] < 2;
+      return this[U].push(BA), this[p] || (a.bodyLength(BA.body) == null && a.isIterable(BA.body) ? (this[p] = 1, queueMicrotask(() => VA(this))) : this[z](!0)), this[p] && this[h] !== 2 && this[Q] && (this[h] = 2), this[h] < 2;
     }
     async [IA]() {
       return new Promise((R) => {
@@ -5279,7 +5279,7 @@ function Se() {
         const oA = this[U].splice(this[f]);
         for (let hA = 0; hA < oA.length; hA++) {
           const RA = oA[hA];
-          g.errorRequest(this, RA, R);
+          a.errorRequest(this, RA, R);
         }
         const BA = () => {
           this[fA] && (this[fA](), this[fA] = null), Z(null);
@@ -5295,7 +5295,7 @@ function Se() {
       const Z = _[U].splice(_[w]);
       for (let oA = 0; oA < Z.length; oA++) {
         const BA = Z[oA];
-        g.errorRequest(_, BA, R);
+        a.errorRequest(_, BA, R);
       }
       A(_[M] === 0);
     }
@@ -5335,7 +5335,7 @@ function Se() {
         });
       });
       if (_.destroyed) {
-        g.destroy(hA.on("error", LA), new B());
+        a.destroy(hA.on("error", LA), new B());
         return;
       }
       A(hA);
@@ -5375,7 +5375,7 @@ function Se() {
       }), hA.code === "ERR_TLS_CERT_ALTNAME_INVALID")
         for (A(_[F] === 0); _[S] > 0 && _[U][_[f]].servername === _[C]; ) {
           const RA = _[U][_[f]++];
-          g.errorRequest(_, RA, hA);
+          a.errorRequest(_, RA, hA);
         }
       else
         FA(_, hA);
@@ -5399,7 +5399,7 @@ function Se() {
         _[fA](), _[fA] = null;
         return;
       }
-      if (_[O] && _[O].resume(), _[c])
+      if (_[O] && _[O].resume(), _[Q])
         _[h] = 2;
       else if (_[h] === 2) {
         R ? (_[h] = 1, queueMicrotask(() => qA(_))) : qA(_);
@@ -5471,8 +5471,8 @@ var Wt, Xn;
 function Do() {
   if (Xn) return Wt;
   Xn = 1;
-  const { kFree: A, kConnected: r, kPending: t, kQueued: g, kRunning: e, kSize: n } = WA(), i = /* @__PURE__ */ Symbol("pool");
-  class Q {
+  const { kFree: A, kConnected: r, kPending: t, kQueued: a, kRunning: e, kSize: n } = WA(), i = /* @__PURE__ */ Symbol("pool");
+  class c {
     constructor(B) {
       this[i] = B;
     }
@@ -5486,7 +5486,7 @@ function Do() {
       return this[i][t];
     }
     get queued() {
-      return this[i][g];
+      return this[i][a];
     }
     get running() {
       return this[i][e];
@@ -5495,16 +5495,16 @@ function Do() {
       return this[i][n];
     }
   }
-  return Wt = Q, Wt;
+  return Wt = c, Wt;
 }
 var qt, _n;
 function pi() {
   if (_n) return qt;
   _n = 1;
-  const A = Fe(), r = Di(), { kConnected: t, kSize: g, kRunning: e, kPending: n, kQueued: i, kBusy: Q, kFree: l, kUrl: B, kClose: s, kDestroy: o, kDispatch: C } = WA(), I = Do(), c = /* @__PURE__ */ Symbol("clients"), u = /* @__PURE__ */ Symbol("needDrain"), p = /* @__PURE__ */ Symbol("queue"), F = /* @__PURE__ */ Symbol("closed resolve"), S = /* @__PURE__ */ Symbol("onDrain"), M = /* @__PURE__ */ Symbol("onConnect"), U = /* @__PURE__ */ Symbol("onDisconnect"), b = /* @__PURE__ */ Symbol("onConnectionError"), E = /* @__PURE__ */ Symbol("get dispatcher"), h = /* @__PURE__ */ Symbol("add client"), D = /* @__PURE__ */ Symbol("remove client"), a = /* @__PURE__ */ Symbol("stats");
+  const A = Fe(), r = Di(), { kConnected: t, kSize: a, kRunning: e, kPending: n, kQueued: i, kBusy: c, kFree: l, kUrl: B, kClose: s, kDestroy: o, kDispatch: C } = WA(), I = Do(), Q = /* @__PURE__ */ Symbol("clients"), u = /* @__PURE__ */ Symbol("needDrain"), p = /* @__PURE__ */ Symbol("queue"), F = /* @__PURE__ */ Symbol("closed resolve"), S = /* @__PURE__ */ Symbol("onDrain"), M = /* @__PURE__ */ Symbol("onConnect"), U = /* @__PURE__ */ Symbol("onDisconnect"), b = /* @__PURE__ */ Symbol("onConnectionError"), E = /* @__PURE__ */ Symbol("get dispatcher"), h = /* @__PURE__ */ Symbol("add client"), D = /* @__PURE__ */ Symbol("remove client"), g = /* @__PURE__ */ Symbol("stats");
   class f extends A {
     constructor() {
-      super(), this[p] = new r(), this[c] = [], this[i] = 0;
+      super(), this[p] = new r(), this[Q] = [], this[i] = 0;
       const d = this;
       this[S] = function(k, L) {
         const T = d[p];
@@ -5515,47 +5515,47 @@ function pi() {
             break;
           d[i]--, Y = !this.dispatch(G.opts, G.handler);
         }
-        this[u] = Y, !this[u] && d[u] && (d[u] = !1, d.emit("drain", k, [d, ...L])), d[F] && T.isEmpty() && Promise.all(d[c].map((G) => G.close())).then(d[F]);
+        this[u] = Y, !this[u] && d[u] && (d[u] = !1, d.emit("drain", k, [d, ...L])), d[F] && T.isEmpty() && Promise.all(d[Q].map((G) => G.close())).then(d[F]);
       }, this[M] = (y, k) => {
         d.emit("connect", y, [d, ...k]);
       }, this[U] = (y, k, L) => {
         d.emit("disconnect", y, [d, ...k], L);
       }, this[b] = (y, k, L) => {
         d.emit("connectionError", y, [d, ...k], L);
-      }, this[a] = new I(this);
+      }, this[g] = new I(this);
     }
-    get [Q]() {
+    get [c]() {
       return this[u];
     }
     get [t]() {
-      return this[c].filter((d) => d[t]).length;
+      return this[Q].filter((d) => d[t]).length;
     }
     get [l]() {
-      return this[c].filter((d) => d[t] && !d[u]).length;
+      return this[Q].filter((d) => d[t] && !d[u]).length;
     }
     get [n]() {
       let d = this[i];
-      for (const { [n]: y } of this[c])
+      for (const { [n]: y } of this[Q])
         d += y;
       return d;
     }
     get [e]() {
       let d = 0;
-      for (const { [e]: y } of this[c])
+      for (const { [e]: y } of this[Q])
         d += y;
       return d;
     }
-    get [g]() {
+    get [a]() {
       let d = this[i];
-      for (const { [g]: y } of this[c])
+      for (const { [a]: y } of this[Q])
         d += y;
       return d;
     }
     get stats() {
-      return this[a];
+      return this[g];
     }
     async [s]() {
-      this[p].isEmpty() ? await Promise.all(this[c].map((d) => d.close())) : await new Promise((d) => {
+      this[p].isEmpty() ? await Promise.all(this[Q].map((d) => d.close())) : await new Promise((d) => {
         this[F] = d;
       });
     }
@@ -5566,27 +5566,27 @@ function pi() {
           break;
         y.handler.onError(d);
       }
-      await Promise.all(this[c].map((y) => y.destroy(d)));
+      await Promise.all(this[Q].map((y) => y.destroy(d)));
     }
     [C](d, y) {
       const k = this[E]();
       return k ? k.dispatch(d, y) || (k[u] = !0, this[u] = !this[E]()) : (this[u] = !0, this[p].push({ opts: d, handler: y }), this[i]++), !this[u];
     }
     [h](d) {
-      return d.on("drain", this[S]).on("connect", this[M]).on("disconnect", this[U]).on("connectionError", this[b]), this[c].push(d), this[u] && queueMicrotask(() => {
+      return d.on("drain", this[S]).on("connect", this[M]).on("disconnect", this[U]).on("connectionError", this[b]), this[Q].push(d), this[u] && queueMicrotask(() => {
         this[u] && this[S](d[B], [this, d]);
       }), this;
     }
     [D](d) {
       d.close(() => {
-        const y = this[c].indexOf(d);
-        y !== -1 && this[c].splice(y, 1);
-      }), this[u] = this[c].some((y) => !y[u] && y.closed !== !0 && y.destroyed !== !0);
+        const y = this[Q].indexOf(d);
+        y !== -1 && this[Q].splice(y, 1);
+      }), this[u] = this[Q].some((y) => !y[u] && y.closed !== !0 && y.destroyed !== !0);
     }
   }
   return qt = {
     PoolBase: f,
-    kClients: c,
+    kClients: Q,
     kNeedDrain: u,
     kAddClient: h,
     kRemoveClient: D,
@@ -5601,24 +5601,24 @@ function be() {
     PoolBase: A,
     kClients: r,
     kNeedDrain: t,
-    kAddClient: g,
+    kAddClient: a,
     kGetDispatcher: e
   } = pi(), n = Se(), {
     InvalidArgumentError: i
-  } = JA(), Q = UA(), { kUrl: l, kInterceptors: B } = WA(), s = Xe(), o = /* @__PURE__ */ Symbol("options"), C = /* @__PURE__ */ Symbol("connections"), I = /* @__PURE__ */ Symbol("factory");
-  function c(p, F) {
+  } = JA(), c = UA(), { kUrl: l, kInterceptors: B } = WA(), s = Xe(), o = /* @__PURE__ */ Symbol("options"), C = /* @__PURE__ */ Symbol("connections"), I = /* @__PURE__ */ Symbol("factory");
+  function Q(p, F) {
     return new n(p, F);
   }
   class u extends A {
     constructor(F, {
       connections: S,
-      factory: M = c,
+      factory: M = Q,
       connect: U,
       connectTimeout: b,
       tls: E,
       maxCachedSessions: h,
       socketPath: D,
-      autoSelectFamily: a,
+      autoSelectFamily: g,
       autoSelectFamilyAttemptTimeout: f,
       allowH2: w,
       ...d
@@ -5635,9 +5635,9 @@ function be() {
         allowH2: w,
         socketPath: D,
         timeout: b,
-        ...a ? { autoSelectFamily: a, autoSelectFamilyAttemptTimeout: f } : void 0,
+        ...g ? { autoSelectFamily: g, autoSelectFamilyAttemptTimeout: f } : void 0,
         ...U
-      })), this[B] = d.interceptors?.Pool && Array.isArray(d.interceptors.Pool) ? d.interceptors.Pool : [], this[C] = S || null, this[l] = Q.parseOrigin(F), this[o] = { ...Q.deepClone(d), connect: U, allowH2: w }, this[o].interceptors = d.interceptors ? { ...d.interceptors } : void 0, this[I] = M, this.on("connectionError", (y, k, L) => {
+      })), this[B] = d.interceptors?.Pool && Array.isArray(d.interceptors.Pool) ? d.interceptors.Pool : [], this[C] = S || null, this[l] = c.parseOrigin(F), this[o] = { ...c.deepClone(d), connect: U, allowH2: w }, this[o].interceptors = d.interceptors ? { ...d.interceptors } : void 0, this[I] = M, this.on("connectionError", (y, k, L) => {
         for (const T of k) {
           const Y = this[r].indexOf(T);
           Y !== -1 && this[r].splice(Y, 1);
@@ -5650,7 +5650,7 @@ function be() {
           return F;
       if (!this[C] || this[r].length < this[C]) {
         const F = this[I](this[l], this[o]);
-        return this[g](F), F;
+        return this[a](F), F;
       }
     }
   }
@@ -5665,17 +5665,17 @@ function po() {
     InvalidArgumentError: r
   } = JA(), {
     PoolBase: t,
-    kClients: g,
+    kClients: a,
     kNeedDrain: e,
     kAddClient: n,
     kRemoveClient: i,
-    kGetDispatcher: Q
-  } = pi(), l = be(), { kUrl: B, kInterceptors: s } = WA(), { parseOrigin: o } = UA(), C = /* @__PURE__ */ Symbol("factory"), I = /* @__PURE__ */ Symbol("options"), c = /* @__PURE__ */ Symbol("kGreatestCommonDivisor"), u = /* @__PURE__ */ Symbol("kCurrentWeight"), p = /* @__PURE__ */ Symbol("kIndex"), F = /* @__PURE__ */ Symbol("kWeight"), S = /* @__PURE__ */ Symbol("kMaxWeightPerServer"), M = /* @__PURE__ */ Symbol("kErrorPenalty");
+    kGetDispatcher: c
+  } = pi(), l = be(), { kUrl: B, kInterceptors: s } = WA(), { parseOrigin: o } = UA(), C = /* @__PURE__ */ Symbol("factory"), I = /* @__PURE__ */ Symbol("options"), Q = /* @__PURE__ */ Symbol("kGreatestCommonDivisor"), u = /* @__PURE__ */ Symbol("kCurrentWeight"), p = /* @__PURE__ */ Symbol("kIndex"), F = /* @__PURE__ */ Symbol("kWeight"), S = /* @__PURE__ */ Symbol("kMaxWeightPerServer"), M = /* @__PURE__ */ Symbol("kErrorPenalty");
   function U(h, D) {
     if (h === 0) return D;
     for (; D !== 0; ) {
-      const a = D;
-      D = h % D, h = a;
+      const g = D;
+      D = h % D, h = g;
     }
     return h;
   }
@@ -5683,19 +5683,19 @@ function po() {
     return new l(h, D);
   }
   class E extends t {
-    constructor(D = [], { factory: a = b, ...f } = {}) {
-      if (super(), this[I] = f, this[p] = -1, this[u] = 0, this[S] = this[I].maxWeightPerServer || 100, this[M] = this[I].errorPenalty || 15, Array.isArray(D) || (D = [D]), typeof a != "function")
+    constructor(D = [], { factory: g = b, ...f } = {}) {
+      if (super(), this[I] = f, this[p] = -1, this[u] = 0, this[S] = this[I].maxWeightPerServer || 100, this[M] = this[I].errorPenalty || 15, Array.isArray(D) || (D = [D]), typeof g != "function")
         throw new r("factory must be a function.");
-      this[s] = f.interceptors?.BalancedPool && Array.isArray(f.interceptors.BalancedPool) ? f.interceptors.BalancedPool : [], this[C] = a;
+      this[s] = f.interceptors?.BalancedPool && Array.isArray(f.interceptors.BalancedPool) ? f.interceptors.BalancedPool : [], this[C] = g;
       for (const w of D)
         this.addUpstream(w);
       this._updateBalancedPoolStats();
     }
     addUpstream(D) {
-      const a = o(D).origin;
-      if (this[g].find((w) => w[B].origin === a && w.closed !== !0 && w.destroyed !== !0))
+      const g = o(D).origin;
+      if (this[a].find((w) => w[B].origin === g && w.closed !== !0 && w.destroyed !== !0))
         return this;
-      const f = this[C](a, Object.assign({}, this[I]));
+      const f = this[C](g, Object.assign({}, this[I]));
       this[n](f), f.on("connect", () => {
         f[F] = Math.min(this[S], f[F] + this[M]);
       }), f.on("connectionError", () => {
@@ -5704,36 +5704,36 @@ function po() {
         const d = w[2];
         d && d.code === "UND_ERR_SOCKET" && (f[F] = Math.max(1, f[F] - this[M]), this._updateBalancedPoolStats());
       });
-      for (const w of this[g])
+      for (const w of this[a])
         w[F] = this[S];
       return this._updateBalancedPoolStats(), this;
     }
     _updateBalancedPoolStats() {
       let D = 0;
-      for (let a = 0; a < this[g].length; a++)
-        D = U(this[g][a][F], D);
-      this[c] = D;
+      for (let g = 0; g < this[a].length; g++)
+        D = U(this[a][g][F], D);
+      this[Q] = D;
     }
     removeUpstream(D) {
-      const a = o(D).origin, f = this[g].find((w) => w[B].origin === a && w.closed !== !0 && w.destroyed !== !0);
+      const g = o(D).origin, f = this[a].find((w) => w[B].origin === g && w.closed !== !0 && w.destroyed !== !0);
       return f && this[i](f), this;
     }
     get upstreams() {
-      return this[g].filter((D) => D.closed !== !0 && D.destroyed !== !0).map((D) => D[B].origin);
+      return this[a].filter((D) => D.closed !== !0 && D.destroyed !== !0).map((D) => D[B].origin);
     }
-    [Q]() {
-      if (this[g].length === 0)
+    [c]() {
+      if (this[a].length === 0)
         throw new A();
-      if (!this[g].find((d) => !d[e] && d.closed !== !0 && d.destroyed !== !0) || this[g].map((d) => d[e]).reduce((d, y) => d && y, !0))
+      if (!this[a].find((d) => !d[e] && d.closed !== !0 && d.destroyed !== !0) || this[a].map((d) => d[e]).reduce((d, y) => d && y, !0))
         return;
-      let f = 0, w = this[g].findIndex((d) => !d[e]);
-      for (; f++ < this[g].length; ) {
-        this[p] = (this[p] + 1) % this[g].length;
-        const d = this[g][this[p]];
-        if (d[F] > this[g][w][F] && !d[e] && (w = this[p]), this[p] === 0 && (this[u] = this[u] - this[c], this[u] <= 0 && (this[u] = this[S])), d[F] >= this[u] && !d[e])
+      let f = 0, w = this[a].findIndex((d) => !d[e]);
+      for (; f++ < this[a].length; ) {
+        this[p] = (this[p] + 1) % this[a].length;
+        const d = this[a][this[p]];
+        if (d[F] > this[a][w][F] && !d[e] && (w = this[p]), this[p] === 0 && (this[u] = this[u] - this[Q], this[u] <= 0 && (this[u] = this[S])), d[F] >= this[u] && !d[e])
           return d;
       }
-      return this[u] = this[g][w][F], this[p] = w, this[g][w];
+      return this[u] = this[a][w][F], this[p] = w, this[a][w];
     }
   }
   return Pt = E, Pt;
@@ -5742,25 +5742,25 @@ var Zt, As;
 function Ue() {
   if (As) return Zt;
   As = 1;
-  const { InvalidArgumentError: A } = JA(), { kClients: r, kRunning: t, kClose: g, kDestroy: e, kDispatch: n, kInterceptors: i } = WA(), Q = Fe(), l = be(), B = Se(), s = UA(), o = tn(), C = /* @__PURE__ */ Symbol("onConnect"), I = /* @__PURE__ */ Symbol("onDisconnect"), c = /* @__PURE__ */ Symbol("onConnectionError"), u = /* @__PURE__ */ Symbol("maxRedirections"), p = /* @__PURE__ */ Symbol("onDrain"), F = /* @__PURE__ */ Symbol("factory"), S = /* @__PURE__ */ Symbol("options");
+  const { InvalidArgumentError: A } = JA(), { kClients: r, kRunning: t, kClose: a, kDestroy: e, kDispatch: n, kInterceptors: i } = WA(), c = Fe(), l = be(), B = Se(), s = UA(), o = tn(), C = /* @__PURE__ */ Symbol("onConnect"), I = /* @__PURE__ */ Symbol("onDisconnect"), Q = /* @__PURE__ */ Symbol("onConnectionError"), u = /* @__PURE__ */ Symbol("maxRedirections"), p = /* @__PURE__ */ Symbol("onDrain"), F = /* @__PURE__ */ Symbol("factory"), S = /* @__PURE__ */ Symbol("options");
   function M(b, E) {
     return E && E.connections === 1 ? new B(b, E) : new l(b, E);
   }
-  class U extends Q {
-    constructor({ factory: E = M, maxRedirections: h = 0, connect: D, ...a } = {}) {
+  class U extends c {
+    constructor({ factory: E = M, maxRedirections: h = 0, connect: D, ...g } = {}) {
       if (super(), typeof E != "function")
         throw new A("factory must be a function.");
       if (D != null && typeof D != "function" && typeof D != "object")
         throw new A("connect must be a function or an object");
       if (!Number.isInteger(h) || h < 0)
         throw new A("maxRedirections must be a positive number");
-      D && typeof D != "function" && (D = { ...D }), this[i] = a.interceptors?.Agent && Array.isArray(a.interceptors.Agent) ? a.interceptors.Agent : [o({ maxRedirections: h })], this[S] = { ...s.deepClone(a), connect: D }, this[S].interceptors = a.interceptors ? { ...a.interceptors } : void 0, this[u] = h, this[F] = E, this[r] = /* @__PURE__ */ new Map(), this[p] = (f, w) => {
+      D && typeof D != "function" && (D = { ...D }), this[i] = g.interceptors?.Agent && Array.isArray(g.interceptors.Agent) ? g.interceptors.Agent : [o({ maxRedirections: h })], this[S] = { ...s.deepClone(g), connect: D }, this[S].interceptors = g.interceptors ? { ...g.interceptors } : void 0, this[u] = h, this[F] = E, this[r] = /* @__PURE__ */ new Map(), this[p] = (f, w) => {
         this.emit("drain", f, [this, ...w]);
       }, this[C] = (f, w) => {
         this.emit("connect", f, [this, ...w]);
       }, this[I] = (f, w, d) => {
         this.emit("disconnect", f, [this, ...w], d);
-      }, this[c] = (f, w, d) => {
+      }, this[Q] = (f, w, d) => {
         this.emit("connectionError", f, [this, ...w], d);
       };
     }
@@ -5776,10 +5776,10 @@ function Ue() {
         D = String(E.origin);
       else
         throw new A("opts.origin must be a non-empty string or URL.");
-      let a = this[r].get(D);
-      return a || (a = this[F](E.origin, this[S]).on("drain", this[p]).on("connect", this[C]).on("disconnect", this[I]).on("connectionError", this[c]), this[r].set(D, a)), a.dispatch(E, h);
+      let g = this[r].get(D);
+      return g || (g = this[F](E.origin, this[S]).on("drain", this[p]).on("connect", this[C]).on("disconnect", this[I]).on("connectionError", this[Q]), this[r].set(D, g)), g.dispatch(E, h);
     }
-    async [g]() {
+    async [a]() {
       const E = [];
       for (const h of this[r].values())
         E.push(h.close());
@@ -5798,26 +5798,26 @@ var Kt, es;
 function Ri() {
   if (es) return Kt;
   es = 1;
-  const { kProxy: A, kClose: r, kDestroy: t, kDispatch: g, kInterceptors: e } = WA(), { URL: n } = Ao, i = Ue(), Q = be(), l = Fe(), { InvalidArgumentError: B, RequestAbortedError: s, SecureProxyConnectionError: o } = JA(), C = Xe(), I = Se(), c = /* @__PURE__ */ Symbol("proxy agent"), u = /* @__PURE__ */ Symbol("proxy client"), p = /* @__PURE__ */ Symbol("proxy headers"), F = /* @__PURE__ */ Symbol("request tls settings"), S = /* @__PURE__ */ Symbol("proxy tls settings"), M = /* @__PURE__ */ Symbol("connect endpoint function"), U = /* @__PURE__ */ Symbol("tunnel proxy");
+  const { kProxy: A, kClose: r, kDestroy: t, kDispatch: a, kInterceptors: e } = WA(), { URL: n } = Ao, i = Ue(), c = be(), l = Fe(), { InvalidArgumentError: B, RequestAbortedError: s, SecureProxyConnectionError: o } = JA(), C = Xe(), I = Se(), Q = /* @__PURE__ */ Symbol("proxy agent"), u = /* @__PURE__ */ Symbol("proxy client"), p = /* @__PURE__ */ Symbol("proxy headers"), F = /* @__PURE__ */ Symbol("request tls settings"), S = /* @__PURE__ */ Symbol("proxy tls settings"), M = /* @__PURE__ */ Symbol("connect endpoint function"), U = /* @__PURE__ */ Symbol("tunnel proxy");
   function b(y) {
     return y === "https:" ? 443 : 80;
   }
   function E(y, k) {
-    return new Q(y, k);
+    return new c(y, k);
   }
   const h = () => {
   };
   function D(y, k) {
-    return k.connections === 1 ? new I(y, k) : new Q(y, k);
+    return k.connections === 1 ? new I(y, k) : new c(y, k);
   }
-  class a extends l {
+  class g extends l {
     #A;
     constructor(k, { headers: L = {}, connect: T, factory: Y }) {
       if (super(), !k)
         throw new B("Proxy URL is mandatory");
       this[p] = L, Y ? this.#A = Y(k, { connect: T }) : this.#A = new I(k, { connect: T });
     }
-    [g](k, L) {
+    [a](k, L) {
       const T = L.onHeaders;
       L.onHeaders = function(sA, QA, aA) {
         if (sA === 407) {
@@ -5835,7 +5835,7 @@ function Ri() {
         const { host: sA } = new n(Y);
         tA.host = sA;
       }
-      return k.headers = { ...this[p], ...tA }, this.#A[g](k, L);
+      return k.headers = { ...this[p], ...tA }, this.#A[a](k, L);
     }
     async [r]() {
       return this.#A.close();
@@ -5859,13 +5859,13 @@ function Ri() {
       this[M] = C({ ...k.requestTls });
       const pA = k.factory || D, yA = (j, P) => {
         const { protocol: rA } = new n(j);
-        return !this[U] && rA === "http:" && this[A].protocol === "http:" ? new a(this[A].uri, {
+        return !this[U] && rA === "http:" && this[A].protocol === "http:" ? new g(this[A].uri, {
           headers: this[p],
           connect: IA,
           factory: pA
         }) : pA(j, P);
       };
-      this[u] = L(Y, { connect: IA }), this[c] = new i({
+      this[u] = L(Y, { connect: IA }), this[Q] = new i({
         ...k,
         factory: yA,
         connect: async (j, P) => {
@@ -5901,7 +5901,7 @@ function Ri() {
         const { host: Y } = new n(k.origin);
         T.host = Y;
       }
-      return this[c].dispatch(
+      return this[Q].dispatch(
         {
           ...k,
           headers: T
@@ -5917,10 +5917,10 @@ function Ri() {
       return typeof k == "string" ? new n(k) : k instanceof n ? k : new n(k.uri);
     }
     async [r]() {
-      await this[c].close(), await this[u].close();
+      await this[Q].close(), await this[u].close();
     }
     async [t]() {
-      await this[c].destroy(), await this[u].destroy();
+      await this[Q].destroy(), await this[u].destroy();
     }
   }
   function w(y) {
@@ -5942,7 +5942,7 @@ var zt, ts;
 function Ro() {
   if (ts) return zt;
   ts = 1;
-  const A = Fe(), { kClose: r, kDestroy: t, kClosed: g, kDestroyed: e, kDispatch: n, kNoProxyAgent: i, kHttpProxyAgent: Q, kHttpsProxyAgent: l } = WA(), B = Ri(), s = Ue(), o = {
+  const A = Fe(), { kClose: r, kDestroy: t, kClosed: a, kDestroyed: e, kDispatch: n, kNoProxyAgent: i, kHttpProxyAgent: c, kHttpsProxyAgent: l } = WA(), B = Ri(), s = Ue(), o = {
     "http:": 80,
     "https:": 443
   };
@@ -5958,23 +5958,23 @@ function Ro() {
       const { httpProxy: p, httpsProxy: F, noProxy: S, ...M } = u;
       this[i] = new s(M);
       const U = p ?? process.env.http_proxy ?? process.env.HTTP_PROXY;
-      U ? this[Q] = new B({ ...M, uri: U }) : this[Q] = this[i];
+      U ? this[c] = new B({ ...M, uri: U }) : this[c] = this[i];
       const b = F ?? process.env.https_proxy ?? process.env.HTTPS_PROXY;
-      b ? this[l] = new B({ ...M, uri: b }) : this[l] = this[Q], this.#s();
+      b ? this[l] = new B({ ...M, uri: b }) : this[l] = this[c], this.#s();
     }
     [n](u, p) {
       const F = new URL(u.origin);
       return this.#r(F).dispatch(u, p);
     }
     async [r]() {
-      await this[i].close(), this[Q][g] || await this[Q].close(), this[l][g] || await this[l].close();
+      await this[i].close(), this[c][a] || await this[c].close(), this[l][a] || await this[l].close();
     }
     async [t](u) {
-      await this[i].destroy(u), this[Q][e] || await this[Q].destroy(u), this[l][e] || await this[l].destroy(u);
+      await this[i].destroy(u), this[c][e] || await this[c].destroy(u), this[l][e] || await this[l].destroy(u);
     }
     #r(u) {
       let { protocol: p, host: F, port: S } = u;
-      return F = F.replace(/:\d*$/, "").toLowerCase(), S = Number.parseInt(S, 10) || o[p] || 0, this.#t(F, S) ? p === "https:" ? this[l] : this[Q] : this[i];
+      return F = F.replace(/:\d*$/, "").toLowerCase(), S = Number.parseInt(S, 10) || o[p] || 0, this.#t(F, S) ? p === "https:" ? this[l] : this[c] : this[i];
     }
     #t(u, p) {
       if (this.#i && this.#s(), this.#e.length === 0)
@@ -6021,12 +6021,12 @@ function rn() {
   if (rs) return Xt;
   rs = 1;
   const A = HA, { kRetryHandlerDefaultRetry: r } = WA(), { RequestRetryError: t } = JA(), {
-    isDisturbed: g,
+    isDisturbed: a,
     parseHeaders: e,
     parseRangeHeader: n,
     wrapRequestBody: i
   } = UA();
-  function Q(B) {
+  function c(B) {
     const s = Date.now();
     return new Date(B).getTime() - s;
   }
@@ -6034,7 +6034,7 @@ function rn() {
     constructor(s, o) {
       const { retryOptions: C, ...I } = s, {
         // Retry scoped
-        retry: c,
+        retry: Q,
         maxRetries: u,
         maxTimeout: p,
         minTimeout: F,
@@ -6046,7 +6046,7 @@ function rn() {
         statusCodes: E
       } = C ?? {};
       this.dispatch = o.dispatch, this.handler = o.handler, this.opts = { ...I, body: i(s.body) }, this.abort = null, this.aborted = !1, this.retryOpts = {
-        retry: c ?? l[r],
+        retry: Q ?? l[r],
         retryAfter: b ?? !0,
         maxTimeout: p ?? 30 * 1e3,
         // 30s,
@@ -6087,24 +6087,24 @@ function rn() {
       if (this.handler.onBodySent) return this.handler.onBodySent(s);
     }
     static [r](s, { state: o, opts: C }, I) {
-      const { statusCode: c, code: u, headers: p } = s, { method: F, retryOptions: S } = C, {
+      const { statusCode: Q, code: u, headers: p } = s, { method: F, retryOptions: S } = C, {
         maxRetries: M,
         minTimeout: U,
         maxTimeout: b,
         timeoutFactor: E,
         statusCodes: h,
         errorCodes: D,
-        methods: a
+        methods: g
       } = S, { counter: f } = o;
       if (u && u !== "UND_ERR_REQ_RETRY" && !D.includes(u)) {
         I(s);
         return;
       }
-      if (Array.isArray(a) && !a.includes(F)) {
+      if (Array.isArray(g) && !g.includes(F)) {
         I(s);
         return;
       }
-      if (c != null && Array.isArray(h) && !h.includes(c)) {
+      if (Q != null && Array.isArray(h) && !h.includes(Q)) {
         I(s);
         return;
       }
@@ -6113,12 +6113,12 @@ function rn() {
         return;
       }
       let w = p?.["retry-after"];
-      w && (w = Number(w), w = Number.isNaN(w) ? Q(w) : w * 1e3);
+      w && (w = Number(w), w = Number.isNaN(w) ? c(w) : w * 1e3);
       const d = w > 0 ? Math.min(w, b) : Math.min(U * E ** (f - 1), b);
       setTimeout(() => I(null), d);
     }
     onHeaders(s, o, C, I) {
-      const c = e(o);
+      const Q = e(o);
       if (this.retryCount += 1, s >= 300)
         return this.retryOpts.statusCodes.includes(s) === !1 ? this.handler.onHeaders(
           s,
@@ -6127,7 +6127,7 @@ function rn() {
           I
         ) : (this.abort(
           new t("Request failed", s, {
-            headers: c,
+            headers: Q,
             data: {
               count: this.retryCount
             }
@@ -6137,22 +6137,22 @@ function rn() {
         if (this.resume = null, s !== 206 && (this.start > 0 || s !== 200))
           return this.abort(
             new t("server does not support the range header and the payload was partially consumed", s, {
-              headers: c,
+              headers: Q,
               data: { count: this.retryCount }
             })
           ), !1;
-        const p = n(c["content-range"]);
+        const p = n(Q["content-range"]);
         if (!p)
           return this.abort(
             new t("Content-Range mismatch", s, {
-              headers: c,
+              headers: Q,
               data: { count: this.retryCount }
             })
           ), !1;
-        if (this.etag != null && this.etag !== c.etag)
+        if (this.etag != null && this.etag !== Q.etag)
           return this.abort(
             new t("ETag mismatch", s, {
-              headers: c,
+              headers: Q,
               data: { count: this.retryCount }
             })
           ), !1;
@@ -6161,7 +6161,7 @@ function rn() {
       }
       if (this.end == null) {
         if (s === 206) {
-          const p = n(c["content-range"]);
+          const p = n(Q["content-range"]);
           if (p == null)
             return this.handler.onHeaders(
               s,
@@ -6176,13 +6176,13 @@ function rn() {
           ), A(M != null && Number.isFinite(M), "invalid content-length"), this.start = F, this.end = M;
         }
         if (this.end == null) {
-          const p = c["content-length"];
+          const p = Q["content-length"];
           this.end = p != null ? Number(p) - 1 : null;
         }
         return A(Number.isFinite(this.start)), A(
           this.end == null || Number.isFinite(this.end),
           "invalid content-length"
-        ), this.resume = C, this.etag = c.etag != null ? c.etag : null, this.etag != null && this.etag.startsWith("W/") && (this.etag = null), this.handler.onHeaders(
+        ), this.resume = C, this.etag = Q.etag != null ? Q.etag : null, this.etag != null && this.etag.startsWith("W/") && (this.etag = null), this.handler.onHeaders(
           s,
           o,
           C,
@@ -6190,7 +6190,7 @@ function rn() {
         );
       }
       const u = new t("Request failed", s, {
-        headers: c,
+        headers: Q,
         data: { count: this.retryCount }
       });
       return this.abort(u), !1;
@@ -6202,7 +6202,7 @@ function rn() {
       return this.retryCount = 0, this.handler.onComplete(s);
     }
     onError(s) {
-      if (this.aborted || g(this.opts.body))
+      if (this.aborted || a(this.opts.body))
         return this.handler.onError(s);
       this.retryCount - this.retryCountCheckpoint > 0 ? this.retryCount = this.retryCountCheckpoint + (this.retryCount - this.retryCountCheckpoint) : this.retryCount += 1, this.retryOpts.retry(
         s,
@@ -6213,7 +6213,7 @@ function rn() {
         o.bind(this)
       );
       function o(C) {
-        if (C != null || this.aborted || g(this.opts.body))
+        if (C != null || this.aborted || a(this.opts.body))
           return this.handler.onError(C);
         if (this.start !== 0) {
           const I = { range: `bytes=${this.start}-${this.end ?? ""}` };
@@ -6269,7 +6269,7 @@ var Ce = {}, He = { exports: {} }, jt, ss;
 function ki() {
   if (ss) return jt;
   ss = 1;
-  const A = HA, { Readable: r } = re, { RequestAbortedError: t, NotSupportedError: g, InvalidArgumentError: e, AbortError: n } = JA(), i = UA(), { ReadableStreamFrom: Q } = UA(), l = /* @__PURE__ */ Symbol("kConsume"), B = /* @__PURE__ */ Symbol("kReading"), s = /* @__PURE__ */ Symbol("kBody"), o = /* @__PURE__ */ Symbol("kAbort"), C = /* @__PURE__ */ Symbol("kContentType"), I = /* @__PURE__ */ Symbol("kContentLength"), c = () => {
+  const A = HA, { Readable: r } = re, { RequestAbortedError: t, NotSupportedError: a, InvalidArgumentError: e, AbortError: n } = JA(), i = UA(), { ReadableStreamFrom: c } = UA(), l = /* @__PURE__ */ Symbol("kConsume"), B = /* @__PURE__ */ Symbol("kReading"), s = /* @__PURE__ */ Symbol("kBody"), o = /* @__PURE__ */ Symbol("kAbort"), C = /* @__PURE__ */ Symbol("kContentType"), I = /* @__PURE__ */ Symbol("kContentLength"), Q = () => {
   };
   class u extends r {
     constructor({
@@ -6332,7 +6332,7 @@ function ki() {
     }
     // https://fetch.spec.whatwg.org/#dom-body-formdata
     async formData() {
-      throw new g();
+      throw new a();
     }
     // https://fetch.spec.whatwg.org/#dom-body-bodyused
     get bodyUsed() {
@@ -6340,7 +6340,7 @@ function ki() {
     }
     // https://fetch.spec.whatwg.org/#dom-body-body
     get body() {
-      return this[s] || (this[s] = Q(this), this[l] && (this[s].getReader(), A(this[s].locked))), this[s];
+      return this[s] || (this[s] = c(this), this[l] && (this[s].getReader(), A(this[s].locked))), this[s];
     }
     async dump(f) {
       let w = Number.isFinite(f?.limit) ? f.limit : 131072;
@@ -6354,92 +6354,92 @@ function ki() {
         };
         d?.addEventListener("abort", L), this.on("close", function() {
           d?.removeEventListener("abort", L), d?.aborted ? k(d.reason ?? new n()) : y(null);
-        }).on("error", c).on("data", function(T) {
+        }).on("error", Q).on("data", function(T) {
           w -= T.length, w <= 0 && this.destroy();
         }).resume();
       });
     }
   }
-  function p(a) {
-    return a[s] && a[s].locked === !0 || a[l];
+  function p(g) {
+    return g[s] && g[s].locked === !0 || g[l];
   }
-  function F(a) {
-    return i.isDisturbed(a) || p(a);
+  function F(g) {
+    return i.isDisturbed(g) || p(g);
   }
-  async function S(a, f) {
-    return A(!a[l]), new Promise((w, d) => {
-      if (F(a)) {
-        const y = a._readableState;
-        y.destroyed && y.closeEmitted === !1 ? a.on("error", (k) => {
+  async function S(g, f) {
+    return A(!g[l]), new Promise((w, d) => {
+      if (F(g)) {
+        const y = g._readableState;
+        y.destroyed && y.closeEmitted === !1 ? g.on("error", (k) => {
           d(k);
         }).on("close", () => {
           d(new TypeError("unusable"));
         }) : d(y.errored ?? new TypeError("unusable"));
       } else
         queueMicrotask(() => {
-          a[l] = {
+          g[l] = {
             type: f,
-            stream: a,
+            stream: g,
             resolve: w,
             reject: d,
             length: 0,
             body: []
-          }, a.on("error", function(y) {
+          }, g.on("error", function(y) {
             D(this[l], y);
           }).on("close", function() {
             this[l].body !== null && D(this[l], new t());
-          }), M(a[l]);
+          }), M(g[l]);
         });
     });
   }
-  function M(a) {
-    if (a.body === null)
+  function M(g) {
+    if (g.body === null)
       return;
-    const { _readableState: f } = a.stream;
+    const { _readableState: f } = g.stream;
     if (f.bufferIndex) {
       const w = f.bufferIndex, d = f.buffer.length;
       for (let y = w; y < d; y++)
-        h(a, f.buffer[y]);
+        h(g, f.buffer[y]);
     } else
       for (const w of f.buffer)
-        h(a, w);
-    for (f.endEmitted ? E(this[l]) : a.stream.on("end", function() {
+        h(g, w);
+    for (f.endEmitted ? E(this[l]) : g.stream.on("end", function() {
       E(this[l]);
-    }), a.stream.resume(); a.stream.read() != null; )
+    }), g.stream.resume(); g.stream.read() != null; )
       ;
   }
-  function U(a, f) {
-    if (a.length === 0 || f === 0)
+  function U(g, f) {
+    if (g.length === 0 || f === 0)
       return "";
-    const w = a.length === 1 ? a[0] : Buffer.concat(a, f), d = w.length, y = d > 2 && w[0] === 239 && w[1] === 187 && w[2] === 191 ? 3 : 0;
+    const w = g.length === 1 ? g[0] : Buffer.concat(g, f), d = w.length, y = d > 2 && w[0] === 239 && w[1] === 187 && w[2] === 191 ? 3 : 0;
     return w.utf8Slice(y, d);
   }
-  function b(a, f) {
-    if (a.length === 0 || f === 0)
+  function b(g, f) {
+    if (g.length === 0 || f === 0)
       return new Uint8Array(0);
-    if (a.length === 1)
-      return new Uint8Array(a[0]);
+    if (g.length === 1)
+      return new Uint8Array(g[0]);
     const w = new Uint8Array(Buffer.allocUnsafeSlow(f).buffer);
     let d = 0;
-    for (let y = 0; y < a.length; ++y) {
-      const k = a[y];
+    for (let y = 0; y < g.length; ++y) {
+      const k = g[y];
       w.set(k, d), d += k.length;
     }
     return w;
   }
-  function E(a) {
-    const { type: f, body: w, resolve: d, stream: y, length: k } = a;
+  function E(g) {
+    const { type: f, body: w, resolve: d, stream: y, length: k } = g;
     try {
-      f === "text" ? d(U(w, k)) : f === "json" ? d(JSON.parse(U(w, k))) : f === "arrayBuffer" ? d(b(w, k).buffer) : f === "blob" ? d(new Blob(w, { type: y[C] })) : f === "bytes" && d(b(w, k)), D(a);
+      f === "text" ? d(U(w, k)) : f === "json" ? d(JSON.parse(U(w, k))) : f === "arrayBuffer" ? d(b(w, k).buffer) : f === "blob" ? d(new Blob(w, { type: y[C] })) : f === "bytes" && d(b(w, k)), D(g);
     } catch (L) {
       y.destroy(L);
     }
   }
-  function h(a, f) {
-    a.length += f.length, a.body.push(f);
+  function h(g, f) {
+    g.length += f.length, g.body.push(f);
   }
-  function D(a, f) {
-    a.body !== null && (f ? a.reject(f) : a.resolve(), a.type = null, a.stream = null, a.resolve = null, a.reject = null, a.length = 0, a.body = null);
+  function D(g, f) {
+    g.body !== null && (f ? g.reject(f) : g.resolve(), g.type = null, g.stream = null, g.resolve = null, g.reject = null, g.length = 0, g.body = null);
   }
   return jt = { Readable: u, chunksDecode: U }, jt;
 }
@@ -6449,36 +6449,36 @@ function mi() {
   is = 1;
   const A = HA, {
     ResponseStatusCodeError: r
-  } = JA(), { chunksDecode: t } = ki(), g = 128 * 1024;
-  async function e({ callback: Q, body: l, contentType: B, statusCode: s, statusMessage: o, headers: C }) {
+  } = JA(), { chunksDecode: t } = ki(), a = 128 * 1024;
+  async function e({ callback: c, body: l, contentType: B, statusCode: s, statusMessage: o, headers: C }) {
     A(l);
-    let I = [], c = 0;
+    let I = [], Q = 0;
     try {
       for await (const S of l)
-        if (I.push(S), c += S.length, c > g) {
-          I = [], c = 0;
+        if (I.push(S), Q += S.length, Q > a) {
+          I = [], Q = 0;
           break;
         }
     } catch {
-      I = [], c = 0;
+      I = [], Q = 0;
     }
     const u = `Response status code ${s}${o ? `: ${o}` : ""}`;
-    if (s === 204 || !B || !c) {
-      queueMicrotask(() => Q(new r(u, s, C)));
+    if (s === 204 || !B || !Q) {
+      queueMicrotask(() => c(new r(u, s, C)));
       return;
     }
     const p = Error.stackTraceLimit;
     Error.stackTraceLimit = 0;
     let F;
     try {
-      n(B) ? F = JSON.parse(t(I, c)) : i(B) && (F = t(I, c));
+      n(B) ? F = JSON.parse(t(I, Q)) : i(B) && (F = t(I, Q));
     } catch {
     } finally {
       Error.stackTraceLimit = p;
     }
-    queueMicrotask(() => Q(new r(u, s, C, F)));
+    queueMicrotask(() => c(new r(u, s, C, F)));
   }
-  const n = (Q) => Q.length > 15 && Q[11] === "/" && Q[0] === "a" && Q[1] === "p" && Q[2] === "p" && Q[3] === "l" && Q[4] === "i" && Q[5] === "c" && Q[6] === "a" && Q[7] === "t" && Q[8] === "i" && Q[9] === "o" && Q[10] === "n" && Q[12] === "j" && Q[13] === "s" && Q[14] === "o" && Q[15] === "n", i = (Q) => Q.length > 4 && Q[4] === "/" && Q[0] === "t" && Q[1] === "e" && Q[2] === "x" && Q[3] === "t";
+  const n = (c) => c.length > 15 && c[11] === "/" && c[0] === "a" && c[1] === "p" && c[2] === "p" && c[3] === "l" && c[4] === "i" && c[5] === "c" && c[6] === "a" && c[7] === "t" && c[8] === "i" && c[9] === "o" && c[10] === "n" && c[12] === "j" && c[13] === "s" && c[14] === "o" && c[15] === "n", i = (c) => c.length > 4 && c[4] === "/" && c[0] === "t" && c[1] === "e" && c[2] === "x" && c[3] === "t";
   return $t = {
     getResolveErrorBodyCallback: e,
     isContentTypeApplicationJson: n,
@@ -6489,12 +6489,12 @@ var os;
 function mo() {
   if (os) return He.exports;
   os = 1;
-  const A = HA, { Readable: r } = ki(), { InvalidArgumentError: t, RequestAbortedError: g } = JA(), e = UA(), { getResolveErrorBodyCallback: n } = mi(), { AsyncResource: i } = Re;
-  class Q extends i {
+  const A = HA, { Readable: r } = ki(), { InvalidArgumentError: t, RequestAbortedError: a } = JA(), e = UA(), { getResolveErrorBodyCallback: n } = mi(), { AsyncResource: i } = Re;
+  class c extends i {
     constructor(s, o) {
       if (!s || typeof s != "object")
         throw new t("invalid opts");
-      const { signal: C, method: I, opaque: c, body: u, onInfo: p, responseHeaders: F, throwOnError: S, highWaterMark: M } = s;
+      const { signal: C, method: I, opaque: Q, body: u, onInfo: p, responseHeaders: F, throwOnError: S, highWaterMark: M } = s;
       try {
         if (typeof o != "function")
           throw new t("invalid callback");
@@ -6510,10 +6510,10 @@ function mo() {
       } catch (U) {
         throw e.isStream(u) && e.destroy(u.on("error", e.nop), U), U;
       }
-      this.method = I, this.responseHeaders = F || null, this.opaque = c || null, this.callback = o, this.res = null, this.abort = null, this.body = u, this.trailers = {}, this.context = null, this.onInfo = p || null, this.throwOnError = S, this.highWaterMark = M, this.signal = C, this.reason = null, this.removeAbortListener = null, e.isStream(u) && u.on("error", (U) => {
+      this.method = I, this.responseHeaders = F || null, this.opaque = Q || null, this.callback = o, this.res = null, this.abort = null, this.body = u, this.trailers = {}, this.context = null, this.onInfo = p || null, this.throwOnError = S, this.highWaterMark = M, this.signal = C, this.reason = null, this.removeAbortListener = null, e.isStream(u) && u.on("error", (U) => {
         this.onError(U);
-      }), this.signal && (this.signal.aborted ? this.reason = this.signal.reason ?? new g() : this.removeAbortListener = e.addAbortListener(this.signal, () => {
-        this.reason = this.signal.reason ?? new g(), this.res ? e.destroy(this.res.on("error", e.nop), this.reason) : this.abort && this.abort(this.reason), this.removeAbortListener && (this.res?.off("close", this.removeAbortListener), this.removeAbortListener(), this.removeAbortListener = null);
+      }), this.signal && (this.signal.aborted ? this.reason = this.signal.reason ?? new a() : this.removeAbortListener = e.addAbortListener(this.signal, () => {
+        this.reason = this.signal.reason ?? new a(), this.res ? e.destroy(this.res.on("error", e.nop), this.reason) : this.abort && this.abort(this.reason), this.removeAbortListener && (this.res?.off("close", this.removeAbortListener), this.removeAbortListener(), this.removeAbortListener = null);
       }));
     }
     onConnect(s, o) {
@@ -6524,7 +6524,7 @@ function mo() {
       A(this.callback), this.abort = s, this.context = o;
     }
     onHeaders(s, o, C, I) {
-      const { callback: c, opaque: u, abort: p, context: F, responseHeaders: S, highWaterMark: M } = this, U = S === "raw" ? e.parseRawHeaders(o) : e.parseHeaders(o);
+      const { callback: Q, opaque: u, abort: p, context: F, responseHeaders: S, highWaterMark: M } = this, U = S === "raw" ? e.parseRawHeaders(o) : e.parseHeaders(o);
       if (s < 200) {
         this.onInfo && this.onInfo({ statusCode: s, headers: U });
         return;
@@ -6536,11 +6536,11 @@ function mo() {
         contentLength: this.method !== "HEAD" && h ? Number(h) : null,
         highWaterMark: M
       });
-      this.removeAbortListener && D.on("close", this.removeAbortListener), this.callback = null, this.res = D, c !== null && (this.throwOnError && s >= 400 ? this.runInAsyncScope(
+      this.removeAbortListener && D.on("close", this.removeAbortListener), this.callback = null, this.res = D, Q !== null && (this.throwOnError && s >= 400 ? this.runInAsyncScope(
         n,
         null,
-        { callback: c, body: D, contentType: E, statusCode: s, statusMessage: I, headers: U }
-      ) : this.runInAsyncScope(c, null, null, {
+        { callback: Q, body: D, contentType: E, statusCode: s, statusMessage: I, headers: U }
+      ) : this.runInAsyncScope(Q, null, null, {
         statusCode: s,
         headers: U,
         trailers: this.trailers,
@@ -6556,9 +6556,9 @@ function mo() {
       e.parseHeaders(s, this.trailers), this.res.push(null);
     }
     onError(s) {
-      const { res: o, callback: C, body: I, opaque: c } = this;
+      const { res: o, callback: C, body: I, opaque: Q } = this;
       C && (this.callback = null, queueMicrotask(() => {
-        this.runInAsyncScope(C, null, s, { opaque: c });
+        this.runInAsyncScope(C, null, s, { opaque: Q });
       })), o && (this.res = null, queueMicrotask(() => {
         e.destroy(o, s);
       })), I && (this.body = null, e.destroy(I, s)), this.removeAbortListener && (o?.off("close", this.removeAbortListener), this.removeAbortListener(), this.removeAbortListener = null);
@@ -6567,10 +6567,10 @@ function mo() {
   function l(B, s) {
     if (s === void 0)
       return new Promise((o, C) => {
-        l.call(this, B, (I, c) => I ? C(I) : o(c));
+        l.call(this, B, (I, Q) => I ? C(I) : o(Q));
       });
     try {
-      this.dispatch(B, new Q(B, s));
+      this.dispatch(B, new c(B, s));
     } catch (o) {
       if (typeof s != "function")
         throw o;
@@ -6578,29 +6578,29 @@ function mo() {
       queueMicrotask(() => s(o, { opaque: C }));
     }
   }
-  return He.exports = l, He.exports.RequestHandler = Q, He.exports;
+  return He.exports = l, He.exports.RequestHandler = c, He.exports;
 }
 var Ar, as;
 function $e() {
   if (as) return Ar;
   as = 1;
-  const { addAbortListener: A } = UA(), { RequestAbortedError: r } = JA(), t = /* @__PURE__ */ Symbol("kListener"), g = /* @__PURE__ */ Symbol("kSignal");
-  function e(Q) {
-    Q.abort ? Q.abort(Q[g]?.reason) : Q.reason = Q[g]?.reason ?? new r(), i(Q);
+  const { addAbortListener: A } = UA(), { RequestAbortedError: r } = JA(), t = /* @__PURE__ */ Symbol("kListener"), a = /* @__PURE__ */ Symbol("kSignal");
+  function e(c) {
+    c.abort ? c.abort(c[a]?.reason) : c.reason = c[a]?.reason ?? new r(), i(c);
   }
-  function n(Q, l) {
-    if (Q.reason = null, Q[g] = null, Q[t] = null, !!l) {
+  function n(c, l) {
+    if (c.reason = null, c[a] = null, c[t] = null, !!l) {
       if (l.aborted) {
-        e(Q);
+        e(c);
         return;
       }
-      Q[g] = l, Q[t] = () => {
-        e(Q);
-      }, A(Q[g], Q[t]);
+      c[a] = l, c[t] = () => {
+        e(c);
+      }, A(c[a], c[t]);
     }
   }
-  function i(Q) {
-    Q[g] && ("removeEventListener" in Q[g] ? Q[g].removeEventListener("abort", Q[t]) : Q[g].removeListener("abort", Q[t]), Q[g] = null, Q[t] = null);
+  function i(c) {
+    c[a] && ("removeEventListener" in c[a] ? c[a].removeEventListener("abort", c[t]) : c[a].removeListener("abort", c[t]), c[a] = null, c[t] = null);
   }
   return Ar = {
     addSignal: n,
@@ -6611,40 +6611,40 @@ var er, gs;
 function Fo() {
   if (gs) return er;
   gs = 1;
-  const A = HA, { finished: r, PassThrough: t } = re, { InvalidArgumentError: g, InvalidReturnValueError: e } = JA(), n = UA(), { getResolveErrorBodyCallback: i } = mi(), { AsyncResource: Q } = Re, { addSignal: l, removeSignal: B } = $e();
-  class s extends Q {
-    constructor(I, c, u) {
+  const A = HA, { finished: r, PassThrough: t } = re, { InvalidArgumentError: a, InvalidReturnValueError: e } = JA(), n = UA(), { getResolveErrorBodyCallback: i } = mi(), { AsyncResource: c } = Re, { addSignal: l, removeSignal: B } = $e();
+  class s extends c {
+    constructor(I, Q, u) {
       if (!I || typeof I != "object")
-        throw new g("invalid opts");
+        throw new a("invalid opts");
       const { signal: p, method: F, opaque: S, body: M, onInfo: U, responseHeaders: b, throwOnError: E } = I;
       try {
         if (typeof u != "function")
-          throw new g("invalid callback");
-        if (typeof c != "function")
-          throw new g("invalid factory");
+          throw new a("invalid callback");
+        if (typeof Q != "function")
+          throw new a("invalid factory");
         if (p && typeof p.on != "function" && typeof p.addEventListener != "function")
-          throw new g("signal must be an EventEmitter or EventTarget");
+          throw new a("signal must be an EventEmitter or EventTarget");
         if (F === "CONNECT")
-          throw new g("invalid method");
+          throw new a("invalid method");
         if (U && typeof U != "function")
-          throw new g("invalid onInfo callback");
+          throw new a("invalid onInfo callback");
         super("UNDICI_STREAM");
       } catch (h) {
         throw n.isStream(M) && n.destroy(M.on("error", n.nop), h), h;
       }
-      this.responseHeaders = b || null, this.opaque = S || null, this.factory = c, this.callback = u, this.res = null, this.abort = null, this.context = null, this.trailers = null, this.body = M, this.onInfo = U || null, this.throwOnError = E || !1, n.isStream(M) && M.on("error", (h) => {
+      this.responseHeaders = b || null, this.opaque = S || null, this.factory = Q, this.callback = u, this.res = null, this.abort = null, this.context = null, this.trailers = null, this.body = M, this.onInfo = U || null, this.throwOnError = E || !1, n.isStream(M) && M.on("error", (h) => {
         this.onError(h);
       }), l(this, p);
     }
-    onConnect(I, c) {
+    onConnect(I, Q) {
       if (this.reason) {
         I(this.reason);
         return;
       }
-      A(this.callback), this.abort = I, this.context = c;
+      A(this.callback), this.abort = I, this.context = Q;
     }
-    onHeaders(I, c, u, p) {
-      const { factory: F, opaque: S, context: M, callback: U, responseHeaders: b } = this, E = b === "raw" ? n.parseRawHeaders(c) : n.parseHeaders(c);
+    onHeaders(I, Q, u, p) {
+      const { factory: F, opaque: S, context: M, callback: U, responseHeaders: b } = this, E = b === "raw" ? n.parseRawHeaders(Q) : n.parseHeaders(Q);
       if (I < 200) {
         this.onInfo && this.onInfo({ statusCode: I, headers: E });
         return;
@@ -6652,7 +6652,7 @@ function Fo() {
       this.factory = null;
       let h;
       if (this.throwOnError && I >= 400) {
-        const f = (b === "raw" ? n.parseHeaders(c) : E)["content-type"];
+        const f = (b === "raw" ? n.parseHeaders(Q) : E)["content-type"];
         h = new t(), this.callback = null, this.runInAsyncScope(
           i,
           null,
@@ -6668,40 +6668,40 @@ function Fo() {
           context: M
         }), !h || typeof h.write != "function" || typeof h.end != "function" || typeof h.on != "function")
           throw new e("expected Writable");
-        r(h, { readable: !1 }, (a) => {
+        r(h, { readable: !1 }, (g) => {
           const { callback: f, res: w, opaque: d, trailers: y, abort: k } = this;
-          this.res = null, (a || !w.readable) && n.destroy(w, a), this.callback = null, this.runInAsyncScope(f, null, a || null, { opaque: d, trailers: y }), a && k();
+          this.res = null, (g || !w.readable) && n.destroy(w, g), this.callback = null, this.runInAsyncScope(f, null, g || null, { opaque: d, trailers: y }), g && k();
         });
       }
       return h.on("drain", u), this.res = h, (h.writableNeedDrain !== void 0 ? h.writableNeedDrain : h._writableState?.needDrain) !== !0;
     }
     onData(I) {
-      const { res: c } = this;
-      return c ? c.write(I) : !0;
+      const { res: Q } = this;
+      return Q ? Q.write(I) : !0;
     }
     onComplete(I) {
-      const { res: c } = this;
-      B(this), c && (this.trailers = n.parseHeaders(I), c.end());
+      const { res: Q } = this;
+      B(this), Q && (this.trailers = n.parseHeaders(I), Q.end());
     }
     onError(I) {
-      const { res: c, callback: u, opaque: p, body: F } = this;
-      B(this), this.factory = null, c ? (this.res = null, n.destroy(c, I)) : u && (this.callback = null, queueMicrotask(() => {
+      const { res: Q, callback: u, opaque: p, body: F } = this;
+      B(this), this.factory = null, Q ? (this.res = null, n.destroy(Q, I)) : u && (this.callback = null, queueMicrotask(() => {
         this.runInAsyncScope(u, null, I, { opaque: p });
       })), F && (this.body = null, n.destroy(F, I));
     }
   }
-  function o(C, I, c) {
-    if (c === void 0)
+  function o(C, I, Q) {
+    if (Q === void 0)
       return new Promise((u, p) => {
         o.call(this, C, I, (F, S) => F ? p(F) : u(S));
       });
     try {
-      this.dispatch(C, new s(C, I, c));
+      this.dispatch(C, new s(C, I, Q));
     } catch (u) {
-      if (typeof c != "function")
+      if (typeof Q != "function")
         throw u;
       const p = C?.opaque;
-      queueMicrotask(() => c(u, { opaque: p }));
+      queueMicrotask(() => Q(u, { opaque: p }));
     }
   }
   return er = o, er;
@@ -6715,10 +6715,10 @@ function No() {
     Duplex: r,
     PassThrough: t
   } = re, {
-    InvalidArgumentError: g,
+    InvalidArgumentError: a,
     InvalidReturnValueError: e,
     RequestAbortedError: n
-  } = JA(), i = UA(), { AsyncResource: Q } = Re, { addSignal: l, removeSignal: B } = $e(), s = HA, o = /* @__PURE__ */ Symbol("resume");
+  } = JA(), i = UA(), { AsyncResource: c } = Re, { addSignal: l, removeSignal: B } = $e(), s = HA, o = /* @__PURE__ */ Symbol("resume");
   class C extends A {
     constructor() {
       super({ autoDestroy: !0 }), this[o] = null;
@@ -6742,19 +6742,19 @@ function No() {
       !F && !this._readableState.endEmitted && (F = new n()), S(F);
     }
   }
-  class c extends Q {
+  class Q extends c {
     constructor(F, S) {
       if (!F || typeof F != "object")
-        throw new g("invalid opts");
+        throw new a("invalid opts");
       if (typeof S != "function")
-        throw new g("invalid handler");
+        throw new a("invalid handler");
       const { signal: M, method: U, opaque: b, onInfo: E, responseHeaders: h } = F;
       if (M && typeof M.on != "function" && typeof M.addEventListener != "function")
-        throw new g("signal must be an EventEmitter or EventTarget");
+        throw new a("signal must be an EventEmitter or EventTarget");
       if (U === "CONNECT")
-        throw new g("invalid method");
+        throw new a("invalid method");
       if (E && typeof E != "function")
-        throw new g("invalid onInfo callback");
+        throw new a("invalid onInfo callback");
       super("UNDICI_PIPELINE"), this.opaque = b || null, this.responseHeaders = h || null, this.handler = S, this.abort = null, this.context = null, this.onInfo = E || null, this.req = new C().on("error", i.nop), this.ret = new r({
         readableObjectMode: F.objectMode,
         autoDestroy: !0,
@@ -6762,13 +6762,13 @@ function No() {
           const { body: D } = this;
           D?.resume && D.resume();
         },
-        write: (D, a, f) => {
+        write: (D, g, f) => {
           const { req: w } = this;
-          w.push(D, a) || w._readableState.destroyed ? f() : w[o] = f;
+          w.push(D, g) || w._readableState.destroyed ? f() : w[o] = f;
         },
-        destroy: (D, a) => {
+        destroy: (D, g) => {
           const { body: f, req: w, res: d, ret: y, abort: k } = this;
-          !D && !y._readableState.endEmitted && (D = new n()), k && D && k(), i.destroy(f, D), i.destroy(w, D), i.destroy(d, D), B(this), a(D);
+          !D && !y._readableState.endEmitted && (D = new n()), k && D && k(), i.destroy(f, D), i.destroy(w, D), i.destroy(d, D), B(this), g(D);
         }
       }).on("prefinish", () => {
         const { req: D } = this;
@@ -6810,11 +6810,11 @@ function No() {
       if (!h || typeof h.on != "function")
         throw new e("expected Readable");
       h.on("data", (D) => {
-        const { ret: a, body: f } = this;
-        !a.push(D) && f.pause && f.pause();
+        const { ret: g, body: f } = this;
+        !g.push(D) && f.pause && f.pause();
       }).on("error", (D) => {
-        const { ret: a } = this;
-        i.destroy(a, D);
+        const { ret: g } = this;
+        i.destroy(g, D);
       }).on("end", () => {
         const { ret: D } = this;
         D.push(null);
@@ -6838,7 +6838,7 @@ function No() {
   }
   function u(p, F) {
     try {
-      const S = new c(p, F);
+      const S = new Q(p, F);
       return this.dispatch({ ...p, body: S.req }, S), S.ret;
     } catch (S) {
       return new t().destroy(S);
@@ -6850,17 +6850,17 @@ var rr, cs;
 function So() {
   if (cs) return rr;
   cs = 1;
-  const { InvalidArgumentError: A, SocketError: r } = JA(), { AsyncResource: t } = Re, g = UA(), { addSignal: e, removeSignal: n } = $e(), i = HA;
-  class Q extends t {
+  const { InvalidArgumentError: A, SocketError: r } = JA(), { AsyncResource: t } = Re, a = UA(), { addSignal: e, removeSignal: n } = $e(), i = HA;
+  class c extends t {
     constructor(s, o) {
       if (!s || typeof s != "object")
         throw new A("invalid opts");
       if (typeof o != "function")
         throw new A("invalid callback");
-      const { signal: C, opaque: I, responseHeaders: c } = s;
+      const { signal: C, opaque: I, responseHeaders: Q } = s;
       if (C && typeof C.on != "function" && typeof C.addEventListener != "function")
         throw new A("signal must be an EventEmitter or EventTarget");
-      super("UNDICI_UPGRADE"), this.responseHeaders = c || null, this.opaque = I || null, this.callback = o, this.abort = null, this.context = null, e(this, C);
+      super("UNDICI_UPGRADE"), this.responseHeaders = Q || null, this.opaque = I || null, this.callback = o, this.abort = null, this.context = null, e(this, C);
     }
     onConnect(s, o) {
       if (this.reason) {
@@ -6874,13 +6874,13 @@ function So() {
     }
     onUpgrade(s, o, C) {
       i(s === 101);
-      const { callback: I, opaque: c, context: u } = this;
+      const { callback: I, opaque: Q, context: u } = this;
       n(this), this.callback = null;
-      const p = this.responseHeaders === "raw" ? g.parseRawHeaders(o) : g.parseHeaders(o);
+      const p = this.responseHeaders === "raw" ? a.parseRawHeaders(o) : a.parseHeaders(o);
       this.runInAsyncScope(I, null, null, {
         headers: p,
         socket: C,
-        opaque: c,
+        opaque: Q,
         context: u
       });
     }
@@ -6894,10 +6894,10 @@ function So() {
   function l(B, s) {
     if (s === void 0)
       return new Promise((o, C) => {
-        l.call(this, B, (I, c) => I ? C(I) : o(c));
+        l.call(this, B, (I, Q) => I ? C(I) : o(Q));
       });
     try {
-      const o = new Q(B, s);
+      const o = new c(B, s);
       this.dispatch({
         ...B,
         method: B.method || "GET",
@@ -6916,17 +6916,17 @@ var nr, Bs;
 function bo() {
   if (Bs) return nr;
   Bs = 1;
-  const A = HA, { AsyncResource: r } = Re, { InvalidArgumentError: t, SocketError: g } = JA(), e = UA(), { addSignal: n, removeSignal: i } = $e();
-  class Q extends r {
+  const A = HA, { AsyncResource: r } = Re, { InvalidArgumentError: t, SocketError: a } = JA(), e = UA(), { addSignal: n, removeSignal: i } = $e();
+  class c extends r {
     constructor(s, o) {
       if (!s || typeof s != "object")
         throw new t("invalid opts");
       if (typeof o != "function")
         throw new t("invalid callback");
-      const { signal: C, opaque: I, responseHeaders: c } = s;
+      const { signal: C, opaque: I, responseHeaders: Q } = s;
       if (C && typeof C.on != "function" && typeof C.addEventListener != "function")
         throw new t("signal must be an EventEmitter or EventTarget");
-      super("UNDICI_CONNECT"), this.opaque = I || null, this.responseHeaders = c || null, this.callback = o, this.abort = null, n(this, C);
+      super("UNDICI_CONNECT"), this.opaque = I || null, this.responseHeaders = Q || null, this.callback = o, this.abort = null, n(this, C);
     }
     onConnect(s, o) {
       if (this.reason) {
@@ -6936,17 +6936,17 @@ function bo() {
       A(this.callback), this.abort = s, this.context = o;
     }
     onHeaders() {
-      throw new g("bad connect", null);
+      throw new a("bad connect", null);
     }
     onUpgrade(s, o, C) {
-      const { callback: I, opaque: c, context: u } = this;
+      const { callback: I, opaque: Q, context: u } = this;
       i(this), this.callback = null;
       let p = o;
       p != null && (p = this.responseHeaders === "raw" ? e.parseRawHeaders(o) : e.parseHeaders(o)), this.runInAsyncScope(I, null, null, {
         statusCode: s,
         headers: p,
         socket: C,
-        opaque: c,
+        opaque: Q,
         context: u
       });
     }
@@ -6960,10 +6960,10 @@ function bo() {
   function l(B, s) {
     if (s === void 0)
       return new Promise((o, C) => {
-        l.call(this, B, (I, c) => I ? C(I) : o(c));
+        l.call(this, B, (I, Q) => I ? C(I) : o(Q));
       });
     try {
-      const o = new Q(B, s);
+      const o = new c(B, s);
       this.dispatch({ ...B, method: "CONNECT" }, o);
     } catch (o) {
       if (typeof s != "function")
@@ -7027,10 +7027,10 @@ function At() {
   const { MockNotMatchedError: A } = Fi(), {
     kDispatches: r,
     kMockAgent: t,
-    kOriginalDispatch: g,
+    kOriginalDispatch: a,
     kOrigin: e,
     kGetNetConnect: n
-  } = Me(), { buildURL: i } = UA(), { STATUS_CODES: Q } = Ze, {
+  } = Me(), { buildURL: i } = UA(), { STATUS_CODES: c } = Ze, {
     types: {
       isPromise: l
     }
@@ -7071,7 +7071,7 @@ function At() {
     }
     return !0;
   }
-  function c(d) {
+  function Q(d) {
     if (typeof d != "string")
       return d;
     const y = d.split("?");
@@ -7088,8 +7088,8 @@ function At() {
     return Buffer.isBuffer(d) || d instanceof Uint8Array || d instanceof ArrayBuffer ? d : typeof d == "object" ? JSON.stringify(d) : d.toString();
   }
   function F(d, y) {
-    const k = y.query ? i(y.path, y.query) : y.path, L = typeof k == "string" ? c(k) : k;
-    let T = d.filter(({ consumed: Y }) => !Y).filter(({ path: Y }) => B(c(Y), L));
+    const k = y.query ? i(y.path, y.query) : y.path, L = typeof k == "string" ? Q(k) : k;
+    let T = d.filter(({ consumed: Y }) => !Y).filter(({ path: Y }) => B(Q(Y), L));
     if (T.length === 0)
       throw new A(`Mock dispatch not matched for path '${L}'`);
     if (T = T.filter(({ method: Y }) => B(Y, y.method)), T.length === 0)
@@ -7133,7 +7133,7 @@ function At() {
     return k;
   }
   function E(d) {
-    return Q[d] || "unknown";
+    return c[d] || "unknown";
   }
   async function h(d) {
     const y = [];
@@ -7163,8 +7163,8 @@ function At() {
     }
     return !0;
   }
-  function a() {
-    const d = this[t], y = this[e], k = this[g];
+  function g() {
+    const d = this[t], y = this[e], k = this[a];
     return function(T, Y) {
       if (d.isMockActive)
         try {
@@ -7206,7 +7206,7 @@ function At() {
     getResponse: h,
     getStatusText: E,
     mockDispatch: D,
-    buildMockDispatch: a,
+    buildMockDispatch: g,
     checkNetConnect: f,
     buildMockOptions: w,
     getHeaderByName: o,
@@ -7218,24 +7218,24 @@ function Ni() {
   if (hs) return Ve;
   hs = 1;
   const { getResponseData: A, buildKey: r, addMockDispatch: t } = At(), {
-    kDispatches: g,
+    kDispatches: a,
     kDispatchKey: e,
     kDefaultHeaders: n,
     kDefaultTrailers: i,
-    kContentLength: Q,
+    kContentLength: c,
     kMockDispatch: l
   } = Me(), { InvalidArgumentError: B } = JA(), { buildURL: s } = UA();
   class o {
-    constructor(c) {
-      this[l] = c;
+    constructor(Q) {
+      this[l] = Q;
     }
     /**
      * Delay a reply by a set amount in ms.
      */
-    delay(c) {
-      if (typeof c != "number" || !Number.isInteger(c) || c <= 0)
+    delay(Q) {
+      if (typeof Q != "number" || !Number.isInteger(Q) || Q <= 0)
         throw new B("waitInMs must be a valid integer > 0");
-      return this[l].delay = c, this;
+      return this[l].delay = Q, this;
     }
     /**
      * For a defined reply, never mark as consumed.
@@ -7246,92 +7246,92 @@ function Ni() {
     /**
      * Allow one to define a reply for a set amount of matching requests.
      */
-    times(c) {
-      if (typeof c != "number" || !Number.isInteger(c) || c <= 0)
+    times(Q) {
+      if (typeof Q != "number" || !Number.isInteger(Q) || Q <= 0)
         throw new B("repeatTimes must be a valid integer > 0");
-      return this[l].times = c, this;
+      return this[l].times = Q, this;
     }
   }
   class C {
-    constructor(c, u) {
-      if (typeof c != "object")
+    constructor(Q, u) {
+      if (typeof Q != "object")
         throw new B("opts must be an object");
-      if (typeof c.path > "u")
+      if (typeof Q.path > "u")
         throw new B("opts.path must be defined");
-      if (typeof c.method > "u" && (c.method = "GET"), typeof c.path == "string")
-        if (c.query)
-          c.path = s(c.path, c.query);
+      if (typeof Q.method > "u" && (Q.method = "GET"), typeof Q.path == "string")
+        if (Q.query)
+          Q.path = s(Q.path, Q.query);
         else {
-          const p = new URL(c.path, "data://");
-          c.path = p.pathname + p.search;
+          const p = new URL(Q.path, "data://");
+          Q.path = p.pathname + p.search;
         }
-      typeof c.method == "string" && (c.method = c.method.toUpperCase()), this[e] = r(c), this[g] = u, this[n] = {}, this[i] = {}, this[Q] = !1;
+      typeof Q.method == "string" && (Q.method = Q.method.toUpperCase()), this[e] = r(Q), this[a] = u, this[n] = {}, this[i] = {}, this[c] = !1;
     }
-    createMockScopeDispatchData({ statusCode: c, data: u, responseOptions: p }) {
-      const F = A(u), S = this[Q] ? { "content-length": F.length } : {}, M = { ...this[n], ...S, ...p.headers }, U = { ...this[i], ...p.trailers };
-      return { statusCode: c, data: u, headers: M, trailers: U };
+    createMockScopeDispatchData({ statusCode: Q, data: u, responseOptions: p }) {
+      const F = A(u), S = this[c] ? { "content-length": F.length } : {}, M = { ...this[n], ...S, ...p.headers }, U = { ...this[i], ...p.trailers };
+      return { statusCode: Q, data: u, headers: M, trailers: U };
     }
-    validateReplyParameters(c) {
-      if (typeof c.statusCode > "u")
+    validateReplyParameters(Q) {
+      if (typeof Q.statusCode > "u")
         throw new B("statusCode must be defined");
-      if (typeof c.responseOptions != "object" || c.responseOptions === null)
+      if (typeof Q.responseOptions != "object" || Q.responseOptions === null)
         throw new B("responseOptions must be an object");
     }
     /**
      * Mock an undici request with a defined reply.
      */
-    reply(c) {
-      if (typeof c == "function") {
+    reply(Q) {
+      if (typeof Q == "function") {
         const S = (U) => {
-          const b = c(U);
+          const b = Q(U);
           if (typeof b != "object" || b === null)
             throw new B("reply options callback must return an object");
           const E = { data: "", responseOptions: {}, ...b };
           return this.validateReplyParameters(E), {
             ...this.createMockScopeDispatchData(E)
           };
-        }, M = t(this[g], this[e], S);
+        }, M = t(this[a], this[e], S);
         return new o(M);
       }
       const u = {
-        statusCode: c,
+        statusCode: Q,
         data: arguments[1] === void 0 ? "" : arguments[1],
         responseOptions: arguments[2] === void 0 ? {} : arguments[2]
       };
       this.validateReplyParameters(u);
-      const p = this.createMockScopeDispatchData(u), F = t(this[g], this[e], p);
+      const p = this.createMockScopeDispatchData(u), F = t(this[a], this[e], p);
       return new o(F);
     }
     /**
      * Mock an undici request with a defined error.
      */
-    replyWithError(c) {
-      if (typeof c > "u")
+    replyWithError(Q) {
+      if (typeof Q > "u")
         throw new B("error must be defined");
-      const u = t(this[g], this[e], { error: c });
+      const u = t(this[a], this[e], { error: Q });
       return new o(u);
     }
     /**
      * Set default reply headers on the interceptor for subsequent replies
      */
-    defaultReplyHeaders(c) {
-      if (typeof c > "u")
+    defaultReplyHeaders(Q) {
+      if (typeof Q > "u")
         throw new B("headers must be defined");
-      return this[n] = c, this;
+      return this[n] = Q, this;
     }
     /**
      * Set default reply trailers on the interceptor for subsequent replies
      */
-    defaultReplyTrailers(c) {
-      if (typeof c > "u")
+    defaultReplyTrailers(Q) {
+      if (typeof Q > "u")
         throw new B("trailers must be defined");
-      return this[i] = c, this;
+      return this[i] = Q, this;
     }
     /**
      * Set reply content length header for replies on the interceptor
      */
     replyContentLength() {
-      return this[Q] = !0, this;
+      return this[c] = !0, this;
     }
   }
   return Ve.MockInterceptor = C, Ve.MockScope = o, Ve;
@@ -7341,11 +7341,11 @@ function Si() {
   if (us) return ar;
   us = 1;
   const { promisify: A } = Ae, r = Se(), { buildMockDispatch: t } = At(), {
-    kDispatches: g,
+    kDispatches: a,
     kMockAgent: e,
     kClose: n,
     kOriginalClose: i,
-    kOrigin: Q,
+    kOrigin: c,
     kOriginalDispatch: l,
     kConnected: B
   } = Me(), { MockInterceptor: s } = Ni(), o = WA(), { InvalidArgumentError: C } = JA();
@@ -7353,7 +7353,7 @@ function Si() {
     constructor(u, p) {
       if (super(u, p), !p || !p.agent || typeof p.agent.dispatch != "function")
         throw new C("Argument opts.agent must implement Agent");
-      this[e] = p.agent, this[Q] = u, this[g] = [], this[B] = 1, this[l] = this.dispatch, this[i] = this.close.bind(this), this.dispatch = t.call(this), this.close = this[n];
+      this[e] = p.agent, this[c] = u, this[a] = [], this[B] = 1, this[l] = this.dispatch, this[i] = this.close.bind(this), this.dispatch = t.call(this), this.close = this[n];
     }
     get [o.kConnected]() {
       return this[B];
@@ -7362,10 +7362,10 @@ function Si() {
      * Sets up the base interceptor for mocking replies from undici.
      */
     intercept(u) {
-      return new s(u, this[g]);
+      return new s(u, this[a]);
     }
     async [n]() {
-      await A(this[i])(), this[B] = 0, this[e][o.kClients].delete(this[Q]);
+      await A(this[i])(), this[B] = 0, this[e][o.kClients].delete(this[c]);
     }
   }
   return ar = I, ar;
@@ -7375,11 +7375,11 @@ function bi() {
   if (ds) return gr;
   ds = 1;
   const { promisify: A } = Ae, r = be(), { buildMockDispatch: t } = At(), {
-    kDispatches: g,
+    kDispatches: a,
     kMockAgent: e,
     kClose: n,
     kOriginalClose: i,
-    kOrigin: Q,
+    kOrigin: c,
     kOriginalDispatch: l,
     kConnected: B
   } = Me(), { MockInterceptor: s } = Ni(), o = WA(), { InvalidArgumentError: C } = JA();
@@ -7387,7 +7387,7 @@ function bi() {
     constructor(u, p) {
       if (super(u, p), !p || !p.agent || typeof p.agent.dispatch != "function")
         throw new C("Argument opts.agent must implement Agent");
-      this[e] = p.agent, this[Q] = u, this[g] = [], this[B] = 1, this[l] = this.dispatch, this[i] = this.close.bind(this), this.dispatch = t.call(this), this.close = this[n];
+      this[e] = p.agent, this[c] = u, this[a] = [], this[B] = 1, this[l] = this.dispatch, this[i] = this.close.bind(this), this.dispatch = t.call(this), this.close = this[n];
     }
     get [o.kConnected]() {
       return this[B];
@@ -7396,10 +7396,10 @@ function bi() {
      * Sets up the base interceptor for mocking replies from undici.
      */
     intercept(u) {
-      return new s(u, this[g]);
+      return new s(u, this[a]);
     }
     async [n]() {
-      await A(this[i])(), this[B] = 0, this[e][o.kClients].delete(this[Q]);
+      await A(this[i])(), this[B] = 0, this[e][o.kClients].delete(this[c]);
     }
   }
   return gr = I, gr;
@@ -7420,12 +7420,12 @@ function Mo() {
     this: "these"
   };
   return Qr = class {
-    constructor(g, e) {
-      this.singular = g, this.plural = e;
+    constructor(a, e) {
+      this.singular = a, this.plural = e;
     }
-    pluralize(g) {
-      const e = g === 1, n = e ? A : r, i = e ? this.singular : this.plural;
-      return { ...n, count: g, noun: i };
+    pluralize(a) {
+      const e = a === 1, n = e ? A : r, i = e ? this.singular : this.plural;
+      return { ...n, count: a, noun: i };
     }
   }, Qr;
 }
@@ -7433,11 +7433,11 @@ var cr, ws;
 function Lo() {
   if (ws) return cr;
   ws = 1;
-  const { Transform: A } = re, { Console: r } = eo, t = process.versions.icu ? "✅" : "Y ", g = process.versions.icu ? "❌" : "N ";
+  const { Transform: A } = re, { Console: r } = eo, t = process.versions.icu ? "✅" : "Y ", a = process.versions.icu ? "❌" : "N ";
   return cr = class {
     constructor({ disableColors: n } = {}) {
       this.transform = new A({
-        transform(i, Q, l) {
+        transform(i, c, l) {
           l(null, i);
         }
       }), this.logger = new r({
@@ -7449,12 +7449,12 @@ function Lo() {
     }
     format(n) {
       const i = n.map(
-        ({ method: Q, path: l, data: { statusCode: B }, persist: s, times: o, timesInvoked: C, origin: I }) => ({
-          Method: Q,
+        ({ method: c, path: l, data: { statusCode: B }, persist: s, times: o, timesInvoked: C, origin: I }) => ({
+          Method: c,
           Origin: I,
           Path: l,
           "Status code": B,
-          Persistent: s ? t : g,
+          Persistent: s ? t : a,
           Invocations: C,
           Remaining: s ? 1 / 0 : o - C
         })
@@ -7469,25 +7469,25 @@ function To() {
   ys = 1;
   const { kClients: A } = WA(), r = Ue(), {
     kAgent: t,
-    kMockAgentSet: g,
+    kMockAgentSet: a,
     kMockAgentGet: e,
     kDispatches: n,
     kIsMockActive: i,
-    kNetConnect: Q,
+    kNetConnect: c,
     kGetNetConnect: l,
     kOptions: B,
     kFactory: s
-  } = Me(), o = Si(), C = bi(), { matchValue: I, buildMockOptions: c } = At(), { InvalidArgumentError: u, UndiciError: p } = JA(), F = ze(), S = Mo(), M = Lo();
+  } = Me(), o = Si(), C = bi(), { matchValue: I, buildMockOptions: Q } = At(), { InvalidArgumentError: u, UndiciError: p } = JA(), F = ze(), S = Mo(), M = Lo();
   class U extends F {
     constructor(E) {
-      if (super(E), this[Q] = !0, this[i] = !0, E?.agent && typeof E.agent.dispatch != "function")
+      if (super(E), this[c] = !0, this[i] = !0, E?.agent && typeof E.agent.dispatch != "function")
         throw new u("Argument opts.agent must implement Agent");
       const h = E?.agent ? E.agent : new r(E);
-      this[t] = h, this[A] = h[A], this[B] = c(E);
+      this[t] = h, this[A] = h[A], this[B] = Q(E);
     }
     get(E) {
       let h = this[e](E);
-      return h || (h = this[s](E), this[g](E, h)), h;
+      return h || (h = this[s](E), this[a](E, h)), h;
     }
     dispatch(E, h) {
       return this.get(E.origin), this[t].dispatch(E, h);
@@ -7503,21 +7503,21 @@ function To() {
     }
     enableNetConnect(E) {
       if (typeof E == "string" || typeof E == "function" || E instanceof RegExp)
-        Array.isArray(this[Q]) ? this[Q].push(E) : this[Q] = [E];
+        Array.isArray(this[c]) ? this[c].push(E) : this[c] = [E];
       else if (typeof E > "u")
-        this[Q] = !0;
+        this[c] = !0;
       else
         throw new u("Unsupported matcher. Must be one of String|Function|RegExp.");
     }
     disableNetConnect() {
-      this[Q] = !1;
+      this[c] = !1;
     }
     // This is required to bypass issues caused by using global symbols - see:
     // https://github.com/nodejs/undici/issues/1447
     get isMockActive() {
       return this[i];
     }
-    [g](E, h) {
+    [a](E, h) {
       this[A].set(E, h);
     }
     [s](E) {
@@ -7530,20 +7530,20 @@ function To() {
         return h;
       if (typeof E != "string") {
         const D = this[s]("http://localhost:9999");
-        return this[g](E, D), D;
+        return this[a](E, D), D;
       }
-      for (const [D, a] of Array.from(this[A]))
-        if (a && typeof D != "string" && I(D, E)) {
+      for (const [D, g] of Array.from(this[A]))
+        if (g && typeof D != "string" && I(D, E)) {
           const f = this[s](E);
-          return this[g](E, f), f[n] = a[n], f;
+          return this[a](E, f), f[n] = g[n], f;
         }
     }
     [l]() {
-      return this[Q];
+      return this[c];
     }
     pendingInterceptors() {
       const E = this[A];
-      return Array.from(E.entries()).flatMap(([h, D]) => D[n].map((a) => ({ ...a, origin: h }))).filter(({ pending: h }) => h);
+      return Array.from(E.entries()).flatMap(([h, D]) => D[n].map((g) => ({ ...g, origin: h }))).filter(({ pending: h }) => h);
     }
     assertNoPendingInterceptors({ pendingInterceptorsFormatter: E = new M() } = {}) {
       const h = this.pendingInterceptors();
@@ -7564,8 +7564,8 @@ function nn() {
   if (Ds) return Er;
   Ds = 1;
   const A = /* @__PURE__ */ Symbol.for("undici.globalDispatcher.1"), { InvalidArgumentError: r } = JA(), t = Ue();
-  e() === void 0 && g(new t());
-  function g(n) {
+  e() === void 0 && a(new t());
+  function a(n) {
     if (!n || typeof n.dispatch != "function")
       throw new r("Argument agent must implement Agent");
     Object.defineProperty(globalThis, A, {
@@ -7579,7 +7579,7 @@ function nn() {
     return globalThis[A];
   }
   return Er = {
-    setGlobalDispatcher: g,
+    setGlobalDispatcher: a,
     getGlobalDispatcher: e
   }, Er;
 }
@@ -7625,17 +7625,17 @@ function Yo() {
   const A = en();
   return Cr = (r) => {
     const t = r?.maxRedirections;
-    return (g) => function(n, i) {
-      const { maxRedirections: Q = t, ...l } = n;
-      if (!Q)
-        return g(n, i);
+    return (a) => function(n, i) {
+      const { maxRedirections: c = t, ...l } = n;
+      if (!c)
+        return a(n, i);
       const B = new A(
-        g,
-        Q,
+        a,
+        c,
         n,
         i
       );
-      return g(l, B);
+      return a(l, B);
     };
   }, Cr;
 }
@@ -7661,8 +7661,8 @@ var hr, ms;
 function Jo() {
   if (ms) return hr;
   ms = 1;
-  const A = UA(), { InvalidArgumentError: r, RequestAbortedError: t } = JA(), g = sn();
-  class e extends g {
+  const A = UA(), { InvalidArgumentError: r, RequestAbortedError: t } = JA(), a = sn();
+  class e extends a {
     #A = 1024 * 1024;
     #e = null;
     #n = !1;
@@ -7670,56 +7670,56 @@ function Jo() {
     #t = 0;
     #s = null;
     #i = null;
-    constructor({ maxSize: Q }, l) {
-      if (super(l), Q != null && (!Number.isFinite(Q) || Q < 1))
+    constructor({ maxSize: c }, l) {
+      if (super(l), c != null && (!Number.isFinite(c) || c < 1))
         throw new r("maxSize must be a number greater than 0");
-      this.#A = Q ?? this.#A, this.#i = l;
+      this.#A = c ?? this.#A, this.#i = l;
     }
-    onConnect(Q) {
-      this.#e = Q, this.#i.onConnect(this.#o.bind(this));
+    onConnect(c) {
+      this.#e = c, this.#i.onConnect(this.#o.bind(this));
     }
-    #o(Q) {
-      this.#r = !0, this.#s = Q;
+    #o(c) {
+      this.#r = !0, this.#s = c;
     }
     // TODO: will require adjustment after new hooks are out
-    onHeaders(Q, l, B, s) {
+    onHeaders(c, l, B, s) {
       const C = A.parseHeaders(l)["content-length"];
       if (C != null && C > this.#A)
         throw new t(
           `Response size (${C}) larger than maxSize (${this.#A})`
         );
       return this.#r ? !0 : this.#i.onHeaders(
-        Q,
+        c,
         l,
         B,
         s
       );
     }
-    onError(Q) {
-      this.#n || (Q = this.#s ?? Q, this.#i.onError(Q));
+    onError(c) {
+      this.#n || (c = this.#s ?? c, this.#i.onError(c));
     }
-    onData(Q) {
-      return this.#t = this.#t + Q.length, this.#t >= this.#A && (this.#n = !0, this.#r ? this.#i.onError(this.#s) : this.#i.onComplete([])), !0;
+    onData(c) {
+      return this.#t = this.#t + c.length, this.#t >= this.#A && (this.#n = !0, this.#r ? this.#i.onError(this.#s) : this.#i.onComplete([])), !0;
     }
-    onComplete(Q) {
+    onComplete(c) {
       if (!this.#n) {
         if (this.#r) {
           this.#i.onError(this.reason);
           return;
         }
-        this.#i.onComplete(Q);
+        this.#i.onComplete(c);
       }
     }
   }
   function n({ maxSize: i } = {
     maxSize: 1024 * 1024
   }) {
-    return (Q) => function(B, s) {
+    return (c) => function(B, s) {
       const { dumpMaxSize: o = i } = B, C = new e(
         { maxSize: o },
         s
       );
-      return Q(B, C);
+      return c(B, C);
     };
   }
   return hr = n, hr;
@@ -7728,7 +7728,7 @@ var ur, Fs;
 function vo() {
   if (Fs) return ur;
   Fs = 1;
-  const { isIP: A } = Pe, { lookup: r } = to, t = sn(), { InvalidArgumentError: g, InformationalError: e } = JA(), n = Math.pow(2, 31) - 1;
+  const { isIP: A } = Pe, { lookup: r } = to, t = sn(), { InvalidArgumentError: a, InformationalError: e } = JA(), n = Math.pow(2, 31) - 1;
   class i {
     #A = 0;
     #e = 0;
@@ -7759,9 +7759,9 @@ function vo() {
         maxItems: this.#e
       };
       if (C == null)
-        this.lookup(B, I, (c, u) => {
-          if (c || u == null || u.length === 0) {
-            o(c ?? new e("No DNS entries found"));
+        this.lookup(B, I, (Q, u) => {
+          if (Q || u == null || u.length === 0) {
+            o(Q ?? new e("No DNS entries found"));
             return;
           }
           this.setRecords(B, u);
@@ -7777,19 +7777,19 @@ function vo() {
           );
         });
       else {
-        const c = this.pick(
+        const Q = this.pick(
           B,
           C,
           I.affinity
         );
-        if (c == null) {
+        if (Q == null) {
           this.#n.delete(B.hostname), this.runLookup(B, s, o);
           return;
         }
         let u;
-        typeof c.port == "number" ? u = `:${c.port}` : B.port !== "" ? u = `:${B.port}` : u = "", o(
+        typeof Q.port == "number" ? u = `:${Q.port}` : B.port !== "" ? u = `:${B.port}` : u = "", o(
           null,
-          `${B.protocol}//${c.family === 6 ? `[${c.address}]` : c.address}${u}`
+          `${B.protocol}//${Q.family === 6 ? `[${Q.address}]` : Q.address}${u}`
         );
       }
     }
@@ -7804,18 +7804,18 @@ function vo() {
         (C, I) => {
           if (C)
             return o(C);
-          const c = /* @__PURE__ */ new Map();
+          const Q = /* @__PURE__ */ new Map();
           for (const u of I)
-            c.set(`${u.address}:${u.family}`, u);
-          o(null, c.values());
+            Q.set(`${u.address}:${u.family}`, u);
+          o(null, Q.values());
         }
       );
     }
     #t(B, s, o) {
       let C = null;
-      const { records: I, offset: c } = s;
+      const { records: I, offset: Q } = s;
       let u;
-      if (this.dualStack ? (o == null && (c == null || c === n ? (s.offset = 0, o = 4) : (s.offset++, o = (s.offset & 1) === 1 ? 6 : 4)), I[o] != null && I[o].ips.length > 0 ? u = I[o] : u = I[o === 4 ? 6 : 4]) : u = I[o], u == null || u.ips.length === 0)
+      if (this.dualStack ? (o == null && (Q == null || Q === n ? (s.offset = 0, o = 4) : (s.offset++, o = (s.offset & 1) === 1 ? 6 : 4)), I[o] != null && I[o].ips.length > 0 ? u = I[o] : u = I[o === 4 ? 6 : 4]) : u = I[o], u == null || u.ips.length === 0)
         return C;
       u.offset == null || u.offset === n ? u.offset = 0 : u.offset++;
       const p = u.offset % u.ips.length;
@@ -7825,16 +7825,16 @@ function vo() {
       const o = Date.now(), C = { records: { 4: null, 6: null } };
       for (const I of s) {
         I.timestamp = o, typeof I.ttl == "number" ? I.ttl = Math.min(I.ttl, this.#A) : I.ttl = this.#A;
-        const c = C.records[I.family] ?? { ips: [] };
-        c.ips.push(I), C.records[I.family] = c;
+        const Q = C.records[I.family] ?? { ips: [] };
+        Q.ips.push(I), C.records[I.family] = Q;
       }
       this.#n.set(B.hostname, C);
     }
     getHandler(B, s) {
-      return new Q(this, B, s);
+      return new c(this, B, s);
     }
   }
-  class Q extends t {
+  class c extends t {
     #A = null;
     #e = null;
     #n = null;
@@ -7873,19 +7873,19 @@ function vo() {
   }
   return ur = (l) => {
     if (l?.maxTTL != null && (typeof l?.maxTTL != "number" || l?.maxTTL < 0))
-      throw new g("Invalid maxTTL. Must be a positive number");
+      throw new a("Invalid maxTTL. Must be a positive number");
     if (l?.maxItems != null && (typeof l?.maxItems != "number" || l?.maxItems < 1))
-      throw new g(
+      throw new a(
         "Invalid maxItems. Must be a positive number and greater than zero"
       );
     if (l?.affinity != null && l?.affinity !== 4 && l?.affinity !== 6)
-      throw new g("Invalid affinity. Must be either 4 or 6");
+      throw new a("Invalid affinity. Must be either 4 or 6");
     if (l?.dualStack != null && typeof l?.dualStack != "boolean")
-      throw new g("Invalid dualStack. Must be a boolean");
+      throw new a("Invalid dualStack. Must be a boolean");
     if (l?.lookup != null && typeof l?.lookup != "function")
-      throw new g("Invalid lookup. Must be a function");
+      throw new a("Invalid lookup. Must be a function");
     if (l?.pick != null && typeof l?.pick != "function")
-      throw new g("Invalid pick. Must be a function");
+      throw new a("Invalid pick. Must be a function");
     const B = l?.dualStack ?? !0;
     let s;
     B ? s = l?.affinity ?? null : s = l?.affinity ?? 4;
@@ -7927,9 +7927,9 @@ function we() {
   Ns = 1;
   const { kConstruct: A } = WA(), { kEnumerableProperty: r } = UA(), {
     iteratorMixin: t,
-    isValidHeaderName: g,
+    isValidHeaderName: a,
     isValidHeaderValue: e
-  } = ne(), { webidl: n } = _A(), i = HA, Q = Ae, l = /* @__PURE__ */ Symbol("headers map"), B = /* @__PURE__ */ Symbol("headers map sorted");
+  } = ne(), { webidl: n } = _A(), i = HA, c = Ae, l = /* @__PURE__ */ Symbol("headers map"), B = /* @__PURE__ */ Symbol("headers map sorted");
   function s(b) {
     return b === 10 || b === 13 || b === 9 || b === 32;
   }
@@ -7962,7 +7962,7 @@ function we() {
       });
   }
   function I(b, E, h) {
-    if (h = o(h), g(E)) {
+    if (h = o(h), a(E)) {
       if (!e(h))
         throw n.errors.invalidArgument({
           prefix: "Headers.append",
@@ -7978,7 +7978,7 @@ function we() {
       throw new TypeError("immutable");
     return M(b).append(E, h, !1);
   }
-  function c(b, E) {
+  function Q(b, E) {
     return b[0] < E[0] ? -1 : 1;
   }
   class u {
@@ -8006,16 +8006,16 @@ function we() {
      */
     append(E, h, D) {
       this[B] = null;
-      const a = D ? E : E.toLowerCase(), f = this[l].get(a);
+      const g = D ? E : E.toLowerCase(), f = this[l].get(g);
       if (f) {
-        const w = a === "cookie" ? "; " : ", ";
-        this[l].set(a, {
+        const w = g === "cookie" ? "; " : ", ";
+        this[l].set(g, {
           name: f.name,
           value: `${f.value}${w}${h}`
         });
       } else
-        this[l].set(a, { name: E, value: h });
-      a === "set-cookie" && (this.cookies ??= []).push(h);
+        this[l].set(g, { name: E, value: h });
+      g === "set-cookie" && (this.cookies ??= []).push(h);
     }
     /**
      * @see https://fetch.spec.whatwg.org/#concept-header-list-set
@@ -8025,8 +8025,8 @@ function we() {
      */
     set(E, h, D) {
       this[B] = null;
-      const a = D ? E : E.toLowerCase();
-      a === "set-cookie" && (this.cookies = [h]), this[l].set(a, { name: E, value: h });
+      const g = D ? E : E.toLowerCase();
+      g === "set-cookie" && (this.cookies = [h]), this[l].set(g, { name: E, value: h });
     }
     /**
      * @see https://fetch.spec.whatwg.org/#concept-header-list-delete
@@ -8062,12 +8062,12 @@ function we() {
     get entriesList() {
       const E = [];
       if (this[l].size !== 0)
-        for (const { 0: h, 1: { name: D, value: a } } of this[l])
+        for (const { 0: h, 1: { name: D, value: g } } of this[l])
           if (h === "set-cookie")
             for (const f of this.cookies)
               E.push([D, f]);
           else
-            E.push([D, a]);
+            E.push([D, g]);
       return E;
     }
     // https://fetch.spec.whatwg.org/#convert-header-names-to-a-sorted-lowercase-set
@@ -8076,8 +8076,8 @@ function we() {
       if (E <= 32) {
         if (E === 0)
           return h;
-        const D = this[l][Symbol.iterator](), a = D.next().value;
-        h[0] = [a[0], a[1].value], i(a[1].value !== null);
+        const D = this[l][Symbol.iterator](), g = D.next().value;
+        h[0] = [g[0], g[1].value], i(g[1].value !== null);
         for (let f = 1, w = 0, d = 0, y = 0, k = 0, L, T; f < E; ++f) {
           for (T = D.next().value, L = h[f] = [T[0], T[1].value], i(L[1] !== null), y = 0, d = f; y < d; )
             k = y + (d - y >> 1), h[k][0] <= L[0] ? y = k + 1 : d = k;
@@ -8092,9 +8092,9 @@ function we() {
         return h;
       } else {
         let D = 0;
-        for (const { 0: a, 1: { value: f } } of this[l])
-          h[D++] = [a, f], i(f !== null);
-        return h.sort(c);
+        for (const { 0: g, 1: { value: f } } of this[l])
+          h[D++] = [g, f], i(f !== null);
+        return h.sort(Q);
       }
     }
   }
@@ -8112,7 +8112,7 @@ function we() {
     }
     // https://fetch.spec.whatwg.org/#dom-headers-delete
     delete(E) {
-      if (n.brandCheck(this, p), n.argumentLengthCheck(arguments, 1, "Headers.delete"), E = n.converters.ByteString(E, "Headers.delete", "name"), !g(E))
+      if (n.brandCheck(this, p), n.argumentLengthCheck(arguments, 1, "Headers.delete"), E = n.converters.ByteString(E, "Headers.delete", "name"), !a(E))
         throw n.errors.invalidArgument({
           prefix: "Headers.delete",
           value: E,
@@ -8126,7 +8126,7 @@ function we() {
     get(E) {
       n.brandCheck(this, p), n.argumentLengthCheck(arguments, 1, "Headers.get");
       const h = "Headers.get";
-      if (E = n.converters.ByteString(E, h, "name"), !g(E))
+      if (E = n.converters.ByteString(E, h, "name"), !a(E))
         throw n.errors.invalidArgument({
           prefix: h,
           value: E,
@@ -8138,7 +8138,7 @@ function we() {
     has(E) {
       n.brandCheck(this, p), n.argumentLengthCheck(arguments, 1, "Headers.has");
       const h = "Headers.has";
-      if (E = n.converters.ByteString(E, h, "name"), !g(E))
+      if (E = n.converters.ByteString(E, h, "name"), !a(E))
         throw n.errors.invalidArgument({
           prefix: h,
           value: E,
@@ -8150,7 +8150,7 @@ function we() {
     set(E, h) {
       n.brandCheck(this, p), n.argumentLengthCheck(arguments, 2, "Headers.set");
       const D = "Headers.set";
-      if (E = n.converters.ByteString(E, D, "name"), h = n.converters.ByteString(h, D, "value"), h = o(h), g(E)) {
+      if (E = n.converters.ByteString(E, D, "name"), h = n.converters.ByteString(h, D, "value"), h = o(h), a(E)) {
         if (!e(h))
           throw n.errors.invalidArgument({
             prefix: D,
@@ -8179,8 +8179,8 @@ function we() {
       const E = [], h = this.#e.toSortedArray(), D = this.#e.cookies;
       if (D === null || D.length === 1)
         return this.#e[B] = h;
-      for (let a = 0; a < h.length; ++a) {
-        const { 0: f, 1: w } = h[a];
+      for (let g = 0; g < h.length; ++g) {
+        const { 0: f, 1: w } = h[g];
         if (f === "set-cookie")
           for (let d = 0; d < D.length; ++d)
             E.push([f, D[d]]);
@@ -8189,8 +8189,8 @@ function we() {
       }
       return this.#e[B] = E;
     }
-    [Q.inspect.custom](E, h) {
-      return h.depth ??= E, `Headers ${Q.formatWithOptions(h, this.#e.entries)}`;
+    [c.inspect.custom](E, h) {
+      return h.depth ??= E, `Headers ${c.formatWithOptions(h, this.#e.entries)}`;
     }
     static getHeadersGuard(E) {
       return E.#A;
@@ -8217,13 +8217,13 @@ function we() {
       value: "Headers",
       configurable: !0
     },
-    [Q.inspect.custom]: {
+    [c.inspect.custom]: {
       enumerable: !1
     }
   }), n.converters.HeadersInit = function(b, E, h) {
     if (n.util.Type(b) === "Object") {
       const D = Reflect.get(b, Symbol.iterator);
-      if (!Q.types.isProxy(b) && D === p.prototype.entries)
+      if (!c.types.isProxy(b) && D === p.prototype.entries)
         try {
           return M(b).entriesList;
         } catch {
@@ -8238,7 +8238,7 @@ function we() {
   }, dr = {
     fill: C,
     // for test.
-    compareHeaderName: c,
+    compareHeaderName: Q,
     Headers: p,
     HeadersList: u,
     getHeadersGuard: F,
@@ -8251,7 +8251,7 @@ var fr, Ss;
 function et() {
   if (Ss) return fr;
   Ss = 1;
-  const { Headers: A, HeadersList: r, fill: t, getHeadersGuard: g, setHeadersGuard: e, setHeadersList: n } = we(), { extractBody: i, cloneBody: Q, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: s, bodyUnusable: o } = Ne(), C = UA(), I = Ae, { kEnumerableProperty: c } = C, {
+  const { Headers: A, HeadersList: r, fill: t, getHeadersGuard: a, setHeadersGuard: e, setHeadersList: n } = we(), { extractBody: i, cloneBody: c, mixinBody: l, hasFinalizationRegistry: B, streamRegistry: s, bodyUnusable: o } = Ne(), C = UA(), I = Ae, { kEnumerableProperty: Q } = C, {
     isValidReasonPhrase: u,
     isCancelled: p,
     isAborted: F,
@@ -8263,7 +8263,7 @@ function et() {
   } = ne(), {
     redirectStatusSet: h,
     nullBodyStatus: D
-  } = _e(), { kState: a, kHeaders: f } = ue(), { webidl: w } = _A(), { FormData: d } = je(), { URLSerializer: y } = ee(), { kConstruct: k } = WA(), L = HA, { types: T } = Ae, Y = new TextEncoder("utf-8");
+  } = _e(), { kState: g, kHeaders: f } = ue(), { webidl: w } = _A(), { FormData: d } = je(), { URLSerializer: y } = ee(), { kConstruct: k } = WA(), L = HA, { types: T } = Ae, Y = new TextEncoder("utf-8");
   class G {
     // Creates network error Response.
     static error() {
@@ -8289,15 +8289,15 @@ function et() {
       if (!h.has(rA))
         throw new RangeError(`Invalid status code ${rA}`);
       const O = yA(sA({}), "immutable");
-      O[a].status = rA;
+      O[g].status = rA;
       const x = b(y(v));
-      return O[a].headersList.append("location", x, !0), O;
+      return O[g].headersList.append("location", x, !0), O;
     }
     // https://fetch.spec.whatwg.org/#dom-response
     constructor(P = null, rA = {}) {
       if (w.util.markAsUncloneable(this), P === k)
         return;
-      P !== null && (P = w.converters.BodyInit(P)), rA = w.converters.ResponseInit(rA), this[a] = sA({}), this[f] = new A(k), e(this[f], "response"), n(this[f], this[a].headersList);
+      P !== null && (P = w.converters.BodyInit(P)), rA = w.converters.ResponseInit(rA), this[g] = sA({}), this[f] = new A(k), e(this[f], "response"), n(this[f], this[g].headersList);
       let v = null;
       if (P != null) {
         const [O, x] = i(P);
@@ -8307,39 +8307,39 @@ function et() {
     }
     // Returns response’s type, e.g., "cors".
     get type() {
-      return w.brandCheck(this, G), this[a].type;
+      return w.brandCheck(this, G), this[g].type;
     }
     // Returns response’s URL, if it has one; otherwise the empty string.
     get url() {
       w.brandCheck(this, G);
-      const P = this[a].urlList, rA = P[P.length - 1] ?? null;
+      const P = this[g].urlList, rA = P[P.length - 1] ?? null;
       return rA === null ? "" : y(rA, !0);
     }
     // Returns whether response was obtained through a redirect.
     get redirected() {
-      return w.brandCheck(this, G), this[a].urlList.length > 1;
+      return w.brandCheck(this, G), this[g].urlList.length > 1;
     }
     // Returns response’s status.
     get status() {
-      return w.brandCheck(this, G), this[a].status;
+      return w.brandCheck(this, G), this[g].status;
     }
     // Returns whether response’s status is an ok status.
     get ok() {
-      return w.brandCheck(this, G), this[a].status >= 200 && this[a].status <= 299;
+      return w.brandCheck(this, G), this[g].status >= 200 && this[g].status <= 299;
     }
     // Returns response’s status message.
     get statusText() {
-      return w.brandCheck(this, G), this[a].statusText;
+      return w.brandCheck(this, G), this[g].statusText;
     }
     // Returns response’s headers as Headers.
     get headers() {
       return w.brandCheck(this, G), this[f];
     }
     get body() {
-      return w.brandCheck(this, G), this[a].body ? this[a].body.stream : null;
+      return w.brandCheck(this, G), this[g].body ? this[g].body.stream : null;
     }
     get bodyUsed() {
-      return w.brandCheck(this, G), !!this[a].body && C.isDisturbed(this[a].body.stream);
+      return w.brandCheck(this, G), !!this[g].body && C.isDisturbed(this[g].body.stream);
     }
     // Returns a clone of response.
     clone() {
@@ -8348,8 +8348,8 @@ function et() {
           header: "Response.clone",
           message: "Body has already been consumed."
         });
-      const P = tA(this[a]);
-      return B && this[a].body?.stream && s.register(this, new WeakRef(this[a].body.stream)), yA(P, g(this[f]));
+      const P = tA(this[g]);
+      return B && this[g].body?.stream && s.register(this, new WeakRef(this[g].body.stream)), yA(P, a(this[f]));
     }
     [I.inspect.custom](P, rA) {
       rA.depth === null && (rA.depth = 2), rA.colors ??= !0;
@@ -8368,24 +8368,24 @@ function et() {
     }
   }
   l(G), Object.defineProperties(G.prototype, {
-    type: c,
-    url: c,
-    status: c,
-    ok: c,
-    redirected: c,
-    statusText: c,
-    headers: c,
-    clone: c,
-    body: c,
-    bodyUsed: c,
+    type: Q,
+    url: Q,
+    status: Q,
+    ok: Q,
+    redirected: Q,
+    statusText: Q,
+    headers: Q,
+    clone: Q,
+    body: Q,
+    bodyUsed: Q,
     [Symbol.toStringTag]: {
       value: "Response",
       configurable: !0
     }
   }), Object.defineProperties(G, {
-    json: c,
-    redirect: c,
-    error: c
+    json: Q,
+    redirect: Q,
+    error: Q
   });
   function tA(j) {
     if (j.internalResponse)
@@ -8394,7 +8394,7 @@ function et() {
         j.type
       );
     const P = sA({ ...j, body: null });
-    return j.body != null && (P.body = Q(P, j.body)), P;
+    return j.body != null && (P.body = c(P, j.body)), P;
   }
   function sA(j) {
     return {
@@ -8478,18 +8478,18 @@ function et() {
       throw new RangeError('init["status"] must be in the range of 200 to 599, inclusive.');
     if ("statusText" in P && P.statusText != null && !u(String(P.statusText)))
       throw new TypeError("Invalid statusText");
-    if ("status" in P && P.status != null && (j[a].status = P.status), "statusText" in P && P.statusText != null && (j[a].statusText = P.statusText), "headers" in P && P.headers != null && t(j[f], P.headers), rA) {
+    if ("status" in P && P.status != null && (j[g].status = P.status), "statusText" in P && P.statusText != null && (j[g].statusText = P.statusText), "headers" in P && P.headers != null && t(j[f], P.headers), rA) {
       if (D.includes(j.status))
         throw w.errors.exception({
           header: "Response constructor",
           message: `Invalid response status code ${j.status}`
         });
-      j[a].body = rA.body, rA.type != null && !j[a].headersList.contains("content-type", !0) && j[a].headersList.append("content-type", rA.type, !0);
+      j[g].body = rA.body, rA.type != null && !j[g].headersList.contains("content-type", !0) && j[g].headersList.append("content-type", rA.type, !0);
     }
   }
   function yA(j, P) {
     const rA = new G(k);
-    return rA[a] = j, rA[f] = new A(k), n(rA[f], j.headersList), e(rA[f], P), B && j.body?.stream && s.register(rA, new WeakRef(j.body.stream)), rA;
+    return rA[g] = j, rA[f] = new A(k), n(rA[f], j.headersList), e(rA[f], P), B && j.body?.stream && s.register(rA, new WeakRef(j.body.stream)), rA;
   }
   return w.converters.ReadableStream = w.interfaceConverter(
     ReadableStream
@@ -8540,7 +8540,7 @@ function Ho() {
       return this.value[A] === 0 && this.value[r] === 0 ? void 0 : this.value;
     }
   }
-  class g {
+  class a {
     constructor(n) {
       this.finalizer = n;
     }
@@ -8555,7 +8555,7 @@ function Ho() {
   return wr = function() {
     return process.env.NODE_V8_COVERAGE && process.version.startsWith("v18") ? (process._rawDebug("Using compatibility WeakRef and FinalizationRegistry"), {
       WeakRef: t,
-      FinalizationRegistry: g
+      FinalizationRegistry: a
     }) : { WeakRef, FinalizationRegistry };
   }, wr;
 }
@@ -8563,8 +8563,8 @@ var yr, Us;
 function Le() {
   if (Us) return yr;
   Us = 1;
-  const { extractBody: A, mixinBody: r, cloneBody: t, bodyUnusable: g } = Ne(), { Headers: e, fill: n, HeadersList: i, setHeadersGuard: Q, getHeadersGuard: l, setHeadersList: B, getHeadersList: s } = we(), { FinalizationRegistry: o } = Ho()(), C = UA(), I = Ae, {
-    isValidHTTPToken: c,
+  const { extractBody: A, mixinBody: r, cloneBody: t, bodyUnusable: a } = Ne(), { Headers: e, fill: n, HeadersList: i, setHeadersGuard: c, getHeadersGuard: l, setHeadersList: B, getHeadersList: s } = we(), { FinalizationRegistry: o } = Ho()(), C = UA(), I = Ae, {
+    isValidHTTPToken: Q,
     sameOrigin: u,
     environmentSettingsObject: p
   } = ne(), {
@@ -8576,7 +8576,7 @@ function Le() {
     requestCredentials: E,
     requestCache: h,
     requestDuplex: D
-  } = _e(), { kEnumerableProperty: a, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: k, kDispatcher: L } = ue(), { webidl: T } = _A(), { URLSerializer: Y } = ee(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new o(({ signal: x, abort: z }) => {
+  } = _e(), { kEnumerableProperty: g, normalizedMethodRecordsBase: f, normalizedMethodRecords: w } = C, { kHeaders: d, kSignal: y, kState: k, kDispatcher: L } = ue(), { webidl: T } = _A(), { URLSerializer: Y } = ee(), { kConstruct: G } = WA(), tA = HA, { getMaxListeners: sA, setMaxListeners: QA, getEventListeners: aA, defaultMaxListeners: lA } = pe, CA = /* @__PURE__ */ Symbol("abortController"), IA = new o(({ signal: x, abort: z }) => {
     x.removeEventListener("abort", z);
   }), pA = /* @__PURE__ */ new WeakMap();
   function yA(x) {
@@ -8704,7 +8704,7 @@ function Le() {
         if (oA !== void 0)
           iA.method = oA;
         else {
-          if (!c(Z))
+          if (!Q(Z))
             throw new TypeError(`'${Z}' is not a valid HTTP method.`);
           const BA = Z.toUpperCase();
           if (F.has(BA))
@@ -8734,12 +8734,12 @@ function Le() {
           C.addAbortListener(wA, oA), IA.register(qA, { signal: wA, abort: oA }, oA);
         }
       }
-      if (this[d] = new e(G), B(this[d], iA.headersList), Q(this[d], "request"), dA === "no-cors") {
+      if (this[d] = new e(G), B(this[d], iA.headersList), c(this[d], "request"), dA === "no-cors") {
         if (!S.has(iA.method))
           throw new TypeError(
             `'${iA.method} is unsupported in no-cors mode.`
           );
-        Q(this[d], "request-no-cors");
+        c(this[d], "request-no-cors");
       }
       if (FA) {
         const Z = s(this[d]), oA = nA.headers !== void 0 ? nA.headers : new i(Z);
@@ -8773,7 +8773,7 @@ function Le() {
       }
       let R = _;
       if (vA == null && VA != null) {
-        if (g(z))
+        if (a(z))
           throw new TypeError(
             "Cannot construct a Request with a Request object that has already been used."
           );
@@ -8882,7 +8882,7 @@ function Le() {
     }
     // Returns a clone of request.
     clone() {
-      if (T.brandCheck(this, P), g(this))
+      if (T.brandCheck(this, P), a(this))
         throw new TypeError("unusable");
       const z = v(this[k]), nA = new AbortController();
       if (this.signal.aborted)
@@ -8969,29 +8969,29 @@ function Le() {
   }
   function O(x, z, nA) {
     const cA = new P(G);
-    return cA[k] = x, cA[y] = z, cA[d] = new e(G), B(cA[d], x.headersList), Q(cA[d], nA), cA;
+    return cA[k] = x, cA[y] = z, cA[d] = new e(G), B(cA[d], x.headersList), c(cA[d], nA), cA;
   }
   return Object.defineProperties(P.prototype, {
-    method: a,
-    url: a,
-    headers: a,
-    redirect: a,
-    clone: a,
-    signal: a,
-    duplex: a,
-    destination: a,
-    body: a,
-    bodyUsed: a,
-    isHistoryNavigation: a,
-    isReloadNavigation: a,
-    keepalive: a,
-    integrity: a,
-    cache: a,
-    credentials: a,
-    attribute: a,
-    referrerPolicy: a,
-    referrer: a,
-    mode: a,
+    method: g,
+    url: g,
+    headers: g,
+    redirect: g,
+    clone: g,
+    signal: g,
+    duplex: g,
+    destination: g,
+    body: g,
+    bodyUsed: g,
+    isHistoryNavigation: g,
+    isReloadNavigation: g,
+    keepalive: g,
+    integrity: g,
+    cache: g,
+    credentials: g,
+    attribute: g,
+    referrerPolicy: g,
+    referrer: g,
+    mode: g,
     [Symbol.toStringTag]: {
       value: "Request",
       configurable: !0
@@ -9094,15 +9094,15 @@ function tt() {
     makeNetworkError: A,
     makeAppropriateNetworkError: r,
     filterResponse: t,
-    makeResponse: g,
+    makeResponse: a,
     fromInnerResponse: e
-  } = et(), { HeadersList: n } = we(), { Request: i, cloneRequest: Q } = Le(), l = $r, {
+  } = et(), { HeadersList: n } = we(), { Request: i, cloneRequest: c } = Le(), l = $r, {
     bytesMatch: B,
     makePolicyContainer: s,
     clonePolicyContainer: o,
     requestBadPort: C,
     TAOCheck: I,
-    appendRequestOriginHeader: c,
+    appendRequestOriginHeader: Q,
     responseLocationURL: u,
     requestCurrentURL: p,
     setRequestReferrerPolicyOnRedirect: F,
@@ -9113,7 +9113,7 @@ function tt() {
     crossOriginResourcePolicyCheck: E,
     determineRequestsReferrer: h,
     coarsenedSharedCurrentTime: D,
-    createDeferredPromise: a,
+    createDeferredPromise: g,
     isBlobLike: f,
     sameOrigin: w,
     isCancelled: d,
@@ -9155,7 +9155,7 @@ function tt() {
   }
   function GA(m, V = void 0) {
     _.argumentLengthCheck(arguments, 1, "globalThis.fetch");
-    let H = a(), W;
+    let H = g(), W;
     try {
       W = new i(m, V);
     } catch (xA) {
@@ -9305,7 +9305,7 @@ function tt() {
         const eA = BA(W.toString());
         if (V.method !== "GET" || !f(eA))
           return Promise.resolve(A("invalid method"));
-        const K = g(), gA = eA.size, NA = Y(`${gA}`), YA = eA.type;
+        const K = a(), gA = eA.size, NA = Y(`${gA}`), YA = eA.type;
         if (V.headersList.contains("range", !0)) {
           K.rangeRequested = !0;
           const MA = V.headersList.get("range", !0), xA = aA(MA, !0);
@@ -9334,7 +9334,7 @@ function tt() {
         if (eA === "failure")
           return Promise.resolve(A("failed to fetch the data URL"));
         const K = qA(eA.mimeType);
-        return Promise.resolve(g({
+        return Promise.resolve(a({
           statusText: "OK",
           headersList: [
             ["content-type", { name: "Content-Type", value: K }]
@@ -9438,10 +9438,10 @@ function tt() {
   async function N(m, V = !1, H = !1) {
     const W = m.request;
     let eA = null, K = null, gA = null;
-    W.window === "no-window" && W.redirect === "error" ? (eA = m, K = W) : (K = Q(W), eA = { ...m }, eA.request = K);
+    W.window === "no-window" && W.redirect === "error" ? (eA = m, K = W) : (K = c(W), eA = { ...m }, eA.request = K);
     const NA = W.credentials === "include" || W.credentials === "same-origin" && W.responseTainting === "basic", YA = K.body ? K.body.length : null;
     let MA = null;
-    if (K.body == null && ["POST", "PUT"].includes(K.method) && (MA = "0"), YA != null && (MA = Y(`${YA}`)), MA != null && K.headersList.append("content-length", MA, !0), YA != null && K.keepalive, K.referrer instanceof URL && K.headersList.append("referer", Y(K.referrer.href), !0), c(K), U(K), K.headersList.contains("user-agent", !0) || K.headersList.append("user-agent", oA), K.cache === "default" && (K.headersList.contains("if-modified-since", !0) || K.headersList.contains("if-none-match", !0) || K.headersList.contains("if-unmodified-since", !0) || K.headersList.contains("if-match", !0) || K.headersList.contains("if-range", !0)) && (K.cache = "no-store"), K.cache === "no-cache" && !K.preventNoCacheCacheControlHeaderModification && !K.headersList.contains("cache-control", !0) && K.headersList.append("cache-control", "max-age=0", !0), (K.cache === "no-store" || K.cache === "reload") && (K.headersList.contains("pragma", !0) || K.headersList.append("pragma", "no-cache", !0), K.headersList.contains("cache-control", !0) || K.headersList.append("cache-control", "no-cache", !0)), K.headersList.contains("range", !0) && K.headersList.append("accept-encoding", "identity", !0), K.headersList.contains("accept-encoding", !0) || (sA(p(K)) ? K.headersList.append("accept-encoding", "br, gzip, deflate", !0) : K.headersList.append("accept-encoding", "gzip, deflate", !0)), K.headersList.delete("host", !0), K.cache = "no-store", K.cache !== "no-store" && K.cache, gA == null) {
+    if (K.body == null && ["POST", "PUT"].includes(K.method) && (MA = "0"), YA != null && (MA = Y(`${YA}`)), MA != null && K.headersList.append("content-length", MA, !0), YA != null && K.keepalive, K.referrer instanceof URL && K.headersList.append("referer", Y(K.referrer.href), !0), Q(K), U(K), K.headersList.contains("user-agent", !0) || K.headersList.append("user-agent", oA), K.cache === "default" && (K.headersList.contains("if-modified-since", !0) || K.headersList.contains("if-none-match", !0) || K.headersList.contains("if-unmodified-since", !0) || K.headersList.contains("if-match", !0) || K.headersList.contains("if-range", !0)) && (K.cache = "no-store"), K.cache === "no-cache" && !K.preventNoCacheCacheControlHeaderModification && !K.headersList.contains("cache-control", !0) && K.headersList.append("cache-control", "max-age=0", !0), (K.cache === "no-store" || K.cache === "reload") && (K.headersList.contains("pragma", !0) || K.headersList.append("pragma", "no-cache", !0), K.headersList.contains("cache-control", !0) || K.headersList.append("cache-control", "no-cache", !0)), K.headersList.contains("range", !0) && K.headersList.append("accept-encoding", "identity", !0), K.headersList.contains("accept-encoding", !0) || (sA(p(K)) ? K.headersList.append("accept-encoding", "br, gzip, deflate", !0) : K.headersList.append("accept-encoding", "gzip, deflate", !0)), K.headersList.delete("host", !0), K.cache = "no-store", K.cache !== "no-store" && K.cache, gA == null) {
       if (K.cache === "only-if-cached")
         return A("only if cached");
       const xA = await q(
@@ -9505,10 +9505,10 @@ function tt() {
     try {
       const { body: SA, status: zA, statusText: te, headersList: OA, socket: ce } = await ie({ body: gA });
       if (ce)
-        eA = g({ status: zA, statusText: te, headersList: OA, socket: ce });
+        eA = a({ status: zA, statusText: te, headersList: OA, socket: ce });
       else {
         const ZA = SA[Symbol.asyncIterator]();
-        m.controller.next = () => ZA.next(), eA = g({ status: zA, statusText: te, headersList: OA });
+        m.controller.next = () => ZA.next(), eA = a({ status: zA, statusText: te, headersList: OA });
       }
     } catch (SA) {
       return SA.name === "AbortError" ? (m.controller.connection.destroy(), r(m, SA)) : A(SA);
@@ -10035,9 +10035,9 @@ function Wo() {
     kState: A,
     kError: r,
     kResult: t,
-    kAborted: g,
+    kAborted: a,
     kLastProgressEventFired: e
-  } = Ui(), { ProgressEvent: n } = Vo(), { getEncoding: i } = xo(), { serializeAMimeType: Q, parseMIMEType: l } = ee(), { types: B } = Ae, { StringDecoder: s } = ro, { btoa: o } = se, C = {
+  } = Ui(), { ProgressEvent: n } = Vo(), { getEncoding: i } = xo(), { serializeAMimeType: c, parseMIMEType: l } = ee(), { types: B } = Ae, { StringDecoder: s } = ro, { btoa: o } = se, C = {
     enumerable: !0,
     writable: !1,
     configurable: !1
@@ -10046,44 +10046,44 @@ function Wo() {
     if (M[A] === "loading")
       throw new DOMException("Invalid state", "InvalidStateError");
     M[A] = "loading", M[t] = null, M[r] = null;
-    const D = U.stream().getReader(), a = [];
+    const D = U.stream().getReader(), g = [];
     let f = D.read(), w = !0;
     (async () => {
-      for (; !M[g]; )
+      for (; !M[a]; )
         try {
           const { done: d, value: y } = await f;
-          if (w && !M[g] && queueMicrotask(() => {
-            c("loadstart", M);
+          if (w && !M[a] && queueMicrotask(() => {
+            Q("loadstart", M);
           }), w = !1, !d && B.isUint8Array(y))
-            a.push(y), (M[e] === void 0 || Date.now() - M[e] >= 50) && !M[g] && (M[e] = Date.now(), queueMicrotask(() => {
-              c("progress", M);
+            g.push(y), (M[e] === void 0 || Date.now() - M[e] >= 50) && !M[a] && (M[e] = Date.now(), queueMicrotask(() => {
+              Q("progress", M);
             })), f = D.read();
           else if (d) {
             queueMicrotask(() => {
               M[A] = "done";
               try {
-                const k = u(a, b, U.type, E);
-                if (M[g])
+                const k = u(g, b, U.type, E);
+                if (M[a])
                   return;
-                M[t] = k, c("load", M);
+                M[t] = k, Q("load", M);
               } catch (k) {
-                M[r] = k, c("error", M);
+                M[r] = k, Q("error", M);
               }
-              M[A] !== "loading" && c("loadend", M);
+              M[A] !== "loading" && Q("loadend", M);
             });
             break;
           }
         } catch (d) {
-          if (M[g])
+          if (M[a])
             return;
           queueMicrotask(() => {
-            M[A] = "done", M[r] = d, c("error", M), M[A] !== "loading" && c("loadend", M);
+            M[A] = "done", M[r] = d, Q("error", M), M[A] !== "loading" && Q("loadend", M);
           });
           break;
         }
     })();
   }
-  function c(M, U) {
+  function Q(M, U) {
     const b = new n(M, {
       bubbles: !1,
       cancelable: !1
@@ -10095,11 +10095,11 @@ function Wo() {
       case "DataURL": {
         let h = "data:";
         const D = l(b || "application/octet-stream");
-        D !== "failure" && (h += Q(D)), h += ";base64,";
-        const a = new s("latin1");
+        D !== "failure" && (h += c(D)), h += ";base64,";
+        const g = new s("latin1");
         for (const f of M)
-          h += o(a.write(f));
-        return h += o(a.end()), h;
+          h += o(g.write(f));
+        return h += o(g.end()), h;
       }
       case "Text": {
         let h = "failure";
@@ -10114,8 +10114,8 @@ function Wo() {
       case "BinaryString": {
         let h = "";
         const D = new s("latin1");
-        for (const a of M)
-          h += D.write(a);
+        for (const g of M)
+          h += D.write(g);
         return h += D.end(), h;
       }
     }
@@ -10139,7 +10139,7 @@ function Wo() {
   return mr = {
     staticPropertyDescriptors: C,
     readOperation: I,
-    fireAProgressEvent: c
+    fireAProgressEvent: Q
   }, mr;
 }
 var Fr, Js;
@@ -10151,15 +10151,15 @@ function qo() {
     readOperation: r,
     fireAProgressEvent: t
   } = Wo(), {
-    kState: g,
+    kState: a,
     kError: e,
     kResult: n,
     kEvents: i,
-    kAborted: Q
+    kAborted: c
   } = Ui(), { webidl: l } = _A(), { kEnumerableProperty: B } = UA();
   class s extends EventTarget {
     constructor() {
-      super(), this[g] = "empty", this[n] = null, this[e] = null, this[i] = {
+      super(), this[a] = "empty", this[n] = null, this[e] = null, this[i] = {
         loadend: null,
         error: null,
         abort: null,
@@ -10201,17 +10201,17 @@ function qo() {
      * @see https://w3c.github.io/FileAPI/#dfn-abort
      */
     abort() {
-      if (this[g] === "empty" || this[g] === "done") {
+      if (this[a] === "empty" || this[a] === "done") {
         this[n] = null;
         return;
       }
-      this[g] === "loading" && (this[g] = "done", this[n] = null), this[Q] = !0, t("abort", this), this[g] !== "loading" && t("loadend", this);
+      this[a] === "loading" && (this[a] = "done", this[n] = null), this[c] = !0, t("abort", this), this[a] !== "loading" && t("loadend", this);
     }
     /**
      * @see https://w3c.github.io/FileAPI/#dom-filereader-readystate
      */
     get readyState() {
-      switch (l.brandCheck(this, s), this[g]) {
+      switch (l.brandCheck(this, s), this[a]) {
         case "empty":
           return this.EMPTY;
         case "loading":
@@ -10312,19 +10312,19 @@ function Oo() {
   if (Hs) return Sr;
   Hs = 1;
   const A = HA, { URLSerializer: r } = ee(), { isValidHeaderName: t } = ne();
-  function g(n, i, Q = !1) {
-    const l = r(n, Q), B = r(i, Q);
+  function a(n, i, c = !1) {
+    const l = r(n, c), B = r(i, c);
     return l === B;
   }
   function e(n) {
     A(n !== null);
     const i = [];
-    for (let Q of n.split(","))
-      Q = Q.trim(), t(Q) && i.push(Q);
+    for (let c of n.split(","))
+      c = c.trim(), t(c) && i.push(c);
     return i;
   }
   return Sr = {
-    urlEquals: g,
+    urlEquals: a,
     getFieldValues: e
   }, Sr;
 }
@@ -10332,7 +10332,7 @@ var br, Vs;
 function Po() {
   if (Vs) return br;
   Vs = 1;
-  const { kConstruct: A } = on(), { urlEquals: r, getFieldValues: t } = Oo(), { kEnumerableProperty: g, isDisturbed: e } = UA(), { webidl: n } = _A(), { Response: i, cloneResponse: Q, fromInnerResponse: l } = et(), { Request: B, fromInnerRequest: s } = Le(), { kState: o } = ue(), { fetching: C } = tt(), { urlIsHttpHttpsScheme: I, createDeferredPromise: c, readAllBytes: u } = ne(), p = HA;
+  const { kConstruct: A } = on(), { urlEquals: r, getFieldValues: t } = Oo(), { kEnumerableProperty: a, isDisturbed: e } = UA(), { webidl: n } = _A(), { Response: i, cloneResponse: c, fromInnerResponse: l } = et(), { Request: B, fromInnerRequest: s } = Le(), { kState: o } = ue(), { fetching: C } = tt(), { urlIsHttpHttpsScheme: I, createDeferredPromise: Q, readAllBytes: u } = ne(), p = HA;
   class F {
     /**
      * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-request-response-list
@@ -10392,7 +10392,7 @@ function Po() {
             message: "Expected http/s scheme."
           });
         T.initiator = "fetch", T.destination = "subresource", h.push(T);
-        const Y = c();
+        const Y = Q();
         D.push(C({
           request: T,
           processResponse(G) {
@@ -10437,7 +10437,7 @@ function Po() {
         };
         w.push(T), d++;
       }
-      const y = c();
+      const y = Q();
       let k = null;
       try {
         this.#e(w);
@@ -10478,7 +10478,7 @@ function Po() {
           header: E,
           message: "Response body is locked or disturbed"
         });
-      const a = Q(D), f = c();
+      const g = c(D), f = Q();
       if (D.body != null) {
         const Y = D.body.stream.getReader();
         u(Y).then(f.resolve, f.reject);
@@ -10489,13 +10489,13 @@ function Po() {
         // 14.
         request: h,
         // 15.
-        response: a
+        response: g
         // 16.
       };
       w.push(d);
       const y = await f.promise;
-      a.body != null && (a.body.source = y);
-      const k = c();
+      g.body != null && (g.body.source = y);
+      const k = Q();
       let L = null;
       try {
         this.#e(w);
@@ -10516,13 +10516,13 @@ function Po() {
           return !1;
       } else
         p(typeof U == "string"), h = new B(U)[o];
-      const D = [], a = {
+      const D = [], g = {
         type: "delete",
         request: h,
         options: b
       };
-      D.push(a);
-      const f = c();
+      D.push(g);
+      const f = Q();
       let w = null, d;
       try {
         d = this.#e(D);
@@ -10549,18 +10549,18 @@ function Po() {
           if (h = U[o], h.method !== "GET" && !b.ignoreMethod)
             return [];
         } else typeof U == "string" && (h = new B(U)[o]);
-      const D = c(), a = [];
+      const D = Q(), g = [];
       if (U === void 0)
         for (const f of this.#A)
-          a.push(f[0]);
+          g.push(f[0]);
       else {
         const f = this.#n(h, b);
         for (const w of f)
-          a.push(w[0]);
+          g.push(w[0]);
       }
       return queueMicrotask(() => {
         const f = [];
-        for (const w of a) {
+        for (const w of g) {
           const d = s(
             w,
             new AbortController().signal,
@@ -10579,34 +10579,34 @@ function Po() {
     #e(U) {
       const b = this.#A, E = [...b], h = [], D = [];
       try {
-        for (const a of U) {
-          if (a.type !== "delete" && a.type !== "put")
+        for (const g of U) {
+          if (g.type !== "delete" && g.type !== "put")
             throw n.errors.exception({
               header: "Cache.#batchCacheOperations",
               message: 'operation type does not match "delete" or "put"'
             });
-          if (a.type === "delete" && a.response != null)
+          if (g.type === "delete" && g.response != null)
             throw n.errors.exception({
               header: "Cache.#batchCacheOperations",
               message: "delete operation should not have an associated response"
             });
-          if (this.#n(a.request, a.options, h).length)
+          if (this.#n(g.request, g.options, h).length)
             throw new DOMException("???", "InvalidStateError");
           let f;
-          if (a.type === "delete") {
-            if (f = this.#n(a.request, a.options), f.length === 0)
+          if (g.type === "delete") {
+            if (f = this.#n(g.request, g.options), f.length === 0)
               return [];
             for (const w of f) {
               const d = b.indexOf(w);
               p(d !== -1), b.splice(d, 1);
             }
-          } else if (a.type === "put") {
-            if (a.response == null)
+          } else if (g.type === "put") {
+            if (g.response == null)
               throw n.errors.exception({
                 header: "Cache.#batchCacheOperations",
                 message: "put operation should have an associated response"
               });
-            const w = a.request;
+            const w = g.request;
             if (!I(w.url))
               throw n.errors.exception({
                 header: "Cache.#batchCacheOperations",
@@ -10617,23 +10617,23 @@ function Po() {
                 header: "Cache.#batchCacheOperations",
                 message: "not get method"
               });
-            if (a.options != null)
+            if (g.options != null)
               throw n.errors.exception({
                 header: "Cache.#batchCacheOperations",
                 message: "options must not be defined"
               });
-            f = this.#n(a.request);
+            f = this.#n(g.request);
             for (const d of f) {
               const y = b.indexOf(d);
               p(y !== -1), b.splice(y, 1);
             }
-            b.push([a.request, a.response]), h.push([a.request, a.response]);
+            b.push([g.request, g.response]), h.push([g.request, g.response]);
           }
-          D.push([a.request, a.response]);
+          D.push([g.request, g.response]);
         }
         return D;
-      } catch (a) {
-        throw this.#A.length = 0, this.#A = E, a;
+      } catch (g) {
+        throw this.#A.length = 0, this.#A = E, g;
       }
     }
     /**
@@ -10645,9 +10645,9 @@ function Po() {
      */
     #n(U, b, E) {
       const h = [], D = E ?? this.#A;
-      for (const a of D) {
-        const [f, w] = a;
-        this.#r(U, f, w, b) && h.push(a);
+      for (const g of D) {
+        const [f, w] = g;
+        this.#r(U, f, w, b) && h.push(g);
       }
       return h;
     }
@@ -10660,8 +10660,8 @@ function Po() {
      * @returns {boolean}
      */
     #r(U, b, E = null, h) {
-      const D = new URL(U.url), a = new URL(b.url);
-      if (h?.ignoreSearch && (a.search = "", D.search = ""), !r(D, a, !0))
+      const D = new URL(U.url), g = new URL(b.url);
+      if (h?.ignoreSearch && (g.search = "", D.search = ""), !r(D, g, !0))
         return !1;
       if (E == null || h?.ignoreVary || !E.headersList.contains("vary"))
         return !0;
@@ -10691,13 +10691,13 @@ function Po() {
         for (const w of f)
           D.push(w[1]);
       }
-      const a = [];
+      const g = [];
       for (const f of D) {
         const w = l(f, "immutable");
-        if (a.push(w.clone()), a.length >= E)
+        if (g.push(w.clone()), g.length >= E)
           break;
       }
-      return Object.freeze(a);
+      return Object.freeze(g);
     }
   }
   Object.defineProperties(F.prototype, {
@@ -10705,13 +10705,13 @@ function Po() {
       value: "Cache",
       configurable: !0
     },
-    match: g,
-    matchAll: g,
-    add: g,
-    addAll: g,
-    put: g,
-    delete: g,
-    keys: g
+    match: a,
+    matchAll: a,
+    add: a,
+    addAll: a,
+    put: a,
+    delete: a,
+    keys: a
   });
   const S = [
     {
@@ -10746,7 +10746,7 @@ var Ur, xs;
 function Zo() {
   if (xs) return Ur;
   xs = 1;
-  const { kConstruct: A } = on(), { Cache: r } = Po(), { webidl: t } = _A(), { kEnumerableProperty: g } = UA();
+  const { kConstruct: A } = on(), { Cache: r } = Po(), { webidl: t } = _A(), { kEnumerableProperty: a } = UA();
   class e {
     /**
      * @see https://w3c.github.io/ServiceWorker/#dfn-relevant-name-to-cache-map
@@ -10756,15 +10756,15 @@ function Zo() {
     constructor() {
       arguments[0] !== A && t.illegalConstructor(), t.util.markAsUncloneable(this);
     }
-    async match(i, Q = {}) {
-      if (t.brandCheck(this, e), t.argumentLengthCheck(arguments, 1, "CacheStorage.match"), i = t.converters.RequestInfo(i), Q = t.converters.MultiCacheQueryOptions(Q), Q.cacheName != null) {
-        if (this.#A.has(Q.cacheName)) {
-          const l = this.#A.get(Q.cacheName);
-          return await new r(A, l).match(i, Q);
+    async match(i, c = {}) {
+      if (t.brandCheck(this, e), t.argumentLengthCheck(arguments, 1, "CacheStorage.match"), i = t.converters.RequestInfo(i), c = t.converters.MultiCacheQueryOptions(c), c.cacheName != null) {
+        if (this.#A.has(c.cacheName)) {
+          const l = this.#A.get(c.cacheName);
+          return await new r(A, l).match(i, c);
         }
       } else
         for (const l of this.#A.values()) {
-          const s = await new r(A, l).match(i, Q);
+          const s = await new r(A, l).match(i, c);
           if (s !== void 0)
             return s;
         }
@@ -10776,8 +10776,8 @@ function Zo() {
      */
     async has(i) {
       t.brandCheck(this, e);
-      const Q = "CacheStorage.has";
-      return t.argumentLengthCheck(arguments, 1, Q), i = t.converters.DOMString(i, Q, "cacheName"), this.#A.has(i);
+      const c = "CacheStorage.has";
+      return t.argumentLengthCheck(arguments, 1, c), i = t.converters.DOMString(i, c, "cacheName"), this.#A.has(i);
     }
     /**
      * @see https://w3c.github.io/ServiceWorker/#dom-cachestorage-open
@@ -10786,8 +10786,8 @@ function Zo() {
      */
     async open(i) {
       t.brandCheck(this, e);
-      const Q = "CacheStorage.open";
-      if (t.argumentLengthCheck(arguments, 1, Q), i = t.converters.DOMString(i, Q, "cacheName"), this.#A.has(i)) {
+      const c = "CacheStorage.open";
+      if (t.argumentLengthCheck(arguments, 1, c), i = t.converters.DOMString(i, c, "cacheName"), this.#A.has(i)) {
         const B = this.#A.get(i);
         return new r(A, B);
       }
@@ -10801,8 +10801,8 @@ function Zo() {
      */
     async delete(i) {
       t.brandCheck(this, e);
-      const Q = "CacheStorage.delete";
-      return t.argumentLengthCheck(arguments, 1, Q), i = t.converters.DOMString(i, Q, "cacheName"), this.#A.delete(i);
+      const c = "CacheStorage.delete";
+      return t.argumentLengthCheck(arguments, 1, c), i = t.converters.DOMString(i, c, "cacheName"), this.#A.delete(i);
     }
     /**
      * @see https://w3c.github.io/ServiceWorker/#cache-storage-keys
@@ -10817,11 +10817,11 @@ function Zo() {
       value: "CacheStorage",
       configurable: !0
     },
-    match: g,
-    has: g,
-    open: g,
-    delete: g,
-    keys: g
+    match: a,
+    has: a,
+    open: a,
+    delete: a,
+    keys: a
   }), Ur = {
     CacheStorage: e
   }, Ur;
@@ -10878,17 +10878,17 @@ function Mi() {
       --C, ++I;
     }
     for (; I < C; ) {
-      const c = o.charCodeAt(I++);
-      if (c < 33 || // exclude CTLs (0-31)
-      c > 126 || // non-ascii and DEL (127)
-      c === 34 || // "
-      c === 44 || // ,
-      c === 59 || // ;
-      c === 92)
+      const Q = o.charCodeAt(I++);
+      if (Q < 33 || // exclude CTLs (0-31)
+      Q > 126 || // non-ascii and DEL (127)
+      Q === 34 || // "
+      Q === 44 || // ,
+      Q === 59 || // ;
+      Q === 92)
         throw new Error("Invalid cookie value");
     }
   }
-  function g(o) {
+  function a(o) {
     for (let C = 0; C < o.length; ++C) {
       const I = o.charCodeAt(C);
       if (I < 32 || // exclude CTLs (0-31)
@@ -10922,9 +10922,9 @@ function Mi() {
     "Oct",
     "Nov",
     "Dec"
-  ], Q = Array(61).fill(0).map((o, C) => C.toString().padStart(2, "0"));
+  ], c = Array(61).fill(0).map((o, C) => C.toString().padStart(2, "0"));
   function l(o) {
-    return typeof o == "number" && (o = new Date(o)), `${n[o.getUTCDay()]}, ${Q[o.getUTCDate()]} ${i[o.getUTCMonth()]} ${o.getUTCFullYear()} ${Q[o.getUTCHours()]}:${Q[o.getUTCMinutes()]}:${Q[o.getUTCSeconds()]} GMT`;
+    return typeof o == "number" && (o = new Date(o)), `${n[o.getUTCDay()]}, ${c[o.getUTCDate()]} ${i[o.getUTCMonth()]} ${o.getUTCFullYear()} ${c[o.getUTCHours()]}:${c[o.getUTCMinutes()]}:${c[o.getUTCSeconds()]} GMT`;
   }
   function B(o) {
     if (o < 0)
@@ -10935,19 +10935,19 @@ function Mi() {
       return null;
     r(o.name), t(o.value);
     const C = [`${o.name}=${o.value}`];
-    o.name.startsWith("__Secure-") && (o.secure = !0), o.name.startsWith("__Host-") && (o.secure = !0, o.domain = null, o.path = "/"), o.secure && C.push("Secure"), o.httpOnly && C.push("HttpOnly"), typeof o.maxAge == "number" && (B(o.maxAge), C.push(`Max-Age=${o.maxAge}`)), o.domain && (e(o.domain), C.push(`Domain=${o.domain}`)), o.path && (g(o.path), C.push(`Path=${o.path}`)), o.expires && o.expires.toString() !== "Invalid Date" && C.push(`Expires=${l(o.expires)}`), o.sameSite && C.push(`SameSite=${o.sameSite}`);
+    o.name.startsWith("__Secure-") && (o.secure = !0), o.name.startsWith("__Host-") && (o.secure = !0, o.domain = null, o.path = "/"), o.secure && C.push("Secure"), o.httpOnly && C.push("HttpOnly"), typeof o.maxAge == "number" && (B(o.maxAge), C.push(`Max-Age=${o.maxAge}`)), o.domain && (e(o.domain), C.push(`Domain=${o.domain}`)), o.path && (a(o.path), C.push(`Path=${o.path}`)), o.expires && o.expires.toString() !== "Invalid Date" && C.push(`Expires=${l(o.expires)}`), o.sameSite && C.push(`SameSite=${o.sameSite}`);
     for (const I of o.unparsed) {
       if (!I.includes("="))
         throw new Error("Invalid unparsed");
-      const [c, ...u] = I.split("=");
-      C.push(`${c.trim()}=${u.join("=")}`);
+      const [Q, ...u] = I.split("=");
+      C.push(`${Q.trim()}=${u.join("=")}`);
     }
     return C.join("; ");
   }
   return Lr = {
     isCTLExcludingHtab: A,
     validateCookieName: r,
-    validateCookiePath: g,
+    validateCookiePath: a,
     validateCookieValue: t,
     toIMFDate: l,
     stringify: s
@@ -10957,21 +10957,21 @@ var Tr, Os;
 function zo() {
   if (Os) return Tr;
   Os = 1;
-  const { maxNameValuePairSize: A, maxAttributeValueSize: r } = Ko(), { isCTLExcludingHtab: t } = Mi(), { collectASequenceOfCodePointsFast: g } = ee(), e = HA;
-  function n(Q) {
-    if (t(Q))
+  const { maxNameValuePairSize: A, maxAttributeValueSize: r } = Ko(), { isCTLExcludingHtab: t } = Mi(), { collectASequenceOfCodePointsFast: a } = ee(), e = HA;
+  function n(c) {
+    if (t(c))
       return null;
     let l = "", B = "", s = "", o = "";
-    if (Q.includes(";")) {
+    if (c.includes(";")) {
       const C = { position: 0 };
-      l = g(";", Q, C), B = Q.slice(C.position);
+      l = a(";", c, C), B = c.slice(C.position);
     } else
-      l = Q;
+      l = c;
     if (!l.includes("="))
       o = l;
     else {
       const C = { position: 0 };
-      s = g(
+      s = a(
         "=",
         l,
         C
@@ -10983,20 +10983,20 @@ function zo() {
       ...i(B)
     };
   }
-  function i(Q, l = {}) {
-    if (Q.length === 0)
+  function i(c, l = {}) {
+    if (c.length === 0)
       return l;
-    e(Q[0] === ";"), Q = Q.slice(1);
+    e(c[0] === ";"), c = c.slice(1);
     let B = "";
-    Q.includes(";") ? (B = g(
+    c.includes(";") ? (B = a(
       ";",
-      Q,
+      c,
       { position: 0 }
-    ), Q = Q.slice(B.length)) : (B = Q, Q = "");
+    ), c = c.slice(B.length)) : (B = c, c = "");
     let s = "", o = "";
     if (B.includes("=")) {
       const I = { position: 0 };
-      s = g(
+      s = a(
         "=",
         B,
         I
@@ -11004,7 +11004,7 @@ function zo() {
     } else
       s = B;
     if (s = s.trim(), o = o.trim(), o.length > r)
-      return i(Q, l);
+      return i(c, l);
     const C = s.toLowerCase();
     if (C === "expires") {
       const I = new Date(o);
@@ -11012,9 +11012,9 @@ function zo() {
     } else if (C === "max-age") {
       const I = o.charCodeAt(0);
       if ((I < 48 || I > 57) && o[0] !== "-" || !/^\d+$/.test(o))
-        return i(Q, l);
-      const c = Number(o);
-      l.maxAge = c;
+        return i(c, l);
+      const Q = Number(o);
+      l.maxAge = Q;
     } else if (C === "domain") {
       let I = o;
       I[0] === "." && (I = I.slice(1)), I = I.toLowerCase(), l.domain = I;
@@ -11027,11 +11027,11 @@ function zo() {
       l.httpOnly = !0;
     else if (C === "samesite") {
       let I = "Default";
-      const c = o.toLowerCase();
-      c.includes("none") && (I = "None"), c.includes("strict") && (I = "Strict"), c.includes("lax") && (I = "Lax"), l.sameSite = I;
+      const Q = o.toLowerCase();
+      Q.includes("none") && (I = "None"), Q.includes("strict") && (I = "Strict"), Q.includes("lax") && (I = "Lax"), l.sameSite = I;
     } else
       l.unparsed ??= [], l.unparsed.push(`${s}=${o}`);
-    return i(Q, l);
+    return i(c, l);
   }
   return Tr = {
     parseSetCookie: n,
@@ -11042,9 +11042,9 @@ var Yr, Ps;
 function Xo() {
   if (Ps) return Yr;
   Ps = 1;
-  const { parseSetCookie: A } = zo(), { stringify: r } = Mi(), { webidl: t } = _A(), { Headers: g } = we();
+  const { parseSetCookie: A } = zo(), { stringify: r } = Mi(), { webidl: t } = _A(), { Headers: a } = we();
   function e(l) {
-    t.argumentLengthCheck(arguments, 1, "getCookies"), t.brandCheck(l, g, { strict: !1 });
+    t.argumentLengthCheck(arguments, 1, "getCookies"), t.brandCheck(l, a, { strict: !1 });
     const B = l.get("cookie"), s = {};
     if (!B)
       return s;
@@ -11055,9 +11055,9 @@ function Xo() {
     return s;
   }
   function n(l, B, s) {
-    t.brandCheck(l, g, { strict: !1 });
+    t.brandCheck(l, a, { strict: !1 });
     const o = "deleteCookie";
-    t.argumentLengthCheck(arguments, 2, o), B = t.converters.DOMString(B, o, "name"), s = t.converters.DeleteCookieAttributes(s), Q(l, {
+    t.argumentLengthCheck(arguments, 2, o), B = t.converters.DOMString(B, o, "name"), s = t.converters.DeleteCookieAttributes(s), c(l, {
       name: B,
       value: "",
       expires: /* @__PURE__ */ new Date(0),
@@ -11065,12 +11065,12 @@ function Xo() {
     });
   }
   function i(l) {
-    t.argumentLengthCheck(arguments, 1, "getSetCookies"), t.brandCheck(l, g, { strict: !1 });
+    t.argumentLengthCheck(arguments, 1, "getSetCookies"), t.brandCheck(l, a, { strict: !1 });
     const B = l.getSetCookie();
     return B ? B.map((s) => A(s)) : [];
   }
-  function Q(l, B) {
-    t.argumentLengthCheck(arguments, 2, "setCookie"), t.brandCheck(l, g, { strict: !1 }), B = t.converters.Cookie(B);
+  function c(l, B) {
+    t.argumentLengthCheck(arguments, 2, "setCookie"), t.brandCheck(l, a, { strict: !1 }), B = t.converters.Cookie(B);
     const s = r(B);
     s && l.append("Set-Cookie", s);
   }
@@ -11138,14 +11138,14 @@ function Xo() {
     getCookies: e,
     deleteCookie: n,
     getSetCookies: i,
-    setCookie: Q
+    setCookie: c
   }, Yr;
 }
 var Gr, Zs;
 function Te() {
   if (Zs) return Gr;
   Zs = 1;
-  const { webidl: A } = _A(), { kEnumerableProperty: r } = UA(), { kConstruct: t } = WA(), { MessagePort: g } = ui;
+  const { webidl: A } = _A(), { kEnumerableProperty: r } = UA(), { kConstruct: t } = WA(), { MessagePort: a } = ui;
   class e extends Event {
     #A;
     constructor(s, o = {}) {
@@ -11171,12 +11171,12 @@ function Te() {
     get ports() {
       return A.brandCheck(this, e), Object.isFrozen(this.#A.ports) || Object.freeze(this.#A.ports), this.#A.ports;
     }
-    initMessageEvent(s, o = !1, C = !1, I = null, c = "", u = "", p = null, F = []) {
+    initMessageEvent(s, o = !1, C = !1, I = null, Q = "", u = "", p = null, F = []) {
       return A.brandCheck(this, e), A.argumentLengthCheck(arguments, 1, "MessageEvent.initMessageEvent"), new e(s, {
         bubbles: o,
         cancelable: C,
         data: I,
-        origin: c,
+        origin: Q,
         lastEventId: u,
         source: p,
         ports: F
@@ -11205,26 +11205,26 @@ function Te() {
       return A.brandCheck(this, i), this.#A.reason;
     }
   }
-  class Q extends Event {
+  class c extends Event {
     #A;
     constructor(s, o) {
       const C = "ErrorEvent constructor";
       A.argumentLengthCheck(arguments, 1, C), super(s, o), A.util.markAsUncloneable(this), s = A.converters.DOMString(s, C, "type"), o = A.converters.ErrorEventInit(o ?? {}), this.#A = o;
     }
     get message() {
-      return A.brandCheck(this, Q), this.#A.message;
+      return A.brandCheck(this, c), this.#A.message;
     }
     get filename() {
-      return A.brandCheck(this, Q), this.#A.filename;
+      return A.brandCheck(this, c), this.#A.filename;
     }
     get lineno() {
-      return A.brandCheck(this, Q), this.#A.lineno;
+      return A.brandCheck(this, c), this.#A.lineno;
     }
     get colno() {
-      return A.brandCheck(this, Q), this.#A.colno;
+      return A.brandCheck(this, c), this.#A.colno;
     }
     get error() {
-      return A.brandCheck(this, Q), this.#A.error;
+      return A.brandCheck(this, c), this.#A.error;
     }
   }
   Object.defineProperties(e.prototype, {
@@ -11246,7 +11246,7 @@ function Te() {
     reason: r,
     code: r,
     wasClean: r
-  }), Object.defineProperties(Q.prototype, {
+  }), Object.defineProperties(c.prototype, {
     [Symbol.toStringTag]: {
       value: "ErrorEvent",
       configurable: !0
@@ -11256,7 +11256,7 @@ function Te() {
     lineno: r,
     colno: r,
     error: r
-  }), A.converters.MessagePort = A.interfaceConverter(g), A.converters["sequence<MessagePort>"] = A.sequenceConverter(
+  }), A.converters.MessagePort = A.interfaceConverter(a), A.converters["sequence<MessagePort>"] = A.sequenceConverter(
     A.converters.MessagePort
   );
   const l = [
@@ -11351,7 +11351,7 @@ function Te() {
   ]), Gr = {
     MessageEvent: e,
     CloseEvent: i,
-    ErrorEvent: Q,
+    ErrorEvent: c,
     createFastMessageEvent: n
   }, Gr;
 }
@@ -11368,7 +11368,7 @@ function ye() {
     OPEN: 1,
     CLOSING: 2,
     CLOSED: 3
-  }, g = {
+  }, a = {
     NOT_SENT: 0,
     PROCESSING: 1,
     SENT: 2
@@ -11384,16 +11384,16 @@ function ye() {
     PAYLOADLENGTH_16: 2,
     PAYLOADLENGTH_64: 3,
     READ_DATA: 4
-  }, Q = Buffer.allocUnsafe(0);
+  }, c = Buffer.allocUnsafe(0);
   return Jr = {
     uid: A,
-    sentCloseFrameState: g,
+    sentCloseFrameState: a,
     staticPropertyDescriptors: r,
     states: t,
     opcodes: e,
     maxUnsigned16Bit: n,
     parserStates: i,
-    emptyBuffer: Q,
+    emptyBuffer: c,
     sendHints: {
       string: 1,
       typedArray: 2,
@@ -11419,14 +11419,14 @@ var Hr, Xs;
 function nt() {
   if (Xs) return Hr;
   Xs = 1;
-  const { kReadyState: A, kController: r, kResponse: t, kBinaryType: g, kWebSocketURL: e } = rt(), { states: n, opcodes: i } = ye(), { ErrorEvent: Q, createFastMessageEvent: l } = Te(), { isUtf8: B } = se, { collectASequenceOfCodePointsFast: s, removeHTTPWhitespace: o } = ee();
+  const { kReadyState: A, kController: r, kResponse: t, kBinaryType: a, kWebSocketURL: e } = rt(), { states: n, opcodes: i } = ye(), { ErrorEvent: c, createFastMessageEvent: l } = Te(), { isUtf8: B } = se, { collectASequenceOfCodePointsFast: s, removeHTTPWhitespace: o } = ee();
   function C(L) {
     return L[A] === n.CONNECTING;
   }
   function I(L) {
     return L[A] === n.OPEN;
   }
-  function c(L) {
+  function Q(L) {
     return L[A] === n.CLOSING;
   }
   function u(L) {
@@ -11447,7 +11447,7 @@ function nt() {
         b(L, "Received invalid UTF-8 in text frame.");
         return;
       }
-    else T === i.BINARY && (L[g] === "blob" ? G = new Blob([Y]) : G = S(Y));
+    else T === i.BINARY && (L[a] === "blob" ? G = new Blob([Y]) : G = S(Y));
     p("message", L, l, {
       origin: L[e].origin,
       data: G
@@ -11490,7 +11490,7 @@ function nt() {
   }
   function b(L, T) {
     const { [r]: Y, [t]: G } = L;
-    Y.abort(), G?.socket && !G.socket.destroyed && G.socket.destroy(), T && p("error", L, (tA, sA) => new Q(tA, sA), {
+    Y.abort(), G?.socket && !G.socket.destroyed && G.socket.destroy(), T && p("error", L, (tA, sA) => new c(tA, sA), {
       error: new Error(T),
       message: T
     });
@@ -11504,7 +11504,7 @@ function nt() {
   function D(L) {
     return L === i.TEXT || L === i.BINARY;
   }
-  function a(L) {
+  function g(L) {
     return D(L) || h(L) || E(L);
   }
   function f(L) {
@@ -11534,7 +11534,7 @@ function nt() {
   return Hr = {
     isConnecting: C,
     isEstablished: I,
-    isClosing: c,
+    isClosing: Q,
     isClosed: u,
     fireEvent: p,
     isValidSubprotocol: M,
@@ -11545,7 +11545,7 @@ function nt() {
     isControlFrame: E,
     isContinuationFrame: h,
     isTextBinaryFrame: D,
-    isValidOpcode: a,
+    isValidOpcode: g,
     parseExtensions: f,
     isValidClientWindowBits: w
   }, Hr;
@@ -11555,7 +11555,7 @@ function an() {
   if (_s) return Vr;
   _s = 1;
   const { maxUnsigned16Bit: A } = ye(), r = 16386;
-  let t, g = null, e = r;
+  let t, a = null, e = r;
   try {
     t = require("node:crypto");
   } catch {
@@ -11569,7 +11569,7 @@ function an() {
     };
   }
   function n() {
-    return e === r && (e = 0, t.randomFillSync(g ??= Buffer.allocUnsafe(r), 0, r)), [g[e++], g[e++], g[e++], g[e++]];
+    return e === r && (e = 0, t.randomFillSync(a ??= Buffer.allocUnsafe(r), 0, r)), [a[e++], a[e++], a[e++], a[e++]];
   }
   class i {
     /**
@@ -11582,12 +11582,12 @@ function an() {
       const B = this.frameData, s = n(), o = B?.byteLength ?? 0;
       let C = o, I = 6;
       o > A ? (I += 8, C = 127) : o > 125 && (I += 2, C = 126);
-      const c = Buffer.allocUnsafe(o + I);
-      c[0] = c[1] = 0, c[0] |= 128, c[0] = (c[0] & 240) + l;
-      c[I - 4] = s[0], c[I - 3] = s[1], c[I - 2] = s[2], c[I - 1] = s[3], c[1] = C, C === 126 ? c.writeUInt16BE(o, 2) : C === 127 && (c[2] = c[3] = 0, c.writeUIntBE(o, 4, 6)), c[1] |= 128;
+      const Q = Buffer.allocUnsafe(o + I);
+      Q[0] = Q[1] = 0, Q[0] |= 128, Q[0] = (Q[0] & 240) + l;
+      Q[I - 4] = s[0], Q[I - 3] = s[1], Q[I - 2] = s[2], Q[I - 1] = s[3], Q[1] = C, C === 126 ? Q.writeUInt16BE(o, 2) : C === 127 && (Q[2] = Q[3] = 0, Q.writeUIntBE(o, 4, 6)), Q[1] |= 128;
       for (let u = 0; u < o; ++u)
-        c[I + u] = B[u] ^ s[u & 3];
-      return c;
+        Q[I + u] = B[u] ^ s[u & 3];
+      return Q;
     }
   }
   return Vr = {
@@ -11598,19 +11598,19 @@ var xr, js;
 function Li() {
   if (js) return xr;
   js = 1;
-  const { uid: A, states: r, sentCloseFrameState: t, emptyBuffer: g, opcodes: e } = ye(), {
+  const { uid: A, states: r, sentCloseFrameState: t, emptyBuffer: a, opcodes: e } = ye(), {
     kReadyState: n,
     kSentClose: i,
-    kByteParser: Q,
+    kByteParser: c,
     kReceivedClose: l,
     kResponse: B
-  } = rt(), { fireEvent: s, failWebsocketConnection: o, isClosing: C, isClosed: I, isEstablished: c, parseExtensions: u } = nt(), { channels: p } = me(), { CloseEvent: F } = Te(), { makeRequest: S } = Le(), { fetching: M } = tt(), { Headers: U, getHeadersList: b } = we(), { getDecodeSplit: E } = ne(), { WebsocketFrameSend: h } = an();
+  } = rt(), { fireEvent: s, failWebsocketConnection: o, isClosing: C, isClosed: I, isEstablished: Q, parseExtensions: u } = nt(), { channels: p } = me(), { CloseEvent: F } = Te(), { makeRequest: S } = Le(), { fetching: M } = tt(), { Headers: U, getHeadersList: b } = we(), { getDecodeSplit: E } = ne(), { WebsocketFrameSend: h } = an();
   let D;
   try {
     D = require("node:crypto");
   } catch {
   }
-  function a(k, L, T, Y, G, tA) {
+  function g(k, L, T, Y, G, tA) {
     const sA = k;
     sA.protocol = k.protocol === "ws:" ? "http:" : "https:";
     const QA = S({
@@ -11677,24 +11677,24 @@ function Li() {
     });
   }
   function f(k, L, T, Y) {
-    if (!(C(k) || I(k))) if (!c(k))
+    if (!(C(k) || I(k))) if (!Q(k))
       o(k, "Connection was closed before it was established."), k[n] = r.CLOSING;
     else if (k[i] === t.NOT_SENT) {
       k[i] = t.PROCESSING;
       const G = new h();
-      L !== void 0 && T === void 0 ? (G.frameData = Buffer.allocUnsafe(2), G.frameData.writeUInt16BE(L, 0)) : L !== void 0 && T !== void 0 ? (G.frameData = Buffer.allocUnsafe(2 + Y), G.frameData.writeUInt16BE(L, 0), G.frameData.write(T, 2, "utf-8")) : G.frameData = g, k[B].socket.write(G.createFrame(e.CLOSE)), k[i] = t.SENT, k[n] = r.CLOSING;
+      L !== void 0 && T === void 0 ? (G.frameData = Buffer.allocUnsafe(2), G.frameData.writeUInt16BE(L, 0)) : L !== void 0 && T !== void 0 ? (G.frameData = Buffer.allocUnsafe(2 + Y), G.frameData.writeUInt16BE(L, 0), G.frameData.write(T, 2, "utf-8")) : G.frameData = a, k[B].socket.write(G.createFrame(e.CLOSE)), k[i] = t.SENT, k[n] = r.CLOSING;
     } else
       k[n] = r.CLOSING;
   }
   function w(k) {
-    this.ws[Q].write(k) || this.pause();
+    this.ws[c].write(k) || this.pause();
   }
   function d() {
     const { ws: k } = this, { [B]: L } = k;
     L.socket.off("data", w), L.socket.off("close", d), L.socket.off("error", y);
     const T = k[i] === t.SENT && k[l];
     let Y = 1005, G = "";
-    const tA = k[Q].closingInfo;
+    const tA = k[c].closingInfo;
     tA && !tA.error ? (Y = tA.code ?? 1005, G = tA.reason) : k[l] || (Y = 1006), k[n] = r.CLOSED, s("close", k, (sA, QA) => new F(sA, QA), {
       wasClean: T,
       code: Y,
@@ -11710,7 +11710,7 @@ function Li() {
     L[n] = r.CLOSING, p.socketError.hasSubscribers && p.socketError.publish(k), this.destroy();
   }
   return xr = {
-    establishWebSocketConnection: a,
+    establishWebSocketConnection: g,
     closeWebSocketConnection: f
   }, xr;
 }
@@ -11718,7 +11718,7 @@ var Wr, $s;
 function _o() {
   if ($s) return Wr;
   $s = 1;
-  const { createInflateRaw: A, Z_DEFAULT_WINDOWBITS: r } = $r, { isValidClientWindowBits: t } = nt(), g = Buffer.from([0, 0, 255, 255]), e = /* @__PURE__ */ Symbol("kBuffer"), n = /* @__PURE__ */ Symbol("kLength");
+  const { createInflateRaw: A, Z_DEFAULT_WINDOWBITS: r } = $r, { isValidClientWindowBits: t } = nt(), a = Buffer.from([0, 0, 255, 255]), e = /* @__PURE__ */ Symbol("kBuffer"), n = /* @__PURE__ */ Symbol("kLength");
   class i {
     /** @type {import('node:zlib').InflateRaw} */
     #A;
@@ -11742,7 +11742,7 @@ function _o() {
           this.#A = null, s(C);
         });
       }
-      this.#A.write(l), B && this.#A.write(g), this.#A.flush(() => {
+      this.#A.write(l), B && this.#A.write(a), this.#A.flush(() => {
         const o = Buffer.concat(this.#A[e], this.#A[n]);
         this.#A[e].length = 0, this.#A[n] = 0, s(null, o);
       });
@@ -11754,10 +11754,10 @@ var qr, Ai;
 function jo() {
   if (Ai) return qr;
   Ai = 1;
-  const { Writable: A } = re, r = HA, { parserStates: t, opcodes: g, states: e, emptyBuffer: n, sentCloseFrameState: i } = ye(), { kReadyState: Q, kSentClose: l, kResponse: B, kReceivedClose: s } = rt(), { channels: o } = me(), {
+  const { Writable: A } = re, r = HA, { parserStates: t, opcodes: a, states: e, emptyBuffer: n, sentCloseFrameState: i } = ye(), { kReadyState: c, kSentClose: l, kResponse: B, kReceivedClose: s } = rt(), { channels: o } = me(), {
     isValidStatusCode: C,
     isValidOpcode: I,
-    failWebsocketConnection: c,
+    failWebsocketConnection: Q,
     websocketMessageReceived: u,
     utf8Decode: p,
     isControlFrame: F,
@@ -11773,78 +11773,78 @@ function jo() {
     #s = [];
     /** @type {Map<string, PerMessageDeflate>} */
     #i;
-    constructor(a, f) {
-      super(), this.ws = a, this.#i = f ?? /* @__PURE__ */ new Map(), this.#i.has("permessage-deflate") && this.#i.set("permessage-deflate", new E(f));
+    constructor(g, f) {
+      super(), this.ws = g, this.#i = f ?? /* @__PURE__ */ new Map(), this.#i.has("permessage-deflate") && this.#i.set("permessage-deflate", new E(f));
     }
     /**
      * @param {Buffer} chunk
      * @param {() => void} callback
      */
-    _write(a, f, w) {
-      this.#A.push(a), this.#e += a.length, this.#n = !0, this.run(w);
+    _write(g, f, w) {
+      this.#A.push(g), this.#e += g.length, this.#n = !0, this.run(w);
     }
     /**
      * Runs whenever a new chunk is received.
      * Callback is called whenever there are no more chunks buffering,
      * or not enough bytes are buffered to parse.
      */
-    run(a) {
+    run(g) {
       for (; this.#n; )
         if (this.#r === t.INFO) {
           if (this.#e < 2)
-            return a();
-          const f = this.consume(2), w = (f[0] & 128) !== 0, d = f[0] & 15, y = (f[1] & 128) === 128, k = !w && d !== g.CONTINUATION, L = f[1] & 127, T = f[0] & 64, Y = f[0] & 32, G = f[0] & 16;
+            return g();
+          const f = this.consume(2), w = (f[0] & 128) !== 0, d = f[0] & 15, y = (f[1] & 128) === 128, k = !w && d !== a.CONTINUATION, L = f[1] & 127, T = f[0] & 64, Y = f[0] & 32, G = f[0] & 16;
           if (!I(d))
-            return c(this.ws, "Invalid opcode received"), a();
+            return Q(this.ws, "Invalid opcode received"), g();
           if (y)
-            return c(this.ws, "Frame cannot be masked"), a();
+            return Q(this.ws, "Frame cannot be masked"), g();
           if (T !== 0 && !this.#i.has("permessage-deflate")) {
-            c(this.ws, "Expected RSV1 to be clear.");
+            Q(this.ws, "Expected RSV1 to be clear.");
             return;
           }
           if (Y !== 0 || G !== 0) {
-            c(this.ws, "RSV1, RSV2, RSV3 must be clear");
+            Q(this.ws, "RSV1, RSV2, RSV3 must be clear");
             return;
           }
           if (k && !S(d)) {
-            c(this.ws, "Invalid frame type was fragmented.");
+            Q(this.ws, "Invalid frame type was fragmented.");
             return;
           }
           if (S(d) && this.#s.length > 0) {
-            c(this.ws, "Expected continuation frame");
+            Q(this.ws, "Expected continuation frame");
             return;
           }
           if (this.#t.fragmented && k) {
-            c(this.ws, "Fragmented frame exceeded 125 bytes.");
+            Q(this.ws, "Fragmented frame exceeded 125 bytes.");
             return;
           }
           if ((L > 125 || k) && F(d)) {
-            c(this.ws, "Control frame either too large or fragmented");
+            Q(this.ws, "Control frame either too large or fragmented");
             return;
           }
           if (M(d) && this.#s.length === 0 && !this.#t.compressed) {
-            c(this.ws, "Unexpected continuation frame");
+            Q(this.ws, "Unexpected continuation frame");
             return;
           }
           L <= 125 ? (this.#t.payloadLength = L, this.#r = t.READ_DATA) : L === 126 ? this.#r = t.PAYLOADLENGTH_16 : L === 127 && (this.#r = t.PAYLOADLENGTH_64), S(d) && (this.#t.binaryType = d, this.#t.compressed = T !== 0), this.#t.opcode = d, this.#t.masked = y, this.#t.fin = w, this.#t.fragmented = k;
         } else if (this.#r === t.PAYLOADLENGTH_16) {
           if (this.#e < 2)
-            return a();
+            return g();
           const f = this.consume(2);
           this.#t.payloadLength = f.readUInt16BE(0), this.#r = t.READ_DATA;
         } else if (this.#r === t.PAYLOADLENGTH_64) {
           if (this.#e < 8)
-            return a();
+            return g();
           const f = this.consume(8), w = f.readUInt32BE(0);
           if (w > 2 ** 31 - 1) {
-            c(this.ws, "Received payload length > 2^31 bytes.");
+            Q(this.ws, "Received payload length > 2^31 bytes.");
             return;
           }
           const d = f.readUInt32BE(4);
           this.#t.payloadLength = (w << 8) + d, this.#r = t.READ_DATA;
         } else if (this.#r === t.READ_DATA) {
           if (this.#e < this.#t.payloadLength)
-            return a();
+            return g();
           const f = this.consume(this.#t.payloadLength);
           if (F(this.#t.opcode))
             this.#n = this.parseControlFrame(f), this.#r = t.INFO;
@@ -11855,10 +11855,10 @@ function jo() {
                 return;
               }
               if (this.#s.push(d), !this.#t.fin) {
-                this.#r = t.INFO, this.#n = !0, this.run(a);
+                this.#r = t.INFO, this.#n = !0, this.run(g);
                 return;
               }
-              u(this.ws, this.#t.binaryType, Buffer.concat(this.#s)), this.#n = !0, this.#r = t.INFO, this.#s.length = 0, this.run(a);
+              u(this.ws, this.#t.binaryType, Buffer.concat(this.#s)), this.#n = !0, this.#r = t.INFO, this.#s.length = 0, this.run(g);
             }), this.#n = !1;
             break;
           } else {
@@ -11875,34 +11875,34 @@ function jo() {
      * @param {number} n
      * @returns {Buffer}
      */
-    consume(a) {
-      if (a > this.#e)
+    consume(g) {
+      if (g > this.#e)
         throw new Error("Called consume() before buffers satiated.");
-      if (a === 0)
+      if (g === 0)
         return n;
-      if (this.#A[0].length === a)
+      if (this.#A[0].length === g)
         return this.#e -= this.#A[0].length, this.#A.shift();
-      const f = Buffer.allocUnsafe(a);
+      const f = Buffer.allocUnsafe(g);
       let w = 0;
-      for (; w !== a; ) {
+      for (; w !== g; ) {
         const d = this.#A[0], { length: y } = d;
-        if (y + w === a) {
+        if (y + w === g) {
           f.set(this.#A.shift(), w);
           break;
-        } else if (y + w > a) {
-          f.set(d.subarray(0, a - w), w), this.#A[0] = d.subarray(a - w);
+        } else if (y + w > g) {
+          f.set(d.subarray(0, g - w), w), this.#A[0] = d.subarray(g - w);
           break;
         } else
           f.set(this.#A.shift(), w), w += d.length;
       }
-      return this.#e -= a, f;
+      return this.#e -= g, f;
     }
-    parseCloseBody(a) {
-      r(a.length !== 1);
+    parseCloseBody(g) {
+      r(g.length !== 1);
       let f;
-      if (a.length >= 2 && (f = a.readUInt16BE(0)), f !== void 0 && !C(f))
+      if (g.length >= 2 && (f = g.readUInt16BE(0)), f !== void 0 && !C(f))
         return { code: 1002, reason: "Invalid status code", error: !0 };
-      let w = a.subarray(2);
+      let w = g.subarray(2);
       w[0] === 239 && w[1] === 187 && w[2] === 191 && (w = w.subarray(3));
       try {
         w = p(w);
@@ -11915,36 +11915,36 @@ function jo() {
      * Parses control frames.
      * @param {Buffer} body
      */
-    parseControlFrame(a) {
+    parseControlFrame(g) {
       const { opcode: f, payloadLength: w } = this.#t;
-      if (f === g.CLOSE) {
+      if (f === a.CLOSE) {
         if (w === 1)
-          return c(this.ws, "Received close frame with a 1-byte body."), !1;
-        if (this.#t.closeInfo = this.parseCloseBody(a), this.#t.closeInfo.error) {
+          return Q(this.ws, "Received close frame with a 1-byte body."), !1;
+        if (this.#t.closeInfo = this.parseCloseBody(g), this.#t.closeInfo.error) {
           const { code: d, reason: y } = this.#t.closeInfo;
-          return b(this.ws, d, y, y.length), c(this.ws, y), !1;
+          return b(this.ws, d, y, y.length), Q(this.ws, y), !1;
         }
         if (this.ws[l] !== i.SENT) {
           let d = n;
           this.#t.closeInfo.code && (d = Buffer.allocUnsafe(2), d.writeUInt16BE(this.#t.closeInfo.code, 0));
           const y = new U(d);
           this.ws[B].socket.write(
-            y.createFrame(g.CLOSE),
+            y.createFrame(a.CLOSE),
             (k) => {
               k || (this.ws[l] = i.SENT);
             }
           );
         }
-        return this.ws[Q] = e.CLOSING, this.ws[s] = !0, !1;
-      } else if (f === g.PING) {
+        return this.ws[c] = e.CLOSING, this.ws[s] = !0, !1;
+      } else if (f === a.PING) {
         if (!this.ws[s]) {
-          const d = new U(a);
-          this.ws[B].socket.write(d.createFrame(g.PONG)), o.ping.hasSubscribers && o.ping.publish({
-            payload: a
+          const d = new U(g);
+          this.ws[B].socket.write(d.createFrame(a.PONG)), o.ping.hasSubscribers && o.ping.publish({
+            payload: g
           });
         }
-      } else f === g.PONG && o.pong.hasSubscribers && o.pong.publish({
-        payload: a
+      } else f === a.PONG && o.pong.hasSubscribers && o.pong.publish({
+        payload: g
       });
       return !0;
     }
@@ -11960,12 +11960,12 @@ var Or, ei;
 function $o() {
   if (ei) return Or;
   ei = 1;
-  const { WebsocketFrameSend: A } = an(), { opcodes: r, sendHints: t } = ye(), g = Di(), e = Buffer[Symbol.species];
+  const { WebsocketFrameSend: A } = an(), { opcodes: r, sendHints: t } = ye(), a = Di(), e = Buffer[Symbol.species];
   class n {
     /**
      * @type {FixedQueue}
      */
-    #A = new g();
+    #A = new a();
     /**
      * @type {boolean}
      */
@@ -11981,12 +11981,12 @@ function $o() {
         if (!this.#e)
           this.#n.write(I, s);
         else {
-          const c = {
+          const Q = {
             promise: null,
             callback: s,
             frame: I
           };
-          this.#A.push(c);
+          this.#A.push(Q);
         }
         return;
       }
@@ -12010,9 +12010,9 @@ function $o() {
     }
   }
   function i(l, B) {
-    return new A(Q(l, B)).createFrame(B === t.string ? r.TEXT : r.BINARY);
+    return new A(c(l, B)).createFrame(B === t.string ? r.TEXT : r.BINARY);
   }
-  function Q(l, B) {
+  function c(l, B) {
     switch (B) {
       case t.string:
         return Buffer.from(l);
@@ -12029,8 +12029,8 @@ var Pr, ti;
 function Aa() {
   if (ti) return Pr;
   ti = 1;
-  const { webidl: A } = _A(), { URLSerializer: r } = ee(), { environmentSettingsObject: t } = ne(), { staticPropertyDescriptors: g, states: e, sentCloseFrameState: n, sendHints: i } = ye(), {
-    kWebSocketURL: Q,
+  const { webidl: A } = _A(), { URLSerializer: r } = ee(), { environmentSettingsObject: t } = ne(), { staticPropertyDescriptors: a, states: e, sentCloseFrameState: n, sendHints: i } = ye(), {
+    kWebSocketURL: c,
     kReadyState: l,
     kController: B,
     kBinaryType: s,
@@ -12038,12 +12038,12 @@ function Aa() {
     kSentClose: C,
     kByteParser: I
   } = rt(), {
-    isConnecting: c,
+    isConnecting: Q,
     isEstablished: u,
     isClosing: p,
     isValidSubprotocol: F,
     fireEvent: S
-  } = nt(), { establishWebSocketConnection: M, closeWebSocketConnection: U } = Li(), { ByteParser: b } = jo(), { kEnumerableProperty: E, isBlobLike: h } = UA(), { getGlobalDispatcher: D } = nn(), { types: a } = Ae, { ErrorEvent: f, CloseEvent: w } = Te(), { SendQueue: d } = $o();
+  } = nt(), { establishWebSocketConnection: M, closeWebSocketConnection: U } = Li(), { ByteParser: b } = jo(), { kEnumerableProperty: E, isBlobLike: h } = UA(), { getGlobalDispatcher: D } = nn(), { types: g } = Ae, { ErrorEvent: f, CloseEvent: w } = Te(), { SendQueue: d } = $o();
   class y extends EventTarget {
     #A = {
       open: null,
@@ -12084,7 +12084,7 @@ function Aa() {
         throw new DOMException("Invalid Sec-WebSocket-Protocol value", "SyntaxError");
       if (G.length > 0 && !G.every((CA) => F(CA)))
         throw new DOMException("Invalid Sec-WebSocket-Protocol value", "SyntaxError");
-      this[Q] = new URL(aA.href);
+      this[c] = new URL(aA.href);
       const lA = t.settingsObject;
       this[B] = M(
         aA,
@@ -12120,7 +12120,7 @@ function Aa() {
     send(Y) {
       A.brandCheck(this, y);
       const G = "WebSocket.send";
-      if (A.argumentLengthCheck(arguments, 1, G), Y = A.converters.WebSocketSendData(Y, G, "data"), c(this))
+      if (A.argumentLengthCheck(arguments, 1, G), Y = A.converters.WebSocketSendData(Y, G, "data"), Q(this))
         throw new DOMException("Sent before connected.", "InvalidStateError");
       if (!(!u(this) || p(this)))
         if (typeof Y == "string") {
@@ -12128,7 +12128,7 @@ function Aa() {
           this.#e += tA, this.#t.add(Y, () => {
             this.#e -= tA;
           }, i.string);
-        } else a.isArrayBuffer(Y) ? (this.#e += Y.byteLength, this.#t.add(Y, () => {
+        } else g.isArrayBuffer(Y) ? (this.#e += Y.byteLength, this.#t.add(Y, () => {
           this.#e -= Y.byteLength;
         }, i.arrayBuffer)) : ArrayBuffer.isView(Y) ? (this.#e += Y.byteLength, this.#t.add(Y, () => {
           this.#e -= Y.byteLength;
@@ -12143,7 +12143,7 @@ function Aa() {
       return A.brandCheck(this, y), this.#e;
     }
     get url() {
-      return A.brandCheck(this, y), r(this[Q]);
+      return A.brandCheck(this, y), r(this[c]);
     }
     get extensions() {
       return A.brandCheck(this, y), this.#r;
@@ -12195,10 +12195,10 @@ function Aa() {
     }
   }
   y.CONNECTING = y.prototype.CONNECTING = e.CONNECTING, y.OPEN = y.prototype.OPEN = e.OPEN, y.CLOSING = y.prototype.CLOSING = e.CLOSING, y.CLOSED = y.prototype.CLOSED = e.CLOSED, Object.defineProperties(y.prototype, {
-    CONNECTING: g,
-    OPEN: g,
-    CLOSING: g,
-    CLOSED: g,
+    CONNECTING: a,
+    OPEN: a,
+    CLOSING: a,
+    CLOSED: a,
     url: E,
     readyState: E,
     bufferedAmount: E,
@@ -12218,10 +12218,10 @@ function Aa() {
       configurable: !0
     }
   }), Object.defineProperties(y, {
-    CONNECTING: g,
-    OPEN: g,
-    CLOSING: g,
-    CLOSED: g
+    CONNECTING: a,
+    OPEN: a,
+    CLOSING: a,
+    CLOSED: a
   }), A.converters["sequence<DOMString>"] = A.sequenceConverter(
     A.converters.DOMString
   ), A.converters["DOMString or sequence<DOMString>"] = function(T, Y, G) {
@@ -12247,7 +12247,7 @@ function Aa() {
     if (A.util.Type(T) === "Object") {
       if (h(T))
         return A.converters.Blob(T, { strict: !1 });
-      if (ArrayBuffer.isView(T) || a.isArrayBuffer(T))
+      if (ArrayBuffer.isView(T) || g.isArrayBuffer(T))
         return A.converters.BufferSource(T);
     }
     return A.converters.USVString(T);
@@ -12267,18 +12267,18 @@ var Zr, ri;
 function Ti() {
   if (ri) return Zr;
   ri = 1;
-  function A(g) {
-    return g.indexOf("\0") === -1;
+  function A(a) {
+    return a.indexOf("\0") === -1;
   }
-  function r(g) {
-    if (g.length === 0) return !1;
-    for (let e = 0; e < g.length; e++)
-      if (g.charCodeAt(e) < 48 || g.charCodeAt(e) > 57) return !1;
+  function r(a) {
+    if (a.length === 0) return !1;
+    for (let e = 0; e < a.length; e++)
+      if (a.charCodeAt(e) < 48 || a.charCodeAt(e) > 57) return !1;
     return !0;
   }
-  function t(g) {
+  function t(a) {
     return new Promise((e) => {
-      setTimeout(e, g).unref();
+      setTimeout(e, a).unref();
     });
   }
   return Zr = {
@@ -12291,7 +12291,7 @@ var Kr, ni;
 function ea() {
   if (ni) return Kr;
   ni = 1;
-  const { Transform: A } = re, { isASCIINumber: r, isValidLastEventId: t } = Ti(), g = [239, 187, 191], e = 10, n = 13, i = 58, Q = 32;
+  const { Transform: A } = re, { isASCIINumber: r, isValidLastEventId: t } = Ti(), a = [239, 187, 191], e = 10, n = 13, i = 58, c = 32;
   class l extends A {
     /**
      * @type {eventSourceSettings}
@@ -12343,28 +12343,28 @@ function ea() {
       if (this.buffer ? this.buffer = Buffer.concat([this.buffer, s]) : this.buffer = s, this.checkBOM)
         switch (this.buffer.length) {
           case 1:
-            if (this.buffer[0] === g[0]) {
+            if (this.buffer[0] === a[0]) {
               C();
               return;
             }
             this.checkBOM = !1, C();
             return;
           case 2:
-            if (this.buffer[0] === g[0] && this.buffer[1] === g[1]) {
+            if (this.buffer[0] === a[0] && this.buffer[1] === a[1]) {
               C();
               return;
             }
             this.checkBOM = !1;
             break;
           case 3:
-            if (this.buffer[0] === g[0] && this.buffer[1] === g[1] && this.buffer[2] === g[2]) {
+            if (this.buffer[0] === a[0] && this.buffer[1] === a[1] && this.buffer[2] === a[2]) {
               this.buffer = Buffer.alloc(0), this.checkBOM = !1, C();
               return;
             }
             this.checkBOM = !1;
             break;
           default:
-            this.buffer[0] === g[0] && this.buffer[1] === g[1] && this.buffer[2] === g[2] && (this.buffer = this.buffer.subarray(3)), this.checkBOM = !1;
+            this.buffer[0] === a[0] && this.buffer[1] === a[1] && this.buffer[2] === a[2] && (this.buffer = this.buffer.subarray(3)), this.checkBOM = !1;
             break;
         }
       for (; this.pos < this.buffer.length; ) {
@@ -12401,26 +12401,26 @@ function ea() {
       const C = s.indexOf(i);
       if (C === 0)
         return;
-      let I = "", c = "";
+      let I = "", Q = "";
       if (C !== -1) {
         I = s.subarray(0, C).toString("utf8");
         let u = C + 1;
-        s[u] === Q && ++u, c = s.subarray(u).toString("utf8");
+        s[u] === c && ++u, Q = s.subarray(u).toString("utf8");
       } else
-        I = s.toString("utf8"), c = "";
+        I = s.toString("utf8"), Q = "";
       switch (I) {
         case "data":
-          o[I] === void 0 ? o[I] = c : o[I] += `
-${c}`;
+          o[I] === void 0 ? o[I] = Q : o[I] += `
+${Q}`;
           break;
         case "retry":
-          r(c) && (o[I] = c);
+          r(Q) && (o[I] = Q);
           break;
         case "id":
-          t(c) && (o[I] = c);
+          t(Q) && (o[I] = Q);
           break;
         case "event":
-          c.length > 0 && (o[I] = c);
+          Q.length > 0 && (o[I] = Q);
           break;
       }
     }
@@ -12454,9 +12454,9 @@ var zr, si;
 function ta() {
   if (si) return zr;
   si = 1;
-  const { pipeline: A } = re, { fetching: r } = tt(), { makeRequest: t } = Le(), { webidl: g } = _A(), { EventSourceStream: e } = ea(), { parseMIMEType: n } = ee(), { createFastMessageEvent: i } = Te(), { isNetworkError: Q } = et(), { delay: l } = Ti(), { kEnumerableProperty: B } = UA(), { environmentSettingsObject: s } = ne();
+  const { pipeline: A } = re, { fetching: r } = tt(), { makeRequest: t } = Le(), { webidl: a } = _A(), { EventSourceStream: e } = ea(), { parseMIMEType: n } = ee(), { createFastMessageEvent: i } = Te(), { isNetworkError: c } = et(), { delay: l } = Ti(), { kEnumerableProperty: B } = UA(), { environmentSettingsObject: s } = ne();
   let o = !1;
-  const C = 3e3, I = 0, c = 1, u = 2, p = "anonymous", F = "use-credentials";
+  const C = 3e3, I = 0, Q = 1, u = 2, p = "anonymous", F = "use-credentials";
   class S extends EventTarget {
     #A = {
       open: null,
@@ -12480,22 +12480,22 @@ function ta() {
      * @see https://html.spec.whatwg.org/multipage/server-sent-events.html#the-eventsource-interface
      */
     constructor(b, E = {}) {
-      super(), g.util.markAsUncloneable(this);
+      super(), a.util.markAsUncloneable(this);
       const h = "EventSource constructor";
-      g.argumentLengthCheck(arguments, 1, h), o || (o = !0, process.emitWarning("EventSource is experimental, expect them to change at any time.", {
+      a.argumentLengthCheck(arguments, 1, h), o || (o = !0, process.emitWarning("EventSource is experimental, expect them to change at any time.", {
         code: "UNDICI-ES"
-      })), b = g.converters.USVString(b, h, "url"), E = g.converters.EventSourceInitDict(E, h, "eventSourceInitDict"), this.#i = E.dispatcher, this.#o = {
+      })), b = a.converters.USVString(b, h, "url"), E = a.converters.EventSourceInitDict(E, h, "eventSourceInitDict"), this.#i = E.dispatcher, this.#o = {
         lastEventId: "",
         reconnectionTime: C
       };
       const D = s;
-      let a;
+      let g;
       try {
-        a = new URL(b, D.settingsObject.baseUrl), this.#o.origin = a.origin;
+        g = new URL(b, D.settingsObject.baseUrl), this.#o.origin = g.origin;
       } catch (d) {
         throw new DOMException(d, "SyntaxError");
       }
-      this.#e = a.href;
+      this.#e = g.href;
       let f = p;
       E.withCredentials && (f = F, this.#n = !0);
       const w = {
@@ -12539,10 +12539,10 @@ function ta() {
         request: this.#t,
         dispatcher: this.#i
       }, E = (h) => {
-        Q(h) && (this.dispatchEvent(new Event("error")), this.close()), this.#g();
+        c(h) && (this.dispatchEvent(new Event("error")), this.close()), this.#g();
       };
       b.processResponseEndOfBody = E, b.processResponse = (h) => {
-        if (Q(h))
+        if (c(h))
           if (h.aborted) {
             this.close(), this.dispatchEvent(new Event("error"));
             return;
@@ -12550,12 +12550,12 @@ function ta() {
             this.#g();
             return;
           }
-        const D = h.headersList.get("content-type", !0), a = D !== null ? n(D) : "failure", f = a !== "failure" && a.essence === "text/event-stream";
+        const D = h.headersList.get("content-type", !0), g = D !== null ? n(D) : "failure", f = g !== "failure" && g.essence === "text/event-stream";
         if (h.status !== 200 || f === !1) {
           this.close(), this.dispatchEvent(new Event("error"));
           return;
         }
-        this.#r = c, this.dispatchEvent(new Event("open")), this.#o.origin = h.urlList[h.urlList.length - 1].origin;
+        this.#r = Q, this.dispatchEvent(new Event("open")), this.#o.origin = h.urlList[h.urlList.length - 1].origin;
         const w = new e({
           eventSourceSettings: this.#o,
           push: (d) => {
@@ -12586,7 +12586,7 @@ function ta() {
      * CLOSED.
      */
     close() {
-      g.brandCheck(this, S), this.#r !== u && (this.#r = u, this.#s.abort(), this.#t = null);
+      a.brandCheck(this, S), this.#r !== u && (this.#r = u, this.#s.abort(), this.#t = null);
     }
     get onopen() {
       return this.#A.open;
@@ -12619,7 +12619,7 @@ function ta() {
       __proto__: null,
       configurable: !1,
       enumerable: !0,
-      value: c,
+      value: Q,
       writable: !1
     },
     CLOSED: {
@@ -12638,16 +12638,16 @@ function ta() {
     readyState: B,
     url: B,
     withCredentials: B
-  }), g.converters.EventSourceInitDict = g.dictionaryConverter([
+  }), a.converters.EventSourceInitDict = a.dictionaryConverter([
     {
       key: "withCredentials",
-      converter: g.converters.boolean,
+      converter: a.converters.boolean,
       defaultValue: () => !1
     },
     {
       key: "dispatcher",
       // undici only
-      converter: g.converters.any
+      converter: a.converters.any
     }
   ]), zr = {
     EventSource: S,
@@ -12658,8 +12658,8 @@ var ii;
 function ra() {
   if (ii) return DA;
   ii = 1;
-  const A = Se(), r = ze(), t = be(), g = po(), e = Ue(), n = Ri(), i = Ro(), Q = ko(), l = JA(), B = UA(), { InvalidArgumentError: s } = l, o = Uo(), C = Xe(), I = Si(), c = To(), u = bi(), p = Fi(), F = rn(), { getGlobalDispatcher: S, setGlobalDispatcher: M } = nn(), U = sn(), b = en(), E = tn();
-  Object.assign(r.prototype, o), DA.Dispatcher = r, DA.Client = A, DA.Pool = t, DA.BalancedPool = g, DA.Agent = e, DA.ProxyAgent = n, DA.EnvHttpProxyAgent = i, DA.RetryAgent = Q, DA.RetryHandler = F, DA.DecoratorHandler = U, DA.RedirectHandler = b, DA.createRedirectInterceptor = E, DA.interceptors = {
+  const A = Se(), r = ze(), t = be(), a = po(), e = Ue(), n = Ri(), i = Ro(), c = ko(), l = JA(), B = UA(), { InvalidArgumentError: s } = l, o = Uo(), C = Xe(), I = Si(), Q = To(), u = bi(), p = Fi(), F = rn(), { getGlobalDispatcher: S, setGlobalDispatcher: M } = nn(), U = sn(), b = en(), E = tn();
+  Object.assign(r.prototype, o), DA.Dispatcher = r, DA.Client = A, DA.Pool = t, DA.BalancedPool = a, DA.Agent = e, DA.ProxyAgent = n, DA.EnvHttpProxyAgent = i, DA.RetryAgent = c, DA.RetryHandler = F, DA.DecoratorHandler = U, DA.RedirectHandler = b, DA.createRedirectInterceptor = E, DA.interceptors = {
     redirect: Yo(),
     retry: Go(),
     dump: Jo(),
@@ -12701,8 +12701,8 @@ function ra() {
       throw pA && typeof pA == "object" && Error.captureStackTrace(pA), pA;
     }
   }, DA.Headers = we().Headers, DA.Response = et().Response, DA.Request = Le().Request, DA.FormData = je().FormData, DA.File = globalThis.File ?? se.File, DA.FileReader = qo().FileReader;
-  const { setGlobalOrigin: a, getGlobalOrigin: f } = wi();
-  DA.setGlobalOrigin = a, DA.getGlobalOrigin = f;
+  const { setGlobalOrigin: g, getGlobalOrigin: f } = wi();
+  DA.setGlobalOrigin = g, DA.getGlobalOrigin = f;
   const { CacheStorage: w } = Zo(), { kConstruct: d } = on();
   DA.caches = new w(d);
   const { deleteCookie: y, getCookies: k, getSetCookies: L, setCookie: T } = Xo();
@@ -12710,7 +12710,7 @@ function ra() {
   const { parseMIMEType: Y, serializeAMimeType: G } = ee();
   DA.parseMIMEType = Y, DA.serializeAMimeType = G;
   const { CloseEvent: tA, ErrorEvent: sA, MessageEvent: QA } = Te();
-  DA.WebSocket = Aa().WebSocket, DA.CloseEvent = tA, DA.ErrorEvent = sA, DA.MessageEvent = QA, DA.request = h(o.request), DA.stream = h(o.stream), DA.pipeline = h(o.pipeline), DA.connect = h(o.connect), DA.upgrade = h(o.upgrade), DA.MockClient = I, DA.MockPool = u, DA.MockAgent = c, DA.mockErrors = p;
+  DA.WebSocket = Aa().WebSocket, DA.CloseEvent = tA, DA.ErrorEvent = sA, DA.MessageEvent = QA, DA.request = h(o.request), DA.stream = h(o.stream), DA.pipeline = h(o.pipeline), DA.connect = h(o.connect), DA.upgrade = h(o.upgrade), DA.MockClient = I, DA.MockPool = u, DA.MockAgent = Q, DA.mockErrors = p;
   const { EventSource: aA } = ta();
   return DA.EventSource = aA, DA;
 }
@@ -12730,31 +12730,31 @@ var ai;
 ae.MovedPermanently, ae.ResourceMoved, ae.SeeOther, ae.TemporaryRedirect, ae.PermanentRedirect;
 ae.BadGateway, ae.ServiceUnavailable, ae.GatewayTimeout;
 const { access: hg, appendFile: ug, writeFile: dg } = qi;
-var Yi = function(A, r, t, g) {
+var Yi = function(A, r, t, a) {
   function e(n) {
     return n instanceof t ? n : new t(function(i) {
       i(n);
     });
   }
   return new (t || (t = Promise))(function(n, i) {
-    function Q(s) {
+    function c(s) {
       try {
-        B(g.next(s));
+        B(a.next(s));
       } catch (o) {
         i(o);
       }
     }
     function l(s) {
       try {
-        B(g.throw(s));
+        B(a.throw(s));
       } catch (o) {
         i(o);
       }
     }
     function B(s) {
-      s.done ? n(s.value) : e(s.value).then(Q, l);
+      s.done ? n(s.value) : e(s.value).then(c, l);
     }
-    B((g = g.apply(A, r || [])).next());
+    B((a = a.apply(A, r || [])).next());
   });
 };
 const { chmod: fg, copyFile: wg, lstat: yg, mkdir: Dg, open: pg, readdir: na, rename: Rg, rm: kg, rmdir: mg, stat: Xr, symlink: Fg, unlink: Ng } = qe.promises, fe = process.platform === "win32";
@@ -12792,9 +12792,9 @@ function gi(A, r) {
       } else if (Qi(t))
         return A;
     }
-    const g = A;
+    const a = A;
     for (const e of r) {
-      A = g + e, t = void 0;
+      A = a + e, t = void 0;
       try {
         t = yield Xr(A);
       } catch (n) {
@@ -12804,9 +12804,9 @@ function gi(A, r) {
         if (fe) {
           try {
             const n = Qe.dirname(A), i = Qe.basename(A).toUpperCase();
-            for (const Q of yield na(n))
-              if (i === Q.toUpperCase()) {
-                A = Qe.join(n, Q);
+            for (const c of yield na(n))
+              if (i === c.toUpperCase()) {
+                A = Qe.join(n, c);
                 break;
               }
           } catch (n) {
@@ -12826,31 +12826,31 @@ function ia(A) {
 function Qi(A) {
   return (A.mode & 1) > 0 || (A.mode & 8) > 0 && process.getgid !== void 0 && A.gid === process.getgid() || (A.mode & 64) > 0 && process.getuid !== void 0 && A.uid === process.getuid();
 }
-var Ji = function(A, r, t, g) {
+var Ji = function(A, r, t, a) {
   function e(n) {
     return n instanceof t ? n : new t(function(i) {
       i(n);
     });
   }
   return new (t || (t = Promise))(function(n, i) {
-    function Q(s) {
+    function c(s) {
       try {
-        B(g.next(s));
+        B(a.next(s));
       } catch (o) {
         i(o);
       }
     }
     function l(s) {
       try {
-        B(g.throw(s));
+        B(a.throw(s));
       } catch (o) {
         i(o);
       }
     }
     function B(s) {
-      s.done ? n(s.value) : e(s.value).then(Q, l);
+      s.done ? n(s.value) : e(s.value).then(c, l);
     }
-    B((g = g.apply(A, r || [])).next());
+    B((a = a.apply(A, r || [])).next());
   });
 };
 function vi(A, r) {
@@ -12858,10 +12858,10 @@ function vi(A, r) {
     if (!A)
       throw new Error("parameter 'tool' is required");
     if (r) {
-      const g = yield vi(A, !1);
-      if (!g)
+      const a = yield vi(A, !1);
+      if (!a)
         throw fe ? new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : new Error(`Unable to locate executable file: ${A}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
-      return g;
+      return a;
     }
     const t = yield oa(A);
     return t && t.length > 0 ? t[0] : "";
@@ -12885,81 +12885,81 @@ function oa(A) {
     if (process.env.PATH)
       for (const e of process.env.PATH.split(Qe.delimiter))
         e && t.push(e);
-    const g = [];
+    const a = [];
     for (const e of t) {
       const n = yield gi(Qe.join(e, A), r);
-      n && g.push(n);
+      n && a.push(n);
     }
-    return g;
+    return a;
   });
 }
-var ci = function(A, r, t, g) {
+var ci = function(A, r, t, a) {
   function e(n) {
     return n instanceof t ? n : new t(function(i) {
       i(n);
     });
   }
   return new (t || (t = Promise))(function(n, i) {
-    function Q(s) {
+    function c(s) {
       try {
-        B(g.next(s));
+        B(a.next(s));
       } catch (o) {
         i(o);
       }
     }
     function l(s) {
       try {
-        B(g.throw(s));
+        B(a.throw(s));
       } catch (o) {
         i(o);
       }
     }
     function B(s) {
-      s.done ? n(s.value) : e(s.value).then(Q, l);
+      s.done ? n(s.value) : e(s.value).then(c, l);
     }
-    B((g = g.apply(A, r || [])).next());
+    B((a = a.apply(A, r || [])).next());
   });
 };
 const xe = process.platform === "win32";
 class aa extends li.EventEmitter {
-  constructor(r, t, g) {
+  constructor(r, t, a) {
     if (super(), !r)
       throw new Error("Parameter 'toolPath' cannot be null or empty.");
-    this.toolPath = r, this.args = t || [], this.options = g || {};
+    this.toolPath = r, this.args = t || [], this.options = a || {};
   }
   _debug(r) {
     this.options.listeners && this.options.listeners.debug && this.options.listeners.debug(r);
   }
   _getCommandString(r, t) {
-    const g = this._getSpawnFileName(), e = this._getSpawnArgs(r);
+    const a = this._getSpawnFileName(), e = this._getSpawnArgs(r);
     let n = t ? "" : "[command]";
     if (xe)
       if (this._isCmdFile()) {
-        n += g;
+        n += a;
         for (const i of e)
           n += ` ${i}`;
       } else if (r.windowsVerbatimArguments) {
-        n += `"${g}"`;
+        n += `"${a}"`;
         for (const i of e)
           n += ` ${i}`;
       } else {
-        n += this._windowsQuoteCmdArg(g);
+        n += this._windowsQuoteCmdArg(a);
         for (const i of e)
           n += ` ${this._windowsQuoteCmdArg(i)}`;
       }
     else {
-      n += g;
+      n += a;
       for (const i of e)
         n += ` ${i}`;
     }
     return n;
   }
-  _processLineBuffer(r, t, g) {
+  _processLineBuffer(r, t, a) {
     try {
       let e = t + r.toString(), n = e.indexOf(ge.EOL);
       for (; n > -1; ) {
         const i = e.substring(0, n);
-        g(i), e = e.substring(n + ge.EOL.length), n = e.indexOf(ge.EOL);
+        a(i), e = e.substring(n + ge.EOL.length), n = e.indexOf(ge.EOL);
       }
       return e;
     } catch (e) {
@@ -12972,8 +12972,8 @@ class aa extends li.EventEmitter {
   _getSpawnArgs(r) {
     if (xe && this._isCmdFile()) {
       let t = `/D /S /C "${this._windowsQuoteCmdArg(this.toolPath)}`;
-      for (const g of this.args)
-        t += " ", t += r.windowsVerbatimArguments ? g : this._windowsQuoteCmdArg(g);
+      for (const a of this.args)
+        t += " ", t += r.windowsVerbatimArguments ? a : this._windowsQuoteCmdArg(a);
       return t += '"', [t];
     }
     return this.args;
@@ -13014,13 +13014,13 @@ class aa extends li.EventEmitter {
       ">",
       '"'
     ];
-    let g = !1;
+    let a = !1;
     for (const i of r)
-      if (t.some((Q) => Q === i)) {
-        g = !0;
+      if (t.some((c) => c === i)) {
+        a = !0;
         break;
       }
-    if (!g)
+    if (!a)
       return r;
     let e = '"', n = !0;
     for (let i = r.length; i > 0; i--)
@@ -13034,9 +13034,9 @@ class aa extends li.EventEmitter {
       return r;
     if (!r.includes('"') && !r.includes("\\"))
       return `"${r}"`;
-    let t = '"', g = !0;
+    let t = '"', a = !0;
     for (let e = r.length; e > 0; e--)
-      t += r[e - 1], g && r[e - 1] === "\\" ? t += "\\" : r[e - 1] === '"' ? (g = !0, t += "\\") : g = !1;
+      t += r[e - 1], a && r[e - 1] === "\\" ? t += "\\" : r[e - 1] === '"' ? (a = !0, t += "\\") : a = !1;
     return t += '"', t.split("").reverse().join("");
   }
   _cloneExecOptions(r) {
@@ -13054,8 +13054,8 @@ class aa extends li.EventEmitter {
   }
   _getSpawnOptions(r, t) {
     r = r || {};
-    const g = {};
-    return g.cwd = r.cwd, g.env = r.env, g.windowsVerbatimArguments = r.windowsVerbatimArguments || this._isCmdFile(), r.windowsVerbatimArguments && (g.argv0 = `"${t}"`), g;
+    const a = {};
+    return a.cwd = r.cwd, a.env = r.env, a.windowsVerbatimArguments = r.windowsVerbatimArguments || this._isCmdFile(), r.windowsVerbatimArguments && (a.argv0 = `"${t}"`), a;
   }
   /**
    * Exec a tool.
@@ -13072,23 +13072,23 @@ class aa extends li.EventEmitter {
         this._debug(`exec tool: ${this.toolPath}`), this._debug("arguments:");
         for (const B of this.args)
           this._debug(`   ${B}`);
-        const g = this._cloneExecOptions(this.options);
-        !g.silent && g.outStream && g.outStream.write(this._getCommandString(g) + ge.EOL);
-        const e = new gn(g, this.toolPath);
+        const a = this._cloneExecOptions(this.options);
+        !a.silent && a.outStream && a.outStream.write(this._getCommandString(a) + ge.EOL);
+        const e = new gn(a, this.toolPath);
         if (e.on("debug", (B) => {
           this._debug(B);
         }), this.options.cwd && !(yield sa(this.options.cwd)))
           return t(new Error(`The cwd: ${this.options.cwd} does not exist!`));
-        const n = this._getSpawnFileName(), i = no.spawn(n, this._getSpawnArgs(g), this._getSpawnOptions(this.options, n));
-        let Q = "";
+        const n = this._getSpawnFileName(), i = no.spawn(n, this._getSpawnArgs(a), this._getSpawnOptions(this.options, n));
+        let c = "";
         i.stdout && i.stdout.on("data", (B) => {
-          this.options.listeners && this.options.listeners.stdout && this.options.listeners.stdout(B), !g.silent && g.outStream && g.outStream.write(B), Q = this._processLineBuffer(B, Q, (s) => {
+          this.options.listeners && this.options.listeners.stdout && this.options.listeners.stdout(B), !a.silent && a.outStream && a.outStream.write(B), c = this._processLineBuffer(B, c, (s) => {
             this.options.listeners && this.options.listeners.stdline && this.options.listeners.stdline(s);
           });
         });
         let l = "";
         if (i.stderr && i.stderr.on("data", (B) => {
-          e.processStderr = !0, this.options.listeners && this.options.listeners.stderr && this.options.listeners.stderr(B), !g.silent && g.errStream && g.outStream && (g.failOnStdErr ? g.errStream : g.outStream).write(B), l = this._processLineBuffer(B, l, (s) => {
+          e.processStderr = !0, this.options.listeners && this.options.listeners.stderr && this.options.listeners.stderr(B), !a.silent && a.errStream && a.outStream && (a.failOnStdErr ? a.errStream : a.outStream).write(B), l = this._processLineBuffer(B, l, (s) => {
             this.options.listeners && this.options.listeners.errline && this.options.listeners.errline(s);
           });
         }), i.on("error", (B) => {
@@ -13098,7 +13098,7 @@ class aa extends li.EventEmitter {
         }), i.on("close", (B) => {
           e.processExitCode = B, e.processExited = !0, e.processClosed = !0, this._debug(`STDIO streams have closed for tool '${this.toolPath}'`), e.CheckComplete();
         }), e.on("done", (B, s) => {
-          Q.length > 0 && this.emit("stdline", Q), l.length > 0 && this.emit("errline", l), i.removeAllListeners(), B ? t(B) : r(s);
+          c.length > 0 && this.emit("stdline", c), l.length > 0 && this.emit("errline", l), i.removeAllListeners(), B ? t(B) : r(s);
         }), this.options.input) {
           if (!i.stdin)
             throw new Error("child process missing stdin");
@@ -13110,29 +13110,29 @@ class aa extends li.EventEmitter {
 }
 function ga(A) {
   const r = [];
-  let t = !1, g = !1, e = "";
+  let t = !1, a = !1, e = "";
   function n(i) {
-    g && i !== '"' && (e += "\\"), e += i, g = !1;
+    a && i !== '"' && (e += "\\"), e += i, a = !1;
   }
   for (let i = 0; i < A.length; i++) {
-    const Q = A.charAt(i);
-    if (Q === '"') {
-      g ? n(Q) : t = !t;
+    const c = A.charAt(i);
+    if (c === '"') {
+      a ? n(c) : t = !t;
       continue;
     }
-    if (Q === "\\" && g) {
-      n(Q);
+    if (c === "\\" && a) {
+      n(c);
       continue;
     }
-    if (Q === "\\" && t) {
-      g = !0;
+    if (c === "\\" && t) {
+      a = !0;
       continue;
     }
-    if (Q === " " && !t) {
+    if (c === " " && !t) {
       e.length > 0 && (r.push(e), e = "");
       continue;
     }
-    n(Q);
+    n(c);
   }
   return e.length > 0 && r.push(e.trim()), r;
 }
@@ -13162,40 +13162,40 @@ class gn extends li.EventEmitter {
     }
   }
 }
-var Qa = function(A, r, t, g) {
+var Qa = function(A, r, t, a) {
   function e(n) {
     return n instanceof t ? n : new t(function(i) {
       i(n);
     });
   }
   return new (t || (t = Promise))(function(n, i) {
-    function Q(s) {
+    function c(s) {
       try {
-        B(g.next(s));
+        B(a.next(s));
       } catch (o) {
         i(o);
       }
     }
     function l(s) {
       try {
-        B(g.throw(s));
+        B(a.throw(s));
       } catch (o) {
         i(o);
       }
     }
     function B(s) {
-      s.done ? n(s.value) : e(s.value).then(Q, l);
+      s.done ? n(s.value) : e(s.value).then(c, l);
     }
-    B((g = g.apply(A, r || [])).next());
+    B((a = a.apply(A, r || [])).next());
   });
 };
 function Hi(A, r, t) {
   return Qa(this, void 0, void 0, function* () {
-    const g = ga(A);
-    if (g.length === 0)
+    const a = ga(A);
+    if (a.length === 0)
       throw new Error("Parameter 'commandLine' cannot be null or empty.");
-    const e = g[0];
-    return r = g.slice(1).concat(r || []), new aa(e, r, t).exec();
+    const e = a[0];
+    return r = a.slice(1).concat(r || []), new aa(e, r, t).exec();
   });
 }
 Ci.platform();
@@ -13211,10 +13211,10 @@ function XA(A, r) {
   return (process.env[`INPUT_${A.replace(/ /g, "_").toUpperCase()}`] || "").trim();
 }
 function le(A, r) {
-  const t = ["true", "True", "TRUE"], g = ["false", "False", "FALSE"], e = XA(A);
+  const t = ["true", "True", "TRUE"], a = ["false", "False", "FALSE"], e = XA(A);
   if (t.includes(e))
     return !0;
-  if (g.includes(e))
+  if (a.includes(e))
     return !1;
   throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${A}
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
@@ -13261,9 +13261,9 @@ const ca = () => {
     const t = A.split(`
 `);
     A = t.pop() ?? "";
-    for (const g of t)
+    for (const a of t)
       try {
-        const e = JSON.parse(g.trim());
+        const e = JSON.parse(a.trim());
         e.message && (e.level === "ERROR" ? Be(e.message) : $A(e.message));
       } catch {
       }
@@ -13273,32 +13273,32 @@ const ca = () => {
     return Oe.isAbsolute(A) ? A : r ? Oe.join(r, A) : A;
 }, Ia = (A) => {
   const r = [];
-  let t = "", g = !1, e = "";
+  let t = "", a = !1, e = "";
   for (let n = 0; n < A.length; n++) {
     const i = A[n];
-    (i === '"' || i === "'") && !g ? (g = !0, e = i) : i === e && g ? (g = !1, e = "") : i === " " && !g ? (t.trim() && r.push(t.trim()), t = "") : t += i;
+    (i === '"' || i === "'") && !a ? (a = !0, e = i) : i === e && a ? (a = !1, e = "") : i === " " && !a ? (t.trim() && r.push(t.trim()), t = "") : t += i;
   }
   return t.trim() && r.push(t.trim()), r;
 }, Ca = (A) => {
   const r = [/^-url=/i, /^-user=/i, /password.*=/i, /token.*=/i];
   return A.map((t) => {
-    for (const g of r)
-      if (g.test(t)) {
+    for (const a of r)
+      if (a.test(t)) {
         const e = t.indexOf("=");
         return `${t.substring(0, e + 1)}***`;
       }
     return t;
   });
 }, ot = async (A, r) => {
-  const { listeners: t, getOutput: g } = Ba(), e = Ea(), n = [...A, "-outputType=json", "-outputLogsInJson=true"];
+  const { listeners: t, getOutput: a } = Ba(), e = Ea(), n = [...A, "-outputType=json", "-outputLogsInJson=true"];
   $A(`Running: flyway ${Ca(n).join(" ")}`);
   const i = {
     silent: !0,
     ignoreReturnCode: !0,
     listeners: { stdout: t.stdout, stderr: e },
     cwd: r || void 0
-  }, Q = await Hi("flyway", n, i), { stdout: l, stderr: B } = g();
-  return $A(l), { exitCode: Q, stdout: l, stderr: B };
+  }, c = await Hi("flyway", n, i), { stdout: l, stderr: B } = a();
+  return $A(l), { exitCode: c, stdout: l, stderr: B };
 }, la = async () => {
   const { listener: A, getOutput: r } = ca();
   try {
@@ -13333,8 +13333,8 @@ const ca = () => {
 }, cn = (A) => {
   const r = [];
   A.targetEnvironment && r.push(`-environment=${A.targetEnvironment}`);
-  const g = A.targetEnvironment && A.targetEnvironment !== "default" ? `-environments.${A.targetEnvironment}.` : "-";
-  return A.targetUrl && r.push(`${g}url=${A.targetUrl}`), A.targetUser && r.push(`${g}user=${A.targetUser}`), A.targetPassword && r.push(`${g}password=${A.targetPassword}`), A.targetSchemas && r.push(`${g}schemas=${A.targetSchemas}`), r;
+  const a = A.targetEnvironment && A.targetEnvironment !== "default" ? `-environments.${A.targetEnvironment}.` : "-";
+  return A.targetUrl && r.push(`${a}url=${A.targetUrl}`), A.targetUser && r.push(`${a}user=${A.targetUser}`), A.targetPassword && r.push(`${a}password=${A.targetPassword}`), A.targetSchemas && r.push(`${a}schemas=${A.targetSchemas}`), r;
 }, da = (A) => {
   if (!jr(A))
     return [];
@@ -13361,18 +13361,17 @@ const ca = () => {
   if (t) {
     st("Running Flyway check: deployment changes report");
     try {
-      const g = await ot(t, A.workingDirectory), e = at(g.stdout);
-      ya(e);
-      let n = g.exitCode;
-      if (n !== 0) {
-        const i = Qn(g.stdout);
-        i?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !A.buildOkToErase ? Be(
-          'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.'
-        ) : i?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? ($A(
+      const a = await ot(t, A.workingDirectory);
+      if (a.exitCode !== 0) {
+        const n = Qn(a.stdout);
+        return n?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? ($A(
           "Deployment changes report could not be generated because advanced comparison features are not supported for this database type."
-        ), n = 0) : i?.error?.message && Be(i.error.message);
+        ), { exitCode: 0 }) : (n?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !A.buildOkToErase ? Be(
+          'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.'
+        ) : n?.error?.message && Be(n.error.message), { exitCode: a.exitCode });
       }
-      return { exitCode: n, reportPath: e?.htmlReport };
+      const e = at(a.stdout);
+      return ya(e), { exitCode: a.exitCode, reportPath: e?.htmlReport };
     } finally {
       it();
     }
@@ -13381,7 +13380,7 @@ const ca = () => {
   const r = A?.individualResults?.filter((t) => t.operation === "changes");
   if (r?.length) {
     const t = r.reduce(
-      (g, e) => g + (e.onlyInSource?.length ?? 0) + (e.onlyInTarget?.length ?? 0) + (e.differences?.length ?? 0),
+      (a, e) => a + (e.onlyInSource?.length ?? 0) + (e.onlyInTarget?.length ?? 0) + (e.differences?.length ?? 0),
       0
     );
     he("changed-object-count", t.toString());
@@ -13407,8 +13406,8 @@ const ca = () => {
         const e = Qn(t.stdout);
         return e?.error?.message && Be(e.error.message), { exitCode: t.exitCode };
       }
-      const g = at(t.stdout);
-      return Ra(g), { exitCode: t.exitCode, reportPath: g?.htmlReport };
+      const a = at(t.stdout);
+      return Ra(a), { exitCode: t.exitCode, reportPath: a?.htmlReport };
     } finally {
       it();
     }
@@ -13416,8 +13415,8 @@ const ca = () => {
 }, Ra = (A) => {
   const r = A?.individualResults?.filter((t) => t.operation === "code");
   if (r?.length) {
-    const g = r.flatMap((e) => e.results?.flatMap((n) => n.violations ?? []) ?? []).map((e) => e.code).filter((e) => !!e);
-    he("code-violation-count", g.length.toString()), he("code-violation-codes", [...new Set(g)].join(","));
+    const a = r.flatMap((e) => e.results?.flatMap((n) => n.violations ?? []) ?? []).map((e) => e.code).filter((e) => !!e);
+    he("code-violation-count", a.length.toString()), he("code-violation-codes", [...new Set(a)].join(","));
   }
 }, ka = (A, r) => {
   if (r !== "enterprise") {
@@ -13439,22 +13438,21 @@ const ca = () => {
   if (t) {
     st("Running Flyway check: drift");
     try {
-      const g = await ot(t, A.workingDirectory);
-      let e = g.exitCode;
-      if (e !== 0) {
-        const Q = ha(g.stdout);
-        return Q?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? (Ii(!0, Ei(Q.error.driftResolutionFolderPath, A.workingDirectory)), { exitCode: e, reportPath: Q.error.htmlReport }) : (Q?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? ($A(
+      const a = await ot(t, A.workingDirectory);
+      if (a.exitCode !== 0) {
+        const i = ha(a.stdout);
+        return i?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? (Ii(!0, Ei(i.error.driftResolutionFolderPath, A.workingDirectory)), { exitCode: a.exitCode, reportPath: i.error.htmlReport }) : i?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? ($A(
           "Drift check could not be run because advanced comparison features are not supported for this database type."
-        ), e = 0) : Q?.error?.message && Be(Q.error.message), { exitCode: e });
+        ), { exitCode: 0 }) : (i?.error?.message && Be(i.error.message), { exitCode: a.exitCode });
       }
-      const n = at(g.stdout), i = n?.individualResults?.find((Q) => Q.operation === "drift");
-      return Ii(Fa(n), Ei(i?.driftResolutionFolder, A.workingDirectory)), { exitCode: e, reportPath: n?.htmlReport };
+      const e = at(a.stdout), n = e?.individualResults?.find((i) => i.operation === "drift");
+      return Ii(Fa(e), Ei(n?.driftResolutionFolder, A.workingDirectory)), { exitCode: a.exitCode, reportPath: e?.htmlReport };
     } finally {
       it();
     }
   }
 }, Fa = (A) => !!A?.individualResults?.filter((r) => r.operation === "drift").some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length), Ii = (A, r) => {
-  he("drift-detected", A.toString()), r && he("drift-resolution-folder", r);
+  he("drift-detected", A.toString()), r !== void 0 && he("drift-resolution-folder", r);
 }, Na = (A, r) => {
   if (r === "community") {
     $A("Skipping deployment script review: not available in Community edition");
@@ -13470,13 +13468,13 @@ const ca = () => {
   if (t) {
     st("Running Flyway check: deployment script review");
     try {
-      const g = await ot(t, A.workingDirectory);
-      if (g.exitCode !== 0) {
-        const n = Qn(g.stdout);
-        return n?.error?.message && Be(n.error.message), { exitCode: g.exitCode };
+      const a = await ot(t, A.workingDirectory);
+      if (a.exitCode !== 0) {
+        const n = Qn(a.stdout);
+        return n?.error?.message && Be(n.error.message), { exitCode: a.exitCode };
       }
-      const e = at(g.stdout);
-      return { exitCode: g.exitCode, reportPath: e?.htmlReport };
+      const e = at(a.stdout);
+      return { exitCode: a.exitCode, reportPath: e?.htmlReport };
     } finally {
       it();
     }
@@ -13490,29 +13488,29 @@ const ca = () => {
     await pa(A),
     await ma(A, r),
     await wa(A, r)
-  ], g = t.find((n) => n?.reportPath)?.reportPath;
-  he("report-path", ba(A, g));
+  ], a = t.find((n) => n?.reportPath)?.reportPath;
+  he("report-path", ba(A, a));
   const e = t.find((n) => n !== void 0 && n.exitCode !== 0);
   if (he("exit-code", (e?.exitCode ?? 0).toString()), e)
     throw new Error("Flyway checks failed");
 }, Ma = () => {
-  const A = XA("target-environment") || void 0, r = XA("target-url") || void 0, t = XA("target-user") || void 0, g = XA("target-password") || void 0, e = XA("target-schemas") || void 0, n = XA("target-migration-version") || void 0, i = XA("cherry-pick") || void 0, Q = XA("build-environment") || void 0, l = XA("build-url") || void 0, B = XA("build-user") || void 0, s = XA("build-password") || void 0, o = XA("build-schemas") || void 0, C = le("build-ok-to-erase"), I = le("skip-code-review"), c = le("skip-drift-check"), u = le("skip-deployment-changes-report"), p = le("skip-deployment-script-review"), F = le("fail-on-code-review"), S = le("fail-on-drift"), M = XA("working-directory"), U = M ? Qe.resolve(M) : void 0, b = XA("pre-deployment-report-name") || void 0, E = XA("extra-args") || void 0;
+  const A = XA("target-environment") || void 0, r = XA("target-url") || void 0, t = XA("target-user") || void 0, a = XA("target-password") || void 0, e = XA("target-schemas") || void 0, n = XA("target-migration-version") || void 0, i = XA("cherry-pick") || void 0, c = XA("build-environment") || void 0, l = XA("build-url") || void 0, B = XA("build-user") || void 0, s = XA("build-password") || void 0, o = XA("build-schemas") || void 0, C = le("build-ok-to-erase"), I = le("skip-code-review"), Q = le("skip-drift-check"), u = le("skip-deployment-changes-report"), p = le("skip-deployment-script-review"), F = le("fail-on-code-review"), S = le("fail-on-drift"), M = XA("working-directory"), U = M ? Qe.resolve(M) : void 0, b = XA("pre-deployment-report-name") || void 0, E = XA("extra-args") || void 0;
   return {
     targetEnvironment: A,
     targetUrl: r,
     targetUser: t,
-    targetPassword: g,
+    targetPassword: a,
     targetSchemas: e,
     targetMigrationVersion: n,
     cherryPick: i,
-    buildEnvironment: Q,
+    buildEnvironment: c,
     buildUrl: l,
     buildUser: B,
     buildPassword: s,
     buildSchemas: o,
     buildOkToErase: C,
     skipCodeReview: I,
-    skipDriftCheck: c,
+    skipDriftCheck: Q,
     skipDeploymentChangesReport: u,
     skipDeploymentScriptReview: p,
     failOnCodeReview: F,
