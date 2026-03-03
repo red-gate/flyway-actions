@@ -62,6 +62,27 @@ describe("checkForDrift", () => {
     expect(setOutput).toHaveBeenCalledWith("report-path", "drift-report.html");
   });
 
+  it("should set drift-resolution-folder output when drift is detected with resolution folder", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "CHECK_DRIFT_DETECTED",
+              message: "Drift detected",
+              driftResolutionFolderPath: "/absolute/path/to/resolution",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/absolute/path/to/resolution");
+  });
+
   it("should not set drift-detected when non-drift error occurs", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
