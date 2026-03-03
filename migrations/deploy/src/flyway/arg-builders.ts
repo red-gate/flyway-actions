@@ -1,5 +1,5 @@
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
-import { parseExtraArgs } from "@flyway-actions/shared";
+import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
 
 const getCommonArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = [];

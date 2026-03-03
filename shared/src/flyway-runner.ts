@@ -8,7 +8,7 @@ import type {
 } from "./types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners } from "./utils.js";
+import { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners } from "./listeners.js";
 
 const parseExtraArgs = (extraArgs: string): string[] => {
   const args: string[] = [];

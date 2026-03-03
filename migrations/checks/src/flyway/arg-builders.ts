@@ -1,5 +1,5 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
-import { parseExtraArgs } from "@flyway-actions/shared";
+import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
 
 const DEFAULT_BUILD_ENVIRONMENT = "default_build";
 

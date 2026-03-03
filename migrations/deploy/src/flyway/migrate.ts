@@ -1,6 +1,6 @@
 import type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
