@@ -1,4 +1,11 @@
-import type { ErrorOutput, FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput } from "./types.js";
+import type {
+  DriftErrorOutput,
+  ErrorOutput,
+  FlywayDetails,
+  FlywayEdition,
+  FlywayRunResult,
+  FlywayVersionOutput,
+} from "./types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 import { createJsonStderrListener, createStdoutListener, createStdoutStderrListeners } from "./utils.js";
@@ -88,6 +95,14 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
   }
 };
 
+const parseDriftErrorOutput = (stdout: string): DriftErrorOutput | undefined => {
+  try {
+    return JSON.parse(stdout) as DriftErrorOutput;
+  } catch {
+    return undefined;
+  }
+};
+
 const parseErrorOutput = (stdout: string): ErrorOutput | undefined => {
   try {
     return JSON.parse(stdout) as ErrorOutput;
@@ -96,4 +111,4 @@ const parseErrorOutput = (stdout: string): ErrorOutput | undefined => {
   }
 };
 
-export { getFlywayDetails, maskArgsForLog, parseErrorOutput, parseExtraArgs, runFlyway };
+export { getFlywayDetails, maskArgsForLog, parseDriftErrorOutput, parseErrorOutput, parseExtraArgs, runFlyway };

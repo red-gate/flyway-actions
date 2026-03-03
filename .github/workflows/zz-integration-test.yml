@@ -124,6 +124,8 @@ jobs:
           working-directory: sample-project
           pre-deployment-report-name: flyway-drift-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
+          drift-resolution-scripts-name: flyway-drift-resolution-${{ matrix.os }}
+          drift-resolution-scripts-retention-days: '1'
       - name: Download report
         uses: actions/download-artifact@v8
         with:
@@ -131,6 +133,13 @@ jobs:
       - name: Verify report exists
         shell: bash
         run: test -s flyway-drift-report-${{ matrix.os }}.html
+      - name: Download drift resolution scripts
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-drift-resolution-${{ matrix.os }}
+      - name: Verify drift resolution scripts exist
+        shell: bash
+        run: test -n "$(find . -maxdepth 1 -name '*.sql')"
       - name: Verify checks failed due to drift
         shell: bash
         run: test "${{ steps.checks.outcome }}" != "success"

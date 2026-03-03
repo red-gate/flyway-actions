@@ -2,7 +2,7 @@ import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../
 import type { FlywayEdition } from "@flyway-actions/shared";
 import * as path from "node:path";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
+import { parseDriftErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
@@ -34,9 +34,10 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     let exitCode = result.exitCode;
 
     if (exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-        setOutput(true);
+        setOutput(true, resolveDriftResolutionFolder(inputs, errorOutput.error.driftResolutionFolderPath));
+        return { exitCode, reportPath: errorOutput.error.htmlReport };
       } else if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
@@ -49,7 +50,8 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     }
 
     const output = parseCheckOutput(result.stdout);
-    setOutput(isDriftDetected(output), getDriftResolutionFolder(inputs, output));
+    const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
+    setOutput(isDriftDetected(output), resolveDriftResolutionFolder(inputs, driftResult?.driftResolutionFolder));
     return { exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
@@ -61,10 +63,7 @@ const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
     ?.filter((r): r is Drift => r.operation === "drift")
     .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
-const getDriftResolutionFolder = (inputs: FlywayMigrationsChecksInputs, output: FlywayCheckOutput | undefined) => {
-  const folder = output?.individualResults?.find(
-    (r): r is Drift => r.operation === "drift" && !!r.driftResolutionFolder,
-  )?.driftResolutionFolder;
+const resolveDriftResolutionFolder = (inputs: FlywayMigrationsChecksInputs, folder: string | undefined) => {
   if (!folder) {
     return undefined;
   }

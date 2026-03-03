@@ -12,4 +12,16 @@ type ErrorCode = "CHECK_BUILD_NO_PROVISIONER" | string;
 
 type ErrorOutput = { error?: { errorCode?: ErrorCode; message?: string } };
 
-export type { ErrorOutput, FlywayDetails, FlywayEdition, FlywayRunResult, FlywayVersionOutput, JsonLogModel };
+type DriftErrorOutput = {
+  error: { errorCode?: string; message?: string; htmlReport?: string; driftResolutionFolderPath?: string };
+};
+
+export type {
+  DriftErrorOutput,
+  ErrorOutput,
+  FlywayDetails,
+  FlywayEdition,
+  FlywayRunResult,
+  FlywayVersionOutput,
+  JsonLogModel,
+};
