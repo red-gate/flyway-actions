@@ -13268,6 +13268,9 @@ const ca = () => {
       } catch {
       }
   };
+}, Ei = (A, r) => {
+  if (A)
+    return Oe.isAbsolute(A) ? A : r ? Oe.join(r, A) : A;
 }, Ia = (A) => {
   const r = [];
   let t = "", g = !1, e = "";
@@ -13440,20 +13443,17 @@ const ca = () => {
       let e = g.exitCode;
       if (e !== 0) {
         const Q = ha(g.stdout);
-        return Q?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? (Ii(!0, Ei(A, Q.error.driftResolutionFolderPath)), { exitCode: e, reportPath: Q.error.htmlReport }) : (Q?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? ($A(
+        return Q?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? (Ii(!0, Ei(Q.error.driftResolutionFolderPath, A.workingDirectory)), { exitCode: e, reportPath: Q.error.htmlReport }) : (Q?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? ($A(
           "Drift check could not be run because advanced comparison features are not supported for this database type."
         ), e = 0) : Q?.error?.message && Be(Q.error.message), { exitCode: e });
       }
       const n = at(g.stdout), i = n?.individualResults?.find((Q) => Q.operation === "drift");
-      return Ii(Fa(n), Ei(A, i?.driftResolutionFolder)), { exitCode: e, reportPath: n?.htmlReport };
+      return Ii(Fa(n), Ei(i?.driftResolutionFolder, A.workingDirectory)), { exitCode: e, reportPath: n?.htmlReport };
     } finally {
       it();
     }
   }
-}, Fa = (A) => !!A?.individualResults?.filter((r) => r.operation === "drift").some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length), Ei = (A, r) => {
-  if (r)
-    return Oe.isAbsolute(r) ? r : A.workingDirectory ? Oe.join(A.workingDirectory, r) : r;
-}, Ii = (A, r) => {
+}, Fa = (A) => !!A?.individualResults?.filter((r) => r.operation === "drift").some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length), Ii = (A, r) => {
   he("drift-detected", A.toString()), r && he("drift-resolution-folder", r);
 }, Na = (A, r) => {
   if (r === "community") {
