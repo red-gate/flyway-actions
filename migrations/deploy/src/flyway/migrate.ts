@@ -5,23 +5,18 @@ import { getCommonArgs } from "./arg-builders.js";
 
 const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   const args: string[] = ["migrate", ...getCommonArgs(inputs)];
-
   if (inputs.targetMigrationVersion) {
     args.push(`-target=${inputs.targetMigrationVersion}`);
   }
-
   if (inputs.cherryPick) {
     args.push(`-cherryPick=${inputs.cherryPick}`);
   }
-
   if (inputs.baselineOnMigrate) {
     args.push("-baselineOnMigrate=true");
   }
-
   if (inputs.saveSnapshot) {
     args.push("-migrate.saveSnapshot=true");
   }
-
   return args;
 };
 

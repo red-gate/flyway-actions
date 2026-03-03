@@ -28,13 +28,10 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
     if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
-
       return { exitCode: result.exitCode };
     }
-
     const output = parseCheckOutput(result.stdout);
     setCodeOutputs(output);
-
     return { exitCode: result.exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();

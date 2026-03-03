@@ -30,7 +30,6 @@ const runCheckDryrun = async (inputs: FlywayMigrationsChecksInputs, edition: Fly
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       return { exitCode: result.exitCode };
     }
-
     const output = parseCheckOutput(result.stdout);
     return { exitCode: result.exitCode, reportPath: output?.htmlReport };
   } finally {
