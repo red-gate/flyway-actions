@@ -1,8 +1,4 @@
-import type {
-  FlywayMigrateOutput,
-  FlywayMigrationsDeploymentInputs,
-  FlywayMigrationsDeploymentOutputs,
-} from "../types.js";
+import type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
 import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
 import { getCommonArgs } from "./arg-builders.js";
@@ -35,23 +31,28 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
     const args = getMigrateArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
-    if (result.exitCode !== 0) {
+    let exitCode = result.exitCode;
+    if (exitCode === 0) {
+      const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
+      core.setOutput("migrations-applied", migrationsApplied.toString());
+      core.setOutput("schema-version", schemaVersion);
+    } else {
       const errorOutput = parseErrorOutput(result.stdout);
-      errorOutput?.error?.message && core.error(errorOutput.error.message);
-      throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
+      if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
+        core.info(
+          "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
+        );
+        exitCode = 0;
+      } else {
+        errorOutput?.error?.message && core.error(errorOutput.error.message);
+        throw new Error(`Flyway migrate failed with exit code ${exitCode}`);
+      }
     }
 
-    const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
-    setOutputs({ exitCode: result.exitCode, migrationsApplied, schemaVersion });
+    core.setOutput("exit-code", exitCode.toString());
   } finally {
     core.endGroup();
   }
-};
-
-const setOutputs = (outputs: FlywayMigrationsDeploymentOutputs): void => {
-  core.setOutput("exit-code", outputs.exitCode.toString());
-  core.setOutput("migrations-applied", outputs.migrationsApplied.toString());
-  core.setOutput("schema-version", outputs.schemaVersion);
 };
 
 const parseFlywayOutput = (stdout: string): { migrationsApplied: number; schemaVersion: string } => {

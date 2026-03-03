@@ -2,10 +2,11 @@ import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
 
 const setOutput = vi.fn();
+const info = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
-  info: vi.fn(),
+  info,
   error: vi.fn(),
   startGroup: vi.fn(),
   endGroup: vi.fn(),
@@ -22,8 +23,9 @@ describe("checkForDrift", () => {
   it("should set drift-detected to false and exit-code to 0 when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
@@ -36,8 +38,9 @@ describe("checkForDrift", () => {
       return Promise.resolve(1);
     });
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
+    expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
@@ -54,6 +57,31 @@ describe("checkForDrift", () => {
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+  });
+
+  it("should return no drift and comparison not supported when database does not support comparison", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+              message: "No comparison capability found that supports both types",
+            },
+          }),
+        ),
+      );
+      return Promise.resolve(1);
+    });
+
+    const result = await checkForDrift({ targetUrl: "jdbc:h2:mem:test" });
+
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: false });
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
+    expect(info).toHaveBeenCalledWith(
+      "Drift check could not be run because advanced comparison features are not supported for this database type.",
+    );
   });
 });
 

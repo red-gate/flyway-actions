@@ -33,17 +33,23 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
     const result = await runFlyway(args, inputs.workingDirectory);
     const output = parseCheckOutput(result.stdout);
     setChangesOutputs(output);
-    if (result.exitCode !== 0) {
+    let exitCode = result.exitCode;
+    if (exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !inputs.buildOkToErase) {
         core.error(
           'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.',
         );
+      } else if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
+        core.info(
+          "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
+        );
+        exitCode = 0;
       } else {
         errorOutput?.error?.message && core.error(errorOutput.error.message);
       }
     }
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
+    return { exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
   }

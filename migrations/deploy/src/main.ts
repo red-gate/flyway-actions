@@ -24,14 +24,15 @@ const run = async (): Promise<void> => {
     if (flywayDetails.edition === "enterprise") {
       if (inputs.skipDriftCheck) {
         core.info('Skipping drift check: "skip-drift-check" set to true');
+        inputs.saveSnapshot = true;
       } else {
-        const driftDetected = await checkForDrift(inputs);
+        const { driftDetected, comparisonSupported } = await checkForDrift(inputs);
         if (driftDetected) {
           core.setFailed("Drift detected. Aborting deployment.");
           return;
         }
+        inputs.saveSnapshot = comparisonSupported;
       }
-      inputs.saveSnapshot = true;
     } else {
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
