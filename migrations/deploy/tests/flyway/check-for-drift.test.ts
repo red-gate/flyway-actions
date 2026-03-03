@@ -1,5 +1,5 @@
 import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
-import type { ExecOptions } from "@actions/exec";
+import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const setOutput = vi.fn();
 const info = vi.fn();
@@ -31,12 +31,12 @@ describe("checkForDrift", () => {
   });
 
   it("should set drift-detected output to true when error code is CHECK_DRIFT_DETECTED", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } })),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } },
+        exitCode: 1,
+      }),
+    );
 
     const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
@@ -46,16 +46,14 @@ describe("checkForDrift", () => {
   });
 
   it("should set report-path output when drift detected with htmlReport in output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected", htmlReport: "drift-report.html" },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected", htmlReport: "drift-report.html" },
+        },
+        exitCode: 1,
+      }),
+    );
 
     await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
@@ -63,12 +61,12 @@ describe("checkForDrift", () => {
   });
 
   it("should not set drift-detected when non-drift error occurs", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Something else failed" } })),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "FAULT", message: "Something else failed" } },
+        exitCode: 1,
+      }),
+    );
 
     await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 
@@ -77,19 +75,17 @@ describe("checkForDrift", () => {
   });
 
   it("should return no drift and comparison not supported when database does not support comparison", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
-              message: "No comparison capability found that supports both types",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+            message: "No comparison capability found that supports both types",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     const result = await checkForDrift({ targetUrl: "jdbc:h2:mem:test" });
 

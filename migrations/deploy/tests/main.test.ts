@@ -1,4 +1,5 @@
-import type { ExecOptions } from "@actions/exec";
+import type { MockExecOptions } from "@flyway-actions/shared/test-utils";
+import { mockExecSequence } from "@flyway-actions/shared/test-utils";
 
 const getInput = vi.fn();
 const getBooleanInput = vi.fn();
@@ -32,9 +33,9 @@ const setupMocks = () => {
 type SetupFlywayMockOptions = {
   edition: string;
   driftExitCode?: number;
-  driftOutput?: string;
+  driftOutput?: Record<string, unknown>;
   migrateExitCode: number;
-  migrateOutput?: string;
+  migrateOutput?: Record<string, unknown>;
 };
 
 describe("run", () => {
@@ -48,28 +49,17 @@ describe("run", () => {
     driftExitCode,
     driftOutput,
     migrateExitCode,
-    migrateOutput = "",
+    migrateOutput,
   }: SetupFlywayMockOptions) => {
-    let callCount = 0;
-    const hasDriftCheck = driftExitCode !== undefined && edition.toLowerCase() === "enterprise";
-    const defaultDriftOutput = JSON.stringify({
+    const defaultDriftOutput = {
       error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" },
-    });
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      callCount++;
-      if (callCount === 1) {
-        options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
-        return Promise.resolve(0);
-      }
-      if (hasDriftCheck && callCount === 2) {
-        options?.listeners?.stdout?.(Buffer.from(driftOutput ?? defaultDriftOutput));
-        return Promise.resolve(driftExitCode);
-      }
-      if (migrateOutput) {
-        options?.listeners?.stdout?.(Buffer.from(migrateOutput));
-      }
-      return Promise.resolve(migrateExitCode);
-    });
+    };
+    const calls: MockExecOptions[] = [{ stdout: { edition, version: "10.0.0" } }];
+    if (driftExitCode !== undefined && edition.toLowerCase() === "enterprise") {
+      calls.push({ stdout: driftOutput ?? defaultDriftOutput, exitCode: driftExitCode });
+    }
+    calls.push({ stdout: migrateOutput, exitCode: migrateExitCode });
+    exec.mockImplementation(mockExecSequence(calls));
   };
 
   it("should fail when flyway is not installed", async () => {
@@ -98,7 +88,7 @@ describe("run", () => {
       edition: "Enterprise",
       driftExitCode: 0,
       migrateExitCode: 0,
-      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
+      migrateOutput: { migrationsExecuted: 1, targetSchemaVersion: "1" },
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -121,7 +111,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Community",
       migrateExitCode: 0,
-      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
+      migrateOutput: { migrationsExecuted: 1, targetSchemaVersion: "1" },
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -159,7 +149,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Community",
       migrateExitCode: 0,
-      migrateOutput: JSON.stringify({ migrationsExecuted: 3, targetSchemaVersion: "3" }),
+      migrateOutput: { migrationsExecuted: 3, targetSchemaVersion: "3" },
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -197,7 +187,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       migrateExitCode: 0,
-      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
+      migrateOutput: { migrationsExecuted: 1, targetSchemaVersion: "1" },
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -219,14 +209,14 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 1,
-      driftOutput: JSON.stringify({
+      driftOutput: {
         error: {
           errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
           message: "No comparison capability found that supports both types",
         },
-      }),
+      },
       migrateExitCode: 0,
-      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
+      migrateOutput: { migrationsExecuted: 1, targetSchemaVersion: "1" },
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
@@ -250,7 +240,7 @@ describe("run", () => {
       edition: "Enterprise",
       driftExitCode: 0,
       migrateExitCode: 0,
-      migrateOutput: JSON.stringify({ migrationsExecuted: 1, targetSchemaVersion: "1" }),
+      migrateOutput: { migrationsExecuted: 1, targetSchemaVersion: "1" },
     });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {

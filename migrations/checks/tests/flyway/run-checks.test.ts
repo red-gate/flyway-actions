@@ -1,6 +1,7 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 import type { ExecOptions } from "@actions/exec";
 import * as path from "node:path";
+import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const error = vi.fn();
@@ -25,19 +26,13 @@ const baseInputs: FlywayMigrationsChecksInputs = {};
 
 describe("runChecks", () => {
   it("should not throw on success", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("{}"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
 
     await expect(runChecks(baseInputs, "enterprise")).resolves.not.toThrow();
   });
 
   it("should set exit-code to 0 on success", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("{}"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks(baseInputs, "enterprise");
 
@@ -45,10 +40,7 @@ describe("runChecks", () => {
   });
 
   it("should make separate exec calls for each check type", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("{}"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks(baseInputs, "enterprise");
 
@@ -70,10 +62,7 @@ describe("runChecks", () => {
   });
 
   it("should make four exec calls when build url is provided", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("{}"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
@@ -84,10 +73,7 @@ describe("runChecks", () => {
   });
 
   it("should only include build args in the changes invocation", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("{}"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
@@ -101,24 +87,24 @@ describe("runChecks", () => {
   });
 
   it("should set exit-code from first failed check before throwing", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Check failed" } })),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "FAULT", message: "Check failed" } },
+        exitCode: 1,
+      }),
+    );
 
     await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow();
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
   });
 
   it("should throw Flyway checks failed on failure", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Check failed" } })),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "FAULT", message: "Check failed" } },
+        exitCode: 1,
+      }),
+    );
 
     await expect(runChecks(baseInputs, "enterprise")).rejects.toThrowError("Flyway checks failed");
   });
@@ -175,10 +161,7 @@ describe("runChecks", () => {
   });
 
   it("should set report-path to report.html when no htmlReport in output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from("{}"));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks(baseInputs, "enterprise");
 
@@ -186,10 +169,7 @@ describe("runChecks", () => {
   });
 
   it("should set report-path from htmlReport in check output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "custom-report.html" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { htmlReport: "custom-report.html" } }));
 
     await runChecks(baseInputs, "enterprise");
 
@@ -197,10 +177,7 @@ describe("runChecks", () => {
   });
 
   it("should prepend working directory to report-path", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "custom-report.html" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { htmlReport: "custom-report.html" } }));
 
     await runChecks({ workingDirectory: "my-project" }, "enterprise");
 
@@ -208,10 +185,7 @@ describe("runChecks", () => {
   });
 
   it("should not prepend working directory when htmlReport is absolute", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ htmlReport: "/tmp/reports/custom-report.html" })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { htmlReport: "/tmp/reports/custom-report.html" } }));
 
     await runChecks({ workingDirectory: "my-project" }, "enterprise");
 

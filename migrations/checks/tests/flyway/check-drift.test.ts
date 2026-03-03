@@ -1,6 +1,6 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
-import type { ExecOptions } from "@actions/exec";
 import * as path from "node:path";
+import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const setOutput = vi.fn();
@@ -88,10 +88,7 @@ describe("runDriftCheck", () => {
   });
 
   it("should set drift-detected to false when exit code is 0 and no drift in output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { individualResults: [{ operation: "drift" }] } }));
 
     await runCheckDrift(baseInputs, "enterprise");
 
@@ -99,16 +96,13 @@ describe("runDriftCheck", () => {
   });
 
   it("should set drift-detected to true when exit code is 0 and drift detected in output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
-          }),
-        ),
-      );
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
+        },
+      }),
+    );
 
     await runCheckDrift(baseInputs, "enterprise");
 
@@ -116,20 +110,18 @@ describe("runDriftCheck", () => {
   });
 
   it("should set drift-detected and drift-resolution-folder when exit code is non-zero and error code is CHECK_DRIFT_DETECTED", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "CHECK_DRIFT_DETECTED",
-              message: "Drift detected",
-              driftResolutionFolderPath: "drift-scripts",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "CHECK_DRIFT_DETECTED",
+            message: "Drift detected",
+            driftResolutionFolderPath: "drift-scripts",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     await runCheckDrift(baseInputs, "enterprise");
 
@@ -138,19 +130,17 @@ describe("runDriftCheck", () => {
   });
 
   it("should return exit code 0 when database does not support comparison", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
-              message: "No comparison capability found that supports both types",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
+            message: "No comparison capability found that supports both types",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     const result = await runCheckDrift(baseInputs, "enterprise");
 
@@ -162,12 +152,12 @@ describe("runDriftCheck", () => {
   });
 
   it("should not set drift-detected when exit code is non-zero and error code is not CHECK_DRIFT_DETECTED", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "FAULT", message: "Something else failed" } })),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "FAULT", message: "Something else failed" } },
+        exitCode: 1,
+      }),
+    );
 
     await runCheckDrift(baseInputs, "enterprise");
 
@@ -175,17 +165,14 @@ describe("runDriftCheck", () => {
   });
 
   it("should return reportPath from parsed output", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            htmlReport: "custom-report.html",
-            individualResults: [{ operation: "drift" }],
-          }),
-        ),
-      );
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          htmlReport: "custom-report.html",
+          individualResults: [{ operation: "drift" }],
+        },
+      }),
+    );
 
     const result = await runCheckDrift(baseInputs, "enterprise");
 
@@ -193,10 +180,7 @@ describe("runDriftCheck", () => {
   });
 
   it("should return undefined reportPath when output has no htmlReport", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { individualResults: [{ operation: "drift" }] } }));
 
     const result = await runCheckDrift(baseInputs, "enterprise");
 
@@ -204,16 +188,13 @@ describe("runDriftCheck", () => {
   });
 
   it("should set drift-resolution-folder output when present in drift result", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
-          }),
-        ),
-      );
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
+        },
+      }),
+    );
 
     await runCheckDrift(baseInputs, "enterprise");
 
@@ -221,10 +202,7 @@ describe("runDriftCheck", () => {
   });
 
   it("should not set drift-resolution-folder output when not present", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ individualResults: [{ operation: "drift" }] })));
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(mockExec({ stdout: { individualResults: [{ operation: "drift" }] } }));
 
     await runCheckDrift(baseInputs, "enterprise");
 
@@ -232,16 +210,13 @@ describe("runDriftCheck", () => {
   });
 
   it("should prepend working directory to drift-resolution-folder", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
-          }),
-        ),
-      );
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
+        },
+      }),
+    );
 
     await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
 
@@ -249,16 +224,13 @@ describe("runDriftCheck", () => {
   });
 
   it("should not prepend working directory when drift-resolution-folder is absolute", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            individualResults: [{ operation: "drift", driftResolutionFolder: "/tmp/drift-scripts" }],
-          }),
-        ),
-      );
-      return Promise.resolve(0);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          individualResults: [{ operation: "drift", driftResolutionFolder: "/tmp/drift-scripts" }],
+        },
+      }),
+    );
 
     await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
 
