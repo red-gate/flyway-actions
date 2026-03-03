@@ -49,7 +49,7 @@ jobs:
           build-url: jdbc:sqlite:database/build.db
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
           pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
@@ -59,7 +59,7 @@ jobs:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
       - name: Download report
         uses: actions/download-artifact@v8
         with:
@@ -127,7 +127,7 @@ jobs:
           build-url: jdbc:h2:mem:build
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
-          working-directory: sample-project-h2
+          working-directory: sample-projects/h2
           pre-deployment-report-name: flyway-pre-deployment-report-h2-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
@@ -137,7 +137,7 @@ jobs:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:h2:mem:prod
-          working-directory: sample-project-h2
+          working-directory: sample-projects/h2
       - name: Download report
         uses: actions/download-artifact@v8
         with:
@@ -189,13 +189,13 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           skip-code-review: 'true' # Bundled code review is Enterprise-only, and fails without an external SQLFluff install
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
       - name: Run deploy
         id: deploy
         uses: ./migrations/deploy
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          working-directory: sample-project
+          working-directory: sample-projects/sqlite
       - name: Test outputs
         shell: bash
         run: |
