@@ -1,5 +1,5 @@
 name: 'Redgate Flyway GitHub Actions'
-description: 'Deploy database changes with confidence'
+description: 'Official Redgate Actions: Set up, check, and deploy changes with Redgate Flyway'
 author: 'Redgate'
 
 branding:
