@@ -148,7 +148,7 @@ name: Deploy to production
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   automated-deploy:
@@ -162,6 +162,19 @@ jobs:
         with:
           edition: community
           i-agree-to-the-eula: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install SQLFluff
+        run: pip install sqlfluff
+      - name: Run checks
+        uses: red-gate/flyway-actions/migrations/checks@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
       - name: Run migrations deployment
         uses: red-gate/flyway-actions/migrations/deploy@v1
         with:
