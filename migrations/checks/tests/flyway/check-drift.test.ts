@@ -115,10 +115,18 @@ describe("runDriftCheck", () => {
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
   });
 
-  it("should set drift-detected to true when exit code is non-zero and error code is CHECK_DRIFT_DETECTED", async () => {
+  it("should set drift-detected and drift-resolution-folder when exit code is non-zero and error code is CHECK_DRIFT_DETECTED", async () => {
     exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
       options?.listeners?.stdout?.(
-        Buffer.from(JSON.stringify({ error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } })),
+        Buffer.from(
+          JSON.stringify({
+            error: {
+              errorCode: "CHECK_DRIFT_DETECTED",
+              message: "Drift detected",
+              driftResolutionFolderPath: "drift-scripts",
+            },
+          }),
+        ),
       );
       return Promise.resolve(1);
     });
@@ -126,6 +134,7 @@ describe("runDriftCheck", () => {
     await runCheckDrift(baseInputs, "enterprise");
 
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "drift-scripts");
   });
 
   it("should return exit code 0 when database does not support comparison", async () => {
