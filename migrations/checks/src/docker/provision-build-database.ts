@@ -3,7 +3,6 @@ import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as core from "@actions/core";
 import { getDockerConfig, parseDatabaseType, parseJdbcUrl, probeTargetVersion } from "./database-config.js";
 
 type ProvisionedDatabase = {
@@ -84,19 +83,11 @@ const provisionDockerContainer = (
 
   let version: string | undefined;
   if (conn) {
-    core.info(`Probing ${dbType} target version at ${conn.host}:${conn.port}...`);
     version = probeTargetVersion(dbType, conn, targetUser, targetPassword);
-    if (version) {
-      core.info(`Detected ${dbType} version: ${version}`);
-    } else {
-      core.info(`Could not detect ${dbType} version, using default image`);
-    }
   }
 
   const image = config.resolveImage(version);
   const containerName = `flyway_build_${Date.now()}`;
-
-  core.info(`Starting ${dbType} container: ${image}`);
   const runCmd = buildDockerRunArgs(containerName, image, config.containerEnv, config.healthCmd);
   execSync(runCmd, { stdio: "pipe" });
 

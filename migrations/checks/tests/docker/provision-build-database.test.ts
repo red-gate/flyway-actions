@@ -2,10 +2,6 @@ vi.doMock("node:child_process", () => ({
   execSync: vi.fn(),
 }));
 
-vi.doMock("@actions/core", () => ({
-  info: vi.fn(),
-}));
-
 const { execSync } = await import("node:child_process");
 const mockedExecSync = vi.mocked(execSync);
 

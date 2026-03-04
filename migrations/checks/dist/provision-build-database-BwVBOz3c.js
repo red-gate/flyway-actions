@@ -1,16 +1,15 @@
 import { execSync as a } from "node:child_process";
-import * as f from "node:fs";
+import * as m from "node:fs";
 import * as y from "node:os";
-import * as b from "node:path";
-import { i as d } from "./main-C9uxLddy.js";
-const h = [
+import * as f from "node:path";
+const b = [
   { prefix: "jdbc:postgresql://", type: "postgresql" },
   { prefix: "jdbc:sqlserver://", type: "sqlserver" },
   { prefix: "jdbc:mysql://", type: "mysql" },
   { prefix: "jdbc:oracle:", type: "oracle" },
   { prefix: "jdbc:sqlite:", type: "sqlite" }
-], p = (e) => h.find((t) => e.startsWith(t.prefix))?.type, $ = (e) => {
-  const t = p(e);
+], d = (e) => b.find((t) => e.startsWith(t.prefix))?.type, h = (e) => {
+  const t = d(e);
   switch (t) {
     case "postgresql":
     case "mysql": {
@@ -22,11 +21,11 @@ const h = [
       };
     }
     case "sqlserver": {
-      const r = e.replace("jdbc:sqlserver://", ""), s = r.split(";")[0], [o, l] = s.split(":"), n = (r.includes(";") ? r.substring(r.indexOf(";") + 1) : "").split(";").find((c) => c.toLowerCase().startsWith("databasename="));
+      const r = e.replace("jdbc:sqlserver://", ""), s = r.split(";")[0], [o, l] = s.split(":"), c = (r.includes(";") ? r.substring(r.indexOf(";") + 1) : "").split(";").find((n) => n.toLowerCase().startsWith("databasename="));
       return {
         host: o,
         port: l ? parseInt(l, 10) : 1433,
-        database: n?.split("=")[1]
+        database: c?.split("=")[1]
       };
     }
     case "oracle": {
@@ -109,7 +108,7 @@ const h = [
     healthCmd: "healthcheck.sh",
     buildJdbcUrl: (e, t, r) => `jdbc:oracle:thin:@${e}:${t}/${r}`
   }
-}, g = (e) => v[e], q = (e, t, r, s) => {
+}, $ = (e) => v[e], q = (e, t, r, s) => {
   try {
     switch (e) {
       case "postgresql":
@@ -136,7 +135,7 @@ const h = [
           `docker run --rm --network host mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd -S "${t.host},${t.port}" -U "${r}" -P "${s}" -Q "SET NOCOUNT ON; SELECT SERVERPROPERTY('ProductVersion')" -h -1 -W`,
           { encoding: "utf-8", stdio: "pipe", timeout: 3e4 }
         ).trim().split(`
-`).filter((n) => n.trim().length > 0);
+`).filter((c) => c.trim().length > 0);
         return l[l.length - 1].trim().split(".")[0];
       }
       case "oracle":
@@ -146,17 +145,17 @@ const h = [
     return;
   }
 }, _ = () => {
-  const e = b.join(y.tmpdir(), `flyway_build_${Date.now()}.db`);
+  const e = f.join(y.tmpdir(), `flyway_build_${Date.now()}.db`);
   return {
     jdbcUrl: `jdbc:sqlite:${e}`,
     user: "",
     password: "",
-    cleanup: () => (f.rmSync(e, { force: !0 }), Promise.resolve())
+    cleanup: () => (m.rmSync(e, { force: !0 }), Promise.resolve())
   };
 }, w = (e, t, r, s) => {
   const o = Object.entries(r).map(([l, i]) => `-e ${l}=${i}`).join(" ");
   return `docker run -d --name ${e} -P --health-cmd="${s}" --health-interval=2s --health-timeout=5s --health-retries=60 ${o} ${t}`;
-}, P = (e, t = 120) => {
+}, g = (e, t = 120) => {
   for (let r = 0; r < t; r++) {
     const s = a(`docker inspect --format={{.State.Health.Status}} ${e}`, {
       stdio: "pipe",
@@ -170,32 +169,30 @@ const h = [
       throw a(`docker rm -f ${e}`, { stdio: "pipe" }), new Error("Container did not become healthy in time");
     a("sleep 1", { stdio: "pipe" });
   }
-}, E = (e, t) => {
+}, P = (e, t) => {
   const r = a(`docker port ${e} ${t}`, {
     stdio: "pipe",
     encoding: "utf-8"
   }).trim();
   return parseInt(r.split(":").pop(), 10);
-}, C = (e, t, r, s) => {
-  const o = g(e), l = $(t);
+}, E = (e, t, r, s) => {
+  const o = $(e), l = h(t);
   let i;
-  l && (d(`Probing ${e} target version at ${l.host}:${l.port}...`), i = q(e, l, r, s), i ? d(`Detected ${e} version: ${i}`) : d(`Could not detect ${e} version, using default image`));
-  const n = o.resolveImage(i), c = `flyway_build_${Date.now()}`;
-  d(`Starting ${e} container: ${n}`);
-  const u = w(c, n, o.containerEnv, o.healthCmd);
-  a(u, { stdio: "pipe" }), P(c);
-  const m = E(c, o.defaultPort);
+  l && (i = q(e, l, r, s));
+  const c = o.resolveImage(i), n = `flyway_build_${Date.now()}`, p = w(n, c, o.containerEnv, o.healthCmd);
+  a(p, { stdio: "pipe" }), g(n);
+  const u = P(n, o.defaultPort);
   return {
-    jdbcUrl: o.buildJdbcUrl("localhost", m, o.database),
+    jdbcUrl: o.buildJdbcUrl("localhost", u, o.database),
     user: o.user,
     password: o.password,
-    cleanup: () => (a(`docker rm -f ${c}`, { stdio: "pipe" }), Promise.resolve())
+    cleanup: () => (a(`docker rm -f ${n}`, { stdio: "pipe" }), Promise.resolve())
   };
-}, D = (e, t, r) => {
-  const s = p(e);
+}, O = (e, t, r) => {
+  const s = d(e);
   if (s)
-    return s === "sqlite" ? _() : C(s, e, t, r);
+    return s === "sqlite" ? _() : E(s, e, t, r);
 };
 export {
-  D as provisionBuildDatabase
+  O as provisionBuildDatabase
 };
