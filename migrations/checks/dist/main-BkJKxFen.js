@@ -97,12 +97,12 @@ function co(A, r) {
     throw new Error(`Unexpected input: value should not contain the delimiter "${t}"`);
   return `${A}<<${t}${ge.EOL}${o}${ge.EOL}${t}`;
 }
-var ln = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, Ce = {}, hn;
+var ln = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, Ie = {}, hn;
 function Bo() {
-  if (hn) return Ce;
+  if (hn) return Ie;
   hn = 1;
   var A = Ki, r = Pi, t = Zi, o = zi, e = Xi;
-  Ce.httpOverHttp = n, Ce.httpsOverHttp = i, Ce.httpOverHttps = Q, Ce.httpsOverHttps = l;
+  Ie.httpOverHttp = n, Ie.httpsOverHttp = i, Ie.httpOverHttps = Q, Ie.httpsOverHttps = l;
   function n(c) {
     var u = new B(c);
     return u.request = r.request, u;
@@ -240,7 +240,7 @@ function Bo() {
     var c = Array.prototype.slice.call(arguments);
     typeof c[0] == "string" ? c[0] = "TUNNEL: " + c[0] : c.unshift("TUNNEL:"), console.error.apply(console, c);
   } : I = function() {
-  }, Ce.debug = I, Ce;
+  }, Ie.debug = I, Ie;
 }
 var Bt, un;
 function Eo() {
@@ -6265,7 +6265,7 @@ function ko() {
   }
   return _t = t, _t;
 }
-var le = {}, Ve = { exports: {} }, jt, is;
+var Ce = {}, Ve = { exports: {} }, jt, is;
 function mi() {
   if (is) return jt;
   is = 1;
@@ -6976,7 +6976,7 @@ function bo() {
 }
 var Is;
 function Uo() {
-  return Is || (Is = 1, le.request = mo(), le.stream = Fo(), le.pipeline = No(), le.upgrade = So(), le.connect = bo()), le;
+  return Is || (Is = 1, Ce.request = mo(), Ce.stream = Fo(), Ce.pipeline = No(), Ce.upgrade = So(), Ce.connect = bo()), Ce;
 }
 var sr, Cs;
 function Ni() {
@@ -9592,12 +9592,12 @@ function tt() {
           onHeaders(ZA, jA, Qt, Ge) {
             if (ZA < 200)
               return;
-            let Ie = "";
+            let Ee = "";
             const Je = new n();
             for (let oe = 0; oe < jA.length; oe += 2)
               Je.append(FA(jA[oe]), jA[oe + 1].toString("latin1"), !0);
-            Ie = Je.get("location", !0), this.body = new iA({ read: Qt });
-            const de = [], Wi = Ie && W.redirect === "follow" && v.has(ZA);
+            Ee = Je.get("location", !0), this.body = new iA({ read: Qt });
+            const de = [], Wi = Ee && W.redirect === "follow" && v.has(ZA);
             if (W.method !== "HEAD" && W.method !== "CONNECT" && !O.includes(ZA) && !Wi) {
               const oe = Je.get("content-encoding", !0), ve = oe ? oe.toLowerCase().split(",") : [], En = 5;
               if (ve.length > En)
@@ -9655,8 +9655,8 @@ function tt() {
             if (ZA !== 101)
               return;
             const Ge = new n();
-            for (let Ie = 0; Ie < jA.length; Ie += 2)
-              Ge.append(FA(jA[Ie]), jA[Ie + 1].toString("latin1"), !0);
+            for (let Ee = 0; Ee < jA.length; Ee += 2)
+              Ge.append(FA(jA[Ee]), jA[Ee + 1].toString("latin1"), !0);
             return OA({
               status: ZA,
               statusText: R[ZA],
@@ -13210,7 +13210,7 @@ function Ei(A) {
 function XA(A, r) {
   return (process.env[`INPUT_${A.replace(/ /g, "_").toUpperCase()}`] || "").trim();
 }
-function Ee(A, r) {
+function le(A, r) {
   const t = ["true", "True", "TRUE"], o = ["false", "False", "FALSE"], e = XA(A);
   if (t.includes(e))
     return !0;
@@ -13485,7 +13485,7 @@ const Ba = () => {
 }, Ua = async (A, r) => {
   if (A.autoProvisionBuildDatabase !== !1 && !Pe(A) && r === "enterprise" && !A.skipDeploymentChangesReport && A.targetUrl)
     try {
-      const { provisionBuildDatabase: t } = await import("./provision-build-database-ChTvuSaR.js");
+      const { provisionBuildDatabase: t } = await import("./provision-build-database-BofsNjax.js");
       return await t(A.targetUrl);
     } catch (t) {
       ca(`Failed to auto-provision build database: ${t}`);
@@ -13514,7 +13514,7 @@ const Ba = () => {
     t && await t.cleanup();
   }
 }, La = () => {
-  const A = XA("target-environment") || void 0, r = XA("target-url") || void 0, t = XA("target-user") || void 0, o = XA("target-password") || void 0, e = XA("target-schemas") || void 0, n = XA("target-migration-version") || void 0, i = XA("cherry-pick") || void 0, Q = Ee("auto-provision-build-database"), l = XA("build-environment") || void 0, B = XA("build-url") || void 0, s = XA("build-user") || void 0, a = XA("build-password") || void 0, C = XA("build-schemas") || void 0, I = Ee("build-ok-to-erase"), c = Ee("skip-code-review"), u = Ee("skip-drift-check"), p = Ee("skip-deployment-changes-report"), F = Ee("skip-deployment-script-review"), S = Ee("fail-on-code-review"), L = Ee("fail-on-drift"), U = XA("working-directory"), b = U ? Qe.resolve(U) : void 0, E = XA("pre-deployment-report-name") || void 0, h = XA("extra-args") || void 0;
+  const A = XA("target-environment") || void 0, r = XA("target-url") || void 0, t = XA("target-user") || void 0, o = XA("target-password") || void 0, e = XA("target-schemas") || void 0, n = XA("target-migration-version") || void 0, i = XA("cherry-pick") || void 0, Q = XA("auto-provision-build-database"), l = Q ? Q.toLowerCase() === "true" : !0, B = XA("build-environment") || void 0, s = XA("build-url") || void 0, a = XA("build-user") || void 0, C = XA("build-password") || void 0, I = XA("build-schemas") || void 0, c = le("build-ok-to-erase"), u = le("skip-code-review"), p = le("skip-drift-check"), F = le("skip-deployment-changes-report"), S = le("skip-deployment-script-review"), L = le("fail-on-code-review"), U = le("fail-on-drift"), b = XA("working-directory"), E = b ? Qe.resolve(b) : void 0, h = XA("pre-deployment-report-name") || void 0, D = XA("extra-args") || void 0;
   return {
     targetEnvironment: A,
     targetUrl: r,
@@ -13523,22 +13523,22 @@ const Ba = () => {
     targetSchemas: e,
     targetMigrationVersion: n,
     cherryPick: i,
-    autoProvisionBuildDatabase: Q,
-    buildEnvironment: l,
-    buildUrl: B,
-    buildUser: s,
-    buildPassword: a,
-    buildSchemas: C,
-    buildOkToErase: I,
-    skipCodeReview: c,
-    skipDriftCheck: u,
-    skipDeploymentChangesReport: p,
-    skipDeploymentScriptReview: F,
-    failOnCodeReview: S,
-    failOnDrift: L,
-    workingDirectory: b,
-    preDeploymentReportName: E,
-    extraArgs: h
+    autoProvisionBuildDatabase: l,
+    buildEnvironment: B,
+    buildUrl: s,
+    buildUser: a,
+    buildPassword: C,
+    buildSchemas: I,
+    buildOkToErase: c,
+    skipCodeReview: u,
+    skipDriftCheck: p,
+    skipDeploymentChangesReport: F,
+    skipDeploymentScriptReview: S,
+    failOnCodeReview: L,
+    failOnDrift: U,
+    workingDirectory: E,
+    preDeploymentReportName: h,
+    extraArgs: D
   };
 }, Ta = (A) => {
   A.targetPassword && Ei(A.targetPassword), A.buildPassword && Ei(A.buildPassword);

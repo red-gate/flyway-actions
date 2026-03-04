@@ -10,7 +10,8 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const targetSchemas = core.getInput("target-schemas") || undefined;
   const targetMigrationVersion = core.getInput("target-migration-version") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
-  const autoProvisionBuildDatabase = core.getBooleanInput("auto-provision-build-database");
+  const autoProvisionRaw = core.getInput("auto-provision-build-database");
+  const autoProvisionBuildDatabase = autoProvisionRaw ? autoProvisionRaw.toLowerCase() === "true" : true;
   const buildEnvironment = core.getInput("build-environment") || undefined;
   const buildUrl = core.getInput("build-url") || undefined;
   const buildUser = core.getInput("build-user") || undefined;
