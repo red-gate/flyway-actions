@@ -1,14 +1,23 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
 
 const info = vi.fn();
+const error = vi.fn();
 const setOutput = vi.fn();
+const runFlyway = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
+  error,
   setOutput,
+  startGroup: vi.fn(),
+  endGroup: vi.fn(),
 }));
 
-const { getCodeArgs, setCodeOutputs } = await import("../../src/flyway/check-code.js");
+vi.doMock("@flyway-actions/shared", () => ({
+  runFlyway,
+}));
+
+const { getCodeArgs, runCheckCode, setCodeOutputs } = await import("../../src/flyway/check-code.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
 
@@ -70,30 +79,82 @@ describe("getCodeArgs", () => {
 
 describe("setCodeOutputs", () => {
   it("should set code-violation-count and code-violation-codes", () => {
-    setCodeOutputs({
-      individualResults: [
-        {
-          operation: "code",
-          results: [{ violations: [{ code: "RG06" }, { code: "RG09" }] }, { violations: [{ code: "RG06" }] }],
-        },
-      ],
-    });
+    setCodeOutputs([{ violations: [{ code: "RG06" }, { code: "RG09" }] }, { violations: [{ code: "RG06" }] }]);
 
     expect(setOutput).toHaveBeenCalledWith("code-violation-count", "3");
     expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06,RG09");
   });
 
   it("should set code-violation-count to zero when no violations", () => {
-    setCodeOutputs({ individualResults: [{ operation: "code", results: [{ violations: [] }] }] });
+    setCodeOutputs([{ violations: [] }]);
 
     expect(setOutput).toHaveBeenCalledWith("code-violation-count", "0");
     expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "");
   });
 
-  it("should not set code outputs when code result is absent", () => {
-    setCodeOutputs({ individualResults: [{ operation: "drift" }] });
+  it("should handle empty results", () => {
+    setCodeOutputs([]);
 
-    expect(setOutput).not.toHaveBeenCalledWith("code-violation-count", expect.anything());
-    expect(setOutput).not.toHaveBeenCalledWith("code-violation-codes", expect.anything());
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "0");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "");
+  });
+});
+
+describe("runCheckCode", () => {
+  it("should return undefined when skipCodeReview is true", async () => {
+    const result = await runCheckCode({ skipCodeReview: true });
+
+    expect(result).toBeUndefined();
+  });
+
+  it("should set outputs and return reportPath on success", async () => {
+    runFlyway.mockResolvedValue({
+      exitCode: 0,
+      stdout: JSON.stringify({
+        htmlReport: "report.html",
+        individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],
+      }),
+    });
+
+    const result = await runCheckCode(baseInputs);
+
+    expect(result?.exitCode).toBe(0);
+    expect(result?.reportPath).toBe("report.html");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "1");
+  });
+
+  it("should parse violations from error output on failure", async () => {
+    runFlyway.mockResolvedValue({
+      exitCode: 1,
+      stdout: JSON.stringify({
+        error: {
+          errorCode: "CHECK_CODE_REVIEW_VIOLATION",
+          message: "Code Analysis Violation(s) detected",
+          results: [{ filepath: "V1__init.sql", violations: [{ code: "RG06" }] }],
+          htmlReport: "/tmp/report.html",
+        },
+      }),
+    });
+
+    const result = await runCheckCode({ failOnCodeReview: true });
+
+    expect(result?.exitCode).toBe(1);
+    expect(result?.reportPath).toBe("/tmp/report.html");
+    expect(error).toHaveBeenCalledWith("Code Analysis Violation(s) detected");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "1");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "RG06");
+  });
+
+  it("should handle error output without results", async () => {
+    runFlyway.mockResolvedValue({
+      exitCode: 1,
+      stdout: JSON.stringify({ error: { errorCode: "FAULT", message: "Something failed" } }),
+    });
+
+    const result = await runCheckCode(baseInputs);
+
+    expect(result?.exitCode).toBe(1);
+    expect(result?.reportPath).toBeUndefined();
+    expect(error).toHaveBeenCalledWith("Something failed");
   });
 });

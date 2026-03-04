@@ -1,4 +1,4 @@
-import type { FlywayCheckOutput } from "./types.js";
+import type { CodeErrorOutput, FlywayCheckOutput } from "./types.js";
 
 const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
   try {
@@ -8,4 +8,12 @@ const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
   }
 };
 
-export { parseCheckOutput };
+const parseCodeErrorOutput = (stdout: string): CodeErrorOutput | undefined => {
+  try {
+    return JSON.parse(stdout) as CodeErrorOutput;
+  } catch {
+    return undefined;
+  }
+};
+
+export { parseCheckOutput, parseCodeErrorOutput };

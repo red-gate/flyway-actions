@@ -33,10 +33,19 @@ type Drift = {
 
 type Changes = { operation?: "changes"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
 
-type Code = { operation?: "code"; results?: { violations?: { code?: string }[] }[] };
+type Code = {
+  operation?: "code";
+  results?: CodeResultItem[];
+};
 
 type Dryrun = { operation?: "dryrun" };
 
 type FlywayCheckOutput = { htmlReport?: string; individualResults?: (Drift | Changes | Code | Dryrun)[] };
 
-export type { Changes, Code, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };
+type CodeResultItem = { violations?: { code?: string }[] };
+
+type CodeErrorOutput = {
+  error?: { errorCode?: string; message?: string; results?: CodeResultItem[]; htmlReport?: string };
+};
+
+export type { Changes, Code, CodeErrorOutput, CodeResultItem, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };

@@ -1,7 +1,7 @@
-import type { Code, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
+import type { Code, CodeResultItem, FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
-import { parseCheckOutput } from "../outputs.js";
+import { runFlyway } from "@flyway-actions/shared";
+import { parseCheckOutput, parseCodeErrorOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined => {
@@ -26,26 +26,28 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
   try {
     const result = await runFlyway(args, inputs.workingDirectory);
     if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseCodeErrorOutput(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
-      return { exitCode: result.exitCode };
+      errorOutput?.error?.results && setCodeOutputs(errorOutput.error.results);
+
+      return { exitCode: result.exitCode, reportPath: errorOutput?.error?.htmlReport };
     }
+
     const output = parseCheckOutput(result.stdout);
-    setCodeOutputs(output);
+    const codeResults = output?.individualResults?.filter((r): r is Code => r.operation === "code");
+    codeResults?.length && setCodeOutputs(codeResults.flatMap((r) => r.results ?? []));
+
     return { exitCode: result.exitCode, reportPath: output?.htmlReport };
   } finally {
     core.endGroup();
   }
 };
 
-const setCodeOutputs = (output: FlywayCheckOutput | undefined): void => {
-  const codeResults = output?.individualResults?.filter((r): r is Code => r.operation === "code");
-  if (codeResults?.length) {
-    const violations = codeResults.flatMap((r) => r.results?.flatMap((v) => v.violations ?? []) ?? []);
-    const codes = violations.map((v) => v.code).filter((c): c is string => !!c);
-    core.setOutput("code-violation-count", codes.length.toString());
-    core.setOutput("code-violation-codes", [...new Set(codes)].join(","));
-  }
+const setCodeOutputs = (results: CodeResultItem[]): void => {
+  const violations = results.flatMap((r) => r.violations ?? []);
+  const codes = violations.map((v) => v.code).filter((c): c is string => !!c);
+  core.setOutput("code-violation-count", codes.length.toString());
+  core.setOutput("code-violation-codes", [...new Set(codes)].join(","));
 };
 
 export { getCodeArgs, runCheckCode, setCodeOutputs };
