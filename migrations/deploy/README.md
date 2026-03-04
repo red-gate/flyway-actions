@@ -133,7 +133,7 @@ When drift is detected, Flyway generates SQL scripts that can be used to resolve
 |-------------------------------------------|----------------------------------------------------------------|----------|-----------------------------------|
 | `drift-resolution-scripts-name`           | Name for the drift resolution scripts artifact                 | No       | `flyway-drift-resolution-scripts` |
 | `drift-resolution-scripts-retention-days` | Number of days to retain the drift resolution scripts artifact | No       | `7`                               |
-| `skip-drift-resolution-upload`            | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                           |
+| `skip-drift-resolution-scripts-upload`    | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                           |
 
 As with drift reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
 
