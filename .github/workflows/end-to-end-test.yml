@@ -60,6 +60,14 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
+      - name: Run undo
+        id: undo
+        uses: ./migrations/undo
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          working-directory: sample-projects/sqlite
       - name: Download report
         uses: actions/download-artifact@v8
         with:
@@ -80,6 +88,10 @@ jobs:
           echo "Deploy drift detected: ${{ steps.deploy.outputs.drift-detected }}"
           echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          echo "Undo exit code: ${{ steps.undo.outputs.exit-code }}"
+          echo "Undo drift detected: ${{ steps.undo.outputs.drift-detected }}"
+          echo "Migrations undone: ${{ steps.undo.outputs.migrations-undone }}"
+          echo "Undo schema version: ${{ steps.undo.outputs.schema-version }}"
           test "${{ steps.checks.outputs.exit-code }}" = "0"
           test "${{ steps.checks.outputs.drift-detected }}" = "false"
           test "${{ steps.checks.outputs.changed-object-count }}" = "2"
@@ -89,6 +101,10 @@ jobs:
           test "${{ steps.deploy.outputs.drift-detected }}" = "false"
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"
+          test "${{ steps.undo.outputs.exit-code }}" = "0"
+          test "${{ steps.undo.outputs.drift-detected }}" = "false"
+          test "${{ steps.undo.outputs.migrations-undone }}" = "1"
+          test "${{ steps.undo.outputs.schema-version }}" = "2"
 
   migrations-enterprise-no-comparison-support:
     strategy:
@@ -123,7 +139,7 @@ jobs:
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
-          target-url: jdbc:h2:mem:prod
+          target-url: jdbc:h2:./database/h2-prod
           build-url: jdbc:h2:mem:build
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
@@ -136,7 +152,15 @@ jobs:
         env:
           REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
-          target-url: jdbc:h2:mem:prod
+          target-url: jdbc:h2:./database/h2-prod
+          working-directory: sample-projects/h2
+      - name: Run undo
+        id: undo
+        uses: ./migrations/undo
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:h2:./database/h2-prod
           working-directory: sample-projects/h2
       - name: Download report
         uses: actions/download-artifact@v8
@@ -158,6 +182,10 @@ jobs:
           echo "Deploy drift detected: ${{ steps.deploy.outputs.drift-detected }}"
           echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
+          echo "Undo exit code: ${{ steps.undo.outputs.exit-code }}"
+          echo "Undo drift detected: ${{ steps.undo.outputs.drift-detected }}"
+          echo "Migrations undone: ${{ steps.undo.outputs.migrations-undone }}"
+          echo "Undo schema version: ${{ steps.undo.outputs.schema-version }}"
           test "${{ steps.checks.outputs.exit-code }}" = "0"
           test "${{ steps.checks.outputs.drift-detected }}" = ""
           test "${{ steps.checks.outputs.changed-object-count }}" = ""
@@ -167,6 +195,10 @@ jobs:
           test "${{ steps.deploy.outputs.drift-detected }}" = ""
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"
+          test "${{ steps.undo.outputs.exit-code }}" = "0"
+          test "${{ steps.undo.outputs.drift-detected }}" = ""
+          test "${{ steps.undo.outputs.migrations-undone }}" = "1"
+          test "${{ steps.undo.outputs.schema-version }}" = "2"
 
   migrations-community:
     strategy:

@@ -22,6 +22,7 @@ jobs:
           echo "Actions: ${{ steps.list.outputs.actions }}"
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/checks") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/undo") != null'
 
   migrations-checks:
     strategy:
@@ -320,3 +321,121 @@ jobs:
           test "${{ steps.deploy.outputs.drift-detected }}" = "true"
           test "${{ steps.deploy.outputs.migrations-applied }}" = ""
           test "${{ steps.deploy.outputs.schema-version }}" = ""
+
+  migrations-undo-no-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run migrations undo
+        id: undo
+        uses: ./migrations/undo
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/undo.db
+          working-directory: sample-projects/sqlite
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.undo.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.undo.outputs.drift-detected }}"
+          echo "Migrations undone: ${{ steps.undo.outputs.migrations-undone }}"
+          echo "Schema version: ${{ steps.undo.outputs.schema-version }}"
+          test "${{ steps.undo.outputs.exit-code }}" = "0"
+          test "${{ steps.undo.outputs.drift-detected }}" = "false"
+          test "${{ steps.undo.outputs.migrations-undone }}" = "1"
+          test "${{ steps.undo.outputs.schema-version }}" = "2"
+
+  migrations-undo-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run migrations undo
+        id: undo
+        uses: ./migrations/undo
+        continue-on-error: true
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/drift.db
+          working-directory: sample-projects/sqlite
+          drift-report-name: flyway-undo-drift-report-${{ matrix.os }}
+          drift-report-retention-days: '1'
+          drift-resolution-scripts-name: flyway-undo-drift-resolution-${{ matrix.os }}
+          drift-resolution-scripts-retention-days: '1'
+      - name: Download drift report
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-undo-drift-report-${{ matrix.os }}.html
+      - name: Verify drift report exists
+        shell: bash
+        run: test -s flyway-undo-drift-report-${{ matrix.os }}.html
+      - name: Download drift resolution scripts
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-undo-drift-resolution-${{ matrix.os }}
+      - name: Verify drift resolution scripts exist
+        shell: bash
+        run: test -n "$(find . -maxdepth 1 -name '*.sql')"
+      - name: Verify undo failed due to drift
+        shell: bash
+        run: test "${{ steps.undo.outcome }}" != "success"
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.undo.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.undo.outputs.drift-detected }}"
+          echo "Migrations undone: ${{ steps.undo.outputs.migrations-undone }}"
+          echo "Schema version: ${{ steps.undo.outputs.schema-version }}"
+          test "${{ steps.undo.outputs.exit-code }}" = "1"
+          test "${{ steps.undo.outputs.drift-detected }}" = "true"
+          test "${{ steps.undo.outputs.migrations-undone }}" = ""
+          test "${{ steps.undo.outputs.schema-version }}" = ""
