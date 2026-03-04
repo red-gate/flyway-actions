@@ -1,4 +1,4 @@
-import { getDatabaseConfig, parseDatabaseType } from "../../src/docker/database-config.js";
+import { constructBuildUrl, getOracleDockerConfig, parseDatabaseType } from "../../src/docker/database-config.js";
 
 describe("parseDatabaseType", () => {
   it("should return postgresql for jdbc:postgresql:// prefix", () => {
@@ -30,66 +30,61 @@ describe("parseDatabaseType", () => {
   });
 });
 
-describe("getDatabaseConfig", () => {
-  it("should return postgresql config with correct image", () => {
-    const config = getDatabaseConfig("postgresql");
-
-    expect(config.image).toBe("postgres");
-    expect(config.defaultPort).toBe(5432);
+describe("constructBuildUrl", () => {
+  it("should construct postgresql build URL", () => {
+    expect(constructBuildUrl("jdbc:postgresql://dbhost:5432/mydb")).toBe("jdbc:postgresql://dbhost:5432/flyway_build");
   });
 
-  it("should return sqlserver config with correct image", () => {
-    const config = getDatabaseConfig("sqlserver");
-
-    expect(config.image).toBe("mcr.microsoft.com/mssql/server");
-    expect(config.defaultPort).toBe(1433);
+  it("should construct postgresql build URL with default port", () => {
+    expect(constructBuildUrl("jdbc:postgresql://dbhost/mydb")).toBe("jdbc:postgresql://dbhost/flyway_build");
   });
 
-  it("should return mysql config with correct image", () => {
-    const config = getDatabaseConfig("mysql");
-
-    expect(config.image).toBe("mysql");
-    expect(config.defaultPort).toBe(3306);
+  it("should construct mysql build URL", () => {
+    expect(constructBuildUrl("jdbc:mysql://dbhost:3306/mydb")).toBe("jdbc:mysql://dbhost:3306/flyway_build");
   });
 
+  it("should construct sqlserver build URL replacing databaseName", () => {
+    expect(constructBuildUrl("jdbc:sqlserver://dbhost:1433;databaseName=mydb")).toBe(
+      "jdbc:sqlserver://dbhost:1433;databaseName=flyway_build",
+    );
+  });
+
+  it("should construct sqlserver build URL preserving other params", () => {
+    expect(constructBuildUrl("jdbc:sqlserver://dbhost:1433;databaseName=mydb;encrypt=false")).toBe(
+      "jdbc:sqlserver://dbhost:1433;databaseName=flyway_build;encrypt=false",
+    );
+  });
+
+  it("should construct sqlserver build URL adding databaseName when missing", () => {
+    expect(constructBuildUrl("jdbc:sqlserver://dbhost:1433;encrypt=false")).toBe(
+      "jdbc:sqlserver://dbhost:1433;databaseName=flyway_build;encrypt=false",
+    );
+  });
+
+  it("should return undefined for oracle", () => {
+    expect(constructBuildUrl("jdbc:oracle:thin:@localhost:1521/xepdb1")).toBeUndefined();
+  });
+
+  it("should return undefined for sqlite", () => {
+    expect(constructBuildUrl("jdbc:sqlite:mydb.db")).toBeUndefined();
+  });
+
+  it("should return undefined for unknown JDBC URL", () => {
+    expect(constructBuildUrl("jdbc:unknown://localhost/db")).toBeUndefined();
+  });
+});
+
+describe("getOracleDockerConfig", () => {
   it("should return oracle config with correct image", () => {
-    const config = getDatabaseConfig("oracle");
+    const config = getOracleDockerConfig();
 
     expect(config.image).toBe("gvenzl/oracle-xe");
     expect(config.defaultPort).toBe(1521);
   });
 
-  it("should build correct postgresql JDBC URL", () => {
-    const config = getDatabaseConfig("postgresql");
-
-    expect(config.buildJdbcUrl("localhost", 5432, "flyway_build")).toBe(
-      "jdbc:postgresql://localhost:5432/flyway_build",
-    );
-  });
-
-  it("should build correct sqlserver JDBC URL", () => {
-    const config = getDatabaseConfig("sqlserver");
-
-    expect(config.buildJdbcUrl("localhost", 1433, "master")).toBe(
-      "jdbc:sqlserver://localhost:1433;encrypt=false;trustServerCertificate=true",
-    );
-  });
-
-  it("should build correct mysql JDBC URL", () => {
-    const config = getDatabaseConfig("mysql");
-
-    expect(config.buildJdbcUrl("localhost", 3306, "flyway_build")).toBe("jdbc:mysql://localhost:3306/flyway_build");
-  });
-
   it("should build correct oracle JDBC URL", () => {
-    const config = getDatabaseConfig("oracle");
+    const config = getOracleDockerConfig();
 
     expect(config.buildJdbcUrl("localhost", 1521, "xepdb1")).toBe("jdbc:oracle:thin:@localhost:1521/xepdb1");
-  });
-
-  it("should build correct sqlite JDBC URL", () => {
-    const config = getDatabaseConfig("sqlite");
-
-    expect(config.buildJdbcUrl("", 0, "flyway_build")).toBe("jdbc:sqlite:flyway_build");
   });
 });

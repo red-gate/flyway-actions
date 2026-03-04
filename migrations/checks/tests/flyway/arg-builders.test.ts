@@ -150,6 +150,29 @@ describe("getBuildEnvironmentArgs", () => {
 
     expect(args).toContain("-environments.default_build.flyway.cleanDisabled=false");
   });
+
+  it("should include provisioner arg when buildProvisioner is set", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildUrl: "jdbc:postgresql://dbhost:5432/flyway_build",
+      buildProvisioner: "create-database",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.provisioner=create-database");
+  });
+
+  it("should not include provisioner arg when buildProvisioner is not set", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      buildUrl: "jdbc:sqlite:build.db",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args.some((a) => a.includes(".provisioner="))).toBe(false);
+  });
 });
 
 describe("getCheckCommandArgs", () => {

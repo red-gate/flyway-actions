@@ -20,11 +20,7 @@
     "@actions/exec": "3.0.0",
     "@actions/http-client": "4.0.0",
     "@actions/io": "3.0.2",
-    "@flyway-actions/shared": "workspace:*",
-    "@testcontainers/mssqlserver": "^11.0.0",
-    "@testcontainers/mysql": "^11.0.0",
-    "@testcontainers/postgresql": "^11.0.0",
-    "testcontainers": "^11.0.0"
+    "@flyway-actions/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "25.3.1",

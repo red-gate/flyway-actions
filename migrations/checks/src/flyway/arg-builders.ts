@@ -94,6 +94,10 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
     args.push(`-environments.${environmentName}.flyway.cleanDisabled=false`);
   }
 
+  if (inputs.buildProvisioner) {
+    args.push(`-environments.${environmentName}.provisioner=${inputs.buildProvisioner}`);
+  }
+
   return args;
 };
 

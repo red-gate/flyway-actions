@@ -13336,7 +13336,7 @@ const Ea = () => {
   if (!Pe(A))
     return [];
   const r = A.buildEnvironment ?? fa, t = [];
-  return t.push(`-check.buildEnvironment=${r}`), A.buildUrl && t.push(`-environments.${r}.url=${A.buildUrl}`), A.buildUser && t.push(`-environments.${r}.user=${A.buildUser}`), A.buildPassword && t.push(`-environments.${r}.password=${A.buildPassword}`), A.buildSchemas && t.push(`-environments.${r}.schemas=${A.buildSchemas}`), A.buildOkToErase && t.push(`-environments.${r}.flyway.cleanDisabled=false`), t;
+  return t.push(`-check.buildEnvironment=${r}`), A.buildUrl && t.push(`-environments.${r}.url=${A.buildUrl}`), A.buildUser && t.push(`-environments.${r}.user=${A.buildUser}`), A.buildPassword && t.push(`-environments.${r}.password=${A.buildPassword}`), A.buildSchemas && t.push(`-environments.${r}.schemas=${A.buildSchemas}`), A.buildOkToErase && t.push(`-environments.${r}.flyway.cleanDisabled=false`), A.buildProvisioner && t.push(`-environments.${r}.provisioner=${A.buildProvisioner}`), t;
 }, Pe = (A) => !!(A.buildEnvironment || A.buildUrl), gt = (A) => {
   try {
     return JSON.parse(A);
@@ -13488,7 +13488,7 @@ const Ea = () => {
 }, Ma = async (A, r) => {
   if (A.autoProvisionBuildDatabase !== !1 && !Pe(A) && r === "enterprise" && !A.skipDeploymentChangesReport && A.targetUrl)
     try {
-      const { provisionBuildDatabase: t } = await import("./provision-build-database-CKow9FGs.js"), i = await t(A.targetUrl);
+      const { provisionBuildDatabase: t } = await import("./provision-build-database-ML8SE6HC.js"), i = t(A.targetUrl, A.targetUser, A.targetPassword);
       return i && (i.password && jr(i.password), jA(`Auto-provisioned build database: ${i.jdbcUrl}`)), i;
     } catch (t) {
       xi(`Failed to auto-provision build database: ${t}`);
@@ -13502,7 +13502,8 @@ const Ea = () => {
       buildUrl: t.jdbcUrl,
       buildUser: t.user,
       buildPassword: t.password,
-      buildOkToErase: !0
+      buildOkToErase: !0,
+      buildProvisioner: t.provisioner
     } : A, e = [
       await Ua(i, r),
       await ma(i),

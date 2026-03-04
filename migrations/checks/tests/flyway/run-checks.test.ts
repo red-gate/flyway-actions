@@ -206,32 +206,53 @@ describe("auto-provisioning", () => {
   const cleanup = vi.fn().mockResolvedValue(undefined);
 
   it("should provision build database when conditions are met", async () => {
-    provisionBuildDatabase.mockResolvedValue({
-      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
-      user: "test",
-      password: "test",
+    provisionBuildDatabase.mockReturnValue({
+      jdbcUrl: "jdbc:postgresql://localhost:5432/flyway_build",
+      user: "admin",
+      password: "secret",
+      provisioner: "create-database",
+      cleanup,
+    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks(
+      { targetUrl: "jdbc:postgresql://localhost:5432/mydb", targetUser: "admin", targetPassword: "secret" },
+      "enterprise",
+    );
+
+    expect(provisionBuildDatabase).toHaveBeenCalledWith("jdbc:postgresql://localhost:5432/mydb", "admin", "secret");
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    expect(checkCalls).toHaveLength(4);
+    expect(checkCalls[3][1]).toContain("-changes");
+    expect(checkCalls[3][1]).toContain("-environments.default_build.url=jdbc:postgresql://localhost:5432/flyway_build");
+  });
+
+  it("should pass buildProvisioner to effective inputs", async () => {
+    provisionBuildDatabase.mockReturnValue({
+      jdbcUrl: "jdbc:postgresql://localhost:5432/flyway_build",
+      user: "admin",
+      password: "secret",
+      provisioner: "create-database",
       cleanup,
     });
     exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ targetUrl: "jdbc:postgresql://localhost:5432/mydb" }, "enterprise");
 
-    expect(provisionBuildDatabase).toHaveBeenCalledWith("jdbc:postgresql://localhost:5432/mydb");
-
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+    const changesCall = checkCalls.find((call) => call[1].includes("-changes"));
 
-    expect(checkCalls).toHaveLength(4);
-    expect(checkCalls[3][1]).toContain("-changes");
-    expect(checkCalls[3][1]).toContain(
-      "-environments.default_build.url=jdbc:postgresql://localhost:55432/flyway_build",
-    );
+    expect(changesCall?.[1]).toContain("-environments.default_build.provisioner=create-database");
   });
 
   it("should call cleanup even when checks fail", async () => {
-    provisionBuildDatabase.mockResolvedValue({
-      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
-      user: "test",
-      password: "test",
+    provisionBuildDatabase.mockReturnValue({
+      jdbcUrl: "jdbc:postgresql://localhost:5432/flyway_build",
+      user: "admin",
+      password: "secret",
+      provisioner: "create-database",
       cleanup,
     });
     exec.mockImplementation(
@@ -287,7 +308,9 @@ describe("auto-provisioning", () => {
   });
 
   it("should degrade gracefully when provisioning fails", async () => {
-    provisionBuildDatabase.mockRejectedValue(new Error("Docker not available"));
+    provisionBuildDatabase.mockImplementation(() => {
+      throw new Error("Docker not available");
+    });
     exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ targetUrl: "jdbc:postgresql://localhost/db" }, "enterprise");
@@ -300,10 +323,11 @@ describe("auto-provisioning", () => {
   });
 
   it("should set buildOkToErase to true for provisioned database", async () => {
-    provisionBuildDatabase.mockResolvedValue({
-      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
-      user: "test",
-      password: "test",
+    provisionBuildDatabase.mockReturnValue({
+      jdbcUrl: "jdbc:postgresql://localhost:5432/flyway_build",
+      user: "admin",
+      password: "secret",
+      provisioner: "create-database",
       cleanup,
     });
     exec.mockImplementation(mockExec({ stdout: {} }));
@@ -317,10 +341,11 @@ describe("auto-provisioning", () => {
   });
 
   it("should mask provisioned password via setSecret", async () => {
-    provisionBuildDatabase.mockResolvedValue({
-      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
-      user: "test",
+    provisionBuildDatabase.mockReturnValue({
+      jdbcUrl: "jdbc:postgresql://localhost:5432/flyway_build",
+      user: "admin",
       password: "secret_password",
+      provisioner: "create-database",
       cleanup,
     });
     exec.mockImplementation(mockExec({ stdout: {} }));
@@ -332,10 +357,11 @@ describe("auto-provisioning", () => {
 
   it("should warn but not throw when cleanup fails", async () => {
     const failingCleanup = vi.fn().mockRejectedValue(new Error("stop failed"));
-    provisionBuildDatabase.mockResolvedValue({
-      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
-      user: "test",
-      password: "test",
+    provisionBuildDatabase.mockReturnValue({
+      jdbcUrl: "jdbc:postgresql://localhost:5432/flyway_build",
+      user: "admin",
+      password: "secret",
+      provisioner: "create-database",
       cleanup: failingCleanup,
     });
     exec.mockImplementation(mockExec({ stdout: {} }));
@@ -346,7 +372,7 @@ describe("auto-provisioning", () => {
   });
 
   it("should skip provisioning when provisionBuildDatabase returns undefined", async () => {
-    provisionBuildDatabase.mockResolvedValue(undefined);
+    provisionBuildDatabase.mockReturnValue(undefined);
     exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ targetUrl: "jdbc:h2:mem:testdb" }, "enterprise");

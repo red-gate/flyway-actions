@@ -1,183 +1,130 @@
-const mockPostgresContainer = {
-  getHost: () => "localhost",
-  getPort: () => 55432,
-  getDatabase: () => "flyway_build",
-  getUsername: () => "test",
-  getPassword: () => "test",
-  stop: vi.fn(),
-};
-
-const mockMySqlContainer = {
-  getHost: () => "localhost",
-  getPort: () => 53306,
-  getDatabase: () => "flyway_build",
-  getUsername: () => "test",
-  getUserPassword: () => "test",
-  stop: vi.fn(),
-};
-
-const mockSqlServerContainer = {
-  getHost: () => "localhost",
-  getPort: () => 51433,
-  getDatabase: () => "master",
-  getUsername: () => "sa",
-  getPassword: () => "Flyway_Build_1",
-  stop: vi.fn(),
-};
-
-const mockGenericContainer = {
-  getHost: () => "localhost",
-  getMappedPort: () => 51521,
-  stop: vi.fn(),
-};
-
-vi.doMock("@testcontainers/postgresql", () => ({
-  PostgreSqlContainer: class {
-    withDatabase() {
-      return this;
-    }
-    withUsername() {
-      return this;
-    }
-    withPassword() {
-      return this;
-    }
-    start() {
-      return Promise.resolve(mockPostgresContainer);
-    }
-  },
+vi.doMock("node:child_process", () => ({
+  execSync: vi.fn(),
 }));
 
-vi.doMock("@testcontainers/mssqlserver", () => ({
-  MSSQLServerContainer: class {
-    acceptLicense() {
-      return this;
-    }
-    start() {
-      return Promise.resolve(mockSqlServerContainer);
-    }
-  },
-}));
-
-vi.doMock("@testcontainers/mysql", () => ({
-  MySqlContainer: class {
-    withDatabase() {
-      return this;
-    }
-    withUsername() {
-      return this;
-    }
-    withUserPassword() {
-      return this;
-    }
-    start() {
-      return Promise.resolve(mockMySqlContainer);
-    }
-  },
-}));
-
-vi.doMock("testcontainers", () => ({
-  GenericContainer: class {
-    withExposedPorts() {
-      return this;
-    }
-    withEnvironment() {
-      return this;
-    }
-    withWaitStrategy() {
-      return this;
-    }
-    start() {
-      return Promise.resolve(mockGenericContainer);
-    }
-  },
-  Wait: { forHealthCheck: () => ({}) },
-}));
+const { execSync } = await import("node:child_process");
+const mockedExecSync = vi.mocked(execSync);
 
 const { provisionBuildDatabase } = await import("../../src/docker/provision-build-database.js");
 
 describe("provisionBuildDatabase", () => {
-  beforeEach(() => {
-    mockPostgresContainer.stop.mockResolvedValue(undefined);
-    mockMySqlContainer.stop.mockResolvedValue(undefined);
-    mockSqlServerContainer.stop.mockResolvedValue(undefined);
-    mockGenericContainer.stop.mockResolvedValue(undefined);
-  });
-
-  it("should return undefined for unknown JDBC URL", async () => {
-    const result = await provisionBuildDatabase("jdbc:unknown://localhost/db");
+  it("should return undefined for unknown JDBC URL", () => {
+    const result = provisionBuildDatabase("jdbc:unknown://localhost/db");
 
     expect(result).toBeUndefined();
   });
 
-  it("should provision postgresql container and return connection details", async () => {
-    const result = await provisionBuildDatabase("jdbc:postgresql://localhost:5432/mydb");
+  describe("createDatabase provisioner", () => {
+    it("should return build URL for postgresql with create-database provisioner", () => {
+      const result = provisionBuildDatabase("jdbc:postgresql://dbhost:5432/mydb", "admin", "secret");
 
-    expect(result).toBeDefined();
-    expect(result!.jdbcUrl).toBe("jdbc:postgresql://localhost:55432/flyway_build");
-    expect(result!.user).toBe("test");
-    expect(result!.password).toBe("test");
+      expect(result).toBeDefined();
+      expect(result!.jdbcUrl).toBe("jdbc:postgresql://dbhost:5432/flyway_build");
+      expect(result!.user).toBe("admin");
+      expect(result!.password).toBe("secret");
+      expect(result!.provisioner).toBe("create-database");
+    });
+
+    it("should return build URL for mysql with create-database provisioner", () => {
+      const result = provisionBuildDatabase("jdbc:mysql://dbhost:3306/mydb", "admin", "secret");
+
+      expect(result).toBeDefined();
+      expect(result!.jdbcUrl).toBe("jdbc:mysql://dbhost:3306/flyway_build");
+      expect(result!.user).toBe("admin");
+      expect(result!.password).toBe("secret");
+      expect(result!.provisioner).toBe("create-database");
+    });
+
+    it("should return build URL for sqlserver with create-database provisioner", () => {
+      const result = provisionBuildDatabase("jdbc:sqlserver://dbhost:1433;databaseName=mydb", "sa", "secret");
+
+      expect(result).toBeDefined();
+      expect(result!.jdbcUrl).toBe("jdbc:sqlserver://dbhost:1433;databaseName=flyway_build");
+      expect(result!.user).toBe("sa");
+      expect(result!.password).toBe("secret");
+      expect(result!.provisioner).toBe("create-database");
+    });
+
+    it("should use empty strings when user and password are not provided", () => {
+      const result = provisionBuildDatabase("jdbc:postgresql://dbhost:5432/mydb");
+
+      expect(result!.user).toBe("");
+      expect(result!.password).toBe("");
+    });
+
+    it("should have a no-op cleanup function", async () => {
+      const result = provisionBuildDatabase("jdbc:postgresql://dbhost:5432/mydb");
+
+      await expect(result!.cleanup()).resolves.not.toThrow();
+    });
   });
 
-  it("should provision sqlserver container and return connection details", async () => {
-    const result = await provisionBuildDatabase("jdbc:sqlserver://localhost:1433;databaseName=mydb");
+  describe("oracle docker provisioner", () => {
+    it("should start oracle container and return connection details", () => {
+      mockedExecSync
+        .mockReturnValueOnce(Buffer.from("container-id"))
+        .mockReturnValueOnce("healthy")
+        .mockReturnValueOnce("0.0.0.0:51521");
 
-    expect(result).toBeDefined();
-    expect(result!.jdbcUrl).toBe("jdbc:sqlserver://localhost:51433;encrypt=false;trustServerCertificate=true");
-    expect(result!.user).toBe("sa");
-    expect(result!.password).toBe("Flyway_Build_1");
+      const result = provisionBuildDatabase("jdbc:oracle:thin:@localhost:1521/xepdb1");
+
+      expect(result).toBeDefined();
+      expect(result!.jdbcUrl).toBe("jdbc:oracle:thin:@localhost:51521/xepdb1");
+      expect(result!.user).toBe("system");
+      expect(result!.password).toBe("test");
+      expect(result!.provisioner).toBeUndefined();
+    });
+
+    it("should call docker run with correct arguments", () => {
+      mockedExecSync
+        .mockReturnValueOnce(Buffer.from("container-id"))
+        .mockReturnValueOnce("healthy")
+        .mockReturnValueOnce("0.0.0.0:51521");
+
+      provisionBuildDatabase("jdbc:oracle:thin:@localhost:1521/xepdb1");
+
+      expect(mockedExecSync).toHaveBeenCalledWith(
+        expect.stringContaining("docker run -d --name"),
+        expect.objectContaining({ stdio: "pipe" }),
+      );
+    });
+
+    it("should cleanup by removing the container", async () => {
+      mockedExecSync
+        .mockReturnValueOnce(Buffer.from("container-id"))
+        .mockReturnValueOnce("healthy")
+        .mockReturnValueOnce("0.0.0.0:51521");
+
+      const result = provisionBuildDatabase("jdbc:oracle:thin:@localhost:1521/xepdb1");
+      await result!.cleanup();
+
+      expect(mockedExecSync).toHaveBeenCalledWith(
+        expect.stringContaining("docker rm -f"),
+        expect.objectContaining({ stdio: "pipe" }),
+      );
+    });
   });
 
-  it("should provision mysql container and return connection details", async () => {
-    const result = await provisionBuildDatabase("jdbc:mysql://localhost:3306/mydb");
+  describe("sqlite provisioner", () => {
+    it("should provision sqlite with a temp file JDBC URL", () => {
+      const result = provisionBuildDatabase("jdbc:sqlite:mydb.db");
 
-    expect(result).toBeDefined();
-    expect(result!.jdbcUrl).toBe("jdbc:mysql://localhost:53306/flyway_build");
-    expect(result!.user).toBe("test");
-    expect(result!.password).toBe("test");
-  });
+      expect(result).toBeDefined();
+      expect(result!.jdbcUrl).toMatch(/^jdbc:sqlite:.*flyway_build.*\.db$/);
+      expect(result!.user).toBe("");
+      expect(result!.password).toBe("");
+      expect(result!.provisioner).toBeUndefined();
+    });
 
-  it("should provision oracle container and return connection details", async () => {
-    const result = await provisionBuildDatabase("jdbc:oracle:thin:@localhost:1521/xepdb1");
+    it("should remove sqlite temp file on cleanup", async () => {
+      const result = provisionBuildDatabase("jdbc:sqlite:mydb.db");
+      const dbFile = result!.jdbcUrl.replace("jdbc:sqlite:", "");
 
-    expect(result).toBeDefined();
-    expect(result!.jdbcUrl).toBe("jdbc:oracle:thin:@localhost:51521/xepdb1");
-    expect(result!.user).toBe("system");
-    expect(result!.password).toBe("test");
-  });
+      await result!.cleanup();
 
-  it("should provide cleanup function that stops the container", async () => {
-    const result = await provisionBuildDatabase("jdbc:postgresql://localhost:5432/mydb");
-    await result!.cleanup();
+      const { existsSync } = await import("node:fs");
 
-    expect(mockPostgresContainer.stop).toHaveBeenCalled();
-  });
-
-  it("should propagate cleanup errors to caller", async () => {
-    mockPostgresContainer.stop.mockRejectedValueOnce(new Error("stop failed"));
-
-    const result = await provisionBuildDatabase("jdbc:postgresql://localhost:5432/mydb");
-
-    await expect(result!.cleanup()).rejects.toThrow("stop failed");
-  });
-
-  it("should provision sqlite with a temp file JDBC URL", async () => {
-    const result = await provisionBuildDatabase("jdbc:sqlite:mydb.db");
-
-    expect(result).toBeDefined();
-    expect(result!.jdbcUrl).toMatch(/^jdbc:sqlite:.*flyway_build.*\.db$/);
-    expect(result!.user).toBe("");
-    expect(result!.password).toBe("");
-  });
-
-  it("should remove sqlite temp file on cleanup", async () => {
-    const result = await provisionBuildDatabase("jdbc:sqlite:mydb.db");
-    const dbFile = result!.jdbcUrl.replace("jdbc:sqlite:", "");
-
-    await result!.cleanup();
-
-    const { existsSync } = await import("node:fs");
-
-    expect(existsSync(dbFile)).toBe(false);
+      expect(existsSync(dbFile)).toBe(false);
+    });
   });
 });

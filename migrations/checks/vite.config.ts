@@ -4,12 +4,6 @@ import checker from "vite-plugin-checker";
 import { defineConfig } from "vitest/config";
 
 const nodeBuiltins = builtinModules.flatMap((m) => [m, `node:${m}`]);
-const testcontainersPackages = [
-  "testcontainers",
-  "@testcontainers/postgresql",
-  "@testcontainers/mssqlserver",
-  "@testcontainers/mysql",
-];
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
@@ -21,7 +15,7 @@ export default defineConfig({
       formats: ["es"],
       fileName: (_format, entryName) => `${entryName}.js`,
     },
-    rollupOptions: { external: [...nodeBuiltins, ...testcontainersPackages] },
+    rollupOptions: { external: nodeBuiltins },
     target: "node24",
     minify: "esbuild",
     outDir: "dist",

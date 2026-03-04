@@ -31,7 +31,7 @@ const maybeProvisionBuildDatabase = async (
 
   try {
     const { provisionBuildDatabase } = await import("../docker/provision-build-database.js");
-    const provisioned = await provisionBuildDatabase(inputs.targetUrl);
+    const provisioned = provisionBuildDatabase(inputs.targetUrl, inputs.targetUser, inputs.targetPassword);
     if (provisioned) {
       if (provisioned.password) {
         core.setSecret(provisioned.password);
@@ -56,6 +56,7 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
           buildUser: provisioner.user,
           buildPassword: provisioner.password,
           buildOkToErase: true,
+          buildProvisioner: provisioner.provisioner,
         }
       : inputs;
 
