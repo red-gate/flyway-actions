@@ -1,5 +1,4 @@
 import type { FlywayMigrationsDeploymentInputs } from "../../src/types.js";
-import type { ExecOptions } from "@actions/exec";
 import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const setOutput = vi.fn();
@@ -62,20 +61,18 @@ describe("checkForDrift", () => {
   });
 
   it("should set drift-resolution-folder output when drift is detected with resolution folder", async () => {
-    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
-      options?.listeners?.stdout?.(
-        Buffer.from(
-          JSON.stringify({
-            error: {
-              errorCode: "CHECK_DRIFT_DETECTED",
-              message: "Drift detected",
-              driftResolutionFolderPath: "/absolute/path/to/resolution",
-            },
-          }),
-        ),
-      );
-      return Promise.resolve(1);
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "CHECK_DRIFT_DETECTED",
+            message: "Drift detected",
+            driftResolutionFolderPath: "/absolute/path/to/resolution",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
 
     await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
 

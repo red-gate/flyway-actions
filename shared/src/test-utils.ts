@@ -2,11 +2,7 @@ import type { ExecOptions } from "@actions/exec";
 
 type StringOrObject = string | Record<string, unknown>;
 
-type MockExecOptions = {
-  stdout?: StringOrObject;
-  stderr?: StringOrObject;
-  exitCode?: number;
-};
+type MockExecOptions = { stdout?: StringOrObject; stderr?: StringOrObject; exitCode?: number };
 
 const toBuffer = (value: StringOrObject) => Buffer.from(typeof value === "string" ? value : JSON.stringify(value));
 
@@ -22,6 +18,8 @@ const mockExec =
     return Promise.resolve(exitCode);
   };
 
+// used in another workspace
+// noinspection JSUnusedGlobalSymbols
 const mockExecSequence = (calls: MockExecOptions[]) => {
   let callIndex = 0;
   return (_cmd: string, _args?: string[], options?: ExecOptions) => {
