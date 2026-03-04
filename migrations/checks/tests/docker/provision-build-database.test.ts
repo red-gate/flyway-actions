@@ -1,13 +1,3 @@
-const info = vi.fn();
-const warning = vi.fn();
-const setSecret = vi.fn();
-
-vi.doMock("@actions/core", () => ({
-  info,
-  warning,
-  setSecret,
-}));
-
 const mockPostgresContainer = {
   getHost: () => "localhost",
   getPort: () => 55432,
@@ -156,12 +146,6 @@ describe("provisionBuildDatabase", () => {
     expect(result!.password).toBe("test");
   });
 
-  it("should mask password via core.setSecret", async () => {
-    await provisionBuildDatabase("jdbc:postgresql://localhost:5432/mydb");
-
-    expect(setSecret).toHaveBeenCalledWith("test");
-  });
-
   it("should provide cleanup function that stops the container", async () => {
     const result = await provisionBuildDatabase("jdbc:postgresql://localhost:5432/mydb");
     await result!.cleanup();
@@ -169,13 +153,12 @@ describe("provisionBuildDatabase", () => {
     expect(mockPostgresContainer.stop).toHaveBeenCalled();
   });
 
-  it("should warn but not throw when cleanup fails", async () => {
+  it("should propagate cleanup errors to caller", async () => {
     mockPostgresContainer.stop.mockRejectedValueOnce(new Error("stop failed"));
 
     const result = await provisionBuildDatabase("jdbc:postgresql://localhost:5432/mydb");
-    await result!.cleanup();
 
-    expect(warning).toHaveBeenCalledWith(expect.stringContaining("stop failed"));
+    await expect(result!.cleanup()).rejects.toThrow("stop failed");
   });
 
   it("should provision sqlite with a temp file JDBC URL", async () => {
@@ -192,8 +175,6 @@ describe("provisionBuildDatabase", () => {
     const dbFile = result!.jdbcUrl.replace("jdbc:sqlite:", "");
 
     await result!.cleanup();
-
-    expect(info).toHaveBeenCalledWith("SQLite build database removed");
 
     const { existsSync } = await import("node:fs");
 

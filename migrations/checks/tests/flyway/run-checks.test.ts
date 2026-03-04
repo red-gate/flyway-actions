@@ -316,6 +316,35 @@ describe("auto-provisioning", () => {
     expect(changesCall?.[1]).toContain("-environments.default_build.flyway.cleanDisabled=false");
   });
 
+  it("should mask provisioned password via setSecret", async () => {
+    provisionBuildDatabase.mockResolvedValue({
+      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
+      user: "test",
+      password: "secret_password",
+      cleanup,
+    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks({ targetUrl: "jdbc:postgresql://localhost:5432/mydb" }, "enterprise");
+
+    expect(setSecret).toHaveBeenCalledWith("secret_password");
+  });
+
+  it("should warn but not throw when cleanup fails", async () => {
+    const failingCleanup = vi.fn().mockRejectedValue(new Error("stop failed"));
+    provisionBuildDatabase.mockResolvedValue({
+      jdbcUrl: "jdbc:postgresql://localhost:55432/flyway_build",
+      user: "test",
+      password: "test",
+      cleanup: failingCleanup,
+    });
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks({ targetUrl: "jdbc:postgresql://localhost:5432/mydb" }, "enterprise");
+
+    expect(warning).toHaveBeenCalledWith(expect.stringContaining("stop failed"));
+  });
+
   it("should skip provisioning when provisionBuildDatabase returns undefined", async () => {
     provisionBuildDatabase.mockResolvedValue(undefined);
     exec.mockImplementation(mockExec({ stdout: {} }));

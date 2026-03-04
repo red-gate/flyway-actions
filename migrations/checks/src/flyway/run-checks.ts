@@ -31,7 +31,14 @@ const maybeProvisionBuildDatabase = async (
 
   try {
     const { provisionBuildDatabase } = await import("../docker/provision-build-database.js");
-    return await provisionBuildDatabase(inputs.targetUrl);
+    const provisioned = await provisionBuildDatabase(inputs.targetUrl);
+    if (provisioned) {
+      if (provisioned.password) {
+        core.setSecret(provisioned.password);
+      }
+      core.info(`Auto-provisioned build database: ${provisioned.jdbcUrl}`);
+    }
+    return provisioned;
   } catch (err) {
     core.warning(`Failed to auto-provision build database: ${err}`);
     return undefined;
@@ -70,7 +77,12 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
     }
   } finally {
     if (provisioner) {
-      await provisioner.cleanup();
+      try {
+        await provisioner.cleanup();
+        core.info("Build database cleaned up");
+      } catch (err) {
+        core.warning(`Failed to clean up build database: ${err}`);
+      }
     }
   }
 };
