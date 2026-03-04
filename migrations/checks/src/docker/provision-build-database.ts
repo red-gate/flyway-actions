@@ -1,4 +1,7 @@
 import type { DatabaseType } from "./database-config.js";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import * as core from "@actions/core";
 import { getDatabaseConfig, parseDatabaseType } from "./database-config.js";
 
@@ -88,20 +91,35 @@ const startOracleContainer = async (): Promise<ContainerInfo> => {
   };
 };
 
-const containerStarters: Record<DatabaseType, () => Promise<ContainerInfo>> = {
+const containerStarters: Record<string, () => Promise<ContainerInfo>> = {
   postgresql: startPostgresContainer,
   sqlserver: startSqlServerContainer,
   mysql: startMySqlContainer,
   oracle: startOracleContainer,
 };
 
-const provisionBuildDatabase = async (targetUrl: string): Promise<ProvisionedDatabase | undefined> => {
-  const dbType = parseDatabaseType(targetUrl);
-  if (!dbType) {
-    core.info(`Auto-provisioning not available for database URL: ${targetUrl}`);
-    return undefined;
-  }
+const provisionSqlite = (targetUrl: string): ProvisionedDatabase => {
+  const dbFile = path.join(os.tmpdir(), `flyway_build_${Date.now()}.db`);
+  const jdbcUrl = `jdbc:sqlite:${dbFile}`;
+  core.info(`Auto-provisioning SQLite build database at ${dbFile} (target: ${targetUrl})`);
 
+  return {
+    jdbcUrl,
+    user: "",
+    password: "",
+    cleanup: () => {
+      try {
+        fs.rmSync(dbFile, { force: true });
+        core.info("SQLite build database removed");
+      } catch (err) {
+        core.warning(`Failed to remove SQLite build database: ${err}`);
+      }
+      return Promise.resolve();
+    },
+  };
+};
+
+const provisionContainer = async (dbType: DatabaseType): Promise<ProvisionedDatabase> => {
   core.info(`Auto-provisioning ${dbType} build database via Docker...`);
 
   const starter = containerStarters[dbType];
@@ -125,6 +143,20 @@ const provisionBuildDatabase = async (targetUrl: string): Promise<ProvisionedDat
       }
     },
   };
+};
+
+const provisionBuildDatabase = async (targetUrl: string): Promise<ProvisionedDatabase | undefined> => {
+  const dbType = parseDatabaseType(targetUrl);
+  if (!dbType) {
+    core.info(`Auto-provisioning not available for database URL: ${targetUrl}`);
+    return undefined;
+  }
+
+  if (dbType === "sqlite") {
+    return provisionSqlite(targetUrl);
+  }
+
+  return provisionContainer(dbType);
 };
 
 export { provisionBuildDatabase };

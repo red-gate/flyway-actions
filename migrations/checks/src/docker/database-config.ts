@@ -1,4 +1,4 @@
-type DatabaseType = "postgresql" | "sqlserver" | "mysql" | "oracle";
+type DatabaseType = "postgresql" | "sqlserver" | "mysql" | "oracle" | "sqlite";
 
 type DatabaseConfig = {
   image: string;
@@ -14,18 +14,21 @@ const jdbcPrefixMap: { prefix: string; type: DatabaseType }[] = [
   { prefix: "jdbc:sqlserver://", type: "sqlserver" },
   { prefix: "jdbc:mysql://", type: "mysql" },
   { prefix: "jdbc:oracle:", type: "oracle" },
+  { prefix: "jdbc:sqlite:", type: "sqlite" },
 ];
 
-const embeddedPrefixes = ["jdbc:sqlite:", "jdbc:h2:"];
-
-const parseDatabaseType = (jdbcUrl: string): DatabaseType | undefined => {
-  if (embeddedPrefixes.some((p) => jdbcUrl.startsWith(p))) {
-    return undefined;
-  }
-  return jdbcPrefixMap.find((entry) => jdbcUrl.startsWith(entry.prefix))?.type;
-};
+const parseDatabaseType = (jdbcUrl: string): DatabaseType | undefined =>
+  jdbcPrefixMap.find((entry) => jdbcUrl.startsWith(entry.prefix))?.type;
 
 const databaseConfigs: Record<DatabaseType, DatabaseConfig> = {
+  sqlite: {
+    image: "",
+    defaultUser: "",
+    defaultPassword: "",
+    defaultPort: 0,
+    defaultDatabase: "flyway_build",
+    buildJdbcUrl: (_host, _port, database) => `jdbc:sqlite:${database}`,
+  },
   postgresql: {
     image: "postgres",
     defaultUser: "test",

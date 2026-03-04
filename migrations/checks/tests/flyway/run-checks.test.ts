@@ -320,7 +320,7 @@ describe("auto-provisioning", () => {
     provisionBuildDatabase.mockResolvedValue(undefined);
     exec.mockImplementation(mockExec({ stdout: {} }));
 
-    await runChecks({ targetUrl: "jdbc:sqlite:mydb.db" }, "enterprise");
+    await runChecks({ targetUrl: "jdbc:h2:mem:testdb" }, "enterprise");
 
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 

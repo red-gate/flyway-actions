@@ -114,13 +114,6 @@ describe("provisionBuildDatabase", () => {
     mockGenericContainer.stop.mockResolvedValue(undefined);
   });
 
-  it("should return undefined for unsupported database type", async () => {
-    const result = await provisionBuildDatabase("jdbc:sqlite:mydb.db");
-
-    expect(result).toBeUndefined();
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("not available"));
-  });
-
   it("should return undefined for unknown JDBC URL", async () => {
     const result = await provisionBuildDatabase("jdbc:unknown://localhost/db");
 
@@ -183,5 +176,27 @@ describe("provisionBuildDatabase", () => {
     await result!.cleanup();
 
     expect(warning).toHaveBeenCalledWith(expect.stringContaining("stop failed"));
+  });
+
+  it("should provision sqlite with a temp file JDBC URL", async () => {
+    const result = await provisionBuildDatabase("jdbc:sqlite:mydb.db");
+
+    expect(result).toBeDefined();
+    expect(result!.jdbcUrl).toMatch(/^jdbc:sqlite:.*flyway_build.*\.db$/);
+    expect(result!.user).toBe("");
+    expect(result!.password).toBe("");
+  });
+
+  it("should remove sqlite temp file on cleanup", async () => {
+    const result = await provisionBuildDatabase("jdbc:sqlite:mydb.db");
+    const dbFile = result!.jdbcUrl.replace("jdbc:sqlite:", "");
+
+    await result!.cleanup();
+
+    expect(info).toHaveBeenCalledWith("SQLite build database removed");
+
+    const { existsSync } = await import("node:fs");
+
+    expect(existsSync(dbFile)).toBe(false);
   });
 });

@@ -17,8 +17,8 @@ describe("parseDatabaseType", () => {
     expect(parseDatabaseType("jdbc:oracle:thin:@localhost:1521/xepdb1")).toBe("oracle");
   });
 
-  it("should return undefined for jdbc:sqlite: prefix", () => {
-    expect(parseDatabaseType("jdbc:sqlite:mydb.db")).toBeUndefined();
+  it("should return sqlite for jdbc:sqlite: prefix", () => {
+    expect(parseDatabaseType("jdbc:sqlite:mydb.db")).toBe("sqlite");
   });
 
   it("should return undefined for jdbc:h2: prefix", () => {
@@ -85,5 +85,11 @@ describe("getDatabaseConfig", () => {
     const config = getDatabaseConfig("oracle");
 
     expect(config.buildJdbcUrl("localhost", 1521, "xepdb1")).toBe("jdbc:oracle:thin:@localhost:1521/xepdb1");
+  });
+
+  it("should build correct sqlite JDBC URL", () => {
+    const config = getDatabaseConfig("sqlite");
+
+    expect(config.buildJdbcUrl("", 0, "flyway_build")).toBe("jdbc:sqlite:flyway_build");
   });
 });
