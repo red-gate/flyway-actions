@@ -1,7 +1,7 @@
 import type { Changes, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
-import type { FlywayEdition } from "@flyway-actions/shared";
+import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared";
+import { parseErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
 import { parseCheckOutput } from "../outputs.js";
 import { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, hasBuildInputs } from "./arg-builders.js";
 

@@ -1,6 +1,7 @@
 import type { FlywayMigrationsDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
-import { parseDriftErrorOutput, resolvePath, runFlyway } from "@flyway-actions/shared";
+import { parseDriftErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
+import { resolvePath } from "@flyway-actions/shared/resolve-path";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getCheckDriftArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => [

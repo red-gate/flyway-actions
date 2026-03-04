@@ -1,7 +1,7 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
-import type { FlywayEdition } from "@flyway-actions/shared";
+import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { resolvePath } from "@flyway-actions/shared";
+import { resolvePath } from "@flyway-actions/shared/resolve-path";
 import { runCheckChanges } from "./check-changes.js";
 import { runCheckCode } from "./check-code.js";
 import { runCheckDrift } from "./check-drift.js";

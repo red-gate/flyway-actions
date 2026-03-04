@@ -2,9 +2,10 @@
   "name": "@flyway-actions/shared",
   "version": "1.0.0",
   "type": "module",
-  "main": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    "./flyway-runner": "./src/flyway-runner.ts",
+    "./resolve-path": "./src/resolve-path.ts",
+    "./types": "./src/types.ts",
     "./test-utils": "./src/test-utils.ts"
   },
   "scripts": {

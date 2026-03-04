@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { getFlywayDetails } from "@flyway-actions/shared";
+import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { checkForDrift } from "./flyway/check-for-drift.js";
 import { migrate } from "./flyway/migrate.js";
 import { getInputs, maskSecrets } from "./inputs.js";

@@ -1,7 +1,8 @@
 import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
-import type { FlywayEdition } from "@flyway-actions/shared";
+import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseDriftErrorOutput, resolvePath, runFlyway } from "@flyway-actions/shared";
+import { parseDriftErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
+import { resolvePath } from "@flyway-actions/shared/resolve-path";
 import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
