@@ -90,7 +90,7 @@ inputs:
     description: 'Number of days to retain the pre-deployment report artifact'
     required: false
     default: '7'
-  skip-drift-resolution-upload:
+  skip-drift-resolution-scripts-upload:
     description: 'Skip uploading drift resolution scripts as a workflow artifact'
     required: false
     default: 'false'
@@ -139,7 +139,7 @@ runs:
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
         if-no-files-found: ignore
     - name: Upload drift resolution scripts
-      if: inputs.skip-drift-resolution-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
+      if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.drift-resolution-scripts-name }}

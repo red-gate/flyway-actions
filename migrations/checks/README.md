@@ -247,7 +247,7 @@ When drift is detected, Flyway generates resolution scripts that can be used to 
 |------------------------------------------|----------------------------------------------------------------|----------|------------------------------------|
 | `drift-resolution-scripts-name`          | Name for the drift resolution scripts artifact                 | No       | `flyway-drift-resolution-scripts`  |
 | `drift-resolution-scripts-retention-days`| Number of days to retain the drift resolution scripts artifact | No       | `7`                                |
-| `skip-drift-resolution-upload`           | Skip uploading drift resolution scripts                        | No       | `false`                            |
+| `skip-drift-resolution-scripts-upload`   | Skip uploading drift resolution scripts                        | No       | `false`                            |
 
 If the checks action runs more than once in the same workflow, use a unique `drift-resolution-scripts-name` for each run to avoid artifact name conflicts:
 
