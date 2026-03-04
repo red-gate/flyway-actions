@@ -1,3 +1,5 @@
+import * as path from "node:path";
+
 const info = vi.fn();
 const error = vi.fn();
 
@@ -68,7 +70,7 @@ describe("resolvePath", () => {
   });
 
   it("should join relative path with working directory", () => {
-    expect(resolvePath("report.html", "/app")).toBe("/app/report.html");
+    expect(resolvePath("report.html", "/app")).toBe(path.join("/app", "report.html"));
   });
 
   it("should return relative path as-is when no working directory", () => {
