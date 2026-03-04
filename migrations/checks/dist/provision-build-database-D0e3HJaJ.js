@@ -1,7 +1,7 @@
 import * as l from "node:fs";
 import * as c from "node:os";
 import * as p from "node:path";
-import { i as r, w as i, s as u } from "./main-BkJKxFen.js";
+import { i as r, w as i, s as u } from "./main-B45grWC6.js";
 const b = [
   { prefix: "jdbc:postgresql://", type: "postgresql" },
   { prefix: "jdbc:sqlserver://", type: "sqlserver" },
