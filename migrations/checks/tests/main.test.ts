@@ -86,7 +86,7 @@ describe("run", () => {
 
   it("should run each check as a separate invocation for enterprise", async () => {
     setupChecksMock("Enterprise");
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "auto-provision-build-database": "false" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
@@ -119,7 +119,7 @@ describe("run", () => {
 
   it("should fail when check exits with non-zero code", async () => {
     setupChecksMock("Enterprise", 1);
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "auto-provision-build-database": "false" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
@@ -129,7 +129,7 @@ describe("run", () => {
 
   it("should not fail when check exits with zero code", async () => {
     setupChecksMock("Enterprise", 0);
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "auto-provision-build-database": "false" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
@@ -145,7 +145,7 @@ describe("run", () => {
       individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],
     });
     setupChecksMock("Enterprise", 0, { "-drift": driftOutput, "-code": codeOutput });
-    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db", "auto-provision-build-database": "false" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();

@@ -29,6 +29,10 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to include'
     required: false
+  auto-provision-build-database:
+    description: 'Automatically provision a Docker build database when no build inputs are provided'
+    required: false
+    default: 'true'
   build-environment:
     description: 'Build database for generating a deployment changes report'
     required: false
