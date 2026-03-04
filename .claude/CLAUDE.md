@@ -29,7 +29,7 @@ This is a GitHub Action with:
 
 ## Committing Changes
 
-- Commit messages should be as terse as possible. No need for long descriptions or a commit signature.
+- Commit messages should be as terse as possible. No need for long descriptions.
 - Before creating any commit, ALWAYS run formatting, linting, and tests.
 
 Example workflow:
