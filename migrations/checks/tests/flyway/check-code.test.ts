@@ -1,9 +1,10 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
+import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const error = vi.fn();
 const setOutput = vi.fn();
-const runFlyway = vi.fn();
+const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
@@ -13,8 +14,8 @@ vi.doMock("@actions/core", () => ({
   endGroup: vi.fn(),
 }));
 
-vi.doMock("@flyway-actions/shared", () => ({
-  runFlyway,
+vi.doMock("@actions/exec", () => ({
+  exec,
 }));
 
 const { getCodeArgs, runCheckCode, setCodeOutputs } = await import("../../src/flyway/check-code.js");
@@ -108,13 +109,14 @@ describe("runCheckCode", () => {
   });
 
   it("should set outputs and return reportPath on success", async () => {
-    runFlyway.mockResolvedValue({
-      exitCode: 0,
-      stdout: JSON.stringify({
-        htmlReport: "report.html",
-        individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          htmlReport: "report.html",
+          individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],
+        },
       }),
-    });
+    );
 
     const result = await runCheckCode(baseInputs);
 
@@ -124,17 +126,19 @@ describe("runCheckCode", () => {
   });
 
   it("should parse violations from error output on failure", async () => {
-    runFlyway.mockResolvedValue({
-      exitCode: 1,
-      stdout: JSON.stringify({
-        error: {
-          errorCode: "CHECK_CODE_REVIEW_VIOLATION",
-          message: "Code Analysis Violation(s) detected",
-          results: [{ filepath: "V1__init.sql", violations: [{ code: "RG06" }] }],
-          htmlReport: "/tmp/report.html",
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "CHECK_CODE_REVIEW_VIOLATION",
+            message: "Code Analysis Violation(s) detected",
+            results: [{ filepath: "V1__init.sql", violations: [{ code: "RG06" }] }],
+            htmlReport: "/tmp/report.html",
+          },
         },
+        exitCode: 1,
       }),
-    });
+    );
 
     const result = await runCheckCode({ failOnCodeReview: true });
 
@@ -146,10 +150,12 @@ describe("runCheckCode", () => {
   });
 
   it("should handle error output without results", async () => {
-    runFlyway.mockResolvedValue({
-      exitCode: 1,
-      stdout: JSON.stringify({ error: { errorCode: "FAULT", message: "Something failed" } }),
-    });
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "FAULT", message: "Something failed" } },
+        exitCode: 1,
+      }),
+    );
 
     const result = await runCheckCode(baseInputs);
 
