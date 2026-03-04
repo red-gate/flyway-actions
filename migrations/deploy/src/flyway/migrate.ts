@@ -31,25 +31,22 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
     const args = getMigrateArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
-    let exitCode = result.exitCode;
-    if (exitCode === 0) {
-      const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
-      core.setOutput("migrations-applied", migrationsApplied.toString());
-      core.setOutput("schema-version", schemaVersion);
-    } else {
+    if (result.exitCode !== 0) {
       const errorOutput = parseErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
         );
-        exitCode = 0;
-      } else {
-        errorOutput?.error?.message && core.error(errorOutput.error.message);
-        throw new Error(`Flyway migrate failed with exit code ${exitCode}`);
+        setOutput(0);
+        return;
       }
+      errorOutput?.error?.message && core.error(errorOutput.error.message);
+      setOutput(result.exitCode);
+      throw new Error(`Flyway migrate failed with exit code ${result.exitCode}`);
     }
 
-    core.setOutput("exit-code", exitCode.toString());
+    const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
+    setOutput(result.exitCode, migrationsApplied, schemaVersion);
   } finally {
     core.endGroup();
   }
@@ -62,6 +59,12 @@ const parseFlywayOutput = (stdout: string): { migrationsApplied: number; schemaV
   } catch {
     return { migrationsApplied: 0, schemaVersion: "unknown" };
   }
+};
+
+const setOutput = (exitCode: number, migrationsApplied?: number, schemaVersion?: string) => {
+  core.setOutput("exit-code", exitCode.toString());
+  migrationsApplied !== undefined && core.setOutput("migrations-applied", migrationsApplied.toString());
+  schemaVersion !== undefined && core.setOutput("schema-version", schemaVersion);
 };
 
 export { getMigrateArgs, migrate, parseFlywayOutput };
