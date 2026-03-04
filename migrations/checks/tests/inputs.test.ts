@@ -130,6 +130,15 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
   });
 
+  it("should return auto-provision-build-database input", () => {
+    getBooleanInput.mockReturnValue(false);
+
+    const inputs = getInputs();
+
+    expect(inputs.autoProvisionBuildDatabase).toBe(false);
+    expect(getBooleanInput).toHaveBeenCalledWith("auto-provision-build-database");
+  });
+
   it("should return pre-deployment report name", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "pre-deployment-report-name") {

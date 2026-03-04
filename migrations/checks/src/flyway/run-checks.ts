@@ -13,6 +13,9 @@ const maybeProvisionBuildDatabase = async (
   inputs: FlywayMigrationsChecksInputs,
   edition: FlywayEdition,
 ): Promise<ProvisionedDatabase | undefined> => {
+  if (inputs.autoProvisionBuildDatabase === false) {
+    return undefined;
+  }
   if (hasBuildInputs(inputs)) {
     return undefined;
   }

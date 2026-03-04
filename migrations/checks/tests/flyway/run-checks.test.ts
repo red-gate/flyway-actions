@@ -270,6 +270,14 @@ describe("auto-provisioning", () => {
     expect(provisionBuildDatabase).not.toHaveBeenCalled();
   });
 
+  it("should skip provisioning when autoProvisionBuildDatabase is false", async () => {
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks({ targetUrl: "jdbc:postgresql://localhost/db", autoProvisionBuildDatabase: false }, "enterprise");
+
+    expect(provisionBuildDatabase).not.toHaveBeenCalled();
+  });
+
   it("should skip provisioning when no targetUrl", async () => {
     exec.mockImplementation(mockExec({ stdout: {} }));
 
