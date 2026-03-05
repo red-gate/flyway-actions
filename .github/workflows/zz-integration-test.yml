@@ -153,6 +153,70 @@ jobs:
           test "${{ steps.checks.outputs.exit-code }}" = "1"
           test "${{ steps.checks.outputs.drift-detected }}" = "true"
 
+  migrations-checks-fail-on-drift-false:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run checks
+        id: checks
+        uses: ./migrations/checks
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:database/drift.db
+          fail-on-drift: 'false'
+          fail-on-code-review: 'false'
+          working-directory: sample-projects/sqlite
+          pre-deployment-report-name: flyway-drift-report-fail-false-${{ matrix.os }}
+          pre-deployment-report-retention-days: '1'
+          drift-resolution-scripts-name: flyway-drift-resolution-scripts-fail-false-${{ matrix.os }}
+          drift-resolution-scripts-retention-days: '1'
+      - name: Download report
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-drift-report-fail-false-${{ matrix.os }}.html
+      - name: Verify report exists
+        shell: bash
+        run: test -s flyway-drift-report-fail-false-${{ matrix.os }}.html
+      - name: Download drift resolution scripts
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-drift-resolution-scripts-fail-false-${{ matrix.os }}
+      - name: Verify drift resolution scripts exist
+        shell: bash
+        run: test -n "$(find . -maxdepth 1 -name '*.sql')"
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Drift detected: ${{ steps.checks.outputs.drift-detected }}"
+          test "${{ steps.checks.outputs.exit-code }}" = "0"
+          test "${{ steps.checks.outputs.drift-detected }}" = "true"
+
   migrations-checks-fail-on-code-review:
     strategy:
       matrix:
