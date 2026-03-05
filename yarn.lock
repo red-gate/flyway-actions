@@ -345,7 +345,7 @@ __metadata:
   resolution: "@flyway-actions/list@workspace:list"
   dependencies:
     "@actions/core": "npm:3.0.0"
-    "@types/node": "npm:25.3.1"
+    "@types/node": "npm:25.3.3"
     "@vitest/coverage-v8": "npm:4.0.18"
     vite: "npm:7.3.1"
     vite-plugin-checker: "npm:0.12.0"
@@ -362,7 +362,7 @@ __metadata:
     "@actions/http-client": "npm:4.0.0"
     "@actions/io": "npm:3.0.2"
     "@flyway-actions/shared": "workspace:*"
-    "@types/node": "npm:25.3.1"
+    "@types/node": "npm:25.3.3"
     "@vitest/coverage-v8": "npm:4.0.18"
     vite: "npm:7.3.1"
     vite-plugin-checker: "npm:0.12.0"
@@ -379,7 +379,7 @@ __metadata:
     "@actions/http-client": "npm:4.0.0"
     "@actions/io": "npm:3.0.2"
     "@flyway-actions/shared": "workspace:*"
-    "@types/node": "npm:25.3.1"
+    "@types/node": "npm:25.3.3"
     "@vitest/coverage-v8": "npm:4.0.18"
     vite: "npm:7.3.1"
     vite-plugin-checker: "npm:0.12.0"
@@ -396,7 +396,7 @@ __metadata:
     "@actions/http-client": "npm:4.0.0"
     "@actions/io": "npm:3.0.2"
     "@flyway-actions/shared": "workspace:*"
-    "@types/node": "npm:25.3.1"
+    "@types/node": "npm:25.3.3"
     "@vitest/coverage-v8": "npm:4.0.18"
     vite: "npm:7.3.1"
     vite-plugin-checker: "npm:0.12.0"
@@ -410,7 +410,7 @@ __metadata:
   dependencies:
     "@actions/core": "npm:3.0.0"
     "@actions/exec": "npm:3.0.0"
-    "@types/node": "npm:25.3.1"
+    "@types/node": "npm:25.3.3"
     vitest: "npm:4.0.18"
   languageName: unknown
   linkType: soft
@@ -744,12 +744,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:25.3.1":
-  version: 25.3.1
-  resolution: "@types/node@npm:25.3.1"
+"@types/node@npm:25.3.3":
+  version: 25.3.3
+  resolution: "@types/node@npm:25.3.3"
   dependencies:
     undici-types: "npm:~7.18.0"
-  checksum: 10c0/f4714e3f2c393434cdefbf207f3fe470bcf4d6c5717298c3fc9239e362a57cd25e59603c60e9c956e7d5d0dfb97cf2e037b37cf6dc2f3876f6a963146f7adc6d
+  checksum: 10c0/63e1d3816a9f4a706ab5d588d18cb98aa824b97748ff585537d327528e9438f58f69f45c7762e7cd3a1ab32c1619f551aabe8075d13172f9273cf10f6d83ab91
   languageName: node
   linkType: hard
 
