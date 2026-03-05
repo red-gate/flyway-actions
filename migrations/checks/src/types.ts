@@ -6,6 +6,7 @@ type FlywayMigrationsChecksInputs = {
   targetSchemas?: string;
   targetMigrationVersion?: string;
   cherryPick?: string;
+  autoProvisionBuildDatabase?: boolean;
   buildEnvironment?: string;
   buildUrl?: string;
   buildUser?: string;
