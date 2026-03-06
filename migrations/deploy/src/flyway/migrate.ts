@@ -20,7 +20,9 @@ const getMigrateArgs = (inputs: FlywayMigrationsDeploymentInputs): string[] => {
   return args;
 };
 
-const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> => {
+type MigrateResult = { migrationsApplied: number; schemaVersion: string };
+
+const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<MigrateResult> => {
   core.startGroup("Running migrations");
   try {
     const args = getMigrateArgs(inputs);
@@ -33,7 +35,7 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
           "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
         );
         setOutput(0);
-        return;
+        return { migrationsApplied: 0, schemaVersion: "unknown" };
       }
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       setOutput(result.exitCode);
@@ -42,6 +44,7 @@ const migrate = async (inputs: FlywayMigrationsDeploymentInputs): Promise<void> 
 
     const { migrationsApplied, schemaVersion } = parseFlywayOutput(result.stdout);
     setOutput(result.exitCode, migrationsApplied, schemaVersion);
+    return { migrationsApplied, schemaVersion };
   } finally {
     core.endGroup();
   }
@@ -63,3 +66,4 @@ const setOutput = (exitCode: number, migrationsApplied?: number, schemaVersion?:
 };
 
 export { getMigrateArgs, migrate, parseFlywayOutput };
+export type { MigrateResult };
