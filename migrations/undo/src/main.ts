@@ -5,6 +5,7 @@ import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { getCommonArgs } from "./flyway/arg-builders.js";
 import { undo } from "./flyway/undo.js";
 import { getInputs, maskSecrets } from "./inputs.js";
+import { writeSummary } from "./write-summary.js";
 
 const checkForDrift = (inputs: FlywayMigrationsUndoInputs) =>
   sharedCheckForDrift(getCommonArgs(inputs), inputs.workingDirectory, inputs.driftReportName);
@@ -34,23 +35,30 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
+    let driftChecked = false;
+    let driftDetected = false;
+
     if (flywayDetails.edition === "enterprise") {
       if (inputs.skipDriftCheck) {
         core.info('Skipping drift check: "skip-drift-check" set to true');
         inputs.saveSnapshot = true;
       } else {
-        const { driftDetected, comparisonSupported } = await checkForDrift(inputs);
-        if (driftDetected) {
+        driftChecked = true;
+        const driftResult = await checkForDrift(inputs);
+        if (driftResult.driftDetected) {
+          driftDetected = true;
+          await writeSummary({ driftChecked, driftDetected, migrationsUndone: 0, schemaVersion: "unknown" });
           core.setFailed("Drift detected. Aborting undo.");
           return;
         }
-        inputs.saveSnapshot = comparisonSupported;
+        inputs.saveSnapshot = driftResult.comparisonSupported;
       }
     } else {
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
 
-    await undo(inputs);
+    const { migrationsUndone, schemaVersion } = await undo(inputs);
+    await writeSummary({ driftChecked, driftDetected, migrationsUndone, schemaVersion });
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
