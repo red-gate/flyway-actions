@@ -16,6 +16,10 @@ vi.doMock("@actions/core", () => ({
   endGroup: vi.fn(),
 }));
 
+vi.doMock("../../src/write-summary.js", () => ({
+  writeSummary: vi.fn(),
+}));
+
 vi.doMock("@actions/exec", () => ({
   exec,
 }));
