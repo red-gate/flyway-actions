@@ -38,7 +38,7 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
         core.info(
           "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
         );
-        return { exitCode: 0 };
+        return { exitCode: 0, changedObjectCount: 0 };
       }
       if (errorOutput?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !inputs.buildOkToErase) {
         core.error(
@@ -47,18 +47,18 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
       } else {
         errorOutput?.error?.message && core.error(errorOutput.error.message);
       }
-      return { exitCode: result.exitCode };
+      return { exitCode: result.exitCode, changedObjectCount: 0 };
     }
 
     const output = parseCheckOutput(result.stdout);
-    setChangesOutputs(output);
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
+    const changedObjectCount = setChangesOutputs(output);
+    return { exitCode: result.exitCode, reportPath: output?.htmlReport, changedObjectCount };
   } finally {
     core.endGroup();
   }
 };
 
-const setChangesOutputs = (output: FlywayCheckOutput | undefined): void => {
+const setChangesOutputs = (output: FlywayCheckOutput | undefined): number => {
   const changesResults = output?.individualResults?.filter((r): r is Changes => r.operation === "changes");
   if (changesResults?.length) {
     const changes = changesResults.reduce(
@@ -66,7 +66,9 @@ const setChangesOutputs = (output: FlywayCheckOutput | undefined): void => {
       0,
     );
     core.setOutput("changed-object-count", changes.toString());
+    return changes;
   }
+  return 0;
 };
 
 export { getChangesArgs, runCheckChanges, setChangesOutputs };

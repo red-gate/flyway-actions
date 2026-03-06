@@ -28,26 +28,27 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
     if (result.exitCode !== 0) {
       const errorOutput = parseCodeErrorOutput(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
-      errorOutput?.error?.results && setCodeOutputs(errorOutput.error.results);
+      const violationCount = errorOutput?.error?.results ? setCodeOutputs(errorOutput.error.results) : 0;
 
-      return { exitCode: result.exitCode, reportPath: errorOutput?.error?.htmlReport };
+      return { exitCode: result.exitCode, reportPath: errorOutput?.error?.htmlReport, violationCount };
     }
 
     const output = parseCheckOutput(result.stdout);
     const codeResults = output?.individualResults?.filter((r): r is Code => r.operation === "code");
-    codeResults?.length && setCodeOutputs(codeResults.flatMap((r) => r.results ?? []));
+    const violationCount = codeResults?.length ? setCodeOutputs(codeResults.flatMap((r) => r.results ?? [])) : 0;
 
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
+    return { exitCode: result.exitCode, reportPath: output?.htmlReport, violationCount };
   } finally {
     core.endGroup();
   }
 };
 
-const setCodeOutputs = (results: CodeResultItem[]): void => {
+const setCodeOutputs = (results: CodeResultItem[]): number => {
   const violations = results.flatMap((r) => r.violations ?? []);
   const codes = violations.map((v) => v.code).filter((c): c is string => !!c);
   core.setOutput("code-violation-count", codes.length.toString());
   core.setOutput("code-violation-codes", [...new Set(codes)].join(","));
+  return codes.length;
 };
 
 export { getCodeArgs, runCheckCode, setCodeOutputs };
