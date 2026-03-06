@@ -24,7 +24,7 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
   const { exitCode, result } = await checkForCodeReviewViolations(args, inputs.workingDirectory);
   core.setOutput("code-violation-count", result.violationCount.toString());
   core.setOutput("code-violation-codes", result.violationCodes.join(","));
-  return { exitCode, reportPath: result.reportPath };
+  return { exitCode, reportPath: result.reportPath, violationCount: result.violationCount };
 };
 
 export { runCheckCode };

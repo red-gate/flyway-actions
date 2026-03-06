@@ -121,7 +121,7 @@ describe("runCheckChanges", () => {
 
     const result = await runCheckChanges({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
-    expect(result).toEqual({ exitCode: 0, reportPath: "/tmp/report.html" });
+    expect(result).toEqual({ exitCode: 0, reportPath: "/tmp/report.html", changedObjectCount: 2 });
   });
 
   it("should set changed-object-count output", async () => {
@@ -138,8 +138,9 @@ describe("runCheckChanges", () => {
   it("should not set changed-object-count output when result is undefined", async () => {
     checkForChanges.mockResolvedValue({ exitCode: 1 });
 
-    await runCheckChanges({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
+    const result = await runCheckChanges({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
+    expect(result).toEqual({ exitCode: 1, reportPath: undefined, changedObjectCount: undefined });
     expect(setOutput).not.toHaveBeenCalledWith("changed-object-count", expect.anything());
   });
 });

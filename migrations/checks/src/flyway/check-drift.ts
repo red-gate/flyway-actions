@@ -34,7 +34,13 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
     core.setOutput("drift-detected", result.driftDetected!.toString());
     driftResolutionFolder !== undefined && core.setOutput("drift-resolution-folder", driftResolutionFolder);
   }
-  return { exitCode, reportPath: result.reportPath };
+  return {
+    exitCode,
+    reportPath: result.reportPath,
+    driftDetected: result.driftDetected,
+    driftCheckSkipped: result.driftCheckSkipped,
+    comparisonSupported: result.comparisonSupported,
+  };
 };
 
 export { getDriftArgs, runCheckDrift };

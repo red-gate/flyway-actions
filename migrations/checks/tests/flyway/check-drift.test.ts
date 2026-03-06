@@ -107,7 +107,13 @@ describe("runCheckDrift", () => {
 
     const result = await runCheckDrift(baseInputs, "enterprise");
 
-    expect(result).toEqual({ exitCode: 0, reportPath: "custom-report.html" });
+    expect(result).toEqual({
+      exitCode: 0,
+      reportPath: "custom-report.html",
+      driftDetected: false,
+      driftCheckSkipped: undefined,
+      comparisonSupported: true,
+    });
   });
 
   it("should set GitHub outputs when drift detected", async () => {
