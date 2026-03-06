@@ -225,7 +225,7 @@ The pre-deployment report is automatically uploaded as a workflow artifact after
 | `pre-deployment-report-retention-days` | Number of days to retain the pre-deployment report artifact | No       | `7`                            |
 | `skip-pre-deployment-report-upload`    | Skip uploading the pre-deployment report                    | No       | `false`                        |
 
-If the checks action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `pre-deployment-report-name` for each run to avoid artifact name conflicts:
+If the 'checks' action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `pre-deployment-report-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:
