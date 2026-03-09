@@ -24,6 +24,7 @@ These actions can be used both for database deployment pipelines, and for valida
 | [`migrations/checks`](migrations/checks)                   | Run pre-deployment checks on migrations and target database |
 | [`migrations/deploy`](migrations/deploy)                   | Deploy pending migrations against target database           |
 | [`migrations/undo`](migrations/undo)                       | Undo migrations on target database                          |
+| [`state/deploy`](state/deploy)                             | Deploy state-based changes to target database               |
 
 ## Usage
 
