@@ -23,6 +23,7 @@ These actions can be used both for database deployment pipelines, and for valida
 | [`setup-flyway`](https://github.com/red-gate/setup-flyway) | Install Flyway CLI in your GitHub Actions workflow          |
 | [`migrations/checks`](migrations/checks)                   | Run pre-deployment checks on migrations and target database |
 | [`migrations/deploy`](migrations/deploy)                   | Deploy pending migrations against target database           |
+| [`migrations/undo`](migrations/undo)                       | Undo migrations on target database                          |
 
 ## Usage
 
