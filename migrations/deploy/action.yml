@@ -97,7 +97,7 @@ runs:
       if: steps.check-node.outputs.node-not-found == 'true'
       uses: actions/setup-node@v4
       with:
-        node-version: latest
+        node-version: 'lts/*'
     - name: Run Flyway deploy
       id: deploy
       run: node "${{ github.action_path }}/dist/index.js"
