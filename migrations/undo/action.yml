@@ -81,6 +81,19 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check for Node.js
+      if: runner.environment != 'github-hosted'
+      id: check-node
+      run: |
+        if ! command -v node &>/dev/null; then
+          echo "node-not-found=true" >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash
+    - name: Install Node.js
+      if: steps.check-node.outputs.node-not-found == 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: latest
     - name: Run Flyway undo
       id: undo
       run: node "${{ github.action_path }}/dist/index.js"
