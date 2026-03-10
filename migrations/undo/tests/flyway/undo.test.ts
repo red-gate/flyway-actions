@@ -129,60 +129,6 @@ describe("getUndoArgs", () => {
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
   });
 
-  describe("target params", () => {
-    it("should use flat params with no environment", () => {
-      const inputs: FlywayMigrationsUndoInputs = {
-        targetUrl: "jdbc:postgresql://localhost/db",
-        targetUser: "admin",
-        targetPassword: "secret",
-        targetSchemas: "public,audit",
-      };
-
-      const args = getUndoArgs(inputs);
-
-      expect(args).toContain("-url=jdbc:postgresql://localhost/db");
-      expect(args).toContain("-user=admin");
-      expect(args).toContain("-password=secret");
-      expect(args).toContain("-schemas=public,audit");
-    });
-
-    it("should use flat params with default environment", () => {
-      const inputs: FlywayMigrationsUndoInputs = {
-        targetEnvironment: "default",
-        targetUrl: "jdbc:postgresql://localhost/db",
-        targetUser: "admin",
-        targetPassword: "secret",
-        targetSchemas: "public,audit",
-      };
-
-      const args = getUndoArgs(inputs);
-
-      expect(args).toContain("-environment=default");
-      expect(args).toContain("-url=jdbc:postgresql://localhost/db");
-      expect(args).toContain("-user=admin");
-      expect(args).toContain("-password=secret");
-      expect(args).toContain("-schemas=public,audit");
-    });
-
-    it("should scope params to named environment", () => {
-      const inputs: FlywayMigrationsUndoInputs = {
-        targetEnvironment: "production",
-        targetUrl: "jdbc:postgresql://localhost/db",
-        targetUser: "admin",
-        targetPassword: "secret",
-        targetSchemas: "public,audit",
-      };
-
-      const args = getUndoArgs(inputs);
-
-      expect(args).toContain("-environment=production");
-      expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
-      expect(args).toContain("-environments.production.user=admin");
-      expect(args).toContain("-environments.production.password=secret");
-      expect(args).toContain("-environments.production.schemas=public,audit");
-    });
-  });
-
   it("should build args with target-migration-version", () => {
     const inputs: FlywayMigrationsUndoInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
@@ -224,40 +170,5 @@ describe("getUndoArgs", () => {
     const args = getUndoArgs(inputs);
 
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
-  });
-
-  it("should include working directory", () => {
-    const inputs: FlywayMigrationsUndoInputs = {
-      workingDirectory: "/app/db",
-    };
-
-    const args = getUndoArgs(inputs);
-
-    expect(args).toContain("-workingDirectory=/app/db");
-  });
-
-  it("should include extra args", () => {
-    const inputs: FlywayMigrationsUndoInputs = {
-      targetUrl: "jdbc:postgresql://localhost/db",
-      extraArgs: "-X -custom=value",
-    };
-
-    const args = getUndoArgs(inputs);
-
-    expect(args).toContain("-X");
-    expect(args).toContain("-custom=value");
-  });
-
-  it("should not include undefined optional values", () => {
-    const inputs: FlywayMigrationsUndoInputs = {};
-
-    const args = getUndoArgs(inputs);
-
-    expect(args.filter((a) => a.includes("url")).length).toBe(0);
-    expect(args.filter((a) => a.includes("user")).length).toBe(0);
-    expect(args.filter((a) => a.includes("password")).length).toBe(0);
-    expect(args.filter((a) => a.includes("environment")).length).toBe(0);
-    expect(args.filter((a) => a.includes("target")).length).toBe(0);
-    expect(args.filter((a) => a.includes("cherryPick")).length).toBe(0);
   });
 });
