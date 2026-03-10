@@ -97,4 +97,21 @@ describe("getCommonArgs", () => {
     expect(args.filter((a) => a.includes("password")).length).toBe(0);
     expect(args.filter((a) => a.includes("environment")).length).toBe(0);
   });
+
+  it("should not include action-specific inputs", () => {
+    const inputs: FlywayStateDeploymentInputs = {
+      targetUrl: "jdbc:postgresql://localhost/db",
+      scriptPath: "/scripts",
+      saveSnapshot: true,
+      skipDriftCheck: true,
+      driftReportName: "report",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args.some((a) => a.includes("scriptPath"))).toBe(false);
+    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
+    expect(args.some((a) => a.includes("driftReportName"))).toBe(false);
+  });
 });
