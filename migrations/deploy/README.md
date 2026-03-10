@@ -112,7 +112,7 @@ When running under Flyway Enterprise and drift is detected, the action uploads t
 | `drift-report-retention-days` | Number of days to retain the drift report artifact     | No       | `7`                   |
 | `skip-drift-report-upload`    | Skip uploading the drift report as a workflow artifact | No       | `false`               |
 
-If the deploy action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `drift-report-name` for each run to avoid artifact name conflicts:
+If the 'deploy' action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `drift-report-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:

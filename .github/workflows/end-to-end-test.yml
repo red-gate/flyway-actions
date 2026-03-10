@@ -217,13 +217,21 @@ jobs:
         with:
           edition: community
           i-agree-to-the-eula: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install SQLFluff
+        run: pip install sqlfluff
       - name: Run checks
         id: checks
         uses: ./migrations/checks
         with:
           target-url: jdbc:sqlite:database/no-drift.db
-          skip-code-review: 'true' # Bundled code review is Enterprise-only, and fails without an external SQLFluff install
+          fail-on-code-review: 'false'
           working-directory: sample-projects/sqlite
+          pre-deployment-report-name: flyway-community-pre-deployment-report-${{ matrix.os }}
+          pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
         uses: ./migrations/deploy
@@ -235,10 +243,14 @@ jobs:
         run: |
           set -euo pipefail
           echo "Checks exit code: ${{ steps.checks.outputs.exit-code }}"
+          echo "Code violation count: ${{ steps.checks.outputs.code-violation-count }}"
+          echo "Code violation codes: ${{ steps.checks.outputs.code-violation-codes }}"
           echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
           echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
           echo "Schema version: ${{ steps.deploy.outputs.schema-version }}"
           test "${{ steps.checks.outputs.exit-code }}" = "0"
+          test "${{ steps.checks.outputs.code-violation-count }}" = "1"
+          test "${{ steps.checks.outputs.code-violation-codes }}" = "AM04"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"
