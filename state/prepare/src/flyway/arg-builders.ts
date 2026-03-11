@@ -1,13 +1,11 @@
 import type { FlywayStatePrepareInputs } from "../types.js";
 import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
 
-type EnvironmentFlag = "environment" | "target";
-
-const getTargetConnectionArgs = (inputs: FlywayStatePrepareInputs, environmentFlag: EnvironmentFlag): string[] => {
+const getTargetConnectionArgs = (inputs: FlywayStatePrepareInputs): string[] => {
   const args: string[] = [];
 
   if (inputs.targetEnvironment) {
-    args.push(`-${environmentFlag}=${inputs.targetEnvironment}`);
+    args.push(`-target=${inputs.targetEnvironment}`);
   }
 
   const hasEnvironment = inputs.targetEnvironment && inputs.targetEnvironment !== "default";
@@ -33,7 +31,7 @@ const getTargetConnectionArgs = (inputs: FlywayStatePrepareInputs, environmentFl
 };
 
 const getPrepareArgs = (inputs: FlywayStatePrepareInputs): string[] => {
-  const args: string[] = ["prepare", "-source=schemaModel", ...getTargetConnectionArgs(inputs, "target")];
+  const args: string[] = ["prepare", "-source=schemaModel", ...getTargetConnectionArgs(inputs)];
 
   const types = inputs.generateUndo ? "deploy,undo" : "deploy";
   args.push(`-types=${types}`);

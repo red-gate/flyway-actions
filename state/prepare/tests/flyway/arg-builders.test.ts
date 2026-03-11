@@ -2,12 +2,9 @@ import type { FlywayStatePrepareInputs } from "../../src/types.js";
 
 const { getPrepareArgs } = await import("../../src/flyway/arg-builders.js");
 
-const baseInputs: FlywayStatePrepareInputs = {};
-
 describe("getPrepareArgs", () => {
   it("should build args with prepare command and schema model source", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetUrl: "jdbc:sqlite:test.db",
     };
 
@@ -19,7 +16,6 @@ describe("getPrepareArgs", () => {
 
   it("should use -target instead of -environment", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetEnvironment: "production",
       targetUrl: "jdbc:postgresql://localhost/db",
     };
@@ -32,7 +28,6 @@ describe("getPrepareArgs", () => {
 
   it("should scope params to named environment", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetEnvironment: "production",
       targetUrl: "jdbc:postgresql://localhost/db",
     };
@@ -44,7 +39,6 @@ describe("getPrepareArgs", () => {
 
   it("should include deploy and undo prepare types when generate-undo is true", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetUrl: "jdbc:sqlite:test.db",
       generateUndo: true,
     };
@@ -56,7 +50,6 @@ describe("getPrepareArgs", () => {
 
   it("should include only deploy prepare type when generate-undo is false", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetUrl: "jdbc:sqlite:test.db",
       generateUndo: false,
     };
@@ -68,7 +61,6 @@ describe("getPrepareArgs", () => {
 
   it("should include working directory", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetUrl: "jdbc:sqlite:test.db",
       workingDirectory: "/app/db",
     };
@@ -80,7 +72,6 @@ describe("getPrepareArgs", () => {
 
   it("should include extra args", () => {
     const inputs: FlywayStatePrepareInputs = {
-      ...baseInputs,
       targetUrl: "jdbc:sqlite:test.db",
       extraArgs: "-X -custom=value",
     };
