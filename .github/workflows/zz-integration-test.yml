@@ -3,6 +3,9 @@ name: Integration Tests
 on:
   workflow_call:
 
+env:
+  REDGATE_DISABLE_TELEMETRY: 'true'
+
 jobs:
   list:
     strategy:
