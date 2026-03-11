@@ -1,7 +1,13 @@
+import type { FlywayStatePrepareInputs } from "./types.js";
 import * as core from "@actions/core";
+import { checkForDrift as sharedCheckForDrift } from "@flyway-actions/shared/check-for-drift";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
+import { getCommonArgs } from "./flyway/arg-builders.js";
 import { prepare } from "./flyway/prepare.js";
 import { getInputs, maskSecrets } from "./inputs.js";
+
+const checkForDrift = (inputs: FlywayStatePrepareInputs) =>
+  sharedCheckForDrift(getCommonArgs(inputs), inputs.workingDirectory, inputs.driftReportName);
 
 if (process.env.FLYWAY_INPUTS) {
   for (const [key, value] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS) as Record<string, string>)) {
@@ -27,6 +33,23 @@ const run = async (): Promise<void> => {
     }
 
     maskSecrets(inputs);
+
+    if (flywayDetails.edition === "enterprise") {
+      if (inputs.skipDriftCheck) {
+        core.info('Skipping drift check: "skip-drift-check" set to true');
+      } else {
+        const { driftDetected } = await checkForDrift(inputs);
+        if (driftDetected) {
+          if (inputs.failOnDrift) {
+            core.setFailed("Drift detected. Aborting prepare.");
+            return;
+          }
+          core.warning("Drift detected. Continuing because fail-on-drift is disabled.");
+        }
+      }
+    } else {
+      core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
+    }
 
     await prepare(inputs);
   } catch (error) {
