@@ -27,17 +27,52 @@ inputs:
     description: 'Generate undo script alongside deploy script'
     required: false
     default: 'true'
+  fail-on-drift:
+    description: 'Fail when drift is detected'
+    required: false
+    default: 'true'
+  skip-drift-check:
+    description: 'Skip the drift check'
+    required: false
+    default: 'false'
   working-directory:
     description: 'Working directory for Flyway'
     required: false
   extra-args:
     description: 'Additional Flyway CLI arguments'
     required: false
+  skip-drift-report-upload:
+    description: 'Skip uploading the drift report as a workflow artifact'
+    required: false
+    default: 'false'
+  drift-report-name:
+    description: 'Name for the drift report artifact'
+    required: false
+    default: 'flyway-drift-report'
+  drift-report-retention-days:
+    description: 'Number of days to retain the drift report artifact'
+    required: false
+    default: '7'
+  skip-drift-resolution-scripts-upload:
+    description: 'Skip uploading drift resolution scripts as a workflow artifact'
+    required: false
+    default: 'false'
+  drift-resolution-scripts-name:
+    description: 'Name for the drift resolution scripts artifact'
+    required: false
+    default: 'flyway-drift-resolution-scripts'
+  drift-resolution-scripts-retention-days:
+    description: 'Number of days to retain the drift resolution scripts artifact'
+    required: false
+    default: '7'
 
 outputs:
   exit-code:
     description: 'Flyway exit code'
     value: ${{ steps.prepare.outputs.exit-code }}
+  drift-detected:
+    description: 'Whether drift was detected (empty if skipped)'
+    value: ${{ steps.prepare.outputs.drift-detected }}
   script-path:
     description: 'Path to the generated deployment script'
     value: ${{ steps.prepare.outputs.script-path }}
@@ -67,3 +102,20 @@ runs:
       shell: bash
       env:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
+    - name: Upload drift report
+      if: inputs.skip-drift-report-upload == 'false' && steps.prepare.outputs.report-path != '' && always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.drift-report-name }}
+        path: ${{ steps.prepare.outputs.report-path }}
+        archive: false
+        retention-days: ${{ inputs.drift-report-retention-days }}
+        if-no-files-found: ignore
+    - name: Upload drift resolution scripts
+      if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.prepare.outputs.drift-resolution-folder != '' && always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.drift-resolution-scripts-name }}
+        path: ${{ steps.prepare.outputs.drift-resolution-folder }}
+        retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
+        if-no-files-found: ignore
