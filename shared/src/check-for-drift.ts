@@ -1,30 +1,32 @@
-import type { FlywayStateDeploymentInputs } from "../types.js";
 import * as core from "@actions/core";
-import { parseDriftErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
-import { resolvePath } from "@flyway-actions/shared/resolve-path";
-import { getCommonArgs } from "./arg-builders.js";
-
-const getCheckDriftArgs = (inputs: FlywayStateDeploymentInputs): string[] => [
-  "check",
-  "-drift",
-  "-check.failOnDrift=true",
-  ...getCommonArgs(inputs),
-  ...(inputs.driftReportName ? [`-reportFilename=${inputs.driftReportName}`] : []),
-];
+import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
+import { resolvePath } from "./resolve-path.js";
 
 type CheckForDriftResult = { driftDetected: boolean; comparisonSupported: boolean };
 
-const checkForDrift = async (inputs: FlywayStateDeploymentInputs): Promise<CheckForDriftResult> => {
+const getCheckDriftArgs = (commonArgs: string[], driftReportName?: string): string[] => [
+  "check",
+  "-drift",
+  "-check.failOnDrift=true",
+  ...commonArgs,
+  ...(driftReportName ? [`-reportFilename=${driftReportName}`] : []),
+];
+
+const checkForDrift = async (
+  commonArgs: string[],
+  workingDirectory?: string,
+  driftReportName?: string,
+): Promise<CheckForDriftResult> => {
   core.startGroup("Checking for drift");
   try {
-    const driftArgs = getCheckDriftArgs(inputs);
-    const result = await runFlyway(driftArgs, inputs.workingDirectory);
+    const driftArgs = getCheckDriftArgs(commonArgs, driftReportName);
+    const result = await runFlyway(driftArgs, workingDirectory);
 
     if (result.exitCode !== 0) {
       const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-        const reportPath = resolvePath(errorOutput.error.htmlReport, inputs.workingDirectory);
-        const resolutionFolder = resolvePath(errorOutput.error.driftResolutionFolderPath, inputs.workingDirectory);
+        const reportPath = resolvePath(errorOutput.error.htmlReport, workingDirectory);
+        const resolutionFolder = resolvePath(errorOutput.error.driftResolutionFolderPath, workingDirectory);
         setOutput(result.exitCode, true, reportPath, resolutionFolder);
         return { driftDetected: true, comparisonSupported: true };
       }
@@ -55,3 +57,4 @@ const setOutput = (exitCode: number, driftDetected?: boolean, reportPath?: strin
 };
 
 export { checkForDrift, getCheckDriftArgs };
+export type { CheckForDriftResult };

@@ -97,4 +97,25 @@ describe("getCommonArgs", () => {
     expect(args.filter((a) => a.includes("password")).length).toBe(0);
     expect(args.filter((a) => a.includes("environment")).length).toBe(0);
   });
+
+  it("should not include action-specific inputs", () => {
+    const inputs: FlywayMigrationsDeploymentInputs = {
+      targetUrl: "jdbc:postgresql://localhost/db",
+      targetMigrationVersion: "5.0",
+      cherryPick: "2.0,2.1",
+      baselineOnMigrate: true,
+      saveSnapshot: true,
+      skipDriftCheck: true,
+      driftReportName: "report",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args.some((a) => a.includes("target"))).toBe(false);
+    expect(args.some((a) => a.includes("cherryPick"))).toBe(false);
+    expect(args.some((a) => a.includes("baselineOnMigrate"))).toBe(false);
+    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
+    expect(args.some((a) => a.includes("driftReportName"))).toBe(false);
+  });
 });

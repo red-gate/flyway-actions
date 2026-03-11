@@ -1,5 +1,4 @@
-import type { FlywayMigrationsUndoInputs } from "../../src/types.js";
-import { mockExec } from "@flyway-actions/shared/test-utils";
+import { mockExec } from "../src/test-utils.js";
 
 const setOutput = vi.fn();
 const info = vi.fn();
@@ -17,13 +16,13 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getCheckDriftArgs, checkForDrift } = await import("../../src/flyway/check-for-drift.js");
+const { getCheckDriftArgs, checkForDrift } = await import("../src/check-for-drift.js");
 
 describe("checkForDrift", () => {
   it("should set drift-detected to false and exit-code to 0 when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
-    const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await checkForDrift(["-url=jdbc:sqlite:test.db"]);
 
     expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
@@ -38,7 +37,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await checkForDrift(["-url=jdbc:sqlite:test.db"]);
 
     expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
@@ -55,7 +54,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    await checkForDrift(["-url=jdbc:sqlite:test.db"]);
 
     expect(setOutput).toHaveBeenCalledWith("report-path", "drift-report.html");
   });
@@ -74,7 +73,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    await checkForDrift(["-url=jdbc:sqlite:test.db"]);
 
     expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/absolute/path/to/resolution");
   });
@@ -87,7 +86,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift({ targetUrl: "jdbc:sqlite:test.db" });
+    await checkForDrift(["-url=jdbc:sqlite:test.db"]);
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
@@ -106,7 +105,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift({ targetUrl: "jdbc:h2:mem:test" });
+    const result = await checkForDrift(["-url=jdbc:h2:mem:test"]);
 
     expect(result).toEqual({ driftDetected: false, comparisonSupported: false });
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
@@ -119,27 +118,29 @@ describe("checkForDrift", () => {
 
 describe("getCheckDriftArgs", () => {
   it("should build args with check and -drift as first elements", () => {
-    const inputs: FlywayMigrationsUndoInputs = {};
-
-    const args = getCheckDriftArgs(inputs);
+    const args = getCheckDriftArgs([]);
 
     expect(args[0]).toBe("check");
     expect(args[1]).toBe("-drift");
     expect(args[2]).toBe("-check.failOnDrift=true");
   });
 
-  it("should not include target, cherryPick, or saveSnapshot", () => {
-    const inputs: FlywayMigrationsUndoInputs = {
-      targetUrl: "jdbc:postgresql://localhost/db",
-      targetMigrationVersion: "5.0",
-      cherryPick: "2.0,2.1",
-      saveSnapshot: true,
-    };
+  it("should include common args", () => {
+    const args = getCheckDriftArgs(["-url=jdbc:sqlite:test.db", "-user=admin"]);
 
-    const args = getCheckDriftArgs(inputs);
+    expect(args).toContain("-url=jdbc:sqlite:test.db");
+    expect(args).toContain("-user=admin");
+  });
 
-    expect(args.some((a) => a.includes("target"))).toBe(false);
-    expect(args.some((a) => a.includes("cherryPick"))).toBe(false);
-    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+  it("should include report filename when provided", () => {
+    const args = getCheckDriftArgs([], "custom-report");
+
+    expect(args).toContain("-reportFilename=custom-report");
+  });
+
+  it("should not include report filename when not provided", () => {
+    const args = getCheckDriftArgs([]);
+
+    expect(args.some((a) => a.includes("reportFilename"))).toBe(false);
   });
 });

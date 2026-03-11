@@ -1,8 +1,13 @@
+import type { FlywayMigrationsUndoInputs } from "./types.js";
 import * as core from "@actions/core";
+import { checkForDrift as sharedCheckForDrift } from "@flyway-actions/shared/check-for-drift";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
-import { checkForDrift } from "./flyway/check-for-drift.js";
+import { getCommonArgs } from "./flyway/arg-builders.js";
 import { undo } from "./flyway/undo.js";
 import { getInputs, maskSecrets } from "./inputs.js";
+
+const checkForDrift = (inputs: FlywayMigrationsUndoInputs) =>
+  sharedCheckForDrift(getCommonArgs(inputs), inputs.workingDirectory, inputs.driftReportName);
 
 if (process.env.FLYWAY_INPUTS) {
   for (const [key, value] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS) as Record<string, string>)) {
