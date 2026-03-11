@@ -1,0 +1,15 @@
+table "users" {
+  columns = (
+    column "id" {
+      type = INTEGER
+    }
+    column "username" {
+      type = TEXT
+      null = NOT NULL
+    }
+    column "email" {
+      type = TEXT
+      null = NOT NULL
+    }
+  )
+}

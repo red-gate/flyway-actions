@@ -1,0 +1,6 @@
+databaseType = "Sqlite"
+name = "Sqlite state sample project"
+id = "782fgab1-232b-67f0-no25-68z54g74e985"
+
+[flyway]
+schemaModelLocation = "schema-model"

@@ -1,0 +1,7 @@
+{
+  "database-engine": "sqlite",
+  "database-properties": {
+    "database-version": "3.41.2"
+  },
+  "model-format": "rgmf"
+}

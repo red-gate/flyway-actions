@@ -1,0 +1,14 @@
+table "posts" {
+  columns = (
+    column "id" {
+      type = INTEGER
+    }
+    column "title" {
+      type = TEXT
+      null = NOT NULL
+    }
+    column "content" {
+      type = TEXT
+    }
+  )
+}

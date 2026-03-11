@@ -27,6 +27,7 @@ jobs:
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/undo") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("state/deploy") != null'
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("state/prepare") != null'
 
   migrations-checks:
     strategy:
@@ -507,6 +508,53 @@ jobs:
           test "${{ steps.undo.outputs.drift-detected }}" = "true"
           test "${{ steps.undo.outputs.migrations-undone }}" = ""
           test "${{ steps.undo.outputs.schema-version }}" = ""
+
+  state-prepare-no-drift:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run state prepare
+        id: prepare
+        uses: ./state/prepare
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-environment: production
+          target-url: jdbc:sqlite:state-prepare-target.db
+          working-directory: sample-projects/sqlite-state
+      - name: Test prepare outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.prepare.outputs.exit-code }}"
+          echo "Script path: ${{ steps.prepare.outputs.script-path }}"
+          echo "Undo script path: ${{ steps.prepare.outputs.undo-script-path }}"
+          test "${{ steps.prepare.outputs.exit-code }}" = "0"
+          [[ "${{ steps.prepare.outputs.script-path }}" == *D__deployment.sql ]]
+          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *DU__undo.sql ]]
 
   state-deploy-no-drift:
     strategy:
