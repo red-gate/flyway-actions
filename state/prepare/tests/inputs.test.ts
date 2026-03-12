@@ -120,6 +120,14 @@ describe("getInputs", () => {
     expect(inputs.skipCodeReview).toBe(true);
   });
 
+  it("should get skip-deployment-changes-report input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "skip-deployment-changes-report");
+
+    const inputs = getInputs();
+
+    expect(inputs.skipDeploymentChangesReport).toBe(true);
+  });
+
   it("should get pre-deployment-report-name input", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "pre-deployment-report-name") {

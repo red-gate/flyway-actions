@@ -43,6 +43,10 @@ inputs:
     description: 'Skip the code review check'
     required: false
     default: 'false'
+  skip-deployment-changes-report:
+    description: 'Skip the deployment changes report'
+    required: false
+    default: 'false'
   working-directory:
     description: 'Working directory for Flyway'
     required: false
@@ -87,6 +91,9 @@ outputs:
   code-violation-codes:
     description: 'Comma-separated list of code review violation codes (empty if skipped)'
     value: ${{ steps.prepare.outputs.code-violation-codes }}
+  changed-object-count:
+    description: 'Number of changed objects detected (empty if skipped)'
+    value: ${{ steps.prepare.outputs.changed-object-count }}
   script-path:
     description: 'Path to the generated deployment script'
     value: ${{ steps.prepare.outputs.script-path }}

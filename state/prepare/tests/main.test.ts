@@ -12,6 +12,7 @@ const error = vi.fn();
 const startGroup = vi.fn();
 const endGroup = vi.fn();
 const exec = vi.fn();
+const runCheckChanges = vi.fn();
 
 const setupMocks = () => {
   vi.doMock("@actions/core", () => ({
@@ -29,6 +30,10 @@ const setupMocks = () => {
 
   vi.doMock("@actions/exec", () => ({
     exec,
+  }));
+
+  vi.doMock("../src/flyway/check-changes.js", () => ({
+    runCheckChanges,
   }));
 };
 
@@ -54,6 +59,7 @@ describe("run", () => {
   beforeEach(() => {
     vi.resetModules();
     setupMocks();
+    runCheckChanges.mockResolvedValue(undefined);
   });
 
   const setupFlywayMock = ({
@@ -103,7 +109,7 @@ describe("run", () => {
     );
   });
 
-  it("should run drift check, code review, and prepare for enterprise edition", async () => {
+  it("should run drift check, changes report, code review, and prepare for enterprise edition", async () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
@@ -117,6 +123,7 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(getDriftCheckCalls()).toHaveLength(1);
+    expect(runCheckChanges).toHaveBeenCalledWith(expect.any(Object), "enterprise");
     expect(getCodeReviewCalls()).toHaveLength(1);
     expect(getPrepareCalls()).toHaveLength(1);
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
@@ -140,7 +147,12 @@ describe("run", () => {
   });
 
   it("should mask password", async () => {
-    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, codeReviewExitCode: 0, prepareExitCode: 0 });
+    setupFlywayMock({
+      edition: "Enterprise",
+      driftExitCode: 0,
+      codeReviewExitCode: 0,
+      prepareExitCode: 0,
+    });
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         "target-url": "jdbc:sqlite:test.db",
@@ -320,6 +332,21 @@ describe("run", () => {
     expect(getPrepareCalls()).toHaveLength(1);
     expect(setFailed).not.toHaveBeenCalled();
     expect(setOutput).toHaveBeenCalledWith("script-path", "deployments/D__deployment.sql");
+  });
+
+  it("should call runCheckChanges", async () => {
+    setupFlywayMock({
+      edition: "Community",
+      codeReviewExitCode: 0,
+      prepareExitCode: 0,
+      prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
+    });
+    getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(runCheckChanges).toHaveBeenCalledWith(expect.any(Object), "community");
   });
 
   it("should skip code review when skip-code-review is enabled", async () => {
