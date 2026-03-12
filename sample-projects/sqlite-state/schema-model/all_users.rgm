@@ -1,0 +1,3 @@
+view "all_users" {
+  selectStatement = SELECT * FROM users
+}
