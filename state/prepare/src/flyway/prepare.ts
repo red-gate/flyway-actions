@@ -16,7 +16,11 @@ const parsePrepareOutput = (stdout: string): PrepareOutput | undefined => {
   }
 };
 
-const prepare = async (inputs: FlywayStatePrepareInputs): Promise<void> => {
+type PrepareResult = {
+  scriptPath?: string;
+};
+
+const prepare = async (inputs: FlywayStatePrepareInputs): Promise<PrepareResult> => {
   core.startGroup("Running state-based prepare");
   try {
     const args = getPrepareArgs(inputs);
@@ -31,6 +35,7 @@ const prepare = async (inputs: FlywayStatePrepareInputs): Promise<void> => {
 
     const output = parsePrepareOutput(result.stdout);
     setOutput(result.exitCode, output?.scriptFilename, output?.undoFilename);
+    return { scriptPath: output?.scriptFilename };
   } finally {
     core.endGroup();
   }

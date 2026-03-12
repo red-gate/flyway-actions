@@ -104,6 +104,22 @@ describe("getInputs", () => {
     expect(inputs.skipDriftCheck).toBe(true);
   });
 
+  it("should get fail-on-code-review input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "fail-on-code-review");
+
+    const inputs = getInputs();
+
+    expect(inputs.failOnCodeReview).toBe(true);
+  });
+
+  it("should get skip-code-review input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "skip-code-review");
+
+    const inputs = getInputs();
+
+    expect(inputs.skipCodeReview).toBe(true);
+  });
+
   it("should get drift-report-name input", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "drift-report-name") {

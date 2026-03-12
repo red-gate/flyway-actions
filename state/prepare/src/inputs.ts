@@ -10,7 +10,9 @@ const getInputs = (): FlywayStatePrepareInputs => {
   const targetSchemas = core.getInput("target-schemas") || undefined;
   const generateUndo = core.getBooleanInput("generate-undo");
   const failOnDrift = core.getBooleanInput("fail-on-drift");
+  const failOnCodeReview = core.getBooleanInput("fail-on-code-review");
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
+  const skipCodeReview = core.getBooleanInput("skip-code-review");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
@@ -24,7 +26,9 @@ const getInputs = (): FlywayStatePrepareInputs => {
     targetSchemas,
     generateUndo,
     failOnDrift,
+    failOnCodeReview,
     skipDriftCheck,
+    skipCodeReview,
     workingDirectory,
     extraArgs,
     driftReportName,

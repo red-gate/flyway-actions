@@ -6,7 +6,9 @@ type FlywayStatePrepareInputs = {
   targetSchemas?: string;
   generateUndo?: boolean;
   failOnDrift?: boolean;
+  failOnCodeReview?: boolean;
   skipDriftCheck?: boolean;
+  skipCodeReview?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
   driftReportName?: string;
