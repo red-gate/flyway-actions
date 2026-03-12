@@ -553,9 +553,11 @@ jobs:
           echo "Exit code: ${{ steps.prepare.outputs.exit-code }}"
           echo "Script path: ${{ steps.prepare.outputs.script-path }}"
           echo "Undo script path: ${{ steps.prepare.outputs.undo-script-path }}"
+          echo "Changed object count: ${{ steps.prepare.outputs.changed-object-count }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "0"
           [[ "${{ steps.prepare.outputs.script-path }}" == *D__deployment.sql ]]
           [[ "${{ steps.prepare.outputs.undo-script-path }}" == *DU__undo.sql ]]
+          test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
 
   state-prepare-drift:
     strategy:
@@ -671,9 +673,11 @@ jobs:
         run: |
           set -euo pipefail
           echo "Exit code: ${{ steps.prepare.outputs.exit-code }}"
+          echo "Changed object count: ${{ steps.prepare.outputs.changed-object-count }}"
           echo "Code violation count: ${{ steps.prepare.outputs.code-violation-count }}"
           echo "Code violation codes: ${{ steps.prepare.outputs.code-violation-codes }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "1"
+          test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
           test "${{ steps.prepare.outputs.code-violation-count }}" = "1"
           test "${{ steps.prepare.outputs.code-violation-codes }}" = "AM04"
 
