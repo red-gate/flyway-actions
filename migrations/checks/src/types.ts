@@ -44,8 +44,4 @@ type FlywayCheckOutput = { htmlReport?: string; individualResults?: (Drift | Cha
 
 type CodeResultItem = { violations?: { code?: string }[] };
 
-type CodeErrorOutput = {
-  error?: { errorCode?: string; message?: string; results?: CodeResultItem[]; htmlReport?: string };
-};
-
-export type { Changes, Code, CodeErrorOutput, CodeResultItem, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };
+export type { Changes, Code, CodeResultItem, Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs };
