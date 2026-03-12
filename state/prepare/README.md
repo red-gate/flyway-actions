@@ -21,7 +21,7 @@ Generates a deployment script by comparing your schema model against the target 
 
 ### Flyway Teams / Community
 
-The [prepare](https://documentation.red-gate.com/flyway/reference/commands/prepare) command requires Flyway Enterprise. This action is not supported on Teams or Community editions.
+The [prepare](https://documentation.red-gate.com/flyway/reference/commands/prepare) command and drift detection require Flyway Enterprise. This action is not supported on Teams or Community editions.
 
 ## Prerequisites
 
