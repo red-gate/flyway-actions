@@ -93,17 +93,17 @@ steps:
 | `working-directory`  | Working directory for Flyway                     | No                                       |           |
 | `extra-args`         | Additional Flyway CLI arguments                  | No                                       |           |
 
-### Drift Report Upload
+### Pre-deployment Report Upload
 
-When running under Flyway Enterprise and drift is detected, the action uploads the drift report as a workflow artifact.
+When running under Flyway Enterprise, the action uploads the pre-deployment report as a workflow artifact.
 
-| Input                         | Description                                            | Required | Default               |
-|-------------------------------|--------------------------------------------------------|----------|-----------------------|
-| `drift-report-name`           | Name for the drift report artifact                     | No       | `flyway-drift-report` |
-| `drift-report-retention-days` | Number of days to retain the drift report artifact     | No       | `7`                   |
-| `skip-drift-report-upload`    | Skip uploading the drift report as a workflow artifact | No       | `false`               |
+| Input                                  | Description                                                     | Required | Default                        |
+|----------------------------------------|-----------------------------------------------------------------|----------|--------------------------------|
+| `pre-deployment-report-name`           | Name for the pre-deployment report artifact                     | No       | `flyway-pre-deployment-report` |
+| `pre-deployment-report-retention-days` | Number of days to retain the pre-deployment report artifact     | No       | `7`                            |
+| `skip-pre-deployment-report-upload`    | Skip uploading the pre-deployment report as a workflow artifact | No       | `false`                        |
 
-If the prepare action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `drift-report-name` for each run to avoid artifact name conflicts:
+If the prepare action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `pre-deployment-report-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:
@@ -113,7 +113,7 @@ steps:
   - uses: red-gate/flyway-actions/state/prepare@v1
     with:
       target-environment: ${{ matrix.target }}
-      drift-report-name: flyway-drift-report-${{ matrix.target }}
+      pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.target }}
 ```
 
 ### Drift Resolution Scripts Upload

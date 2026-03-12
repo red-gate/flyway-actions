@@ -14,7 +14,7 @@ const getCodeArgs = (inputs: FlywayStatePrepareInputs, scriptFilename: string): 
     ...getTargetEnvironmentArgs(inputs),
     ...(inputs.workingDirectory ? [`-workingDirectory=${inputs.workingDirectory}`] : []),
     ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
-    ...(inputs.driftReportName ? [`-reportFilename=${inputs.driftReportName}`] : []),
+    ...(inputs.preDeploymentReportName ? [`-reportFilename=${inputs.preDeploymentReportName}`] : []),
     "-check.scope=script",
     `-check.scriptFilename=${scriptFilename}`,
   ];

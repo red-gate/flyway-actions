@@ -87,15 +87,15 @@ describe("runCheckCode", () => {
     expect(checkForCodeReviewViolations).toHaveBeenCalledWith(expect.any(Array), "/app/db");
   });
 
-  it("should include reportFilename when driftReportName is set", async () => {
-    await runCheckCode({ driftReportName: "my-report" }, "V001__create.sql");
+  it("should include reportFilename when preDeploymentReportName is set", async () => {
+    await runCheckCode({ preDeploymentReportName: "my-report" }, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
     expect(args).toContain("-reportFilename=my-report");
   });
 
-  it("should not include reportFilename when driftReportName is not set", async () => {
+  it("should not include reportFilename when preDeploymentReportName is not set", async () => {
     await runCheckCode({}, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
