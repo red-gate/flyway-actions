@@ -1,6 +1,6 @@
 import type { FlywayStatePrepareInputs } from "../types.js";
 import * as core from "@actions/core";
-import { checkForCodeReview } from "@flyway-actions/shared/check-for-code-review";
+import { checkForCodeReviewViolations } from "@flyway-actions/shared/check-for-code-review-violations";
 import { getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayStatePrepareInputs, scriptFilename: string): string[] | undefined => {
@@ -24,7 +24,7 @@ const runCheckCode = async (inputs: FlywayStatePrepareInputs, scriptFilename: st
   if (!args) {
     return undefined;
   }
-  return checkForCodeReview(args, inputs.workingDirectory);
+  return checkForCodeReviewViolations(args, inputs.workingDirectory);
 };
 
 export { getCodeArgs, runCheckCode };

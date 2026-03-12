@@ -8,7 +8,7 @@
     "./types": "./src/types.ts",
     "./test-utils": "./src/test-utils.ts",
     "./check-for-drift": "./src/check-for-drift.ts",
-    "./check-for-code-review": "./src/check-for-code-review.ts"
+    "./check-for-code-review-violations": "./src/check-for-code-review-violations.ts"
   },
   "scripts": {
     "test": "vitest run",

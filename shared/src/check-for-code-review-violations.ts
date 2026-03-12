@@ -19,7 +19,10 @@ type CheckForCodeReviewResult = {
   violationCodes: string[];
 };
 
-const checkForCodeReview = async (args: string[], workingDirectory?: string): Promise<CheckForCodeReviewResult> => {
+const checkForCodeReviewViolations = async (
+  args: string[],
+  workingDirectory?: string,
+): Promise<CheckForCodeReviewResult> => {
   core.startGroup("Running code review");
   try {
     const result = await runFlyway(args, workingDirectory);
@@ -72,5 +75,5 @@ const parseErrorOutput = (stdout: string): CodeReviewErrorOutput | undefined => 
   }
 };
 
-export { checkForCodeReview };
+export { checkForCodeReviewViolations };
 export type { CheckForCodeReviewResult };

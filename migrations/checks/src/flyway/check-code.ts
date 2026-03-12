@@ -1,6 +1,6 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
 import * as core from "@actions/core";
-import { checkForCodeReview } from "@flyway-actions/shared/check-for-code-review";
+import { checkForCodeReviewViolations } from "@flyway-actions/shared/check-for-code-review-violations";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayMigrationsChecksInputs): string[] | undefined => {
@@ -21,7 +21,7 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
   if (!args) {
     return undefined;
   }
-  const result = await checkForCodeReview(args, inputs.workingDirectory);
+  const result = await checkForCodeReviewViolations(args, inputs.workingDirectory);
   return { exitCode: result.exitCode, reportPath: result.reportPath };
 };
 

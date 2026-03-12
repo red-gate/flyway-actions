@@ -16,9 +16,9 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { checkForCodeReview } = await import("../src/check-for-code-review.js");
+const { checkForCodeReviewViolations } = await import("../src/check-for-code-review-violations.js");
 
-describe("checkForCodeReview", () => {
+describe("checkForCodeReviewViolations", () => {
   it("should set violation count to 0 when no violations found", async () => {
     exec.mockImplementation(
       mockExec({
@@ -28,7 +28,7 @@ describe("checkForCodeReview", () => {
       }),
     );
 
-    const result = await checkForCodeReview(["code"]);
+    const result = await checkForCodeReviewViolations(["code"]);
 
     expect(result).toEqual(expect.objectContaining({ exitCode: 0, violationCount: 0, violationCodes: [] }));
     expect(setOutput).toHaveBeenCalledWith("code-violation-count", "0");
@@ -50,7 +50,7 @@ describe("checkForCodeReview", () => {
       }),
     );
 
-    const result = await checkForCodeReview(["code"]);
+    const result = await checkForCodeReviewViolations(["code"]);
 
     expect(result).toEqual({
       exitCode: 0,
@@ -77,7 +77,7 @@ describe("checkForCodeReview", () => {
       }),
     );
 
-    const result = await checkForCodeReview(["code"]);
+    const result = await checkForCodeReviewViolations(["code"]);
 
     expect(result).toEqual({
       exitCode: 1,
@@ -98,10 +98,18 @@ describe("checkForCodeReview", () => {
       }),
     );
 
-    const result = await checkForCodeReview(["code"]);
+    const result = await checkForCodeReviewViolations(["code"]);
 
     expect(result).toEqual(expect.objectContaining({ exitCode: 1, violationCount: 0, violationCodes: [] }));
     expect(error).toHaveBeenCalledWith("Something failed");
+  });
+
+  it("should handle unparseable error output on failure", async () => {
+    exec.mockImplementation(mockExec({ stdout: "not json", exitCode: 1 }));
+
+    const result = await checkForCodeReviewViolations(["code"]);
+
+    expect(result).toEqual(expect.objectContaining({ exitCode: 1, violationCount: 0, violationCodes: [] }));
   });
 
   it("should ignore non-code individual results", async () => {
@@ -116,7 +124,7 @@ describe("checkForCodeReview", () => {
       }),
     );
 
-    const result = await checkForCodeReview(["code"]);
+    const result = await checkForCodeReviewViolations(["code"]);
 
     expect(result).toEqual(expect.objectContaining({ violationCount: 1, violationCodes: ["AM04"] }));
   });
