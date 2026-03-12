@@ -1,8 +1,7 @@
-import type { Changes, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
+import type { FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
-import { parseCheckOutput } from "../outputs.js";
+import { checkForChanges } from "@flyway-actions/shared/check-for-changes";
 import { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, hasBuildInputs } from "./arg-builders.js";
 
 const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
@@ -28,45 +27,8 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
   if (!args) {
     return undefined;
   }
-  core.startGroup("Running Flyway check: deployment changes report");
-  try {
-    const result = await runFlyway(args, inputs.workingDirectory);
-
-    if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
-      if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-        core.info(
-          "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
-        );
-        return { exitCode: 0 };
-      }
-      if (errorOutput?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !inputs.buildOkToErase) {
-        core.error(
-          'The build database needs to be erasable. Set the "build-ok-to-erase" input to "true" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.',
-        );
-      } else {
-        errorOutput?.error?.message && core.error(errorOutput.error.message);
-      }
-      return { exitCode: result.exitCode };
-    }
-
-    const output = parseCheckOutput(result.stdout);
-    setChangesOutputs(output);
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
-  } finally {
-    core.endGroup();
-  }
+  const result = await checkForChanges(args, inputs.workingDirectory, !inputs.buildOkToErase);
+  return { exitCode: result.exitCode, reportPath: result.reportPath };
 };
 
-const setChangesOutputs = (output: FlywayCheckOutput | undefined): void => {
-  const changesResults = output?.individualResults?.filter((r): r is Changes => r.operation === "changes");
-  if (changesResults?.length) {
-    const changes = changesResults.reduce(
-      (acc, r) => acc + (r.onlyInSource?.length ?? 0) + (r.onlyInTarget?.length ?? 0) + (r.differences?.length ?? 0),
-      0,
-    );
-    core.setOutput("changed-object-count", changes.toString());
-  }
-};
-
-export { getChangesArgs, runCheckChanges, setChangesOutputs };
+export { runCheckChanges };
