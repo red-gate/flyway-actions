@@ -20,7 +20,7 @@
     "@actions/exec": "3.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.3.3",
+    "@types/node": "25.4.0",
     "vitest": "4.0.18"
   }
 }
