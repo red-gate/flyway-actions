@@ -1,6 +1,6 @@
 import type { FlywayStatePrepareInputs } from "../../src/types.js";
 
-const { getPrepareArgs } = await import("../../src/flyway/arg-builders.js");
+const { getCommonArgs, getPrepareArgs } = await import("../../src/flyway/arg-builders.js");
 
 describe("getPrepareArgs", () => {
   it("should build args with prepare command and schema model source", () => {
@@ -77,6 +77,71 @@ describe("getPrepareArgs", () => {
     };
 
     const args = getPrepareArgs(inputs);
+
+    expect(args).toContain("-X");
+    expect(args).toContain("-custom=value");
+  });
+});
+
+describe("getCommonArgs", () => {
+  it("should use -environment instead of -target", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetEnvironment: "production",
+      targetUrl: "jdbc:postgresql://localhost/db",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args).toContain("-environment=production");
+    expect(args).not.toContain("-target=production");
+  });
+
+  it("should scope params to named environment", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetEnvironment: "production",
+      targetUrl: "jdbc:postgresql://localhost/db",
+      targetUser: "admin",
+      targetPassword: "secret",
+      targetSchemas: "public,app",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args).toContain("-environments.production.url=jdbc:postgresql://localhost/db");
+    expect(args).toContain("-environments.production.user=admin");
+    expect(args).toContain("-environments.production.password=secret");
+    expect(args).toContain("-environments.production.schemas=public,app");
+  });
+
+  it("should use flat params for default environment", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetEnvironment: "default",
+      targetUrl: "jdbc:sqlite:test.db",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args).toContain("-url=jdbc:sqlite:test.db");
+  });
+
+  it("should include working directory", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+      workingDirectory: "/app/db",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args).toContain("-workingDirectory=/app/db");
+  });
+
+  it("should include extra args", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+      extraArgs: "-X -custom=value",
+    };
+
+    const args = getCommonArgs(inputs);
 
     expect(args).toContain("-X");
     expect(args).toContain("-custom=value");

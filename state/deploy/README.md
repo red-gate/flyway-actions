@@ -24,13 +24,9 @@ Executes a deployment script against the target database using the [deploy](http
 Captures a snapshot after deployment and stores it in the Flyway snapshot history table, enabling drift checks the next time you deploy, as well as allowing for [ad hoc rollbacks](https://documentation.red-gate.com/flyway/deploying-database-changes-using-flyway/implementing-a-roll-back-strategy).
 This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
 
-### Flyway Teams
+### Flyway Teams / Community
 
-Only the deployment will be performed
-
-### Flyway Community
-
-Only the deployment will be performed
+The [deploy](https://documentation.red-gate.com/flyway/reference/commands/deploy) command requires Flyway Enterprise. This action is not supported on Teams or Community editions.
 
 ## Prerequisites
 

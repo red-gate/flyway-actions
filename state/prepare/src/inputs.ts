@@ -9,9 +9,12 @@ const getInputs = (): FlywayStatePrepareInputs => {
   const targetPassword = core.getInput("target-password") || undefined;
   const targetSchemas = core.getInput("target-schemas") || undefined;
   const generateUndo = core.getBooleanInput("generate-undo");
+  const failOnDrift = core.getBooleanInput("fail-on-drift");
+  const skipDriftCheck = core.getBooleanInput("skip-drift-check");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
+  const driftReportName = core.getInput("drift-report-name") || undefined;
 
   return {
     targetEnvironment,
@@ -20,8 +23,11 @@ const getInputs = (): FlywayStatePrepareInputs => {
     targetPassword,
     targetSchemas,
     generateUndo,
+    failOnDrift,
+    skipDriftCheck,
     workingDirectory,
     extraArgs,
+    driftReportName,
   };
 };
 

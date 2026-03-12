@@ -88,6 +88,35 @@ describe("getInputs", () => {
     expect(inputs.generateUndo).toBe(true);
   });
 
+  it("should get fail-on-drift input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "fail-on-drift");
+
+    const inputs = getInputs();
+
+    expect(inputs.failOnDrift).toBe(true);
+  });
+
+  it("should get skip-drift-check input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "skip-drift-check");
+
+    const inputs = getInputs();
+
+    expect(inputs.skipDriftCheck).toBe(true);
+  });
+
+  it("should get drift-report-name input", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "drift-report-name") {
+        return "custom-report";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.driftReportName).toBe("custom-report");
+  });
+
   it("should get working directory and extra args", () => {
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
@@ -113,6 +142,7 @@ describe("getInputs", () => {
     expect(inputs.targetSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
+    expect(inputs.driftReportName).toBeUndefined();
   });
 });
 
