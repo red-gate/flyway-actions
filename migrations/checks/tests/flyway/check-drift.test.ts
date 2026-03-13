@@ -1,10 +1,8 @@
 import type { FlywayMigrationsChecksInputs } from "../../src/types.js";
-import * as path from "node:path";
-import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const setOutput = vi.fn();
-const exec = vi.fn();
+const checkForDrift = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
@@ -15,7 +13,11 @@ vi.doMock("@actions/core", () => ({
 }));
 
 vi.doMock("@actions/exec", () => ({
-  exec,
+  exec: vi.fn(),
+}));
+
+vi.doMock("@flyway-actions/shared/check-for-drift", () => ({
+  checkForDrift,
 }));
 
 const { getDriftArgs, runCheckDrift } = await import("../../src/flyway/check-drift.js");
@@ -80,160 +82,69 @@ describe("getDriftArgs", () => {
   });
 });
 
-describe("runDriftCheck", () => {
+describe("runCheckDrift", () => {
+  beforeEach(() => {
+    checkForDrift.mockResolvedValue({ exitCode: 0, driftDetected: false, comparisonSupported: true });
+  });
+
   it("should return undefined when edition is not enterprise", async () => {
     const result = await runCheckDrift(baseInputs, "community");
 
     expect(result).toBeUndefined();
   });
 
-  it("should set drift-detected to false when exit code is 0 and no drift in output", async () => {
-    exec.mockImplementation(mockExec({ stdout: { individualResults: [{ operation: "drift" }] } }));
+  it("should pass workingDirectory to checkForDrift", async () => {
+    await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
 
+    expect(checkForDrift).toHaveBeenCalledWith(expect.any(Array), "my-project");
+  });
+
+  it("should return exitCode and reportPath from result", async () => {
+    checkForDrift.mockResolvedValue({
+      exitCode: 0,
+      driftDetected: false,
+      comparisonSupported: true,
+      reportPath: "custom-report.html",
+    });
+
+    const result = await runCheckDrift(baseInputs, "enterprise");
+
+    expect(result).toEqual({ exitCode: 0, reportPath: "custom-report.html" });
+  });
+
+  it("should set GitHub outputs when drift detected", async () => {
+    checkForDrift.mockResolvedValue({
+      exitCode: 1,
+      driftDetected: true,
+      comparisonSupported: true,
+      driftResolutionFolder: "/resolution",
+    });
+
+    await runCheckDrift(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/resolution");
+  });
+
+  it("should set GitHub outputs when no drift and comparison supported", async () => {
     await runCheckDrift(baseInputs, "enterprise");
 
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
-  it("should set drift-detected to true when exit code is 0 and drift detected in output", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
-        },
-      }),
-    );
+  it("should not set outputs when comparison not supported", async () => {
+    checkForDrift.mockResolvedValue({ exitCode: 0, driftDetected: false, comparisonSupported: false });
 
     await runCheckDrift(baseInputs, "enterprise");
 
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
 
-  it("should set drift-detected and drift-resolution-folder when exit code is non-zero and error code is CHECK_DRIFT_DETECTED", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          error: {
-            errorCode: "CHECK_DRIFT_DETECTED",
-            message: "Drift detected",
-            driftResolutionFolderPath: "drift-scripts",
-          },
-        },
-        exitCode: 1,
-      }),
-    );
+  it("should not set outputs when non-drift error occurs", async () => {
+    checkForDrift.mockResolvedValue({ exitCode: 1, driftDetected: false, comparisonSupported: true });
 
     await runCheckDrift(baseInputs, "enterprise");
 
-    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
-    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "drift-scripts");
-  });
-
-  it("should return exit code 0 when database does not support comparison", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          error: {
-            errorCode: "COMPARISON_DATABASE_NOT_SUPPORTED",
-            message: "No comparison capability found that supports both types",
-          },
-        },
-        exitCode: 1,
-      }),
-    );
-
-    const result = await runCheckDrift(baseInputs, "enterprise");
-
-    expect(result?.exitCode).toBe(0);
-    expect(setOutput).not.toHaveBeenCalled();
-    expect(info).toHaveBeenCalledWith(
-      "Drift check could not be run because advanced comparison features are not supported for this database type.",
-    );
-  });
-
-  it("should not set drift-detected when exit code is non-zero and error code is not CHECK_DRIFT_DETECTED", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: { error: { errorCode: "FAULT", message: "Something else failed" } },
-        exitCode: 1,
-      }),
-    );
-
-    await runCheckDrift(baseInputs, "enterprise");
-
-    expect(setOutput).not.toHaveBeenCalled();
-  });
-
-  it("should return reportPath from parsed output", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          htmlReport: "custom-report.html",
-          individualResults: [{ operation: "drift" }],
-        },
-      }),
-    );
-
-    const result = await runCheckDrift(baseInputs, "enterprise");
-
-    expect(result?.reportPath).toBe("custom-report.html");
-  });
-
-  it("should return undefined reportPath when output has no htmlReport", async () => {
-    exec.mockImplementation(mockExec({ stdout: { individualResults: [{ operation: "drift" }] } }));
-
-    const result = await runCheckDrift(baseInputs, "enterprise");
-
-    expect(result?.reportPath).toBeUndefined();
-  });
-
-  it("should set drift-resolution-folder output when present in drift result", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
-        },
-      }),
-    );
-
-    await runCheckDrift(baseInputs, "enterprise");
-
-    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "drift-scripts");
-  });
-
-  it("should not set drift-resolution-folder output when not present", async () => {
-    exec.mockImplementation(mockExec({ stdout: { individualResults: [{ operation: "drift" }] } }));
-
-    await runCheckDrift(baseInputs, "enterprise");
-
-    expect(setOutput).not.toHaveBeenCalledWith("drift-resolution-folder", expect.anything());
-  });
-
-  it("should prepend working directory to drift-resolution-folder", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          individualResults: [{ operation: "drift", driftResolutionFolder: "drift-scripts" }],
-        },
-      }),
-    );
-
-    await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
-
-    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", path.join("my-project", "drift-scripts"));
-  });
-
-  it("should not prepend working directory when drift-resolution-folder is absolute", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          individualResults: [{ operation: "drift", driftResolutionFolder: "/tmp/drift-scripts" }],
-        },
-      }),
-    );
-
-    await runCheckDrift({ workingDirectory: "my-project" }, "enterprise");
-
-    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/tmp/drift-scripts");
+    expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
 });
