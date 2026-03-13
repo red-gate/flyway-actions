@@ -10428,78 +10428,83 @@ var ln = () => {
 	} catch {
 		return;
 	}
-}, bn = "default_build", xn = (e) => {
+}, bn = async (e, t, n) => {
+	sn("Running deployment changes report");
+	try {
+		let r = await mn(e, t);
+		if (r.exitCode !== 0) {
+			let e = _n(r.stdout);
+			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? an("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && an(e.error.message), { exitCode: r.exitCode });
+		}
+		let i = yn(r.stdout);
+		return xn(i), {
+			exitCode: r.exitCode,
+			reportPath: i?.htmlReport
+		};
+	} finally {
+		cn();
+	}
+}, xn = (e) => {
+	let t = e?.individualResults?.filter((e) => e.operation === "changes");
+	t?.length && nn("changed-object-count", t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0).toString());
+}, Sn = "default_build", Cn = (e) => {
 	let t = ["check"];
 	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.preDeploymentReportName && t.push(`-reportFilename=${e.preDeploymentReportName}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
-}, Sn = (e) => {
-	let t = [...Cn(e)];
+}, wn = (e) => {
+	let t = [...Tn(e)];
 	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), t;
-}, Cn = (e) => {
+}, Tn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), t;
-}, wn = (e) => {
-	if (!Tn(e)) return [];
-	let t = e.buildEnvironment ?? bn, n = [];
+}, En = (e) => {
+	if (!Dn(e)) return [];
+	let t = e.buildEnvironment ?? Sn, n = [];
 	return n.push(`-check.buildEnvironment=${t}`), e.buildUrl && n.push(`-environments.${t}.url=${e.buildUrl}`), e.buildUser && n.push(`-environments.${t}.user=${e.buildUser}`), e.buildPassword && n.push(`-environments.${t}.password=${e.buildPassword}`), e.buildSchemas && n.push(`-environments.${t}.schemas=${e.buildSchemas}`), e.buildOkToErase && n.push(`-environments.${t}.flyway.cleanDisabled=false`), n;
-}, Tn = (e) => !!(e.buildEnvironment || e.buildUrl), En = (e, t) => {
+}, Dn = (e) => !!(e.buildEnvironment || e.buildUrl), On = (e, t) => {
 	if (t !== "enterprise") {
 		on(`Skipping deployment changes report: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
 	}
-	if (e.skipDeploymentChangesReport && Tn(e)) {
+	if (e.skipDeploymentChangesReport && Dn(e)) {
 		on("Skipping deployment changes report: \"skip-deployment-changes-report\" set to true");
 		return;
 	}
-	if (!Tn(e)) {
+	if (!Dn(e)) {
 		on("Skipping deployment changes report: no \"build-environment\" or \"build-url\" provided");
 		return;
 	}
 	return [
-		...xn(e),
+		...Cn(e),
 		"-changes",
-		...Sn(e),
-		...wn(e)
+		...wn(e),
+		...En(e)
 	];
-}, Dn = async (e, t) => {
-	let n = En(e, t);
-	if (n) {
-		sn("Running Flyway check: deployment changes report");
-		try {
-			let t = await mn(n, e.workingDirectory);
-			if (t.exitCode !== 0) {
-				let n = _n(t.stdout);
-				return n?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (n?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && !e.buildOkToErase ? an("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : n?.error?.message && an(n.error.message), { exitCode: t.exitCode });
-			}
-			let r = yn(t.stdout);
-			return On(r), {
-				exitCode: t.exitCode,
-				reportPath: r?.htmlReport
-			};
-		} finally {
-			cn();
-		}
-	}
-}, On = (e) => {
-	let t = e?.individualResults?.filter((e) => e.operation === "changes");
-	t?.length && nn("changed-object-count", t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0).toString());
 }, kn = async (e, t) => {
+	let n = On(e, t);
+	if (!n) return;
+	let r = await bn(n, e.workingDirectory, !e.buildOkToErase);
+	return {
+		exitCode: r.exitCode,
+		reportPath: r.reportPath
+	};
+}, An = async (e, t) => {
 	sn("Running code review");
 	try {
 		let n = await mn(e, t);
 		if (n.exitCode !== 0) {
-			let e = Nn(n.stdout);
+			let e = Pn(n.stdout);
 			e?.error?.message && an(e.error.message);
-			let t = An(e?.error?.results ?? []);
-			return jn(t), {
+			let t = jn(e?.error?.results ?? []);
+			return Mn(t), {
 				exitCode: n.exitCode,
 				reportPath: e?.error?.htmlReport,
 				...t
 			};
 		}
-		let r = Mn(n.stdout), i = An((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
-		return jn(i), {
+		let r = Nn(n.stdout), i = jn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
+		return Mn(i), {
 			exitCode: n.exitCode,
 			reportPath: r?.htmlReport,
 			...i
@@ -10507,20 +10512,14 @@ var ln = () => {
 	} finally {
 		cn();
 	}
-}, An = (e) => {
+}, jn = (e) => {
 	let t = e.flatMap((e) => e.violations ?? []).map((e) => e.code).filter((e) => !!e);
 	return {
 		violationCount: t.length,
 		violationCodes: [...new Set(t)]
 	};
-}, jn = (e) => {
-	nn("code-violation-count", e.violationCount.toString()), nn("code-violation-codes", e.violationCodes.join(","));
 }, Mn = (e) => {
-	try {
-		return JSON.parse(e);
-	} catch {
-		return;
-	}
+	nn("code-violation-count", e.violationCount.toString()), nn("code-violation-codes", e.violationCodes.join(","));
 }, Nn = (e) => {
 	try {
 		return JSON.parse(e);
@@ -10528,25 +10527,37 @@ var ln = () => {
 		return;
 	}
 }, Pn = (e) => {
+	try {
+		return JSON.parse(e);
+	} catch {
+		return;
+	}
+}, Fn = (e) => {
 	if (e.skipCodeReview) {
 		on("Skipping code review: \"skip-code-review\" set to true");
 		return;
 	}
 	return [
-		...xn(e),
-		"-code",
 		...Cn(e),
+		"-code",
+		...Tn(e),
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : []
 	];
-}, Fn = async (e) => {
-	let t = Pn(e);
+}, In = async (e) => {
+	let t = Fn(e);
 	if (!t) return;
-	let n = await kn(t, e.workingDirectory);
+	let n = await An(t, e.workingDirectory);
 	return {
 		exitCode: n.exitCode,
 		reportPath: n.reportPath
 	};
-}, In = (e, t) => {
+}, Ln = (e) => {
+	try {
+		return JSON.parse(e);
+	} catch {
+		return;
+	}
+}, Rn = (e, t) => {
 	if (t !== "enterprise") {
 		on(`Skipping drift check: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
@@ -10556,26 +10567,26 @@ var ln = () => {
 		return;
 	}
 	return [
-		...xn(e),
-		"-drift",
 		...Cn(e),
+		"-drift",
+		...Tn(e),
 		...e.failOnDrift ? ["-check.failOnDrift=true"] : []
 	];
-}, Ln = async (e, t) => {
-	let n = In(e, t);
+}, zn = async (e, t) => {
+	let n = Rn(e, t);
 	if (n) {
 		sn("Running Flyway check: drift");
 		try {
 			let t = await mn(n, e.workingDirectory);
 			if (t.exitCode !== 0) {
 				let n = gn(t.stdout);
-				return n?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? (zn(!0, vn(n.error.driftResolutionFolderPath, e.workingDirectory)), {
+				return n?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? (Vn(!0, vn(n.error.driftResolutionFolderPath, e.workingDirectory)), {
 					exitCode: t.exitCode,
 					reportPath: n.error.htmlReport
 				}) : n?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (n?.error?.message && an(n.error.message), { exitCode: t.exitCode });
 			}
-			let r = yn(t.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
-			return zn(Rn(r), vn(i?.driftResolutionFolder, e.workingDirectory)), {
+			let r = Ln(t.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+			return Vn(Bn(r), vn(i?.driftResolutionFolder, e.workingDirectory)), {
 				exitCode: t.exitCode,
 				reportPath: r?.htmlReport
 			};
@@ -10583,9 +10594,9 @@ var ln = () => {
 			cn();
 		}
 	}
-}, Rn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), zn = (e, t) => {
+}, Bn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), Vn = (e, t) => {
 	nn("drift-detected", e.toString()), t !== void 0 && nn("drift-resolution-folder", t);
-}, Bn = (e, t) => {
+}, Hn = (e, t) => {
 	if (t === "community") {
 		on("Skipping deployment script review: not available in Community edition");
 		return;
@@ -10595,12 +10606,12 @@ var ln = () => {
 		return;
 	}
 	return [
-		...xn(e),
+		...Cn(e),
 		"-dryrun",
-		...Sn(e)
+		...wn(e)
 	];
-}, Vn = async (e, t) => {
-	let n = Bn(e, t);
+}, Un = async (e, t) => {
+	let n = Hn(e, t);
 	if (n) {
 		sn("Running Flyway check: deployment script review");
 		try {
@@ -10609,7 +10620,7 @@ var ln = () => {
 				let e = _n(t.stdout);
 				return e?.error?.message && an(e.error.message), { exitCode: t.exitCode };
 			}
-			let r = yn(t.stdout);
+			let r = Ln(t.stdout);
 			return {
 				exitCode: t.exitCode,
 				reportPath: r?.htmlReport
@@ -10618,17 +10629,17 @@ var ln = () => {
 			cn();
 		}
 	}
-}, Hn = async (e, t) => {
+}, Wn = async (e, t) => {
 	let n = [
-		await Vn(e, t),
-		await Fn(e),
-		await Ln(e, t),
-		await Dn(e, t)
+		await Un(e, t),
+		await In(e),
+		await zn(e, t),
+		await kn(e, t)
 	], r = n.find((e) => e?.reportPath)?.reportPath;
 	nn("report-path", vn(r ?? "report.html", e.workingDirectory));
 	let i = n.find((e) => e !== void 0 && e.exitCode !== 0);
 	if (nn("exit-code", (i?.exitCode ?? 0).toString()), i) throw Error("Flyway checks failed");
-}, Un = () => {
+}, Gn = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = en("build-environment") || void 0, l = en("build-url") || void 0, u = en("build-user") || void 0, d = en("build-password") || void 0, f = en("build-schemas") || void 0, p = tn("build-ok-to-erase"), m = tn("skip-code-review"), h = tn("skip-drift-check"), g = tn("skip-deployment-changes-report"), _ = tn("skip-deployment-script-review"), v = tn("fail-on-code-review"), y = tn("fail-on-drift"), b = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10654,7 +10665,7 @@ var ln = () => {
 		preDeploymentReportName: en("pre-deployment-report-name") || void 0,
 		extraArgs: en("extra-args") || void 0
 	};
-}, Wn = (e) => {
+}, Kn = (e) => {
 	e.targetPassword && $t(e.targetPassword), e.buildPassword && $t(e.buildPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10665,12 +10676,12 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Un();
+		let t = Gn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		Wn(t), await Hn(t, e.edition);
+		Kn(t), await Wn(t, e.edition);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
 	}
