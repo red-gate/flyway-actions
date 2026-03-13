@@ -36,22 +36,23 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
       const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
         setOutput(true, resolvePath(errorOutput.error.driftResolutionFolderPath, inputs.workingDirectory));
-        return { exitCode: result.exitCode, reportPath: errorOutput.error.htmlReport };
+        return { exitCode: result.exitCode, reportPath: errorOutput.error.htmlReport, driftDetected: true };
       }
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
         );
-        return { exitCode: 0 };
+        return { exitCode: 0, driftDetected: false };
       }
       errorOutput?.error?.message && core.error(errorOutput.error.message);
-      return { exitCode: result.exitCode };
+      return { exitCode: result.exitCode, driftDetected: false };
     }
 
     const output = parseCheckOutput(result.stdout);
     const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
-    setOutput(isDriftDetected(output), resolvePath(driftResult?.driftResolutionFolder, inputs.workingDirectory));
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
+    const detected = isDriftDetected(output);
+    setOutput(detected, resolvePath(driftResult?.driftResolutionFolder, inputs.workingDirectory));
+    return { exitCode: result.exitCode, reportPath: output?.htmlReport, driftDetected: detected };
   } finally {
     core.endGroup();
   }
