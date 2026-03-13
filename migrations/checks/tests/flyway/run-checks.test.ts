@@ -106,7 +106,7 @@ describe("runChecks", () => {
       }),
     );
 
-    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrowError("Flyway checks failed");
+    await expect(runChecks(baseInputs, "enterprise")).rejects.toThrow("Flyway checks failed");
   });
 
   it("should run all checks even if an earlier one fails", async () => {
