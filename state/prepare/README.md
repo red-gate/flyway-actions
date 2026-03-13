@@ -15,6 +15,11 @@ Note that this will only be able to flag up drift after your first deployment, o
 This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
 For more information, see [the associated Flyway documentation](https://documentation.red-gate.com/flyway/flyway-concepts/drift-analysis).
 
+#### Deployment changes report
+
+Generates a report of what objects will change in your target database when the deployment script is applied.
+This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
+
 #### Code review
 
 Analyzes pending changes for code review violations using configurable rules.
@@ -78,20 +83,21 @@ steps:
 
 ## Inputs
 
-| Input                | Description                                      | Required                                 | Default   |
-|----------------------|--------------------------------------------------|------------------------------------------|-----------|
-| `target-environment` | Target database environment                      | Required if `target-url` not set         | `default` |
-| `target-url`         | JDBC URL for the target database                 | Required if `target-environment` not set |           |
-| `target-user`        | Database user                                    | No                                       |           |
-| `target-password`    | Database password                                | No                                       |           |
-| `target-schemas`     | Comma-separated list of schemas                  | No                                       |           |
-| `generate-undo`      | Generate undo script alongside deploy script     | No                                       | `true`    |
-| `fail-on-drift`      | Fail when drift is detected                      | No                                       | `true`    |
-| `skip-drift-check`   | Skip the drift check                             | No                                       | `false`   |
-| `fail-on-code-review`| Fail when code review violations are detected    | No                                       | `true`    |
-| `skip-code-review`   | Skip the code review check                       | No                                       | `false`   |
-| `working-directory`  | Working directory for Flyway                     | No                                       |           |
-| `extra-args`         | Additional Flyway CLI arguments                  | No                                       |           |
+| Input                            | Description                                   | Required                                 | Default   |
+|----------------------------------|-----------------------------------------------|------------------------------------------|-----------|
+| `target-environment`             | Target database environment                   | Required if `target-url` not set         | `default` |
+| `target-url`                     | JDBC URL for the target database              | Required if `target-environment` not set |           |
+| `target-user`                    | Database user                                 | No                                       |           |
+| `target-password`                | Database password                             | No                                       |           |
+| `target-schemas`                 | Comma-separated list of schemas               | No                                       |           |
+| `generate-undo`                  | Generate undo script alongside deploy script  | No                                       | `true`    |
+| `fail-on-drift`                  | Fail when drift is detected                   | No                                       | `true`    |
+| `skip-drift-check`               | Skip the drift check                          | No                                       | `false`   |
+| `fail-on-code-review`            | Fail when code review violations are detected | No                                       | `true`    |
+| `skip-code-review`               | Skip the code review check                    | No                                       | `false`   |
+| `skip-deployment-changes-report` | Skip the deployment changes report            | No                                       | `false`   |
+| `working-directory`              | Working directory for Flyway                  | No                                       |           |
+| `extra-args`                     | Additional Flyway CLI arguments               | No                                       |           |
 
 ### Pre-deployment Report Upload
 
@@ -141,14 +147,15 @@ steps:
 
 ## Outputs
 
-| Output                 | Description                                                |
-|------------------------|------------------------------------------------------------|
-| `exit-code`            | Flyway exit code                                           |
-| `drift-detected`       | Whether drift was detected (empty if skipped)              |
-| `code-violation-count` | Number of code review violations found (empty if skipped)  |
-| `code-violation-codes` | Comma-separated list of violation codes (empty if skipped) |
-| `script-path`          | Path to the generated deployment script                    |
-| `undo-script-path`     | Path to the generated undo script                          |
+| Output                 | Description                                                         |
+|------------------------|---------------------------------------------------------------------|
+| `exit-code`            | Flyway exit code                                                    |
+| `drift-detected`       | Whether drift was detected (empty if skipped)                       |
+| `changed-object-count` | Number of changed objects in the deployment (empty if skipped)      |
+| `code-violation-count` | Number of code review violations found (empty if skipped)           |
+| `code-violation-codes` | Comma-separated list of violation codes (empty if skipped)          |
+| `script-path`          | Path to the generated deployment script                             |
+| `undo-script-path`     | Path to the generated undo script                                   |
 
 ### Using Outputs
 

@@ -3,6 +3,7 @@ import * as core from "@actions/core";
 import { checkForDrift as sharedCheckForDrift } from "@flyway-actions/shared/check-for-drift";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { getCommonArgs } from "./flyway/arg-builders.js";
+import { runCheckChanges } from "./flyway/check-changes.js";
 import { runCheckCode } from "./flyway/check-code.js";
 import { prepare } from "./flyway/prepare.js";
 import { getInputs, maskSecrets } from "./inputs.js";
@@ -51,6 +52,8 @@ const run = async (): Promise<void> => {
     } else {
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
+
+    await runCheckChanges(inputs, flywayDetails.edition);
 
     const { scriptPath } = await prepare(inputs);
 

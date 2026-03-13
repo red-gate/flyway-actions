@@ -9,6 +9,7 @@ type FlywayStatePrepareInputs = {
   failOnCodeReview?: boolean;
   skipDriftCheck?: boolean;
   skipCodeReview?: boolean;
+  skipDeploymentChangesReport?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
   preDeploymentReportName?: string;
