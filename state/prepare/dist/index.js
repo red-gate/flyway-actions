@@ -13401,7 +13401,7 @@ const ca = () => {
     ...ya(A),
     ...A.workingDirectory ? [`-workingDirectory=${A.workingDirectory}`] : [],
     ...A.failOnCodeReview ? ["-check.code.failOnError=true"] : [],
-    ...A.driftReportName ? [`-reportFilename=${A.driftReportName}`] : [],
+    ...A.preDeploymentReportName ? [`-reportFilename=${A.preDeploymentReportName}`] : [],
     "-check.scope=script",
     `-check.scriptFilename=${r}`
   ];
@@ -13431,7 +13431,7 @@ const ca = () => {
 }, Ei = (A, r, t) => {
   ge("exit-code", A.toString()), r && ge("script-path", r), t && ge("undo-script-path", t);
 }, Sa = () => {
-  const A = ce("target-environment") || void 0, r = ce("target-url") || void 0, t = ce("target-user") || void 0, g = ce("target-password") || void 0, e = ce("target-schemas") || void 0, n = pe("generate-undo"), o = pe("fail-on-drift"), Q = pe("fail-on-code-review"), l = pe("skip-drift-check"), B = pe("skip-code-review"), s = ce("working-directory"), i = s ? ae.resolve(s) : void 0, C = ce("extra-args") || void 0, I = ce("drift-report-name") || void 0;
+  const A = ce("target-environment") || void 0, r = ce("target-url") || void 0, t = ce("target-user") || void 0, g = ce("target-password") || void 0, e = ce("target-schemas") || void 0, n = pe("generate-undo"), o = pe("fail-on-drift"), Q = pe("fail-on-code-review"), l = pe("skip-drift-check"), B = pe("skip-code-review"), s = ce("working-directory"), i = s ? ae.resolve(s) : void 0, C = ce("extra-args") || void 0, I = ce("pre-deployment-report-name") || void 0;
   return {
     targetEnvironment: A,
     targetUrl: r,
@@ -13445,11 +13445,11 @@ const ca = () => {
     skipCodeReview: B,
     workingDirectory: i,
     extraArgs: C,
-    driftReportName: I
+    preDeploymentReportName: I
   };
 }, ba = (A) => {
   A.targetPassword && Qa(A.targetPassword);
-}, Ua = (A) => da(wa(A), A.workingDirectory, A.driftReportName);
+}, Ua = (A) => da(wa(A), A.workingDirectory, A.preDeploymentReportName);
 if (process.env.FLYWAY_INPUTS)
   for (const [A, r] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS)))
     r && (process.env[`INPUT_${A.toUpperCase()}`] = r);
