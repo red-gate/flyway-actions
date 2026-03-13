@@ -1,8 +1,17 @@
+import type { Drift, FlywayCheckOutput } from "./types.js";
 import * as core from "@actions/core";
 import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
 import { resolvePath } from "./resolve-path.js";
 
 type CheckForDriftResult = { driftDetected: boolean; comparisonSupported: boolean };
+
+const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
+  try {
+    return JSON.parse(stdout) as FlywayCheckOutput;
+  } catch {
+    return undefined;
+  }
+};
 
 const checkForDrift = async (args: string[], workingDirectory?: string): Promise<CheckForDriftResult> => {
   core.startGroup("Checking for drift");
@@ -29,12 +38,24 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       return { driftDetected: false, comparisonSupported: true };
     }
 
-    setOutput(result.exitCode, false);
-    return { driftDetected: false, comparisonSupported: true };
+    const output = parseCheckOutput(result.stdout);
+    const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
+    setOutput(
+      result.exitCode,
+      isDriftDetected(output),
+      resolvePath(output?.htmlReport, workingDirectory),
+      resolvePath(driftResult?.driftResolutionFolder, workingDirectory),
+    );
+    return { driftDetected: isDriftDetected(output), comparisonSupported: true };
   } finally {
     core.endGroup();
   }
 };
+
+const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
+  !!output?.individualResults
+    ?.filter((r): r is Drift => r.operation === "drift")
+    .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
 const setOutput = (exitCode: number, driftDetected?: boolean, reportPath?: string, resolutionFolder?: string) => {
   core.setOutput("exit-code", exitCode.toString());
