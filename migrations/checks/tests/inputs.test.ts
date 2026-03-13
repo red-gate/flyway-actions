@@ -130,6 +130,27 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
   });
 
+  it("should return auto-provision-build-database as false when set to false", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "auto-provision-build-database") {
+        return "false";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.autoProvisionBuildDatabase).toBe(false);
+  });
+
+  it("should default auto-provision-build-database to true when not set", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.autoProvisionBuildDatabase).toBe(true);
+  });
+
   it("should return pre-deployment report name", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "pre-deployment-report-name") {

@@ -29,6 +29,10 @@ inputs:
   cherry-pick:
     description: 'Comma-separated list of migration versions to include'
     required: false
+  auto-provision-build-database:
+    description: 'Automatically provision a Docker build database when no build inputs are provided'
+    required: false
+    default: 'true'
   build-environment:
     description: 'Build database for generating a deployment changes report'
     required: false
@@ -90,7 +94,7 @@ inputs:
     description: 'Number of days to retain the pre-deployment report artifact'
     required: false
     default: '7'
-  skip-drift-resolution-scripts-upload:
+  skip-drift-resolution-upload:
     description: 'Skip uploading drift resolution scripts as a workflow artifact'
     required: false
     default: 'false'
@@ -152,7 +156,7 @@ runs:
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
         if-no-files-found: ignore
     - name: Upload drift resolution scripts
-      if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
+      if: inputs.skip-drift-resolution-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.drift-resolution-scripts-name }}
