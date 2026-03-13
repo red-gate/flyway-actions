@@ -11,7 +11,7 @@ type FlywayStatePrepareInputs = {
   skipCodeReview?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
-  driftReportName?: string;
+  preDeploymentReportName?: string;
 };
 
 export type { FlywayStatePrepareInputs };

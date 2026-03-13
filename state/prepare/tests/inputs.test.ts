@@ -120,9 +120,9 @@ describe("getInputs", () => {
     expect(inputs.skipCodeReview).toBe(true);
   });
 
-  it("should get drift-report-name input", () => {
+  it("should get pre-deployment-report-name input", () => {
     getInput.mockImplementation((name: string) => {
-      if (name === "drift-report-name") {
+      if (name === "pre-deployment-report-name") {
         return "custom-report";
       }
       return "";
@@ -130,7 +130,7 @@ describe("getInputs", () => {
 
     const inputs = getInputs();
 
-    expect(inputs.driftReportName).toBe("custom-report");
+    expect(inputs.preDeploymentReportName).toBe("custom-report");
   });
 
   it("should get working directory and extra args", () => {
@@ -158,7 +158,7 @@ describe("getInputs", () => {
     expect(inputs.targetSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
-    expect(inputs.driftReportName).toBeUndefined();
+    expect(inputs.preDeploymentReportName).toBeUndefined();
   });
 });
 

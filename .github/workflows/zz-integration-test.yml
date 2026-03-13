@@ -595,17 +595,17 @@ jobs:
           target-url: jdbc:sqlite:../sqlite/database/drift.db
           working-directory: sample-projects/sqlite-state
           skip-code-review: 'true'
-          drift-report-name: flyway-state-prepare-drift-report-${{ matrix.os }}
-          drift-report-retention-days: '1'
+          pre-deployment-report-name: flyway-state-prepare-pre-deployment-report-${{ matrix.os }}
+          pre-deployment-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-state-prepare-drift-resolution-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
-      - name: Download drift report
+      - name: Download pre deployment report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-state-prepare-drift-report-${{ matrix.os }}.html
-      - name: Verify drift report exists
+          name: flyway-state-prepare-pre-deployment-report-${{ matrix.os }}.html
+      - name: Verify pre-deployment report exists
         shell: bash
-        run: test -s flyway-state-prepare-drift-report-${{ matrix.os }}.html
+        run: test -s flyway-state-prepare-pre-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
