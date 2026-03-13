@@ -16,13 +16,15 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getCheckDriftArgs, checkForDrift } = await import("../src/check-for-drift.js");
+const { checkForDrift } = await import("../src/check-for-drift.js");
+
+const driftArgs = (url: string) => ["check", "-drift", "-check.failOnDrift=true", `-url=${url}`];
 
 describe("checkForDrift", () => {
   it("should set drift-detected to false and exit-code to 0 when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
-    const result = await checkForDrift(["-url=jdbc:sqlite:test.db"]);
+    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
     expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
@@ -37,7 +39,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(["-url=jdbc:sqlite:test.db"]);
+    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
     expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
@@ -54,7 +56,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift(["-url=jdbc:sqlite:test.db"]);
+    await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
     expect(setOutput).toHaveBeenCalledWith("report-path", "drift-report.html");
   });
@@ -73,7 +75,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift(["-url=jdbc:sqlite:test.db"]);
+    await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
     expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/absolute/path/to/resolution");
   });
@@ -86,7 +88,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift(["-url=jdbc:sqlite:test.db"]);
+    await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
@@ -105,7 +107,7 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(["-url=jdbc:h2:mem:test"]);
+    const result = await checkForDrift(driftArgs("jdbc:h2:mem:test"));
 
     expect(result).toEqual({ driftDetected: false, comparisonSupported: false });
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
@@ -113,34 +115,5 @@ describe("checkForDrift", () => {
     expect(info).toHaveBeenCalledWith(
       "Drift check could not be run because advanced comparison features are not supported for this database type.",
     );
-  });
-});
-
-describe("getCheckDriftArgs", () => {
-  it("should build args with check and -drift as first elements", () => {
-    const args = getCheckDriftArgs([]);
-
-    expect(args[0]).toBe("check");
-    expect(args[1]).toBe("-drift");
-    expect(args[2]).toBe("-check.failOnDrift=true");
-  });
-
-  it("should include common args", () => {
-    const args = getCheckDriftArgs(["-url=jdbc:sqlite:test.db", "-user=admin"]);
-
-    expect(args).toContain("-url=jdbc:sqlite:test.db");
-    expect(args).toContain("-user=admin");
-  });
-
-  it("should include report filename when provided", () => {
-    const args = getCheckDriftArgs([], "custom-report");
-
-    expect(args).toContain("-reportFilename=custom-report");
-  });
-
-  it("should not include report filename when not provided", () => {
-    const args = getCheckDriftArgs([]);
-
-    expect(args.some((a) => a.includes("reportFilename"))).toBe(false);
   });
 });
