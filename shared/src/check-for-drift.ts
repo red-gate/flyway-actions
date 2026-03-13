@@ -1,60 +1,67 @@
+import type { Drift, FlywayCheckOutput } from "./types.js";
 import * as core from "@actions/core";
 import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
-import { resolvePath } from "./resolve-path.js";
 
-type CheckForDriftResult = { driftDetected: boolean; comparisonSupported: boolean };
+type CheckForDriftResult = {
+  exitCode: number;
+  driftDetected: boolean;
+  comparisonSupported: boolean;
+  reportPath?: string;
+  driftResolutionFolder?: string;
+};
 
-const getCheckDriftArgs = (commonArgs: string[], driftReportName?: string): string[] => [
-  "check",
-  "-drift",
-  "-check.failOnDrift=true",
-  ...commonArgs,
-  ...(driftReportName ? [`-reportFilename=${driftReportName}`] : []),
-];
+const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
+  try {
+    return JSON.parse(stdout) as FlywayCheckOutput;
+  } catch {
+    return undefined;
+  }
+};
 
-const checkForDrift = async (
-  commonArgs: string[],
-  workingDirectory?: string,
-  driftReportName?: string,
-): Promise<CheckForDriftResult> => {
+const checkForDrift = async (args: string[], workingDirectory?: string): Promise<CheckForDriftResult> => {
   core.startGroup("Checking for drift");
   try {
-    const driftArgs = getCheckDriftArgs(commonArgs, driftReportName);
-    const result = await runFlyway(driftArgs, workingDirectory);
+    const result = await runFlyway(args, workingDirectory);
 
     if (result.exitCode !== 0) {
       const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-        const reportPath = resolvePath(errorOutput.error.htmlReport, workingDirectory);
-        const resolutionFolder = resolvePath(errorOutput.error.driftResolutionFolderPath, workingDirectory);
-        setOutput(result.exitCode, true, reportPath, resolutionFolder);
-        return { driftDetected: true, comparisonSupported: true };
+        return {
+          exitCode: result.exitCode,
+          driftDetected: true,
+          comparisonSupported: true,
+          reportPath: errorOutput.error.htmlReport,
+          driftResolutionFolder: errorOutput.error.driftResolutionFolderPath,
+        };
       }
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
         );
-        setOutput(0);
-        return { driftDetected: false, comparisonSupported: false };
+        return { exitCode: 0, driftDetected: false, comparisonSupported: false };
       }
       errorOutput?.error?.message && core.error(errorOutput.error.message);
-      setOutput(result.exitCode);
-      return { driftDetected: false, comparisonSupported: true };
+      return { exitCode: result.exitCode, driftDetected: false, comparisonSupported: true };
     }
 
-    setOutput(result.exitCode, false);
-    return { driftDetected: false, comparisonSupported: true };
+    const output = parseCheckOutput(result.stdout);
+    const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
+    return {
+      exitCode: result.exitCode,
+      driftDetected: isDriftDetected(output),
+      comparisonSupported: true,
+      reportPath: output?.htmlReport,
+      driftResolutionFolder: driftResult?.driftResolutionFolder,
+    };
   } finally {
     core.endGroup();
   }
 };
 
-const setOutput = (exitCode: number, driftDetected?: boolean, reportPath?: string, resolutionFolder?: string) => {
-  core.setOutput("exit-code", exitCode.toString());
-  driftDetected !== undefined && core.setOutput("drift-detected", driftDetected.toString());
-  reportPath !== undefined && core.setOutput("report-path", reportPath);
-  resolutionFolder !== undefined && core.setOutput("drift-resolution-folder", resolutionFolder);
-};
+const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
+  !!output?.individualResults
+    ?.filter((r): r is Drift => r.operation === "drift")
+    .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
-export { checkForDrift, getCheckDriftArgs };
+export { checkForDrift };
 export type { CheckForDriftResult };

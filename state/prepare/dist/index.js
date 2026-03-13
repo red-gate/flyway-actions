@@ -10423,66 +10423,13 @@ var un = () => {
 	} catch {
 		return;
 	}
-}, yn = (e, t) => {
-	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, bn = (e, t) => [
-	"check",
-	"-drift",
-	"-check.failOnDrift=true",
-	...e,
-	...t ? [`-reportFilename=${t}`] : []
-], xn = async (e, t, n) => {
-	cn("Checking for drift");
-	try {
-		let r = await hn(bn(e, n), t);
-		if (r.exitCode !== 0) {
-			let e = _n(r.stdout);
-			if (e?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-				let n = yn(e.error.htmlReport, t), i = yn(e.error.driftResolutionFolderPath, t);
-				return Sn(r.exitCode, !0, n, i), {
-					driftDetected: !0,
-					comparisonSupported: !0
-				};
-			}
-			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Drift check could not be run because advanced comparison features are not supported for this database type."), Sn(0), {
-				driftDetected: !1,
-				comparisonSupported: !1
-			}) : (e?.error?.message && an(e.error.message), Sn(r.exitCode), {
-				driftDetected: !1,
-				comparisonSupported: !0
-			});
-		}
-		return Sn(r.exitCode, !1), {
-			driftDetected: !1,
-			comparisonSupported: !0
-		};
-	} finally {
-		ln();
-	}
-}, Sn = (e, t, n, r) => {
-	nn("exit-code", e.toString()), t !== void 0 && nn("drift-detected", t.toString()), n !== void 0 && nn("report-path", n), r !== void 0 && nn("drift-resolution-folder", r);
-}, Cn = (e, t) => {
-	let n = [];
-	e.targetEnvironment && n.push(`-${t}=${e.targetEnvironment}`);
-	let r = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
-	return e.targetUrl && n.push(`${r}url=${e.targetUrl}`), e.targetUser && n.push(`${r}user=${e.targetUser}`), e.targetPassword && n.push(`${r}password=${e.targetPassword}`), e.targetSchemas && n.push(`${r}schemas=${e.targetSchemas}`), n;
-}, wn = (e) => {
-	let t = [
-		"prepare",
-		"-source=schemaModel",
-		...Cn(e, "target")
-	], n = e.generateUndo ? "deploy,undo" : "deploy";
-	return t.push(`-types=${n}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
-}, Tn = (e) => {
-	let t = [...Cn(e, "environment")];
-	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
-}, En = (e) => Cn(e, "environment"), Dn = (e) => {
+}, yn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, On = async (e, t, n) => {
+}, bn = async (e, t, n) => {
 	cn("Running deployment changes report");
 	try {
 		let r = await hn(e, t);
@@ -10490,26 +10437,41 @@ var un = () => {
 			let e = vn(r.stdout);
 			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? an("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && an(e.error.message), { exitCode: r.exitCode });
 		}
-		let i = Dn(r.stdout);
-		return kn(i), {
+		let i = yn(r.stdout);
+		return xn(i), {
 			exitCode: r.exitCode,
 			reportPath: i?.htmlReport
 		};
 	} finally {
 		ln();
 	}
-}, kn = (e) => {
+}, xn = (e) => {
 	let t = e?.individualResults?.filter((e) => e.operation === "changes");
 	t?.length && nn("changed-object-count", t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0).toString());
-}, An = (e) => [
+}, Sn = (e, t) => {
+	let n = [];
+	e.targetEnvironment && n.push(`-${t}=${e.targetEnvironment}`);
+	let r = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
+	return e.targetUrl && n.push(`${r}url=${e.targetUrl}`), e.targetUser && n.push(`${r}user=${e.targetUser}`), e.targetPassword && n.push(`${r}password=${e.targetPassword}`), e.targetSchemas && n.push(`${r}schemas=${e.targetSchemas}`), n;
+}, Cn = (e) => {
+	let t = [
+		"prepare",
+		"-source=schemaModel",
+		...Sn(e, "target")
+	], n = e.generateUndo ? "deploy,undo" : "deploy";
+	return t.push(`-types=${n}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+}, wn = (e) => {
+	let t = [...Sn(e, "environment")];
+	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+}, Tn = (e) => Sn(e, "environment"), En = (e) => [
 	"check",
 	"-changes",
-	...En(e),
+	...Tn(e),
 	"-changesSource=schemaModel",
 	...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
 	...e.extraArgs ? pn(e.extraArgs) : [],
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], jn = async (e, t) => {
+], Dn = async (e, t) => {
 	if (t !== "enterprise") {
 		sn(`Skipping deployment changes report: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
@@ -10518,23 +10480,23 @@ var un = () => {
 		sn("Skipping deployment changes report: \"skip-deployment-changes-report\" set to true");
 		return;
 	}
-	return On(An(e), e.workingDirectory);
-}, Mn = async (e, t) => {
+	return bn(En(e), e.workingDirectory);
+}, On = async (e, t) => {
 	cn("Running code review");
 	try {
 		let n = await hn(e, t);
 		if (n.exitCode !== 0) {
-			let e = In(n.stdout);
+			let e = Mn(n.stdout);
 			e?.error?.message && an(e.error.message);
-			let t = Nn(e?.error?.results ?? []);
-			return Pn(t), {
+			let t = kn(e?.error?.results ?? []);
+			return An(t), {
 				exitCode: n.exitCode,
 				reportPath: e?.error?.htmlReport,
 				...t
 			};
 		}
-		let r = Fn(n.stdout), i = Nn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
-		return Pn(i), {
+		let r = jn(n.stdout), i = kn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
+		return An(i), {
 			exitCode: n.exitCode,
 			reportPath: r?.htmlReport,
 			...i
@@ -10542,27 +10504,27 @@ var un = () => {
 	} finally {
 		ln();
 	}
-}, Nn = (e) => {
+}, kn = (e) => {
 	let t = e.flatMap((e) => e.violations ?? []).map((e) => e.code).filter((e) => !!e);
 	return {
 		violationCount: t.length,
 		violationCodes: [...new Set(t)]
 	};
-}, Pn = (e) => {
+}, An = (e) => {
 	nn("code-violation-count", e.violationCount.toString()), nn("code-violation-codes", e.violationCodes.join(","));
-}, Fn = (e) => {
+}, jn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, In = (e) => {
+}, Mn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Ln = (e, t) => {
+}, Nn = (e, t) => {
 	if (e.skipCodeReview) {
 		sn("Skipping code review: \"skip-code-review\" set to true");
 		return;
@@ -10570,38 +10532,88 @@ var un = () => {
 	return [
 		"check",
 		"-code",
-		...En(e),
+		...Tn(e),
 		...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : [],
 		...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : [],
 		"-check.scope=script",
 		`-check.scriptFilename=${t}`
 	];
-}, Rn = async (e, t) => {
-	let n = Ln(e, t);
-	if (n) return Mn(n, e.workingDirectory);
-}, zn = (e) => {
+}, Pn = async (e, t) => {
+	let n = Nn(e, t);
+	if (n) return On(n, e.workingDirectory);
+}, Fn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Bn = async (e) => {
-	cn("Running state-based prepare");
+}, In = async (e, t) => {
+	cn("Checking for drift");
 	try {
-		let t = await hn(wn(e), e.workingDirectory);
-		if (t.exitCode !== 0) {
-			let e = vn(t.stdout);
-			throw e?.error?.message && an(e.error.message), Vn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
+		let n = await hn(e, t);
+		if (n.exitCode !== 0) {
+			let e = _n(n.stdout);
+			return e?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? {
+				exitCode: n.exitCode,
+				driftDetected: !0,
+				comparisonSupported: !0,
+				reportPath: e.error.htmlReport,
+				driftResolutionFolder: e.error.driftResolutionFolderPath
+			} : e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Drift check could not be run because advanced comparison features are not supported for this database type."), {
+				exitCode: 0,
+				driftDetected: !1,
+				comparisonSupported: !1
+			}) : (e?.error?.message && an(e.error.message), {
+				exitCode: n.exitCode,
+				driftDetected: !1,
+				comparisonSupported: !0
+			});
 		}
-		let n = zn(t.stdout);
-		return Vn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
+		let r = Fn(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		return {
+			exitCode: n.exitCode,
+			driftDetected: Ln(r),
+			comparisonSupported: !0,
+			reportPath: r?.htmlReport,
+			driftResolutionFolder: i?.driftResolutionFolder
+		};
 	} finally {
 		ln();
 	}
-}, Vn = (e, t, n) => {
+}, Ln = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), Rn = (e, t) => {
+	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
+}, zn = (e) => [
+	"check",
+	"-drift",
+	"-check.failOnDrift=true",
+	...wn(e),
+	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
+], Bn = async (e) => {
+	let t = await In(zn(e), e.workingDirectory), n = Rn(t.reportPath, e.workingDirectory), r = Rn(t.driftResolutionFolder, e.workingDirectory);
+	return nn("exit-code", t.exitCode.toString()), t.driftDetected !== void 0 && nn("drift-detected", t.driftDetected.toString()), n !== void 0 && nn("report-path", n), r !== void 0 && nn("drift-resolution-folder", r), t;
+}, Vn = (e) => {
+	try {
+		return JSON.parse(e);
+	} catch {
+		return;
+	}
+}, Hn = async (e) => {
+	cn("Running state-based prepare");
+	try {
+		let t = await hn(Cn(e), e.workingDirectory);
+		if (t.exitCode !== 0) {
+			let e = vn(t.stdout);
+			throw e?.error?.message && an(e.error.message), Un(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
+		}
+		let n = Vn(t.stdout);
+		return Un(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
+	} finally {
+		ln();
+	}
+}, Un = (e, t, n) => {
 	nn("exit-code", e.toString()), t && nn("script-path", t), n && nn("undo-script-path", n);
-}, Hn = () => {
+}, Wn = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = tn("generate-undo"), o = tn("fail-on-drift"), s = tn("fail-on-code-review"), l = tn("skip-drift-check"), u = tn("skip-code-review"), d = tn("skip-deployment-changes-report"), f = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10619,9 +10631,9 @@ var un = () => {
 		extraArgs: en("extra-args") || void 0,
 		preDeploymentReportName: en("pre-deployment-report-name") || void 0
 	};
-}, Un = (e) => {
+}, Gn = (e) => {
 	e.targetPassword && $t(e.targetPassword);
-}, Wn = (e) => xn(Tn(e), e.workingDirectory, e.preDeploymentReportName);
+};
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
 	try {
@@ -10630,14 +10642,14 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Hn();
+		let t = Wn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (Un(t), e.edition === "enterprise") if (t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
+		if (Gn(t), e.edition === "enterprise") if (t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { driftDetected: e } = await Wn(t);
+			let { driftDetected: e } = await Bn(t);
 			if (e) {
 				if (t.failOnDrift) {
 					rn("Drift detected. Aborting prepare.");
@@ -10647,13 +10659,13 @@ await (async () => {
 			}
 		}
 		else sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		await jn(t, e.edition);
-		let { scriptPath: n } = await Bn(t);
+		await Dn(t, e.edition);
+		let { scriptPath: n } = await Hn(t);
 		if (!n) {
 			on("No script path returned from prepare. Skipping code review.");
 			return;
 		}
-		let r = await Rn(t, n);
+		let r = await Pn(t, n);
 		if (r && r.violationCount > 0 && t.failOnCodeReview) {
 			nn("exit-code", "1"), rn(`Code review failed with ${r.violationCount} violation(s).`);
 			return;

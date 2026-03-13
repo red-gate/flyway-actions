@@ -1,9 +1,8 @@
-import type { Drift, FlywayCheckOutput, FlywayMigrationsChecksInputs } from "../types.js";
+import type { FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseDriftErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
+import { checkForDrift } from "@flyway-actions/shared/check-for-drift";
 import { resolvePath } from "@flyway-actions/shared/resolve-path";
-import { parseCheckOutput } from "../outputs.js";
 import { getCheckCommandArgs, getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getDriftArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
@@ -28,43 +27,14 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   if (!args) {
     return undefined;
   }
-  core.startGroup("Running Flyway check: drift");
-  try {
-    const result = await runFlyway(args, inputs.workingDirectory);
+  const result = await checkForDrift(args, inputs.workingDirectory);
+  const driftResolutionFolder = resolvePath(result.driftResolutionFolder, inputs.workingDirectory);
 
-    if (result.exitCode !== 0) {
-      const errorOutput = parseDriftErrorOutput(result.stdout);
-      if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-        setOutput(true, resolvePath(errorOutput.error.driftResolutionFolderPath, inputs.workingDirectory));
-        return { exitCode: result.exitCode, reportPath: errorOutput.error.htmlReport };
-      }
-      if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-        core.info(
-          "Drift check could not be run because advanced comparison features are not supported for this database type.",
-        );
-        return { exitCode: 0 };
-      }
-      errorOutput?.error?.message && core.error(errorOutput.error.message);
-      return { exitCode: result.exitCode };
-    }
-
-    const output = parseCheckOutput(result.stdout);
-    const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
-    setOutput(isDriftDetected(output), resolvePath(driftResult?.driftResolutionFolder, inputs.workingDirectory));
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
-  } finally {
-    core.endGroup();
+  if (result.driftDetected || (result.exitCode === 0 && result.comparisonSupported)) {
+    core.setOutput("drift-detected", result.driftDetected.toString());
+    driftResolutionFolder !== undefined && core.setOutput("drift-resolution-folder", driftResolutionFolder);
   }
-};
-
-const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
-  !!output?.individualResults
-    ?.filter((r): r is Drift => r.operation === "drift")
-    .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
-
-const setOutput = (driftDetected: boolean, driftResolutionFolder?: string) => {
-  core.setOutput("drift-detected", driftDetected.toString());
-  driftResolutionFolder !== undefined && core.setOutput("drift-resolution-folder", driftResolutionFolder);
+  return { exitCode: result.exitCode, reportPath: result.reportPath };
 };
 
 export { getDriftArgs, runCheckDrift };
