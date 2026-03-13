@@ -1,13 +1,8 @@
-import type { FlywayMigrationsUndoInputs } from "./types.js";
 import * as core from "@actions/core";
-import { checkForDrift as sharedCheckForDrift } from "@flyway-actions/shared/check-for-drift";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
-import { getCommonArgs } from "./flyway/arg-builders.js";
+import { runCheckDrift } from "./flyway/check-drift.js";
 import { undo } from "./flyway/undo.js";
 import { getInputs, maskSecrets } from "./inputs.js";
-
-const checkForDrift = (inputs: FlywayMigrationsUndoInputs) =>
-  sharedCheckForDrift(getCommonArgs(inputs), inputs.workingDirectory, inputs.undoReportName);
 
 if (process.env.FLYWAY_INPUTS) {
   for (const [key, value] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS) as Record<string, string>)) {
@@ -39,7 +34,7 @@ const run = async (): Promise<void> => {
         core.info('Skipping drift check: "skip-drift-check" set to true');
         inputs.saveSnapshot = true;
       } else {
-        const { driftDetected, comparisonSupported } = await checkForDrift(inputs);
+        const { driftDetected, comparisonSupported } = await runCheckDrift(inputs);
         if (driftDetected) {
           core.setFailed("Drift detected. Aborting undo.");
           return;
