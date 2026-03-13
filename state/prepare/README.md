@@ -15,6 +15,11 @@ Note that this will only be able to flag up drift after your first deployment, o
 This operation is only available for databases with [advanced comparison capability support](https://documentation.red-gate.com/flyway/flyway-concepts/database-comparisons).
 For more information, see [the associated Flyway documentation](https://documentation.red-gate.com/flyway/flyway-concepts/drift-analysis).
 
+#### Code review
+
+Analyzes pending changes for code review violations using configurable rules.
+For more information, see [the associated Flyway documentation](https://documentation.red-gate.com/flyway/flyway-concepts/code-analysis).
+
 #### Prepare
 
 Generates a deployment script by comparing your schema model against the target database using the [prepare](https://documentation.red-gate.com/flyway/reference/commands/prepare) command.
@@ -83,6 +88,8 @@ steps:
 | `generate-undo`      | Generate undo script alongside deploy script     | No                                       | `true`    |
 | `fail-on-drift`      | Fail when drift is detected                      | No                                       | `true`    |
 | `skip-drift-check`   | Skip the drift check                             | No                                       | `false`   |
+| `fail-on-code-review`| Fail when code review violations are detected    | No                                       | `true`    |
+| `skip-code-review`   | Skip the code review check                       | No                                       | `false`   |
 | `working-directory`  | Working directory for Flyway                     | No                                       |           |
 | `extra-args`         | Additional Flyway CLI arguments                  | No                                       |           |
 
@@ -134,12 +141,14 @@ steps:
 
 ## Outputs
 
-| Output             | Description                                   |
-|--------------------|-----------------------------------------------|
-| `exit-code`        | Flyway exit code                              |
-| `drift-detected`   | Whether drift was detected (empty if skipped) |
-| `script-path`      | Path to the generated deployment script       |
-| `undo-script-path` | Path to the generated undo script             |
+| Output                 | Description                                                |
+|------------------------|------------------------------------------------------------|
+| `exit-code`            | Flyway exit code                                           |
+| `drift-detected`       | Whether drift was detected (empty if skipped)              |
+| `code-violation-count` | Number of code review violations found (empty if skipped)  |
+| `code-violation-codes` | Comma-separated list of violation codes (empty if skipped) |
+| `script-path`          | Path to the generated deployment script                    |
+| `undo-script-path`     | Path to the generated undo script                          |
 
 ### Using Outputs
 

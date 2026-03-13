@@ -1,0 +1,31 @@
+import type { FlywayStatePrepareInputs } from "../types.js";
+import * as core from "@actions/core";
+import { checkForCodeReviewViolations } from "@flyway-actions/shared/check-for-code-review-violations";
+import { getTargetEnvironmentArgs } from "./arg-builders.js";
+
+const getCodeArgs = (inputs: FlywayStatePrepareInputs, scriptFilename: string): string[] | undefined => {
+  if (inputs.skipCodeReview) {
+    core.info('Skipping code review: "skip-code-review" set to true');
+    return undefined;
+  }
+  return [
+    "check",
+    "-code",
+    ...getTargetEnvironmentArgs(inputs),
+    ...(inputs.workingDirectory ? [`-workingDirectory=${inputs.workingDirectory}`] : []),
+    ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
+    ...(inputs.driftReportName ? [`-reportFilename=${inputs.driftReportName}`] : []),
+    "-check.scope=script",
+    `-check.scriptFilename=${scriptFilename}`,
+  ];
+};
+
+const runCheckCode = async (inputs: FlywayStatePrepareInputs, scriptFilename: string) => {
+  const args = getCodeArgs(inputs, scriptFilename);
+  if (!args) {
+    return undefined;
+  }
+  return checkForCodeReviewViolations(args, inputs.workingDirectory);
+};
+
+export { getCodeArgs, runCheckCode };

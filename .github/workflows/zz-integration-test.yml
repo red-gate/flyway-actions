@@ -545,6 +545,7 @@ jobs:
           target-environment: production
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
+          skip-code-review: 'true'
       - name: Test prepare outputs
         shell: bash
         run: |
@@ -593,6 +594,7 @@ jobs:
           target-environment: production
           target-url: jdbc:sqlite:../sqlite/database/drift.db
           working-directory: sample-projects/sqlite-state
+          skip-code-review: 'true'
           drift-report-name: flyway-state-prepare-drift-report-${{ matrix.os }}
           drift-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-state-prepare-drift-resolution-${{ matrix.os }}
@@ -622,6 +624,58 @@ jobs:
           echo "Drift detected: ${{ steps.prepare.outputs.drift-detected }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "1"
           test "${{ steps.prepare.outputs.drift-detected }}" = "true"
+
+  state-prepare-fail-on-code-review:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+      - name: Run state prepare with code review
+        id: prepare
+        uses: ./state/prepare
+        continue-on-error: true
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-environment: production
+          target-url: jdbc:sqlite:state-prepare-target.db
+          working-directory: sample-projects/sqlite-state
+          skip-drift-check: 'true'
+      - name: Verify prepare failed due to code review
+        shell: bash
+        run: test "${{ steps.prepare.outcome }}" != "success"
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.prepare.outputs.exit-code }}"
+          echo "Code violation count: ${{ steps.prepare.outputs.code-violation-count }}"
+          echo "Code violation codes: ${{ steps.prepare.outputs.code-violation-codes }}"
+          test "${{ steps.prepare.outputs.exit-code }}" = "1"
+          test "${{ steps.prepare.outputs.code-violation-count }}" = "1"
+          test "${{ steps.prepare.outputs.code-violation-codes }}" = "AM04"
 
   state-deploy-no-drift:
     strategy:

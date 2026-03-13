@@ -3,6 +3,7 @@ import * as core from "@actions/core";
 import { checkForDrift as sharedCheckForDrift } from "@flyway-actions/shared/check-for-drift";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { getCommonArgs } from "./flyway/arg-builders.js";
+import { runCheckCode } from "./flyway/check-code.js";
 import { prepare } from "./flyway/prepare.js";
 import { getInputs, maskSecrets } from "./inputs.js";
 
@@ -51,7 +52,19 @@ const run = async (): Promise<void> => {
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
 
-    await prepare(inputs);
+    const { scriptPath } = await prepare(inputs);
+
+    if (!scriptPath) {
+      core.warning("No script path returned from prepare. Skipping code review.");
+      return;
+    }
+
+    const codeReviewResult = await runCheckCode(inputs, scriptPath);
+    if (codeReviewResult && codeReviewResult.violationCount > 0 && inputs.failOnCodeReview) {
+      core.setOutput("exit-code", "1");
+      core.setFailed(`Code review failed with ${codeReviewResult.violationCount} violation(s).`);
+      return;
+    }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

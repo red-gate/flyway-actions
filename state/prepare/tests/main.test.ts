@@ -36,12 +36,17 @@ type SetupFlywayMockOptions = {
   edition: string;
   driftExitCode?: number;
   driftOutput?: Record<string, unknown>;
+  codeReviewExitCode?: number;
+  codeReviewOutput?: Record<string, unknown>;
   prepareExitCode: number;
   prepareOutput?: Record<string, unknown>;
 };
 
 const getDriftCheckCalls = () =>
   (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.includes("check") && call[1]?.includes("-drift"));
+
+const getCodeReviewCalls = () =>
+  (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.includes("check") && call[1]?.includes("-code"));
 
 const getPrepareCalls = () => (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.includes("prepare"));
 
@@ -55,17 +60,25 @@ describe("run", () => {
     edition,
     driftExitCode,
     driftOutput,
+    codeReviewExitCode,
+    codeReviewOutput,
     prepareExitCode,
     prepareOutput,
   }: SetupFlywayMockOptions) => {
     const defaultDriftOutput = {
       error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" },
     };
+    const defaultCodeReviewOutput = {
+      individualResults: [{ operation: "code", results: [] }],
+    };
     const calls: MockExecOptions[] = [{ stdout: { edition, version: "10.0.0" } }];
     if (driftExitCode !== undefined && edition.toLowerCase() === "enterprise") {
       calls.push({ stdout: driftOutput ?? defaultDriftOutput, exitCode: driftExitCode });
     }
     calls.push({ stdout: prepareOutput, exitCode: prepareExitCode });
+    if (codeReviewExitCode !== undefined) {
+      calls.push({ stdout: codeReviewOutput ?? defaultCodeReviewOutput, exitCode: codeReviewExitCode });
+    }
     exec.mockImplementation(mockExecSequence(calls));
   };
 
@@ -90,10 +103,11 @@ describe("run", () => {
     );
   });
 
-  it("should run drift check and prepare for enterprise edition", async () => {
+  it("should run drift check, code review, and prepare for enterprise edition", async () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
+      codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
     });
@@ -103,6 +117,7 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(getDriftCheckCalls()).toHaveLength(1);
+    expect(getCodeReviewCalls()).toHaveLength(1);
     expect(getPrepareCalls()).toHaveLength(1);
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("script-path", "deployments/D__deployment.sql");
@@ -112,6 +127,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
+      codeReviewExitCode: 0,
       prepareExitCode: 1,
       prepareOutput: { error: { errorCode: "FAULT", message: "Something went wrong" } },
     });
@@ -124,7 +140,7 @@ describe("run", () => {
   });
 
   it("should mask password", async () => {
-    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, prepareExitCode: 0 });
+    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, codeReviewExitCode: 0, prepareExitCode: 0 });
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
         "target-url": "jdbc:sqlite:test.db",
@@ -157,6 +173,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 1,
+      codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
     });
@@ -177,6 +194,7 @@ describe("run", () => {
   it("should skip drift check when skip-drift-check is enabled", async () => {
     setupFlywayMock({
       edition: "Enterprise",
+      codeReviewExitCode: 0,
       prepareExitCode: 0,
     });
     getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
@@ -194,6 +212,7 @@ describe("run", () => {
   it("should skip drift check for community edition", async () => {
     setupFlywayMock({
       edition: "Community",
+      codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
     });
@@ -212,6 +231,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
+      codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
     });
@@ -236,6 +256,7 @@ describe("run", () => {
           message: "No comparison capability found",
         },
       },
+      codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
     });
@@ -248,5 +269,75 @@ describe("run", () => {
     expect(getPrepareCalls()).toHaveLength(1);
     expect(setFailed).not.toHaveBeenCalled();
     expect(setOutput).toHaveBeenCalledWith("script-path", "deployments/D__deployment.sql");
+  });
+
+  it("should fail after prepare when code review violations detected with fail-on-code-review enabled", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      driftExitCode: 0,
+      codeReviewExitCode: 1,
+      codeReviewOutput: {
+        error: {
+          errorCode: "CHECK_CODE_REVIEW_VIOLATION",
+          message: "Code Analysis Violation(s) detected",
+          results: [{ violations: [{ code: "RG06" }] }],
+          htmlReport: "/tmp/report.html",
+        },
+      },
+      prepareExitCode: 0,
+      prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
+    });
+    getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
+    getBooleanInput.mockImplementation((name: string) => name === "fail-on-code-review");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getPrepareCalls()).toHaveLength(1);
+    expect(getCodeReviewCalls()).toHaveLength(1);
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Code review failed"));
+  });
+
+  it("should succeed when code review violations detected with fail-on-code-review disabled", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      driftExitCode: 0,
+      codeReviewExitCode: 0,
+      codeReviewOutput: {
+        individualResults: [{ operation: "code", results: [{ violations: [{ code: "AM04" }] }] }],
+      },
+      prepareExitCode: 0,
+      prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
+    });
+    getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
+    getBooleanInput.mockReturnValue(false);
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getCodeReviewCalls()).toHaveLength(1);
+    expect(getPrepareCalls()).toHaveLength(1);
+    expect(setFailed).not.toHaveBeenCalled();
+    expect(setOutput).toHaveBeenCalledWith("script-path", "deployments/D__deployment.sql");
+  });
+
+  it("should skip code review when skip-code-review is enabled", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      driftExitCode: 0,
+      prepareExitCode: 0,
+      prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
+    });
+    getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
+    getBooleanInput.mockImplementation((name: string) => name === "skip-code-review");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getCodeReviewCalls()).toHaveLength(0);
+    expect(getPrepareCalls()).toHaveLength(1);
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping code review"));
+    expect(setFailed).not.toHaveBeenCalled();
   });
 });

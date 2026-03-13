@@ -25,18 +25,18 @@ describe("runCheckCode", () => {
   });
 
   it("should return undefined when skipCodeReview is true", async () => {
-    expect(await runCheckCode({ skipCodeReview: true })).toBeUndefined();
+    expect(await runCheckCode({ skipCodeReview: true }, "V001__create.sql")).toBeUndefined();
     expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping code review"));
     expect(checkForCodeReviewViolations).not.toHaveBeenCalled();
   });
 
   it("should return undefined when skipCodeReview is true even if failOnCodeReview is true", async () => {
-    expect(await runCheckCode({ skipCodeReview: true, failOnCodeReview: true })).toBeUndefined();
+    expect(await runCheckCode({ skipCodeReview: true, failOnCodeReview: true }, "V001__create.sql")).toBeUndefined();
     expect(checkForCodeReviewViolations).not.toHaveBeenCalled();
   });
 
   it("should pass args with check and -code", async () => {
-    await runCheckCode({});
+    await runCheckCode({}, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
@@ -44,8 +44,17 @@ describe("runCheckCode", () => {
     expect(args).toContain("-code");
   });
 
+  it("should include -check.scope=script and -check.scriptFilename", async () => {
+    await runCheckCode({}, "V001__create.sql");
+
+    const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
+
+    expect(args).toContain("-check.scope=script");
+    expect(args).toContain("-check.scriptFilename=V001__create.sql");
+  });
+
   it("should include -check.code.failOnError=true when failOnCodeReview is true", async () => {
-    await runCheckCode({ failOnCodeReview: true });
+    await runCheckCode({ failOnCodeReview: true }, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
@@ -53,15 +62,18 @@ describe("runCheckCode", () => {
   });
 
   it("should not include -check.code.failOnError=true when failOnCodeReview is false", async () => {
-    await runCheckCode({ failOnCodeReview: false });
+    await runCheckCode({ failOnCodeReview: false }, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
     expect(args).not.toContain("-check.code.failOnError=true");
   });
 
-  it("should include target and base args", async () => {
-    await runCheckCode({ targetUrl: "jdbc:postgresql://localhost/db", workingDirectory: "/app/db" });
+  it("should include target environment and working directory args", async () => {
+    await runCheckCode(
+      { targetUrl: "jdbc:postgresql://localhost/db", workingDirectory: "/app/db" },
+      "V001__create.sql",
+    );
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
@@ -70,43 +82,24 @@ describe("runCheckCode", () => {
   });
 
   it("should pass workingDirectory to checkForCodeReviewViolations", async () => {
-    await runCheckCode({ workingDirectory: "/app/db" });
+    await runCheckCode({ workingDirectory: "/app/db" }, "V001__create.sql");
 
     expect(checkForCodeReviewViolations).toHaveBeenCalledWith(expect.any(Array), "/app/db");
   });
 
-  it("should include target args but not target migration version or cherry pick", async () => {
-    await runCheckCode({
-      targetUrl: "jdbc:postgresql://localhost/db",
-      targetMigrationVersion: "5.0",
-      cherryPick: "3.0,4.0",
-    });
+  it("should include reportFilename when driftReportName is set", async () => {
+    await runCheckCode({ driftReportName: "my-report" }, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
-    expect(args).toContain("-url=jdbc:postgresql://localhost/db");
-    expect(args).not.toContain("-target=5.0");
-    expect(args).not.toContain("-cherryPick=3.0,4.0");
+    expect(args).toContain("-reportFilename=my-report");
   });
 
-  it("should not include build environment args", async () => {
-    await runCheckCode({ buildUrl: "jdbc:sqlite:build.db" });
+  it("should not include reportFilename when driftReportName is not set", async () => {
+    await runCheckCode({}, "V001__create.sql");
 
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
-    expect(args).not.toContain(expect.stringContaining("default_build"));
-  });
-
-  it("should return exitCode and reportPath from result", async () => {
-    checkForCodeReviewViolations.mockResolvedValue({
-      exitCode: 1,
-      reportPath: "/tmp/report.html",
-      violationCount: 1,
-      violationCodes: ["RG06"],
-    });
-
-    const result = await runCheckCode({});
-
-    expect(result).toEqual({ exitCode: 1, reportPath: "/tmp/report.html" });
+    expect(args.some((a: string) => a.startsWith("-reportFilename="))).toBe(false);
   });
 });

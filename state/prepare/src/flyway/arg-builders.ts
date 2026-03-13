@@ -63,4 +63,7 @@ const getCommonArgs = (inputs: FlywayStatePrepareInputs): string[] => {
   return args;
 };
 
-export { getCommonArgs, getPrepareArgs };
+const getTargetEnvironmentArgs = (inputs: FlywayStatePrepareInputs): string[] =>
+  getTargetConnectionArgs(inputs, "environment");
+
+export { getCommonArgs, getPrepareArgs, getTargetEnvironmentArgs };

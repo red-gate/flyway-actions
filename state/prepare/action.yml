@@ -35,6 +35,14 @@ inputs:
     description: 'Skip the drift check'
     required: false
     default: 'false'
+  fail-on-code-review:
+    description: 'Fail when code review violations are detected'
+    required: false
+    default: 'true'
+  skip-code-review:
+    description: 'Skip the code review check'
+    required: false
+    default: 'false'
   working-directory:
     description: 'Working directory for Flyway'
     required: false
@@ -73,6 +81,12 @@ outputs:
   drift-detected:
     description: 'Whether drift was detected (empty if skipped)'
     value: ${{ steps.prepare.outputs.drift-detected }}
+  code-violation-count:
+    description: 'Number of code review violations found (empty if skipped)'
+    value: ${{ steps.prepare.outputs.code-violation-count }}
+  code-violation-codes:
+    description: 'Comma-separated list of code review violation codes (empty if skipped)'
+    value: ${{ steps.prepare.outputs.code-violation-codes }}
   script-path:
     description: 'Path to the generated deployment script'
     value: ${{ steps.prepare.outputs.script-path }}
