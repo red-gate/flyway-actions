@@ -1,7 +1,6 @@
 import type { Drift, FlywayCheckOutput } from "./types.js";
 import * as core from "@actions/core";
 import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
-import { resolvePath } from "./resolve-path.js";
 
 type CheckForDriftResult = {
   exitCode: number;
@@ -31,8 +30,8 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
           exitCode: result.exitCode,
           driftDetected: true,
           comparisonSupported: true,
-          reportPath: resolvePath(errorOutput.error.htmlReport, workingDirectory),
-          driftResolutionFolder: resolvePath(errorOutput.error.driftResolutionFolderPath, workingDirectory),
+          reportPath: errorOutput.error.htmlReport,
+          driftResolutionFolder: errorOutput.error.driftResolutionFolderPath,
         };
       }
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
@@ -51,8 +50,8 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       exitCode: result.exitCode,
       driftDetected: isDriftDetected(output),
       comparisonSupported: true,
-      reportPath: resolvePath(output?.htmlReport, workingDirectory),
-      driftResolutionFolder: resolvePath(driftResult?.driftResolutionFolder, workingDirectory),
+      reportPath: output?.htmlReport,
+      driftResolutionFolder: driftResult?.driftResolutionFolder,
     };
   } finally {
     core.endGroup();
