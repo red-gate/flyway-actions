@@ -1,9 +1,10 @@
 const checkForDrift = vi.fn();
+const setOutput = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info: vi.fn(),
   error: vi.fn(),
-  setOutput: vi.fn(),
+  setOutput,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -20,7 +21,7 @@ const { runCheckDrift } = await import("../../src/flyway/check-drift.js");
 
 describe("runCheckDrift", () => {
   beforeEach(() => {
-    checkForDrift.mockResolvedValue({ driftDetected: false, comparisonSupported: true });
+    checkForDrift.mockResolvedValue({ exitCode: 0, driftDetected: false, comparisonSupported: true });
   });
 
   it("should pass args with check and -drift", async () => {
@@ -81,10 +82,27 @@ describe("runCheckDrift", () => {
   });
 
   it("should return result from checkForDrift", async () => {
-    checkForDrift.mockResolvedValue({ driftDetected: true, comparisonSupported: true });
+    checkForDrift.mockResolvedValue({ exitCode: 1, driftDetected: true, comparisonSupported: true });
 
     const result = await runCheckDrift({});
 
-    expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
+    expect(result).toEqual({ exitCode: 1, driftDetected: true, comparisonSupported: true });
+  });
+
+  it("should set GitHub outputs from result", async () => {
+    checkForDrift.mockResolvedValue({
+      exitCode: 1,
+      driftDetected: true,
+      comparisonSupported: true,
+      reportPath: "report.html",
+      driftResolutionFolder: "/resolution",
+    });
+
+    await runCheckDrift({});
+
+    expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+    expect(setOutput).toHaveBeenCalledWith("report-path", "report.html");
+    expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/resolution");
   });
 });
