@@ -3,7 +3,13 @@ import * as core from "@actions/core";
 import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
 import { resolvePath } from "./resolve-path.js";
 
-type CheckForDriftResult = { driftDetected: boolean; comparisonSupported: boolean };
+type CheckForDriftResult = {
+  exitCode: number;
+  driftDetected: boolean;
+  comparisonSupported: boolean;
+  reportPath?: string;
+  driftResolutionFolder?: string;
+};
 
 const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
   try {
@@ -22,31 +28,40 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       const errorOutput = parseDriftErrorOutput(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
         const reportPath = resolvePath(errorOutput.error.htmlReport, workingDirectory);
-        const resolutionFolder = resolvePath(errorOutput.error.driftResolutionFolderPath, workingDirectory);
-        setOutput(result.exitCode, true, reportPath, resolutionFolder);
-        return { driftDetected: true, comparisonSupported: true };
+        const driftResolutionFolder = resolvePath(errorOutput.error.driftResolutionFolderPath, workingDirectory);
+        setOutput(result.exitCode, true, reportPath, driftResolutionFolder);
+        return {
+          exitCode: result.exitCode,
+          driftDetected: true,
+          comparisonSupported: true,
+          reportPath,
+          driftResolutionFolder,
+        };
       }
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
         );
         setOutput(0);
-        return { driftDetected: false, comparisonSupported: false };
+        return { exitCode: 0, driftDetected: false, comparisonSupported: false };
       }
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       setOutput(result.exitCode);
-      return { driftDetected: false, comparisonSupported: true };
+      return { exitCode: result.exitCode, driftDetected: false, comparisonSupported: true };
     }
 
     const output = parseCheckOutput(result.stdout);
     const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
-    setOutput(
-      result.exitCode,
-      isDriftDetected(output),
-      resolvePath(output?.htmlReport, workingDirectory),
-      resolvePath(driftResult?.driftResolutionFolder, workingDirectory),
-    );
-    return { driftDetected: isDriftDetected(output), comparisonSupported: true };
+    const reportPath = resolvePath(output?.htmlReport, workingDirectory);
+    const driftResolutionFolder = resolvePath(driftResult?.driftResolutionFolder, workingDirectory);
+    setOutput(result.exitCode, isDriftDetected(output), reportPath, driftResolutionFolder);
+    return {
+      exitCode: result.exitCode,
+      driftDetected: isDriftDetected(output),
+      comparisonSupported: true,
+      reportPath,
+      driftResolutionFolder,
+    };
   } finally {
     core.endGroup();
   }
