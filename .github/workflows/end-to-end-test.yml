@@ -302,6 +302,16 @@ jobs:
         with:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
+      - name: Run state deploy with undo script
+        id: undo
+        uses: ./state/deploy
+        env:
+          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
+        with:
+          target-url: jdbc:sqlite:state-prepare-target.db
+          working-directory: sample-projects/sqlite-state
+          script-path: ${{ steps.prepare.outputs.undo-script-path }}
+          skip-drift-check: 'true'
       - name: Test outputs
         shell: bash
         run: |
@@ -311,8 +321,10 @@ jobs:
           echo "Undo script path: ${{ steps.prepare.outputs.undo-script-path }}"
           echo "Changed object count: ${{ steps.prepare.outputs.changed-object-count }}"
           echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Undo exit code: ${{ steps.undo.outputs.exit-code }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "0"
           [[ "${{ steps.prepare.outputs.script-path }}" == *D__deployment.sql ]]
           [[ "${{ steps.prepare.outputs.undo-script-path }}" == *DU__undo.sql ]]
           test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
+          test "${{ steps.undo.outputs.exit-code }}" = "0"
