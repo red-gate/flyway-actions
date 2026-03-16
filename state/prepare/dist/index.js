@@ -10630,12 +10630,16 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
+		if (e.edition !== "enterprise") {
+			rn(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
+			return;
+		}
 		let t = Hn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (Un(t), e.edition === "enterprise") if (t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
+		if (Un(t), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
 			let { driftDetected: e } = await Wn(t);
 			if (e) {
@@ -10646,7 +10650,6 @@ await (async () => {
 				on("Drift detected. Continuing because fail-on-drift is disabled.");
 			}
 		}
-		else sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
 		await jn(t, e.edition);
 		let { scriptPath: n } = await Bn(t);
 		if (!n) {
