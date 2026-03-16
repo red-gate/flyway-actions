@@ -26,6 +26,12 @@ const run = async (): Promise<void> => {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
+    if (flywayDetails.edition !== "enterprise") {
+      core.setFailed(
+        `State-based deployments require Flyway Enterprise edition (current edition: ${flywayDetails.edition}).`,
+      );
+      return;
+    }
     const inputs = getInputs();
     if (!inputs.targetEnvironment && !inputs.targetUrl) {
       core.setFailed(
@@ -36,21 +42,17 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    if (flywayDetails.edition === "enterprise") {
-      if (inputs.skipDriftCheck) {
-        core.info('Skipping drift check: "skip-drift-check" set to true');
-      } else {
-        const { driftDetected } = await checkForDrift(inputs);
-        if (driftDetected) {
-          if (inputs.failOnDrift) {
-            core.setFailed("Drift detected. Aborting prepare.");
-            return;
-          }
-          core.warning("Drift detected. Continuing because fail-on-drift is disabled.");
-        }
-      }
+    if (inputs.skipDriftCheck) {
+      core.info('Skipping drift check: "skip-drift-check" set to true');
     } else {
-      core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
+      const { driftDetected } = await checkForDrift(inputs);
+      if (driftDetected) {
+        if (inputs.failOnDrift) {
+          core.setFailed("Drift detected. Aborting prepare.");
+          return;
+        }
+        core.warning("Drift detected. Continuing because fail-on-drift is disabled.");
+      }
     }
 
     await runCheckChanges(inputs, flywayDetails.edition);

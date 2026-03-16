@@ -24,6 +24,12 @@ const run = async (): Promise<void> => {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
       return;
     }
+    if (flywayDetails.edition !== "enterprise") {
+      core.setFailed(
+        `State-based deployments require Flyway Enterprise edition (current edition: ${flywayDetails.edition}).`,
+      );
+      return;
+    }
     const inputs = getInputs();
     if (!inputs.targetEnvironment && !inputs.targetUrl) {
       core.setFailed(
@@ -34,20 +40,16 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
-    if (flywayDetails.edition === "enterprise") {
-      if (inputs.skipDriftCheck) {
-        core.info('Skipping drift check: "skip-drift-check" set to true');
-        inputs.saveSnapshot = true;
-      } else {
-        const { driftDetected, comparisonSupported } = await checkForDrift(inputs);
-        if (driftDetected) {
-          core.setFailed("Drift detected. Aborting deployment.");
-          return;
-        }
-        inputs.saveSnapshot = comparisonSupported;
-      }
+    if (inputs.skipDriftCheck) {
+      core.info('Skipping drift check: "skip-drift-check" set to true');
+      inputs.saveSnapshot = true;
     } else {
-      core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
+      const { driftDetected, comparisonSupported } = await checkForDrift(inputs);
+      if (driftDetected) {
+        core.setFailed("Drift detected. Aborting deployment.");
+        return;
+      }
+      inputs.saveSnapshot = comparisonSupported;
     }
 
     await deploy(inputs);

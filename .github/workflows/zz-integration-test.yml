@@ -791,35 +791,6 @@ jobs:
           test "${{ steps.deploy.outputs.exit-code }}" = "1"
           test "${{ steps.deploy.outputs.drift-detected }}" = "true"
 
-  state-deploy-community:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Setup Flyway
-        uses: red-gate/setup-flyway@v3
-        with:
-          edition: community
-          i-agree-to-the-eula: true
-      - name: Run state deploy
-        id: deploy
-        uses: ./state/deploy
-        with:
-          target-url: jdbc:sqlite:state-target.db
-          script-path: deployments/D__deployment.sql
-          working-directory: sample-projects/sqlite
-      - name: Test outputs
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Exit code: ${{ steps.deploy.outputs.exit-code }}"
-          echo "Drift detected: ${{ steps.deploy.outputs.drift-detected }}"
-          test "${{ steps.deploy.outputs.exit-code }}" = "0"
-          test "${{ steps.deploy.outputs.drift-detected }}" = ""
-
   state-deploy-no-comparison-support:
     strategy:
       matrix:
