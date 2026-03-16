@@ -71,8 +71,17 @@ describe("run", () => {
     expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway is not installed"));
   });
 
-  it("should fail when neither url nor environment is provided", async () => {
+  it("should fail for non-enterprise edition", async () => {
     setupFlywayMock({ edition: "Community", deployExitCode: 0 });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("require Flyway Enterprise edition"));
+  });
+
+  it("should fail when neither url nor environment is provided", async () => {
+    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, deployExitCode: 0 });
     getInput.mockReturnValue("");
 
     await import("../src/main.js");
@@ -106,30 +115,8 @@ describe("run", () => {
     );
   });
 
-  it("should not include saveSnapshot for community edition", async () => {
-    setupFlywayMock({
-      edition: "Community",
-      deployExitCode: 0,
-    });
-    getInput.mockImplementation((name: string) => {
-      if (name === "target-url") {
-        return "jdbc:sqlite:test.db";
-      }
-      return "";
-    });
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    expect(exec).not.toHaveBeenCalledWith(
-      "flyway",
-      expect.arrayContaining(["-deploy.saveSnapshot=true"]),
-      expect.any(Object),
-    );
-  });
-
   it("should fail when flyway returns non-zero exit code", async () => {
-    setupFlywayMock({ edition: "Community", deployExitCode: 1 });
+    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, deployExitCode: 1 });
     getInput.mockImplementation((name: string) => {
       if (name === "target-url") {
         return "jdbc:sqlite:test.db";
@@ -145,7 +132,8 @@ describe("run", () => {
 
   it("should set outputs on successful execution", async () => {
     setupFlywayMock({
-      edition: "Community",
+      edition: "Enterprise",
+      driftExitCode: 0,
       deployExitCode: 0,
     });
     getInput.mockImplementation((name: string) => {

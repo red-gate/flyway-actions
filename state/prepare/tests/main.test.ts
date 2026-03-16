@@ -97,8 +97,17 @@ describe("run", () => {
     expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway is not installed"));
   });
 
-  it("should fail when neither url nor environment is provided", async () => {
+  it("should fail for non-enterprise edition", async () => {
     setupFlywayMock({ edition: "Community", prepareExitCode: 0 });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("require Flyway Enterprise edition"));
+  });
+
+  it("should fail when neither url nor environment is provided", async () => {
+    setupFlywayMock({ edition: "Enterprise", driftExitCode: 0, prepareExitCode: 0 });
     getInput.mockReturnValue("");
 
     await import("../src/main.js");
@@ -221,24 +230,6 @@ describe("run", () => {
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should skip drift check for community edition", async () => {
-    setupFlywayMock({
-      edition: "Community",
-      codeReviewExitCode: 0,
-      prepareExitCode: 0,
-      prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
-    });
-    getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
-
-    await import("../src/main.js");
-    await vi.dynamicImportSettled();
-
-    expect(getDriftCheckCalls()).toHaveLength(0);
-    expect(getPrepareCalls()).toHaveLength(1);
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("edition is not Enterprise"));
-    expect(setFailed).not.toHaveBeenCalled();
-  });
-
   it("should proceed with prepare when no drift detected for enterprise edition", async () => {
     setupFlywayMock({
       edition: "Enterprise",
@@ -336,7 +327,8 @@ describe("run", () => {
 
   it("should call runCheckChanges", async () => {
     setupFlywayMock({
-      edition: "Community",
+      edition: "Enterprise",
+      driftExitCode: 0,
       codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },
@@ -346,7 +338,7 @@ describe("run", () => {
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(runCheckChanges).toHaveBeenCalledWith(expect.any(Object), "community");
+    expect(runCheckChanges).toHaveBeenCalledWith(expect.any(Object), "enterprise");
   });
 
   it("should skip code review when skip-code-review is enabled", async () => {

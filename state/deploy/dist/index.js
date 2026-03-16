@@ -10509,12 +10509,16 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
+		if (e.edition !== "enterprise") {
+			rn(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
+			return;
+		}
 		let t = En();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (Dn(t), e.edition === "enterprise") if (t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		if (Dn(t), t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
 		else {
 			let { driftDetected: e, comparisonSupported: n } = await On(t);
 			if (e) {
@@ -10523,7 +10527,6 @@ await (async () => {
 			}
 			t.saveSnapshot = n;
 		}
-		else on(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
 		await wn(t);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
