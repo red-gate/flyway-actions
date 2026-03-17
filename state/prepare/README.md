@@ -145,6 +145,31 @@ steps:
       drift-resolution-scripts-name: flyway-drift-resolution-${{ matrix.target }}
 ```
 
+### Deployment and Undo Script Upload
+
+The action uploads the generated deployment and undo scripts as workflow artifacts. Both uploads are controlled by the same skip flag and retention period.
+
+| Input                              | Description                                                          | Required | Default         |
+|------------------------------------|----------------------------------------------------------------------|----------|-----------------|
+| `deployment-script-name`           | Name for the deployment script artifact                              | No       | `D__deployment` |
+| `undo-script-name`                 | Name for the undo script artifact                                    | No       | `DU__undo`      |
+| `deployment-script-retention-days` | Number of days to retain the deployment and undo script artifacts    | No       | `7`             |
+| `skip-deployment-script-upload`    | Skip uploading the deployment and undo scripts as workflow artifacts | No       | `false`         |
+
+As with other artifacts, use unique names when running against multiple targets:
+
+```yaml
+strategy:
+  matrix:
+    target: [staging, production]
+steps:
+  - uses: red-gate/flyway-actions/state/prepare@v1
+    with:
+      target-environment: ${{ matrix.target }}
+      deployment-script-name: flyway-deployment-script-${{ matrix.target }}
+      undo-script-name: flyway-undo-script-${{ matrix.target }}
+```
+
 ## Outputs
 
 | Output                 | Description                                                         |
