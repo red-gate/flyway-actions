@@ -24,6 +24,7 @@ These actions can be used both for database deployment pipelines, and for valida
 | [`migrations/checks`](migrations/checks)                   | Run pre-deployment checks on migrations and target database |
 | [`migrations/deploy`](migrations/deploy)                   | Deploy pending migrations against target database           |
 | [`migrations/undo`](migrations/undo)                       | Undo migrations on target database                          |
+| [`state/prepare`](state/prepare)                           | Generate deployment script and run pre-deployment checks    |
 | [`state/deploy`](state/deploy)                             | Deploy state-based changes to target database               |
 
 ## Usage
@@ -143,6 +144,104 @@ The manual review workflow uses two GitHub environments to separate read-only ch
    Under *Protection rules*, enable **Required reviewers** and add the team members who should approve deployments. You can also restrict which branches can deploy by enabling **Deployment branches and tags** and limiting it to `main`.
 
 The `deploy` job will wait for reviewer approval after the `checks` job passes, giving reviewers a chance to inspect the check results and uploaded report before the migration runs.
+
+### Automated deployment using state (Flyway Enterprise)
+
+State-based deployments use `state/prepare` to generate a deployment script by comparing your schema model against the target database, then `state/deploy` to apply it. This approach is ideal when you manage your database schema as a set of object definitions rather than ordered migration files.
+
+```yaml
+name: Deploy to production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  automated-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+          email: "${{ secrets.FLYWAY_EMAIL }}"
+          token: "${{ secrets.FLYWAY_TOKEN }}"
+      - name: Prepare deployment script
+        uses: red-gate/flyway-actions/state/prepare@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
+      - name: Deploy changes
+        uses: red-gate/flyway-actions/state/deploy@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
+```
+
+### Manual review between prepare and deployment using state (Flyway Enterprise)
+
+Split the prepare and deploy steps into separate jobs. Use a [GitHub environment with required reviewers](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#required-reviewers) on the deploy job so a reviewer can inspect the pre-deployment report and generated deployment script before approving.
+
+```yaml
+name: Deploy to production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    environment: production-read-only
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+          email: "${{ secrets.FLYWAY_EMAIL }}"
+          token: "${{ secrets.FLYWAY_TOKEN }}"
+      - name: Prepare deployment script
+        uses: red-gate/flyway-actions/state/prepare@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: production-write  # requires reviewer approval before running
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+          email: "${{ secrets.FLYWAY_EMAIL }}"
+          token: "${{ secrets.FLYWAY_TOKEN }}"
+      - name: Deploy changes
+        uses: red-gate/flyway-actions/state/deploy@v1
+        with:
+          target-environment: production
+          target-user: "${{ secrets.FLYWAY_USER }}"
+          target-password: "${{ secrets.FLYWAY_PASSWORD }}"
+          working-directory: my-flyway-project
+```
+
+The environment setup is the same as described in [Setting up the environments](#setting-up-the-environments) above. The `prepare` job runs drift detection, code review, and generates reports and the deployment script — all using read-only access. Reviewers can inspect the uploaded pre-deployment report and deployment script artifacts before approving the `deploy` job.
 
 ### Flyway Community deployment
 ```yaml
