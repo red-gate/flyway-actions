@@ -13,6 +13,8 @@ type FlywayStatePrepareInputs = {
   workingDirectory?: string;
   extraArgs?: string;
   preDeploymentReportName?: string;
+  deploymentScriptName?: string;
+  undoScriptName?: string;
 };
 
 export type { FlywayStatePrepareInputs };

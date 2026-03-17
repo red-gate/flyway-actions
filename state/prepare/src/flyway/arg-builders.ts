@@ -38,6 +38,14 @@ const getPrepareArgs = (inputs: FlywayStatePrepareInputs): string[] => {
   const types = inputs.generateUndo ? "deploy,undo" : "deploy";
   args.push(`-types=${types}`);
 
+  if (inputs.deploymentScriptName) {
+    args.push(`-scriptFilename=deployments/${inputs.deploymentScriptName}.sql`);
+  }
+
+  if (inputs.undoScriptName) {
+    args.push(`-undoFilename=deployments/${inputs.undoScriptName}.sql`);
+  }
+
   if (inputs.workingDirectory) {
     args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }
