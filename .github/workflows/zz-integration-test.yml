@@ -546,6 +546,9 @@ jobs:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
           skip-code-review: 'true'
+          deployment-script-name: flyway-deployment-script-${{ matrix.os }}
+          undo-script-name: flyway-undo-script-${{ matrix.os }}
+          deployment-script-retention-days: '1'
       - name: Test prepare outputs
         shell: bash
         run: |
@@ -555,9 +558,23 @@ jobs:
           echo "Undo script path: ${{ steps.prepare.outputs.undo-script-path }}"
           echo "Changed object count: ${{ steps.prepare.outputs.changed-object-count }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "0"
-          [[ "${{ steps.prepare.outputs.script-path }}" == *D__deployment.sql ]]
-          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *DU__undo.sql ]]
+          [[ "${{ steps.prepare.outputs.script-path }}" == *flyway-deployment-script-${{ matrix.os }}.sql ]]
+          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *flyway-undo-script-${{ matrix.os }}.sql ]]
           test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
+      - name: Download deployment script
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-deployment-script-${{ matrix.os }}.sql
+      - name: Verify deployment script exists
+        shell: bash
+        run: test -s flyway-deployment-script-${{ matrix.os }}.sql
+      - name: Download undo script
+        uses: actions/download-artifact@v8
+        with:
+          name: flyway-undo-script-${{ matrix.os }}.sql
+      - name: Verify undo script exists
+        shell: bash
+        run: test -s flyway-undo-script-${{ matrix.os }}.sql
 
   state-prepare-drift:
     strategy:
@@ -601,6 +618,7 @@ jobs:
           pre-deployment-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-state-prepare-drift-resolution-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
+          skip-deployment-script-upload: 'true'
       - name: Download pre deployment report
         uses: actions/download-artifact@v8
         with:
@@ -665,6 +683,7 @@ jobs:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
           skip-drift-check: 'true'
+          skip-deployment-script-upload: 'true'
       - name: Verify prepare failed due to code review
         shell: bash
         run: test "${{ steps.prepare.outcome }}" != "success"

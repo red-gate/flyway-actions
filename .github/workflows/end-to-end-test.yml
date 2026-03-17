@@ -294,6 +294,9 @@ jobs:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
           fail-on-code-review: 'false'
+          deployment-script-name: flyway-e2e-deployment-script-${{ matrix.os }}
+          undo-script-name: flyway-e2e-undo-script-${{ matrix.os }}
+          deployment-script-retention-days: '1'
       - name: Run state deploy
         id: deploy
         uses: ./state/deploy
@@ -302,6 +305,7 @@ jobs:
         with:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
+          script-path: ${{ steps.prepare.outputs.script-path }}
       - name: Run state deploy with undo script
         id: undo
         uses: ./state/deploy
@@ -323,8 +327,8 @@ jobs:
           echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
           echo "Undo exit code: ${{ steps.undo.outputs.exit-code }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "0"
-          [[ "${{ steps.prepare.outputs.script-path }}" == *D__deployment.sql ]]
-          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *DU__undo.sql ]]
+          [[ "${{ steps.prepare.outputs.script-path }}" == *flyway-e2e-deployment-script-${{ matrix.os }}.sql ]]
+          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *flyway-e2e-undo-script-${{ matrix.os }}.sql ]]
           test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.undo.outputs.exit-code }}" = "0"
