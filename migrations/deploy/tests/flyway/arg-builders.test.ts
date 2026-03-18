@@ -106,7 +106,7 @@ describe("getCommonArgs", () => {
       baselineOnMigrate: true,
       saveSnapshot: true,
       skipDriftCheck: true,
-      driftReportName: "report",
+      deploymentReportName: "report",
     };
 
     const args = getCommonArgs(inputs);
@@ -116,6 +116,6 @@ describe("getCommonArgs", () => {
     expect(args.some((a) => a.includes("baselineOnMigrate"))).toBe(false);
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
     expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
-    expect(args.some((a) => a.includes("driftReportName"))).toBe(false);
+    expect(args.some((a) => a.includes("deploymentReportName"))).toBe(false);
   });
 });

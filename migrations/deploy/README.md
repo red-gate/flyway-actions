@@ -102,17 +102,17 @@ steps:
 | `working-directory`        | Working directory for Flyway                                     | No                                       |         |
 | `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`)   | No                                       |         |
 
-### Drift Report Upload
+### Deployment Report Upload
 
-When running under Flyway Enterprise and drift is detected, the action uploads the drift report as a workflow artifact.
+When running under Flyway Enterprise and drift is detected, the action uploads the deployment report as a workflow artifact.
 
-| Input                         | Description                                            | Required | Default                    |
-|-------------------------------|--------------------------------------------------------|----------|----------------------------|
-| `drift-report-name`           | Name for the drift report artifact                     | No       | `flyway-deployment-report` |
-| `drift-report-retention-days` | Number of days to retain the drift report artifact     | No       | `7`                        |
-| `skip-drift-report-upload`    | Skip uploading the drift report as a workflow artifact | No       | `false`                    |
+| Input                              | Description                                                 | Required | Default                    |
+|------------------------------------|-------------------------------------------------------------|----------|----------------------------|
+| `deployment-report-name`           | Name for the deployment report artifact                     | No       | `flyway-deployment-report` |
+| `deployment-report-retention-days` | Number of days to retain the deployment report artifact     | No       | `7`                        |
+| `skip-deployment-report-upload`    | Skip uploading the deployment report as a workflow artifact | No       | `false`                    |
 
-If the 'deploy' action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `drift-report-name` for each run to avoid artifact name conflicts:
+If the 'deploy' action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `deployment-report-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:
@@ -122,7 +122,7 @@ steps:
   - uses: red-gate/flyway-actions/migrations/deploy@v1
     with:
       target-environment: ${{ matrix.target }}
-      drift-report-name: flyway-deployment-report-${{ matrix.target }}
+      deployment-report-name: flyway-deployment-report-${{ matrix.target }}
 ```
 
 ### Drift Resolution Scripts Upload
@@ -135,7 +135,7 @@ When drift is detected, Flyway generates SQL scripts that can be used to resolve
 | `drift-resolution-scripts-retention-days` | Number of days to retain the drift resolution scripts artifact | No       | `7`                               |
 | `skip-drift-resolution-scripts-upload`    | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                           |
 
-As with drift reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
+As with deployment reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
 
 ```yaml
 strategy:
