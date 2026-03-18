@@ -77,6 +77,20 @@ inputs:
     description: 'Number of days to retain the drift resolution scripts artifact'
     required: false
     default: '7'
+  skip-deployment-script-upload:
+    description: 'Skip uploading the deployment and undo scripts as workflow artifacts'
+    required: false
+    default: 'false'
+  deployment-script-name:
+    description: 'Custom name for the deployment script artifact and output file (without extension). When not provided, Flyway controls the output filename.'
+    required: false
+  undo-script-name:
+    description: 'Custom name for the undo script artifact and output file (without extension). When not provided, Flyway controls the output filename.'
+    required: false
+  deployment-script-retention-days:
+    description: 'Number of days to retain the deployment and undo script artifacts'
+    required: false
+    default: '7'
 
 outputs:
   exit-code:
@@ -139,4 +153,21 @@ runs:
         name: ${{ inputs.drift-resolution-scripts-name }}
         path: ${{ steps.prepare.outputs.drift-resolution-folder }}
         retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
+        if-no-files-found: ignore
+    - name: Upload deployment script
+      if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.script-path != '' && always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.deployment-script-name }}
+        path: ${{ steps.prepare.outputs.script-path }}
+        archive: false
+        retention-days: ${{ inputs.deployment-script-retention-days }}
+    - name: Upload undo script
+      if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.undo-script-path != '' && always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.undo-script-name }}
+        path: ${{ steps.prepare.outputs.undo-script-path }}
+        archive: false
+        retention-days: ${{ inputs.deployment-script-retention-days }}
         if-no-files-found: ignore

@@ -141,6 +141,32 @@ describe("getInputs", () => {
     expect(inputs.preDeploymentReportName).toBe("custom-report");
   });
 
+  it("should get deployment-script-name input", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "deployment-script-name") {
+        return "custom-deploy";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentScriptName).toBe("custom-deploy");
+  });
+
+  it("should get undo-script-name input", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "undo-script-name") {
+        return "custom-undo";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.undoScriptName).toBe("custom-undo");
+  });
+
   it("should get working directory and extra args", () => {
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {
@@ -167,6 +193,8 @@ describe("getInputs", () => {
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
     expect(inputs.preDeploymentReportName).toBeUndefined();
+    expect(inputs.deploymentScriptName).toBeUndefined();
+    expect(inputs.undoScriptName).toBeUndefined();
   });
 });
 

@@ -81,6 +81,47 @@ describe("getPrepareArgs", () => {
     expect(args).toContain("-X");
     expect(args).toContain("-custom=value");
   });
+
+  it("should include custom deployment script filename", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetEnvironment: "production",
+      targetUrl: "jdbc:sqlite:test.db",
+      deploymentScriptName: "custom-deploy",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args).toContain("-scriptFilename=deployments/custom-deploy.sql");
+    expect(args).toContain("-source=schemaModel");
+    expect(args).toContain("-types=deploy");
+    expect(args).toContain("-target=production");
+  });
+
+  it("should include custom undo script filename", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetEnvironment: "production",
+      targetUrl: "jdbc:sqlite:test.db",
+      undoScriptName: "custom-undo",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args).toContain("-undoFilename=deployments/custom-undo.sql");
+    expect(args).toContain("-source=schemaModel");
+    expect(args).toContain("-types=deploy");
+    expect(args).toContain("-target=production");
+  });
+
+  it("should not include script filenames when names are not provided", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args.join(" ")).not.toContain("-scriptFilename");
+    expect(args.join(" ")).not.toContain("-undoFilename");
+  });
 });
 
 describe("getCommonArgs", () => {

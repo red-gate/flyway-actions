@@ -18,6 +18,8 @@ const getInputs = (): FlywayStatePrepareInputs => {
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
   const preDeploymentReportName = core.getInput("pre-deployment-report-name") || undefined;
+  const deploymentScriptName = core.getInput("deployment-script-name") || undefined;
+  const undoScriptName = core.getInput("undo-script-name") || undefined;
 
   return {
     targetEnvironment,
@@ -34,6 +36,8 @@ const getInputs = (): FlywayStatePrepareInputs => {
     workingDirectory,
     extraArgs,
     preDeploymentReportName,
+    deploymentScriptName,
+    undoScriptName,
   };
 };
 

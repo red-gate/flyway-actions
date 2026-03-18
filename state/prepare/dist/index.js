@@ -10472,7 +10472,7 @@ var un = () => {
 		"-source=schemaModel",
 		...Cn(e, "target")
 	], n = e.generateUndo ? "deploy,undo" : "deploy";
-	return t.push(`-types=${n}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+	return t.push(`-types=${n}`), e.deploymentScriptName && t.push(`-scriptFilename=deployments/${e.deploymentScriptName}.sql`), e.undoScriptName && t.push(`-undoFilename=deployments/${e.undoScriptName}.sql`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
 }, Tn = (e) => {
 	let t = [...Cn(e, "environment")];
 	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
@@ -10617,7 +10617,9 @@ var un = () => {
 		skipDeploymentChangesReport: d,
 		workingDirectory: f ? c.resolve(f) : void 0,
 		extraArgs: en("extra-args") || void 0,
-		preDeploymentReportName: en("pre-deployment-report-name") || void 0
+		preDeploymentReportName: en("pre-deployment-report-name") || void 0,
+		deploymentScriptName: en("deployment-script-name") || void 0,
+		undoScriptName: en("undo-script-name") || void 0
 	};
 }, Un = (e) => {
 	e.targetPassword && $t(e.targetPassword);
