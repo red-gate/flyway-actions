@@ -39,16 +39,16 @@ inputs:
   extra-args:
     description: 'Additional Flyway CLI arguments (e.g. -sqlMigrationPrefix=M)'
     required: false
-  skip-deployment-report-upload:
-    description: 'Skip uploading the deployment report as a workflow artifact'
+  skip-undo-report-upload:
+    description: 'Skip uploading the undo report as a workflow artifact'
     required: false
     default: 'false'
-  deployment-report-name:
-    description: 'Name for the deployment report artifact'
+  undo-report-name:
+    description: 'Name for the undo report artifact'
     required: false
     default: 'flyway-undo-report'
-  deployment-report-retention-days:
-    description: 'Number of days to retain the deployment report artifact'
+  undo-report-retention-days:
+    description: 'Number of days to retain the undo report artifact'
     required: false
     default: '7'
   skip-drift-resolution-scripts-upload:
@@ -100,14 +100,14 @@ runs:
       shell: bash
       env:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
-    - name: Upload deployment report
-      if: inputs.skip-deployment-report-upload == 'false' && steps.undo.outputs.report-path != '' && always()
+    - name: Upload undo report
+      if: inputs.skip-undo-report-upload == 'false' && steps.undo.outputs.report-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.deployment-report-name }}
+        name: ${{ inputs.undo-report-name }}
         path: ${{ steps.undo.outputs.report-path }}
         archive: false
-        retention-days: ${{ inputs.deployment-report-retention-days }}
+        retention-days: ${{ inputs.undo-report-retention-days }}
         if-no-files-found: ignore
     - name: Upload drift resolution scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.undo.outputs.drift-resolution-folder != '' && always()
