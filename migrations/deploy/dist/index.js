@@ -10422,68 +10422,68 @@ var ln = () => {
 	}
 }, vn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, yn = (e, t) => [
-	"check",
-	"-drift",
-	"-check.failOnDrift=true",
-	...e,
-	...t ? [`-reportFilename=${t}`] : []
-], bn = async (e, t, n) => {
+}, yn = async (e, t) => {
 	sn("Checking for drift");
 	try {
-		let r = await mn(yn(e, n), t);
-		if (r.exitCode !== 0) {
-			let e = gn(r.stdout);
+		let n = await mn(e, t);
+		if (n.exitCode !== 0) {
+			let e = gn(n.stdout);
 			if (e?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
-				let n = vn(e.error.htmlReport, t), i = vn(e.error.driftResolutionFolderPath, t);
-				return xn(r.exitCode, !0, n, i), {
+				let r = vn(e.error.htmlReport, t), i = vn(e.error.driftResolutionFolderPath, t);
+				return bn(n.exitCode, !0, r, i), {
 					driftDetected: !0,
 					comparisonSupported: !0
 				};
 			}
-			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), xn(0), {
+			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), bn(0), {
 				driftDetected: !1,
 				comparisonSupported: !1
-			}) : (e?.error?.message && an(e.error.message), xn(r.exitCode), {
+			}) : (e?.error?.message && an(e.error.message), bn(n.exitCode), {
 				driftDetected: !1,
 				comparisonSupported: !0
 			});
 		}
-		return xn(r.exitCode, !1), {
+		return bn(n.exitCode, !1), {
 			driftDetected: !1,
 			comparisonSupported: !0
 		};
 	} finally {
 		cn();
 	}
-}, xn = (e, t, n, r) => {
+}, bn = (e, t, n, r) => {
 	nn("exit-code", e.toString()), t !== void 0 && nn("drift-detected", t.toString()), n !== void 0 && nn("report-path", n), r !== void 0 && nn("drift-resolution-folder", r);
-}, Sn = (e) => {
+}, xn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
-}, Cn = (e) => {
-	let t = ["migrate", ...Sn(e)];
+}, Sn = (e) => [
+	"check",
+	"-drift",
+	"-check.failOnDrift=true",
+	...xn(e),
+	...e.deploymentReportName ? [`-reportFilename=${e.deploymentReportName}`] : []
+], Cn = async (e) => yn(Sn(e), e.workingDirectory), wn = (e) => {
+	let t = ["migrate", ...xn(e)];
 	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), e.baselineOnMigrate && t.push("-baselineOnMigrate=true"), e.saveSnapshot && t.push("-migrate.saveSnapshot=true"), t;
-}, wn = async (e) => {
+}, Tn = async (e) => {
 	sn("Running migrations");
 	try {
-		let t = await mn(Cn(e), e.workingDirectory);
+		let t = await mn(wn(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = _n(t.stdout);
 			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), En(0);
+				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), Dn(0);
 				return;
 			}
-			throw e?.error?.message && an(e.error.message), En(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && an(e.error.message), Dn(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
 		}
-		let { migrationsApplied: n, schemaVersion: r } = Tn(t.stdout);
-		En(t.exitCode, n, r);
+		let { migrationsApplied: n, schemaVersion: r } = En(t.stdout);
+		Dn(t.exitCode, n, r);
 	} finally {
 		cn();
 	}
-}, Tn = (e) => {
+}, En = (e) => {
 	try {
 		let t = JSON.parse(e);
 		return {
@@ -10496,9 +10496,9 @@ var ln = () => {
 			schemaVersion: "unknown"
 		};
 	}
-}, En = (e, t, n) => {
+}, Dn = (e, t, n) => {
 	nn("exit-code", e.toString()), t !== void 0 && nn("migrations-applied", t.toString()), n !== void 0 && nn("schema-version", n);
-}, Dn = () => {
+}, On = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = tn("baseline-on-migrate"), l = tn("skip-drift-check"), u = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10514,9 +10514,9 @@ var ln = () => {
 		extraArgs: en("extra-args") || void 0,
 		deploymentReportName: en("deployment-report-name") || void 0
 	};
-}, On = (e) => {
+}, kn = (e) => {
 	e.targetPassword && $t(e.targetPassword);
-}, kn = (e) => bn(Sn(e), e.workingDirectory, e.deploymentReportName);
+};
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
 	try {
@@ -10525,14 +10525,14 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Dn();
+		let t = On();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (On(t), e.edition === "enterprise") if (t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		if (kn(t), e.edition === "enterprise") if (t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
 		else {
-			let { driftDetected: e, comparisonSupported: n } = await kn(t);
+			let { driftDetected: e, comparisonSupported: n } = await Cn(t);
 			if (e) {
 				rn("Drift detected. Aborting deployment.");
 				return;
@@ -10540,7 +10540,7 @@ await (async () => {
 			t.saveSnapshot = n;
 		}
 		else on(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		await wn(t);
+		await Tn(t);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
 	}
