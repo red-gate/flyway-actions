@@ -46,7 +46,7 @@ inputs:
   drift-report-name:
     description: 'Name for the drift report artifact'
     required: false
-    default: 'flyway-drift-report'
+    default: 'flyway-undo-report'
   drift-report-retention-days:
     description: 'Number of days to retain the drift report artifact'
     required: false
