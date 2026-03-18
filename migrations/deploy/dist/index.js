@@ -10512,11 +10512,11 @@ var ln = () => {
 		skipDriftCheck: l,
 		workingDirectory: u ? c.resolve(u) : void 0,
 		extraArgs: en("extra-args") || void 0,
-		driftReportName: en("drift-report-name") || void 0
+		deploymentReportName: en("deployment-report-name") || void 0
 	};
 }, On = (e) => {
 	e.targetPassword && $t(e.targetPassword);
-}, kn = (e) => bn(Sn(e), e.workingDirectory, e.driftReportName);
+}, kn = (e) => bn(Sn(e), e.workingDirectory, e.deploymentReportName);
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
 	try {
