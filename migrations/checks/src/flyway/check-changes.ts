@@ -28,7 +28,7 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
     return undefined;
   }
   const result = await checkForChanges(args, inputs.workingDirectory, !inputs.buildOkToErase);
-  return { exitCode: result.exitCode, reportPath: result.reportPath };
+  return { exitCode: result.exitCode, reportPath: result.reportPath, changedObjectCount: result.changedObjectCount };
 };
 
 export { runCheckChanges };

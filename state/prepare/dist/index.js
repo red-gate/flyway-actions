@@ -10490,17 +10490,18 @@ var un = () => {
 			let e = vn(r.stdout);
 			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? an("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && an(e.error.message), { exitCode: r.exitCode });
 		}
-		let i = Dn(r.stdout);
-		return kn(i), {
+		let i = Dn(r.stdout), a = kn(i);
+		return a && nn("changed-object-count", a.changedObjectCount.toString()), {
 			exitCode: r.exitCode,
-			reportPath: i?.htmlReport
+			reportPath: i?.htmlReport,
+			changedObjectCount: a?.changedObjectCount
 		};
 	} finally {
 		ln();
 	}
 }, kn = (e) => {
 	let t = e?.individualResults?.filter((e) => e.operation === "changes");
-	t?.length && nn("changed-object-count", t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0).toString());
+	if (t?.length) return { changedObjectCount: t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0) };
 }, An = (e) => [
 	"check",
 	"-changes",

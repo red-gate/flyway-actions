@@ -22,7 +22,7 @@ const runCheckCode = async (inputs: FlywayMigrationsChecksInputs) => {
     return undefined;
   }
   const result = await checkForCodeReviewViolations(args, inputs.workingDirectory);
-  return { exitCode: result.exitCode, reportPath: result.reportPath };
+  return { exitCode: result.exitCode, reportPath: result.reportPath, violationCount: result.violationCount };
 };
 
 export { runCheckCode };
