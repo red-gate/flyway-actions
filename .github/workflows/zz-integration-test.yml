@@ -357,20 +357,20 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-projects/sqlite
-          drift-report-name: flyway-deploy-drift-report-${{ matrix.os }}
-          drift-report-retention-days: '1'
+          deployment-report-name: flyway-deploy-deployment-report-${{ matrix.os }}
+          deployment-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-deploy-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
       - name: Verify deploy failed due to drift
         shell: bash
         run: test "${{ steps.deploy.outcome }}" != "success"
-      - name: Download drift report
+      - name: Download deployment report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-deploy-drift-report-${{ matrix.os }}.html
-      - name: Verify drift report exists
+          name: flyway-deploy-deployment-report-${{ matrix.os }}.html
+      - name: Verify deployment report exists
         shell: bash
-        run: test -s flyway-deploy-drift-report-${{ matrix.os }}.html
+        run: test -s flyway-deploy-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
@@ -475,17 +475,17 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-projects/sqlite
-          drift-report-name: flyway-undo-drift-report-${{ matrix.os }}
-          drift-report-retention-days: '1'
+          undo-report-name: flyway-undo-report-${{ matrix.os }}
+          undo-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-undo-drift-resolution-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
-      - name: Download drift report
+      - name: Download undo report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-undo-drift-report-${{ matrix.os }}.html
-      - name: Verify drift report exists
+          name: flyway-undo-report-${{ matrix.os }}.html
+      - name: Verify undo report exists
         shell: bash
-        run: test -s flyway-undo-drift-report-${{ matrix.os }}.html
+        run: test -s flyway-undo-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
@@ -780,17 +780,17 @@ jobs:
           target-url: jdbc:sqlite:database/drift.db
           script-path: deployments/D__deployment.sql
           working-directory: sample-projects/sqlite
-          drift-report-name: flyway-state-deploy-drift-report-${{ matrix.os }}
-          drift-report-retention-days: '1'
+          deployment-report-name: flyway-state-deploy-deployment-report-${{ matrix.os }}
+          deployment-report-retention-days: '1'
           drift-resolution-scripts-name: flyway-state-deploy-drift-resolution-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
-      - name: Download drift report
+      - name: Download deployment report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-state-deploy-drift-report-${{ matrix.os }}.html
-      - name: Verify drift report exists
+          name: flyway-state-deploy-deployment-report-${{ matrix.os }}.html
+      - name: Verify deployment report exists
         shell: bash
-        run: test -s flyway-state-deploy-drift-report-${{ matrix.os }}.html
+        run: test -s flyway-state-deploy-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:

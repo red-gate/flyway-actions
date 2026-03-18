@@ -36,16 +36,16 @@ inputs:
   extra-args:
     description: 'Additional Flyway CLI arguments'
     required: false
-  skip-drift-report-upload:
-    description: 'Skip uploading the drift report as a workflow artifact'
+  skip-deployment-report-upload:
+    description: 'Skip uploading the deployment report as a workflow artifact'
     required: false
     default: 'false'
-  drift-report-name:
-    description: 'Name for the drift report artifact'
+  deployment-report-name:
+    description: 'Name for the deployment report artifact'
     required: false
-    default: 'flyway-drift-report'
-  drift-report-retention-days:
-    description: 'Number of days to retain the drift report artifact'
+    default: 'flyway-deployment-report'
+  deployment-report-retention-days:
+    description: 'Number of days to retain the deployment report artifact'
     required: false
     default: '7'
   skip-drift-resolution-scripts-upload:
@@ -91,14 +91,14 @@ runs:
       shell: bash
       env:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
-    - name: Upload drift report
-      if: inputs.skip-drift-report-upload == 'false' && steps.deploy.outputs.report-path != '' && always()
+    - name: Upload deployment report
+      if: inputs.skip-deployment-report-upload == 'false' && steps.deploy.outputs.report-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.drift-report-name }}
+        name: ${{ inputs.deployment-report-name }}
         path: ${{ steps.deploy.outputs.report-path }}
         archive: false
-        retention-days: ${{ inputs.drift-report-retention-days }}
+        retention-days: ${{ inputs.deployment-report-retention-days }}
         if-no-files-found: ignore
     - name: Upload drift resolution scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.deploy.outputs.drift-resolution-folder != '' && always()

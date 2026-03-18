@@ -117,17 +117,17 @@ steps:
 | `working-directory`        | Working directory for Flyway                                   | No                                       |         |
 | `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`) | No                                       |         |
 
-### Drift Report Upload
+### Undo Report Upload
 
-When running under Flyway Enterprise and drift is detected, the action uploads the drift report as a workflow artifact.
+When running under Flyway Enterprise and drift is detected, the action uploads the undo report as a workflow artifact.
 
-| Input                         | Description                                            | Required | Default               |
-|-------------------------------|--------------------------------------------------------|----------|-----------------------|
-| `drift-report-name`           | Name for the drift report artifact                     | No       | `flyway-drift-report` |
-| `drift-report-retention-days` | Number of days to retain the drift report artifact     | No       | `7`                   |
-| `skip-drift-report-upload`    | Skip uploading the drift report as a workflow artifact | No       | `false`               |
+| Input                        | Description                                           | Required | Default              |
+|------------------------------|-------------------------------------------------------|----------|----------------------|
+| `undo-report-name`           | Name for the undo report artifact                     | No       | `flyway-undo-report` |
+| `undo-report-retention-days` | Number of days to retain the undo report artifact     | No       | `7`                  |
+| `skip-undo-report-upload`    | Skip uploading the undo report as a workflow artifact | No       | `false`              |
 
-If the 'undo' action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `drift-report-name` for each run to avoid artifact name conflicts:
+If the 'undo' action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `undo-report-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:
@@ -137,7 +137,7 @@ steps:
   - uses: red-gate/flyway-actions/migrations/undo@v1
     with:
       target-environment: ${{ matrix.target }}
-      drift-report-name: flyway-drift-report-${{ matrix.target }}
+      undo-report-name: flyway-undo-report-${{ matrix.target }}
 ```
 
 ### Drift Resolution Scripts Upload
@@ -150,7 +150,7 @@ When drift is detected, Flyway generates SQL scripts that can be used to resolve
 | `drift-resolution-scripts-retention-days` | Number of days to retain the drift resolution scripts artifact | No       | `7`                               |
 | `skip-drift-resolution-scripts-upload`    | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                           |
 
-As with drift reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
+As with undo reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
 
 ```yaml
 strategy:
