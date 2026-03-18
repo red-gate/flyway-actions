@@ -105,7 +105,7 @@ describe("getCommonArgs", () => {
       cherryPick: "2.0,2.1",
       saveSnapshot: true,
       skipDriftCheck: true,
-      driftReportName: "report",
+      deploymentReportName: "report",
     };
 
     const args = getCommonArgs(inputs);
@@ -114,6 +114,6 @@ describe("getCommonArgs", () => {
     expect(args.some((a) => a.includes("cherryPick"))).toBe(false);
     expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
     expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
-    expect(args.some((a) => a.includes("driftReportName"))).toBe(false);
+    expect(args.some((a) => a.includes("deploymentReportName"))).toBe(false);
   });
 });

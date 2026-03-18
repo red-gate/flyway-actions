@@ -9,7 +9,7 @@ type FlywayMigrationsUndoInputs = {
   skipDriftCheck?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
-  driftReportName?: string;
+  deploymentReportName?: string;
   saveSnapshot?: boolean;
 };
 

@@ -7,7 +7,7 @@ import { undo } from "./flyway/undo.js";
 import { getInputs, maskSecrets } from "./inputs.js";
 
 const checkForDrift = (inputs: FlywayMigrationsUndoInputs) =>
-  sharedCheckForDrift(getCommonArgs(inputs), inputs.workingDirectory, inputs.driftReportName);
+  sharedCheckForDrift(getCommonArgs(inputs), inputs.workingDirectory, inputs.deploymentReportName);
 
 if (process.env.FLYWAY_INPUTS) {
   for (const [key, value] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS) as Record<string, string>)) {
