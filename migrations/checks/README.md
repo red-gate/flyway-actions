@@ -57,7 +57,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
     i-agree-to-the-eula: true
     email: ${{ secrets.REDGATE_EMAIL }}
     token: ${{ secrets.REDGATE_TOKEN }}
-- uses: red-gate/flyway-actions/migrations/checks@v1
+- uses: red-gate/flyway-actions/migrations/checks@v2
   with:
     target-environment: production
     target-user: ${{ secrets.DB_USER }}
@@ -104,7 +104,7 @@ steps:
       i-agree-to-the-eula: true
       email: ${{ secrets.REDGATE_EMAIL }}
       token: ${{ secrets.REDGATE_TOKEN }}
-  - uses: red-gate/flyway-actions/migrations/checks@v1
+  - uses: red-gate/flyway-actions/migrations/checks@v2
     with:
       target-environment: production
       target-user: ${{ secrets.DB_USER }}
@@ -117,7 +117,7 @@ steps:
 Provide a build database to enable the deployment changes report. The build database is a temporary database that Flyway uses to simulate the deployment.
 
 ```yaml
-- uses: red-gate/flyway-actions/migrations/checks@v1
+- uses: red-gate/flyway-actions/migrations/checks@v2
   with:
     target-environment: production
     target-user: ${{ secrets.DB_USER }}
@@ -132,7 +132,7 @@ Provide a build database to enable the deployment changes report. The build data
 ### Skipping Specific Checks
 
 ```yaml
-- uses: red-gate/flyway-actions/migrations/checks@v1
+- uses: red-gate/flyway-actions/migrations/checks@v2
   with:
     target-environment: production
     target-user: ${{ secrets.DB_USER }}
@@ -146,7 +146,7 @@ Provide a build database to enable the deployment changes report. The build data
 By default, the action fails when drift is detected or code review violations are found. Set `fail-on-drift` or `fail-on-code-review` to `false` to continue:
 
 ```yaml
-- uses: red-gate/flyway-actions/migrations/checks@v1
+- uses: red-gate/flyway-actions/migrations/checks@v2
   with:
     target-environment: production
     target-user: ${{ secrets.DB_USER }}
@@ -158,7 +158,7 @@ By default, the action fails when drift is detected or code review violations ar
 ### With Cherry-Pick
 
 ```yaml
-- uses: red-gate/flyway-actions/migrations/checks@v1
+- uses: red-gate/flyway-actions/migrations/checks@v2
   with:
     target-environment: production
     target-user: ${{ secrets.DB_USER }}
@@ -232,7 +232,7 @@ strategy:
   matrix:
     target: [staging, production]
 steps:
-  - uses: red-gate/flyway-actions/migrations/checks@v1
+  - uses: red-gate/flyway-actions/migrations/checks@v2
     with:
       target-environment: ${{ matrix.target }}
       working-directory: my-flyway-project
@@ -256,7 +256,7 @@ strategy:
   matrix:
     target: [staging, production]
 steps:
-  - uses: red-gate/flyway-actions/migrations/checks@v1
+  - uses: red-gate/flyway-actions/migrations/checks@v2
     with:
       target-environment: ${{ matrix.target }}
       working-directory: my-flyway-project
@@ -286,7 +286,7 @@ This will be fixed in an upcoming release.
 ### Using Outputs
 
 ```yaml
-- uses: red-gate/flyway-actions/migrations/checks@v1
+- uses: red-gate/flyway-actions/migrations/checks@v2
   id: checks
   with:
     target-environment: production

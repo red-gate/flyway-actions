@@ -39,7 +39,7 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
     i-agree-to-the-eula: true
     email: ${{ secrets.REDGATE_EMAIL }}
     token: ${{ secrets.REDGATE_TOKEN }}
-- uses: red-gate/flyway-actions/state/deploy@v1
+- uses: red-gate/flyway-actions/state/deploy@v2
   with:
     target-environment: production
 ```
@@ -57,7 +57,7 @@ steps:
       i-agree-to-the-eula: true
       email: ${{ secrets.REDGATE_EMAIL }}
       token: ${{ secrets.REDGATE_TOKEN }}
-  - uses: red-gate/flyway-actions/state/deploy@v1
+  - uses: red-gate/flyway-actions/state/deploy@v2
     with:
       target-environment: qa
       target-user: ${{ secrets.DB_USER }}
@@ -74,7 +74,7 @@ steps:
     i-agree-to-the-eula: true
     email: ${{ secrets.REDGATE_EMAIL }}
     token: ${{ secrets.REDGATE_TOKEN }}
-- uses: red-gate/flyway-actions/state/deploy@v1
+- uses: red-gate/flyway-actions/state/deploy@v2
   with:
     target-environment: production
     target-user: ${{ secrets.DB_USER }}
@@ -113,7 +113,7 @@ strategy:
   matrix:
     target: [staging, production]
 steps:
-  - uses: red-gate/flyway-actions/state/deploy@v1
+  - uses: red-gate/flyway-actions/state/deploy@v2
     with:
       target-environment: ${{ matrix.target }}
       deployment-report-name: flyway-deployment-report-${{ matrix.target }}
@@ -136,7 +136,7 @@ strategy:
   matrix:
     target: [staging, production]
 steps:
-  - uses: red-gate/flyway-actions/state/deploy@v1
+  - uses: red-gate/flyway-actions/state/deploy@v2
     with:
       target-environment: ${{ matrix.target }}
       drift-resolution-scripts-name: flyway-drift-resolution-${{ matrix.target }}
@@ -152,7 +152,7 @@ steps:
 ### Using Outputs
 
 ```yaml
-- uses: red-gate/flyway-actions/state/deploy@v1
+- uses: red-gate/flyway-actions/state/deploy@v2
   id: deploy
   with:
     target-environment: production

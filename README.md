@@ -52,7 +52,7 @@ jobs:
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
       - name: Run deployment checks and generate reports
-        uses: red-gate/flyway-actions/migrations/checks@v1
+        uses: red-gate/flyway-actions/migrations/checks@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -62,7 +62,7 @@ jobs:
           build-password: "${{ secrets.FLYWAY_BUILD_PASSWORD }}"
           working-directory: my-flyway-project
       - name: Run migrations deployment
-        uses: red-gate/flyway-actions/migrations/deploy@v1
+        uses: red-gate/flyway-actions/migrations/deploy@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -96,7 +96,7 @@ jobs:
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
       - name: Run checks
-        uses: red-gate/flyway-actions/migrations/checks@v1
+        uses: red-gate/flyway-actions/migrations/checks@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -120,7 +120,7 @@ jobs:
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
       - name: Run migrations deployment
-        uses: red-gate/flyway-actions/migrations/deploy@v1
+        uses: red-gate/flyway-actions/migrations/deploy@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -171,14 +171,14 @@ jobs:
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
       - name: Prepare deployment script
-        uses: red-gate/flyway-actions/state/prepare@v1
+        uses: red-gate/flyway-actions/state/prepare@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
       - name: Deploy changes
-        uses: red-gate/flyway-actions/state/deploy@v1
+        uses: red-gate/flyway-actions/state/deploy@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -212,7 +212,7 @@ jobs:
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
       - name: Prepare deployment script
-        uses: red-gate/flyway-actions/state/prepare@v1
+        uses: red-gate/flyway-actions/state/prepare@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -233,7 +233,7 @@ jobs:
           email: "${{ secrets.FLYWAY_EMAIL }}"
           token: "${{ secrets.FLYWAY_TOKEN }}"
       - name: Deploy changes
-        uses: red-gate/flyway-actions/state/deploy@v1
+        uses: red-gate/flyway-actions/state/deploy@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -270,14 +270,14 @@ jobs:
       - name: Install SQLFluff
         run: pip install sqlfluff
       - name: Run checks
-        uses: red-gate/flyway-actions/migrations/checks@v1
+        uses: red-gate/flyway-actions/migrations/checks@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
       - name: Run migrations deployment
-        uses: red-gate/flyway-actions/migrations/deploy@v1
+        uses: red-gate/flyway-actions/migrations/deploy@v2
         with:
           target-environment: production
           target-user: "${{ secrets.FLYWAY_USER }}"
@@ -302,7 +302,7 @@ Reference secrets using the `${{ secrets.SECRET_NAME }}` syntax:
 
 ```yaml
 - name: Run migrations deployment
-  uses: red-gate/flyway-actions/migrations/deploy@v1
+  uses: red-gate/flyway-actions/migrations/deploy@v2
   with:
     target-environment: production
     target-user: "${{ secrets.FLYWAY_USER }}"
