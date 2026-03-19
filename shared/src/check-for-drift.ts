@@ -4,23 +4,10 @@ import { resolvePath } from "./resolve-path.js";
 
 type CheckForDriftResult = { driftDetected: boolean; comparisonSupported: boolean };
 
-const getCheckDriftArgs = (commonArgs: string[], driftReportName?: string): string[] => [
-  "check",
-  "-drift",
-  "-check.failOnDrift=true",
-  ...commonArgs,
-  ...(driftReportName ? [`-reportFilename=${driftReportName}`] : []),
-];
-
-const checkForDrift = async (
-  commonArgs: string[],
-  workingDirectory?: string,
-  driftReportName?: string,
-): Promise<CheckForDriftResult> => {
+const checkForDrift = async (args: string[], workingDirectory?: string): Promise<CheckForDriftResult> => {
   core.startGroup("Checking for drift");
   try {
-    const driftArgs = getCheckDriftArgs(commonArgs, driftReportName);
-    const result = await runFlyway(driftArgs, workingDirectory);
+    const result = await runFlyway(args, workingDirectory);
 
     if (result.exitCode !== 0) {
       const errorOutput = parseDriftErrorOutput(result.stdout);
@@ -56,5 +43,5 @@ const setOutput = (exitCode: number, driftDetected?: boolean, reportPath?: strin
   resolutionFolder !== undefined && core.setOutput("drift-resolution-folder", resolutionFolder);
 };
 
-export { checkForDrift, getCheckDriftArgs };
+export { checkForDrift };
 export type { CheckForDriftResult };
