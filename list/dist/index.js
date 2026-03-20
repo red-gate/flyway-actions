@@ -6,7 +6,6 @@ import o, { EOL as s } from "os";
 import * as c from "crypto";
 import * as l from "fs";
 import { constants as u, promises as d } from "fs";
-Object.create, Object.defineProperty, Object.getOwnPropertyDescriptor, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.prototype.hasOwnProperty;
 var f = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports), p = /* @__PURE__ */ e(import.meta.url);
 function m(e) {
 	return e == null ? "" : typeof e == "string" || e instanceof String ? e : JSON.stringify(e);
@@ -4578,7 +4577,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			}
 			let v = o?.["retry-after"];
 			v &&= (v = Number(v), Number.isNaN(v) ? l(v) : v * 1e3);
-			let y = v > 0 ? Math.min(v, f) : Math.min(d * p ** (_ - 1), f);
+			let y = Math.min(v > 0 ? v : d * p ** (_ - 1), f);
 			setTimeout(() => r(null), y);
 		}
 		onHeaders(e, t, r, a) {

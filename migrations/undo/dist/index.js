@@ -9,7 +9,6 @@ import * as l from "events";
 import * as u from "child_process";
 import { setTimeout as d } from "timers";
 import * as f from "node:path";
-Object.create, Object.defineProperty, Object.getOwnPropertyDescriptor, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.prototype.hasOwnProperty;
 var p = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports), m = /* @__PURE__ */ e(import.meta.url);
 function h(e) {
 	return e == null ? "" : typeof e == "string" || e instanceof String ? e : JSON.stringify(e);
@@ -4584,7 +4583,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			}
 			let v = o?.["retry-after"];
 			v &&= (v = Number(v), Number.isNaN(v) ? l(v) : v * 1e3);
-			let y = v > 0 ? Math.min(v, f) : Math.min(d * p ** (_ - 1), f);
+			let y = Math.min(v > 0 ? v : d * p ** (_ - 1), f);
 			setTimeout(() => r(null), y);
 		}
 		onHeaders(e, t, r, a) {
@@ -9986,7 +9985,7 @@ function Ut(e, t) {
 		if (!e) throw Error("parameter 'tool' is required");
 		if (t) {
 			let t = yield Ut(e, !1);
-			if (!t) throw It ? Error(`Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`) : Error(`Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+			if (!t) throw Error(It ? `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.` : `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
 			return t;
 		}
 		let n = yield Wt(e);
