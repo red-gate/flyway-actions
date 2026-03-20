@@ -14,9 +14,21 @@ type ErrorOutput = { error?: { errorCode?: ErrorCode; message?: string } };
 
 type DriftErrorOutput = { error?: ErrorOutput["error"] & { htmlReport?: string; driftResolutionFolderPath?: string } };
 
+type Drift = {
+  operation?: "drift";
+  onlyInSource?: unknown[];
+  onlyInTarget?: unknown[];
+  differences?: unknown[];
+  driftResolutionFolder?: string;
+};
+
+type FlywayCheckOutput = { htmlReport?: string; individualResults?: (Drift | { operation?: string })[] };
+
 export type {
+  Drift,
   DriftErrorOutput,
   ErrorOutput,
+  FlywayCheckOutput,
   FlywayDetails,
   FlywayEdition,
   FlywayRunResult,

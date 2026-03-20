@@ -21,7 +21,7 @@ const { checkForDrift } = await import("../src/check-for-drift.js");
 const driftArgs = (url: string) => ["check", "-drift", "-check.failOnDrift=true", `-url=${url}`];
 
 describe("checkForDrift", () => {
-  it("should set drift-detected to false and exit-code to 0 when exit code is 0", async () => {
+  it("should return drift-detected false when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
     const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
@@ -31,10 +31,57 @@ describe("checkForDrift", () => {
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
-  it("should set drift-detected output to true when error code is CHECK_DRIFT_DETECTED", async () => {
+  it("should detect drift from success-path output when individualResults contain drift items", async () => {
     exec.mockImplementation(
       mockExec({
-        stdout: { error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected" } },
+        stdout: {
+          htmlReport: "report.html",
+          individualResults: [
+            {
+              operation: "drift",
+              onlyInSource: ["table_a"],
+              onlyInTarget: [],
+              differences: [],
+              driftResolutionFolder: "/resolution/folder",
+            },
+          ],
+        },
+      }),
+    );
+
+    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+
+    expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
+  });
+
+  it("should set drift-detected to false when individualResults have empty drift arrays", async () => {
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          htmlReport: "report.html",
+          individualResults: [{ operation: "drift", onlyInSource: [], onlyInTarget: [], differences: [] }],
+        },
+      }),
+    );
+
+    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
+    expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
+  });
+
+  it("should return drift-detected true when error code is CHECK_DRIFT_DETECTED", async () => {
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "CHECK_DRIFT_DETECTED",
+            message: "Drift detected",
+            htmlReport: "drift-report.html",
+            driftResolutionFolderPath: "/absolute/path/to/resolution",
+          },
+        },
         exitCode: 1,
       }),
     );
@@ -44,43 +91,11 @@ describe("checkForDrift", () => {
     expect(result).toEqual({ driftDetected: true, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "true");
-  });
-
-  it("should set report-path output when drift detected with htmlReport in output", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          error: { errorCode: "CHECK_DRIFT_DETECTED", message: "Drift detected", htmlReport: "drift-report.html" },
-        },
-        exitCode: 1,
-      }),
-    );
-
-    await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
-
     expect(setOutput).toHaveBeenCalledWith("report-path", "drift-report.html");
-  });
-
-  it("should set drift-resolution-folder output when drift is detected with resolution folder", async () => {
-    exec.mockImplementation(
-      mockExec({
-        stdout: {
-          error: {
-            errorCode: "CHECK_DRIFT_DETECTED",
-            message: "Drift detected",
-            driftResolutionFolderPath: "/absolute/path/to/resolution",
-          },
-        },
-        exitCode: 1,
-      }),
-    );
-
-    await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
-
     expect(setOutput).toHaveBeenCalledWith("drift-resolution-folder", "/absolute/path/to/resolution");
   });
 
-  it("should not set drift-detected when non-drift error occurs", async () => {
+  it("should return exitCode when non-drift error occurs", async () => {
     exec.mockImplementation(
       mockExec({
         stdout: { error: { errorCode: "FAULT", message: "Something else failed" } },
@@ -88,13 +103,14 @@ describe("checkForDrift", () => {
       }),
     );
 
-    await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
 
-  it("should return no drift and comparison not supported when database does not support comparison", async () => {
+  it("should return exitCode 0 and comparison not supported when database does not support comparison", async () => {
     exec.mockImplementation(
       mockExec({
         stdout: {
