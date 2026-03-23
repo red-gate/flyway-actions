@@ -4,7 +4,7 @@ import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
 import { resolvePath } from "./resolve-path.js";
 
 type CheckForDriftOutput = {
-  driftDetected: boolean;
+  driftDetected?: boolean;
   comparisonSupported: boolean;
   reportPath?: string;
   driftResolutionFolder?: string;
@@ -45,7 +45,7 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
         core.info(
           "Drift check could not be run because advanced comparison features are not supported for this database type.",
         );
-        return { exitCode: 0, result: { driftDetected: false, comparisonSupported: false } };
+        return { exitCode: 0, result: { comparisonSupported: false } };
       }
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       return { exitCode: result.exitCode, result: { driftDetected: false, comparisonSupported: true } };

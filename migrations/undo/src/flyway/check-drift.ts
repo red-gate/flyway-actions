@@ -15,7 +15,7 @@ const runCheckDrift = async (inputs: FlywayMigrationsUndoInputs) => {
   const { exitCode, result } = await checkForDrift(getDriftArgs(inputs), inputs.workingDirectory);
 
   core.setOutput("exit-code", exitCode.toString());
-  core.setOutput("drift-detected", result.driftDetected.toString());
+  result.driftDetected !== undefined && core.setOutput("drift-detected", result.driftDetected.toString());
   result.reportPath !== undefined && core.setOutput("report-path", result.reportPath);
   result.driftResolutionFolder !== undefined && core.setOutput("drift-resolution-folder", result.driftResolutionFolder);
   return { exitCode, result };

@@ -129,7 +129,7 @@ describe("checkForDrift", () => {
     const { exitCode, result } = await checkForDrift(driftArgs("jdbc:h2:mem:test"));
 
     expect(exitCode).toBe(0);
-    expect(result).toEqual({ driftDetected: false, comparisonSupported: false });
+    expect(result).toEqual({ driftDetected: undefined, comparisonSupported: false });
     expect(info).toHaveBeenCalledWith(
       "Drift check could not be run because advanced comparison features are not supported for this database type.",
     );
