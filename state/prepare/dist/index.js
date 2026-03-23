@@ -10574,6 +10574,7 @@ var un = () => {
 		"-code",
 		...Tn(e),
 		...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
+		...e.extraArgs ? pn(e.extraArgs) : [],
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : [],
 		...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : [],
 		"-check.scope=script",
