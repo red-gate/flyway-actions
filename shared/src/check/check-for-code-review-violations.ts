@@ -12,15 +12,13 @@ type CodeReviewErrorOutput = {
   error?: { errorCode?: string; message?: string; results?: CodeResultItem[]; htmlReport?: string };
 };
 
-type CodeReviewResult = {
-  reportPath?: string;
-  violationCount: number;
-  violationCodes: string[];
-};
-
 type CheckForCodeReviewResult = {
   exitCode: number;
-  result: CodeReviewResult;
+  result: {
+    reportPath?: string;
+    violationCount: number;
+    violationCodes: string[];
+  };
 };
 
 const checkForCodeReviewViolations = async (
@@ -80,4 +78,3 @@ const parseErrorOutput = (stdout: string): CodeReviewErrorOutput | undefined => 
 };
 
 export { checkForCodeReviewViolations };
-export type { CheckForCodeReviewResult };
