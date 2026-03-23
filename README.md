@@ -31,7 +31,7 @@ These actions can be used both for database deployment pipelines, and for valida
 
 ### Automated deployment using migrations (Flyway Enterprise)
 ```yaml
-name: Deploy to production
+name: Deploy to test
 
 on:
   push:
@@ -40,7 +40,7 @@ on:
 jobs:
   automated-deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: test
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -54,7 +54,7 @@ jobs:
       - name: Run deployment checks and generate reports
         uses: red-gate/flyway-actions/migrations/checks@v2
         with:
-          target-environment: production
+          target-environment: test
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           build-environment: build
@@ -64,7 +64,7 @@ jobs:
       - name: Run migrations deployment
         uses: red-gate/flyway-actions/migrations/deploy@v2
         with:
-          target-environment: production
+          target-environment: test
           target-user: "${{ secrets.FLYWAY_USER }}"
           target-password: "${{ secrets.FLYWAY_PASSWORD }}"
           working-directory: my-flyway-project
