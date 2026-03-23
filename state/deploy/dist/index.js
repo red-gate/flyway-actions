@@ -418,7 +418,18 @@ var T = /* @__PURE__ */ p(((e) => {
 			return e && e[H] === !0;
 		}
 		[H] = !0;
-	}, W = Symbol.for("undici.error.UND_ERR_PRX_TLS");
+	}, W = Symbol.for("undici.error.UND_ERR_PRX_TLS"), ne = class extends r {
+		constructor(e, t, n) {
+			super(t, {
+				cause: e,
+				...n ?? {}
+			}), this.name = "SecureProxyConnectionError", this.message = t || "Secure Proxy Connection failed", this.code = "UND_ERR_PRX_TLS", this.cause = e;
+		}
+		static [Symbol.hasInstance](e) {
+			return e && e[W] === !0;
+		}
+		[W] = !0;
+	}, re = Symbol.for("undici.error.UND_ERR_WS_MESSAGE_SIZE_EXCEEDED");
 	t.exports = {
 		AbortError: y,
 		HTTPParserError: z,
@@ -442,17 +453,17 @@ var T = /* @__PURE__ */ p(((e) => {
 		ResponseExceededMaxSizeError: ee,
 		RequestRetryError: te,
 		ResponseError: U,
-		SecureProxyConnectionError: class extends r {
-			constructor(e, t, n) {
-				super(t, {
-					cause: e,
-					...n ?? {}
-				}), this.name = "SecureProxyConnectionError", this.message = t || "Secure Proxy Connection failed", this.code = "UND_ERR_PRX_TLS", this.cause = e;
+		SecureProxyConnectionError: ne,
+		MessageSizeExceededError: class extends r {
+			constructor(e) {
+				super(e), this.name = "MessageSizeExceededError", this.message = e || "Max decompressed message size exceeded", this.code = "UND_ERR_WS_MESSAGE_SIZE_EXCEEDED";
 			}
 			static [Symbol.hasInstance](e) {
-				return e && e[W] === !0;
+				return e && e[re] === !0;
 			}
-			[W] = !0;
+			get [re]() {
+				return !0;
+			}
 		}
 	};
 })), k = /* @__PURE__ */ p(((e, t) => {
@@ -947,18 +958,19 @@ var T = /* @__PURE__ */ p(((e) => {
 	t.exports = { channels: c };
 })), N = /* @__PURE__ */ p(((e, t) => {
 	var { InvalidArgumentError: n, NotSupportedError: r } = O(), i = m("node:assert"), { isValidHTTPToken: a, isValidHeaderValue: o, isStream: s, destroy: c, isBuffer: l, isFormDataLike: u, isIterable: d, isBlobLike: f, buildURL: p, validateHandler: h, getServerName: g, normalizedMethodRecords: _ } = j(), { channels: v } = M(), { headerNameLowerCasedRecord: y } = k(), b = /[^\u0021-\u00ff]/, x = Symbol("handler"), S = class {
-		constructor(e, { path: t, method: r, body: i, headers: o, query: m, idempotent: y, blocking: S, upgrade: w, headersTimeout: T, bodyTimeout: E, reset: D, throwOnError: O, expectContinue: k, servername: A }, j) {
+		constructor(e, { path: t, method: r, body: i, headers: m, query: y, idempotent: S, blocking: w, upgrade: T, headersTimeout: E, bodyTimeout: D, reset: O, throwOnError: k, expectContinue: A, servername: j }, M) {
 			if (typeof t != "string") throw new n("path must be a string");
 			if (t[0] !== "/" && !(t.startsWith("http://") || t.startsWith("https://")) && r !== "CONNECT") throw new n("path must be an absolute URL or start with a slash");
 			if (b.test(t)) throw new n("invalid request path");
 			if (typeof r != "string") throw new n("method must be a string");
 			if (_[r] === void 0 && !a(r)) throw new n("invalid request method");
-			if (w && typeof w != "string") throw new n("upgrade must be a string");
-			if (T != null && (!Number.isFinite(T) || T < 0)) throw new n("invalid headersTimeout");
-			if (E != null && (!Number.isFinite(E) || E < 0)) throw new n("invalid bodyTimeout");
-			if (D != null && typeof D != "boolean") throw new n("invalid reset");
-			if (k != null && typeof k != "boolean") throw new n("invalid expectContinue");
-			if (this.headersTimeout = T, this.bodyTimeout = E, this.throwOnError = O === !0, this.method = r, this.abort = null, i == null) this.body = null;
+			if (T && typeof T != "string") throw new n("upgrade must be a string");
+			if (T && !o(T)) throw new n("invalid upgrade header");
+			if (E != null && (!Number.isFinite(E) || E < 0)) throw new n("invalid headersTimeout");
+			if (D != null && (!Number.isFinite(D) || D < 0)) throw new n("invalid bodyTimeout");
+			if (O != null && typeof O != "boolean") throw new n("invalid reset");
+			if (A != null && typeof A != "boolean") throw new n("invalid expectContinue");
+			if (this.headersTimeout = E, this.bodyTimeout = D, this.throwOnError = k === !0, this.method = r, this.abort = null, i == null) this.body = null;
 			else if (s(i)) {
 				this.body = i;
 				let e = this.body._readableState;
@@ -973,19 +985,19 @@ var T = /* @__PURE__ */ p(((e) => {
 			else if (typeof i == "string") this.body = i.length ? Buffer.from(i) : null;
 			else if (u(i) || d(i) || f(i)) this.body = i;
 			else throw new n("body must be a string, a Buffer, a Readable stream, an iterable, or an async iterable");
-			if (this.completed = !1, this.aborted = !1, this.upgrade = w || null, this.path = m ? p(t, m) : t, this.origin = e, this.idempotent = y ?? (r === "HEAD" || r === "GET"), this.blocking = S ?? !1, this.reset = D ?? null, this.host = null, this.contentLength = null, this.contentType = null, this.headers = [], this.expectContinue = k ?? !1, Array.isArray(o)) {
-				if (o.length % 2 != 0) throw new n("headers array must be even");
-				for (let e = 0; e < o.length; e += 2) C(this, o[e], o[e + 1]);
-			} else if (o && typeof o == "object") if (o[Symbol.iterator]) for (let e of o) {
+			if (this.completed = !1, this.aborted = !1, this.upgrade = T || null, this.path = y ? p(t, y) : t, this.origin = e, this.idempotent = S ?? (r === "HEAD" || r === "GET"), this.blocking = w ?? !1, this.reset = O ?? null, this.host = null, this.contentLength = null, this.contentType = null, this.headers = [], this.expectContinue = A ?? !1, Array.isArray(m)) {
+				if (m.length % 2 != 0) throw new n("headers array must be even");
+				for (let e = 0; e < m.length; e += 2) C(this, m[e], m[e + 1]);
+			} else if (m && typeof m == "object") if (m[Symbol.iterator]) for (let e of m) {
 				if (!Array.isArray(e) || e.length !== 2) throw new n("headers must be in key-value pair format");
 				C(this, e[0], e[1]);
 			}
 			else {
-				let e = Object.keys(o);
-				for (let t = 0; t < e.length; ++t) C(this, e[t], o[e[t]]);
+				let e = Object.keys(m);
+				for (let t = 0; t < e.length; ++t) C(this, e[t], m[e[t]]);
 			}
-			else if (o != null) throw new n("headers must be an object or an array");
-			h(j, r, w), this.servername = A || g(this.host), this[x] = j, v.create.hasSubscribers && v.create.publish({ request: this });
+			else if (m != null) throw new n("headers must be an object or an array");
+			h(M, r, T), this.servername = j || g(this.host), this[x] = M, v.create.hasSubscribers && v.create.publish({ request: this });
 		}
 		onBodySent(e) {
 			if (this[x].onBodySent) try {
@@ -1075,10 +1087,12 @@ var T = /* @__PURE__ */ p(((e) => {
 		} else if (typeof i == "string") {
 			if (!o(i)) throw new n(`invalid ${t} header`);
 		} else i = i === null ? "" : `${i}`;
-		if (e.host === null && s === "host") {
+		if (s === "host") {
+			if (e.host !== null) throw new n("duplicate host header");
 			if (typeof i != "string") throw new n("invalid host header");
 			e.host = i;
-		} else if (e.contentLength === null && s === "content-length") {
+		} else if (s === "content-length") {
+			if (e.contentLength !== null) throw new n("duplicate content-length header");
 			if (e.contentLength = parseInt(i, 10), !Number.isFinite(e.contentLength)) throw new n("invalid content-length header");
 		} else if (e.contentType === null && s === "content-type") e.contentType = i, e.headers.push(t, i);
 		else if (s === "transfer-encoding" || s === "keep-alive" || s === "upgrade") throw new n(`invalid ${s} header`);
@@ -8794,11 +8808,13 @@ ${e.format(t)}
 		return n;
 	}
 	function A(e) {
+		if (e.length === 0) return !1;
 		for (let t = 0; t < e.length; t++) {
 			let n = e.charCodeAt(t);
 			if (n < 48 || n > 57) return !1;
 		}
-		return !0;
+		let t = Number.parseInt(e, 10);
+		return t >= 8 && t <= 15;
 	}
 	var j = typeof process.versions.icu == "string", M = j ? new TextDecoder("utf-8", { fatal: !0 }) : void 0, N = j ? M.decode.bind(M) : function(e) {
 		if (d(e)) return e.toString("utf-8");
@@ -8952,37 +8968,59 @@ ${e.format(t)}
 		closeWebSocketConnection: k
 	};
 })), st = /* @__PURE__ */ p(((e, t) => {
-	var { createInflateRaw: n, Z_DEFAULT_WINDOWBITS: r } = m("node:zlib"), { isValidClientWindowBits: i } = it(), a = Buffer.from([
+	var { createInflateRaw: n, Z_DEFAULT_WINDOWBITS: r } = m("node:zlib"), { isValidClientWindowBits: i } = it(), { MessageSizeExceededError: a } = O(), o = Buffer.from([
 		0,
 		0,
 		255,
 		255
-	]), o = Symbol("kBuffer"), s = Symbol("kLength");
+	]), s = Symbol("kBuffer"), c = Symbol("kLength"), l = 4 * 1024 * 1024;
 	t.exports = { PerMessageDeflate: class {
 		#e;
 		#t = {};
+		#n = !1;
+		#r = null;
 		constructor(e) {
 			this.#t.serverNoContextTakeover = e.has("server_no_context_takeover"), this.#t.serverMaxWindowBits = e.get("server_max_window_bits");
 		}
-		decompress(e, t, c) {
+		decompress(e, t, u) {
+			if (this.#n) {
+				u(new a());
+				return;
+			}
 			if (!this.#e) {
 				let e = r;
 				if (this.#t.serverMaxWindowBits) {
 					if (!i(this.#t.serverMaxWindowBits)) {
-						c(/* @__PURE__ */ Error("Invalid server_max_window_bits"));
+						u(/* @__PURE__ */ Error("Invalid server_max_window_bits"));
 						return;
 					}
 					e = Number.parseInt(this.#t.serverMaxWindowBits);
 				}
-				this.#e = n({ windowBits: e }), this.#e[o] = [], this.#e[s] = 0, this.#e.on("data", (e) => {
-					this.#e[o].push(e), this.#e[s] += e.length;
+				try {
+					this.#e = n({ windowBits: e });
+				} catch (e) {
+					u(e);
+					return;
+				}
+				this.#e[s] = [], this.#e[c] = 0, this.#e.on("data", (e) => {
+					if (!this.#n) {
+						if (this.#e[c] += e.length, this.#e[c] > l) {
+							if (this.#n = !0, this.#e.removeAllListeners(), this.#e.destroy(), this.#e = null, this.#r) {
+								let e = this.#r;
+								this.#r = null, e(new a());
+							}
+							return;
+						}
+						this.#e[s].push(e);
+					}
 				}), this.#e.on("error", (e) => {
-					this.#e = null, c(e);
+					this.#e = null, u(e);
 				});
 			}
-			this.#e.write(e), t && this.#e.write(a), this.#e.flush(() => {
-				let e = Buffer.concat(this.#e[o], this.#e[s]);
-				this.#e[o].length = 0, this.#e[s] = 0, c(null, e);
+			this.#r = u, this.#e.write(e), t && this.#e.write(o), this.#e.flush(() => {
+				if (this.#n || !this.#e) return;
+				let e = Buffer.concat(this.#e[s], this.#e[c]);
+				this.#e[s].length = 0, this.#e[c] = 0, this.#r = null, u(null, e);
 			});
 		}
 	} };
@@ -9043,13 +9081,12 @@ ${e.format(t)}
 				this.#i.payloadLength = t.readUInt16BE(0), this.#r = i.READ_DATA;
 			} else if (this.#r === i.PAYLOADLENGTH_64) {
 				if (this.#t < 8) return e();
-				let t = this.consume(8), n = t.readUInt32BE(0);
-				if (n > 2 ** 31 - 1) {
+				let t = this.consume(8), n = t.readUInt32BE(0), r = t.readUInt32BE(4);
+				if (n !== 0 || r > 2 ** 31 - 1) {
 					_(this.ws, "Received payload length > 2^31 bytes.");
 					return;
 				}
-				let r = t.readUInt32BE(4);
-				this.#i.payloadLength = (n << 8) + r, this.#r = i.READ_DATA;
+				this.#i.payloadLength = r, this.#r = i.READ_DATA;
 			} else if (this.#r === i.READ_DATA) {
 				if (this.#t < this.#i.payloadLength) return e();
 				let t = this.consume(this.#i.payloadLength);
@@ -9057,7 +9094,7 @@ ${e.format(t)}
 				else if (this.#i.compressed) {
 					this.#o.get("permessage-deflate").decompress(t, this.#i.fin, (t, n) => {
 						if (t) {
-							w(this.ws, 1007, t.message, t.message.length);
+							_(this.ws, t.message);
 							return;
 						}
 						if (this.#a.push(n), !this.#i.fin) {
