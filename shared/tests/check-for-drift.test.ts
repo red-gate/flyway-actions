@@ -24,9 +24,10 @@ describe("checkForDrift", () => {
   it("should return drift-detected false when exit code is 0", async () => {
     exec.mockResolvedValue(0);
 
-    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+    const { exitCode, result } = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
-    expect(result).toEqual({ exitCode: 0, driftDetected: false, comparisonSupported: true });
+    expect(exitCode).toBe(0);
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
@@ -49,10 +50,10 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+    const { exitCode, result } = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
+    expect(exitCode).toBe(0);
     expect(result).toEqual({
-      exitCode: 0,
       driftDetected: true,
       comparisonSupported: true,
       reportPath: "report.html",
@@ -71,9 +72,10 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+    const { exitCode, result } = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
-    expect(result).toEqual({ exitCode: 0, driftDetected: false, comparisonSupported: true, reportPath: "report.html" });
+    expect(exitCode).toBe(0);
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true, reportPath: "report.html" });
     expect(setOutput).toHaveBeenCalledWith("drift-detected", "false");
   });
 
@@ -92,10 +94,10 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+    const { exitCode, result } = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
+    expect(exitCode).toBe(1);
     expect(result).toEqual({
-      exitCode: 1,
       driftDetected: true,
       comparisonSupported: true,
       reportPath: "drift-report.html",
@@ -115,9 +117,10 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
+    const { exitCode, result } = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
-    expect(result).toEqual({ exitCode: 1, driftDetected: false, comparisonSupported: true });
+    expect(exitCode).toBe(1);
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
   });
@@ -135,9 +138,10 @@ describe("checkForDrift", () => {
       }),
     );
 
-    const result = await checkForDrift(driftArgs("jdbc:h2:mem:test"));
+    const { exitCode, result } = await checkForDrift(driftArgs("jdbc:h2:mem:test"));
 
-    expect(result).toEqual({ exitCode: 0, driftDetected: false, comparisonSupported: false });
+    expect(exitCode).toBe(0);
+    expect(result).toEqual({ driftDetected: false, comparisonSupported: false });
     expect(setOutput).not.toHaveBeenCalledWith("drift-detected", expect.anything());
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(info).toHaveBeenCalledWith(

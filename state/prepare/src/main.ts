@@ -40,7 +40,9 @@ const run = async (): Promise<void> => {
     if (inputs.skipDriftCheck) {
       core.info('Skipping drift check: "skip-drift-check" set to true');
     } else {
-      const { driftDetected } = await runCheckDrift(inputs);
+      const {
+        result: { driftDetected },
+      } = await runCheckDrift(inputs);
       if (driftDetected) {
         if (inputs.failOnDrift) {
           core.setFailed("Drift detected. Aborting prepare.");
