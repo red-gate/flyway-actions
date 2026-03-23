@@ -102,4 +102,21 @@ describe("runCheckCode", () => {
 
     expect(args.some((a: string) => a.startsWith("-reportFilename="))).toBe(false);
   });
+
+  it("should include extra args when provided", async () => {
+    await runCheckCode({ extraArgs: "-X -logLevel=debug" }, "V001__create.sql");
+
+    const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
+
+    expect(args).toContain("-X");
+    expect(args).toContain("-logLevel=debug");
+  });
+
+  it("should not include extra args when not provided", async () => {
+    await runCheckCode({}, "V001__create.sql");
+
+    const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
+
+    expect(args).toEqual(["check", "-code", "-check.scope=script", "-check.scriptFilename=V001__create.sql"]);
+  });
 });

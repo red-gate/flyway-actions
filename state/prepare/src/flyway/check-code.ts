@@ -1,6 +1,7 @@
 import type { FlywayStatePrepareInputs } from "../types.js";
 import * as core from "@actions/core";
 import { checkForCodeReviewViolations } from "@flyway-actions/shared/check-for-code-review-violations";
+import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
 import { getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayStatePrepareInputs, scriptFilename: string): string[] | undefined => {
@@ -13,6 +14,7 @@ const getCodeArgs = (inputs: FlywayStatePrepareInputs, scriptFilename: string): 
     "-code",
     ...getTargetEnvironmentArgs(inputs),
     ...(inputs.workingDirectory ? [`-workingDirectory=${inputs.workingDirectory}`] : []),
+    ...(inputs.extraArgs ? parseExtraArgs(inputs.extraArgs) : []),
     ...(inputs.failOnCodeReview ? ["-check.code.failOnError=true"] : []),
     ...(inputs.preDeploymentReportName ? [`-reportFilename=${inputs.preDeploymentReportName}`] : []),
     "-check.scope=script",
