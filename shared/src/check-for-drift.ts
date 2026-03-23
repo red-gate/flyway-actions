@@ -1,7 +1,6 @@
 import type { Drift, FlywayCheckOutput } from "./types.js";
 import * as core from "@actions/core";
 import { parseDriftErrorOutput, runFlyway } from "./flyway-runner.js";
-import { resolvePath } from "./resolve-path.js";
 
 type CheckForDriftOutput = {
   driftDetected?: boolean;
@@ -36,8 +35,8 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
           result: {
             driftDetected: true,
             comparisonSupported: true,
-            reportPath: resolvePath(errorOutput.error.htmlReport, workingDirectory),
-            driftResolutionFolder: resolvePath(errorOutput.error.driftResolutionFolderPath, workingDirectory),
+            reportPath: errorOutput.error.htmlReport,
+            driftResolutionFolder: errorOutput.error.driftResolutionFolderPath,
           },
         };
       }
@@ -58,8 +57,8 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       result: {
         driftDetected: isDriftDetected(output),
         comparisonSupported: true,
-        reportPath: resolvePath(output?.htmlReport, workingDirectory),
-        driftResolutionFolder: resolvePath(driftResult?.driftResolutionFolder, workingDirectory),
+        reportPath: output?.htmlReport,
+        driftResolutionFolder: driftResult?.driftResolutionFolder,
       },
     };
   } finally {
