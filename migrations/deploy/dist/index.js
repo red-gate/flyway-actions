@@ -418,7 +418,7 @@ var T = /* @__PURE__ */ p(((e) => {
 			return e && e[H] === !0;
 		}
 		[H] = !0;
-	}, W = Symbol.for("undici.error.UND_ERR_PRX_TLS"), ne = class extends r {
+	}, W = Symbol.for("undici.error.UND_ERR_PRX_TLS"), G = class extends r {
 		constructor(e, t, n) {
 			super(t, {
 				cause: e,
@@ -429,7 +429,7 @@ var T = /* @__PURE__ */ p(((e) => {
 			return e && e[W] === !0;
 		}
 		[W] = !0;
-	}, re = Symbol.for("undici.error.UND_ERR_WS_MESSAGE_SIZE_EXCEEDED");
+	}, ne = Symbol.for("undici.error.UND_ERR_WS_MESSAGE_SIZE_EXCEEDED");
 	t.exports = {
 		AbortError: y,
 		HTTPParserError: z,
@@ -453,15 +453,15 @@ var T = /* @__PURE__ */ p(((e) => {
 		ResponseExceededMaxSizeError: ee,
 		RequestRetryError: te,
 		ResponseError: U,
-		SecureProxyConnectionError: ne,
+		SecureProxyConnectionError: G,
 		MessageSizeExceededError: class extends r {
 			constructor(e) {
 				super(e), this.name = "MessageSizeExceededError", this.message = e || "Max decompressed message size exceeded", this.code = "UND_ERR_WS_MESSAGE_SIZE_EXCEEDED";
 			}
 			static [Symbol.hasInstance](e) {
-				return e && e[re] === !0;
+				return e && e[ne] === !0;
 			}
-			get [re]() {
+			get [ne]() {
 				return !0;
 			}
 		}
@@ -640,7 +640,7 @@ var T = /* @__PURE__ */ p(((e) => {
 			let t = e._readableState;
 			return t && t.objectMode === !1 && t.ended === !0 && Number.isFinite(t.length) ? t.length : null;
 		} else if (w(e)) return e.size == null ? null : e.size;
-		else if (re(e)) return e.byteLength;
+		else if (ne(e)) return e.byteLength;
 		return null;
 	}
 	function B(e) {
@@ -674,15 +674,15 @@ var T = /* @__PURE__ */ p(((e) => {
 		}
 		return "content-length" in t && "content-disposition" in t && (t["content-disposition"] = Buffer.from(t["content-disposition"]).toString("latin1")), t;
 	}
-	function ne(e) {
+	function G(e) {
 		let t = e.length, n = Array(t), r = !1, i = -1, a, o, s = 0;
 		for (let t = 0; t < e.length; t += 2) a = e[t], o = e[t + 1], typeof a != "string" && (a = a.toString()), typeof o != "string" && (o = o.toString("utf8")), s = a.length, s === 14 && a[7] === "-" && (a === "content-length" || a.toLowerCase() === "content-length") ? r = !0 : s === 19 && a[7] === "-" && (a === "content-disposition" || a.toLowerCase() === "content-disposition") && (i = t + 1), n[t] = a, n[t + 1] = o;
 		return r && i !== -1 && (n[i] = Buffer.from(n[i]).toString("latin1")), n;
 	}
-	function re(e) {
+	function ne(e) {
 		return e instanceof Uint8Array || Buffer.isBuffer(e);
 	}
-	function ie(e, t, n) {
+	function re(e, t, n) {
 		if (!e || typeof e != "object") throw new h("handler must be an object");
 		if (typeof e.onConnect != "function") throw new h("invalid onConnect method");
 		if (typeof e.onError != "function") throw new h("invalid onError method");
@@ -695,7 +695,7 @@ var T = /* @__PURE__ */ p(((e) => {
 			if (typeof e.onComplete != "function") throw new h("invalid onComplete method");
 		}
 	}
-	function G(e) {
+	function ie(e) {
 		return !!(e && (c.isDisturbed(e) || e[i]));
 	}
 	function ae(e) {
@@ -833,7 +833,7 @@ var T = /* @__PURE__ */ p(((e) => {
 	Object.setPrototypeOf(ge, null), Object.setPrototypeOf(_e, null), t.exports = {
 		kEnumerableProperty: he,
 		nop: S,
-		isDisturbed: G,
+		isDisturbed: ie,
 		isErrored: ae,
 		isReadable: K,
 		toUSVString: ce,
@@ -851,15 +851,15 @@ var T = /* @__PURE__ */ p(((e) => {
 		addListener: Q,
 		removeAllListeners: $,
 		errorRequest: me,
-		parseRawHeaders: ne,
+		parseRawHeaders: G,
 		parseHeaders: W,
 		parseKeepAliveTimeout: te,
 		destroy: ee,
 		bodyLength: z,
 		deepClone: I,
 		ReadableStreamFrom: q,
-		isBuffer: re,
-		validateHandler: ie,
+		isBuffer: ne,
+		validateHandler: re,
 		getSocketInfo: oe,
 		isFormDataLike: J,
 		buildURL: T,
@@ -2246,7 +2246,7 @@ var T = /* @__PURE__ */ p(((e) => {
 	function W(e) {
 		return B(f.now(), e);
 	}
-	function ne(e) {
+	function G(e) {
 		return {
 			startTime: e.startTime ?? 0,
 			redirectStartTime: 0,
@@ -2261,13 +2261,13 @@ var T = /* @__PURE__ */ p(((e) => {
 			finalConnectionTimingInfo: null
 		};
 	}
-	function re() {
+	function ne() {
 		return { referrerPolicy: "strict-origin-when-cross-origin" };
 	}
-	function ie(e) {
+	function re(e) {
 		return { referrerPolicy: e.referrerPolicy };
 	}
-	function G(e) {
+	function ie(e) {
 		let t = e.referrerPolicy;
 		v(t);
 		let n = null;
@@ -2612,7 +2612,7 @@ var T = /* @__PURE__ */ p(((e) => {
 		get origin() {
 			return this.baseUrl?.origin;
 		}
-		policyContainer = re();
+		policyContainer = ne();
 	};
 	t.exports = {
 		isAborted: ue,
@@ -2623,15 +2623,15 @@ var T = /* @__PURE__ */ p(((e) => {
 		tryUpgradeRequestToAPotentiallyTrustworthyURL: ce,
 		clampAndCoarsenConnectionTimingInfo: ee,
 		coarsenedSharedCurrentTime: W,
-		determineRequestsReferrer: G,
-		makePolicyContainer: re,
-		clonePolicyContainer: ie,
+		determineRequestsReferrer: ie,
+		makePolicyContainer: ne,
+		clonePolicyContainer: re,
 		appendFetchMetadata: R,
 		appendRequestOriginHeader: z,
 		TAOCheck: L,
 		corsCheck: I,
 		crossOriginResourcePolicyCheck: F,
-		createOpaqueTimingInfo: ne,
+		createOpaqueTimingInfo: G,
 		setRequestReferrerPolicyOnRedirect: P,
 		isValidHTTPToken: g,
 		requestBadPort: O,
@@ -2669,7 +2669,7 @@ var T = /* @__PURE__ */ p(((e) => {
 			settingsObject = new Ne();
 		}()
 	};
-})), ne = /* @__PURE__ */ p(((e, t) => {
+})), G = /* @__PURE__ */ p(((e, t) => {
 	t.exports = {
 		kUrl: Symbol("url"),
 		kHeaders: Symbol("headers"),
@@ -2677,8 +2677,8 @@ var T = /* @__PURE__ */ p(((e) => {
 		kState: Symbol("state"),
 		kDispatcher: Symbol("dispatcher")
 	};
-})), re = /* @__PURE__ */ p(((e, t) => {
-	var { Blob: n, File: r } = m("node:buffer"), { kState: i } = ne(), { webidl: a } = U(), o = class e {
+})), ne = /* @__PURE__ */ p(((e, t) => {
+	var { Blob: n, File: r } = m("node:buffer"), { kState: i } = G(), { webidl: a } = U(), o = class e {
 		constructor(e, t, n = {}) {
 			this[i] = {
 				blobLike: e,
@@ -2723,8 +2723,8 @@ var T = /* @__PURE__ */ p(((e) => {
 		FileLike: o,
 		isFileLike: s
 	};
-})), ie = /* @__PURE__ */ p(((e, t) => {
-	var { isBlobLike: n, iteratorMixin: r } = W(), { kState: i } = ne(), { kEnumerableProperty: a } = j(), { FileLike: o, isFileLike: s } = re(), { webidl: c } = U(), { File: l } = m("node:buffer"), u = m("node:util"), d = globalThis.File ?? l, f = class e {
+})), re = /* @__PURE__ */ p(((e, t) => {
+	var { isBlobLike: n, iteratorMixin: r } = W(), { kState: i } = G(), { kEnumerableProperty: a } = j(), { FileLike: o, isFileLike: s } = ne(), { webidl: c } = U(), { File: l } = m("node:buffer"), u = m("node:util"), d = globalThis.File ?? l, f = class e {
 		constructor(e) {
 			if (c.util.markAsUncloneable(this), e !== void 0) throw c.errors.conversionFailed({
 				prefix: "FormData constructor",
@@ -2811,8 +2811,8 @@ var T = /* @__PURE__ */ p(((e) => {
 		FormData: f,
 		makeEntry: p
 	};
-})), G = /* @__PURE__ */ p(((e, t) => {
-	var { isUSVString: n, bufferToLowerCasedHeaderName: r } = j(), { utf8DecodeBytes: i } = W(), { HTTP_TOKEN_CODEPOINTS: a, isomorphicDecode: o } = H(), { isFileLike: s } = re(), { makeEntry: c } = ie(), l = m("node:assert"), { File: u } = m("node:buffer"), d = globalThis.File ?? u, f = Buffer.from("form-data; name=\""), p = Buffer.from("; filename"), h = Buffer.from("--"), g = Buffer.from("--\r\n");
+})), ie = /* @__PURE__ */ p(((e, t) => {
+	var { isUSVString: n, bufferToLowerCasedHeaderName: r } = j(), { utf8DecodeBytes: i } = W(), { HTTP_TOKEN_CODEPOINTS: a, isomorphicDecode: o } = H(), { isFileLike: s } = ne(), { makeEntry: c } = re(), l = m("node:assert"), { File: u } = m("node:buffer"), d = globalThis.File ?? u, f = Buffer.from("form-data; name=\""), p = Buffer.from("; filename"), h = Buffer.from("--"), g = Buffer.from("--\r\n");
 	function _(e) {
 		for (let t = 0; t < e.length; ++t) if (e.charCodeAt(t) & -128) return !1;
 		return !0;
@@ -2917,7 +2917,7 @@ var T = /* @__PURE__ */ p(((e) => {
 		validateBoundary: v
 	};
 })), ae = /* @__PURE__ */ p(((e, t) => {
-	var n = j(), { ReadableStreamFrom: r, isBlobLike: i, isReadableStreamLike: a, readableStreamClose: o, createDeferredPromise: s, fullyReadBody: c, extractMimeType: l, utf8DecodeBytes: u } = W(), { FormData: d } = ie(), { kState: f } = ne(), { webidl: p } = U(), { Blob: h } = m("node:buffer"), g = m("node:assert"), { isErrored: _, isDisturbed: v } = m("node:stream"), { isArrayBuffer: y } = m("node:util/types"), { serializeAMimeType: b } = H(), { multipartFormDataParser: x } = G(), S;
+	var n = j(), { ReadableStreamFrom: r, isBlobLike: i, isReadableStreamLike: a, readableStreamClose: o, createDeferredPromise: s, fullyReadBody: c, extractMimeType: l, utf8DecodeBytes: u } = W(), { FormData: d } = re(), { kState: f } = G(), { webidl: p } = U(), { Blob: h } = m("node:buffer"), g = m("node:assert"), { isErrored: _, isDisturbed: v } = m("node:stream"), { isArrayBuffer: y } = m("node:util/types"), { serializeAMimeType: b } = H(), { multipartFormDataParser: x } = ie(), S;
 	try {
 		let e = m("node:crypto");
 		S = (t) => e.randomInt(0, t);
@@ -3088,7 +3088,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		bodyUnusable: F
 	};
 })), K = /* @__PURE__ */ p(((e, t) => {
-	var n = m("node:assert"), r = j(), { channels: i } = M(), a = I(), { RequestContentLengthMismatchError: o, ResponseContentLengthMismatchError: s, RequestAbortedError: c, HeadersTimeoutError: l, HeadersOverflowError: u, SocketError: d, InformationalError: f, BodyTimeoutError: p, HTTPParserError: h, ResponseExceededMaxSizeError: g } = O(), { kUrl: _, kReset: v, kClient: y, kParser: b, kBlocking: x, kRunning: S, kPending: C, kSize: w, kWriting: T, kQueue: E, kNoRef: k, kKeepAliveDefaultTimeout: A, kHostHeader: N, kPendingIdx: P, kRunningIdx: F, kError: L, kPipelining: R, kSocket: V, kKeepAliveTimeoutValue: te, kMaxHeadersSize: H, kKeepAliveMaxTimeout: U, kKeepAliveTimeoutThreshold: W, kHeadersTimeout: ne, kBodyTimeout: re, kStrictContentLength: ie, kMaxRequests: G, kCounter: K, kMaxResponseSize: oe, kOnError: q, kResume: J, kHTTPContext: Y } = D(), X = z(), se = Buffer.alloc(0), ce = Buffer[Symbol.species], le = r.addListener, Z = r.removeAllListeners, ue;
+	var n = m("node:assert"), r = j(), { channels: i } = M(), a = I(), { RequestContentLengthMismatchError: o, ResponseContentLengthMismatchError: s, RequestAbortedError: c, HeadersTimeoutError: l, HeadersOverflowError: u, SocketError: d, InformationalError: f, BodyTimeoutError: p, HTTPParserError: h, ResponseExceededMaxSizeError: g } = O(), { kUrl: _, kReset: v, kClient: y, kParser: b, kBlocking: x, kRunning: S, kPending: C, kSize: w, kWriting: T, kQueue: E, kNoRef: k, kKeepAliveDefaultTimeout: A, kHostHeader: N, kPendingIdx: P, kRunningIdx: F, kError: L, kPipelining: R, kSocket: V, kKeepAliveTimeoutValue: te, kMaxHeadersSize: H, kKeepAliveMaxTimeout: U, kKeepAliveTimeoutThreshold: W, kHeadersTimeout: G, kBodyTimeout: ne, kStrictContentLength: re, kMaxRequests: ie, kCounter: K, kMaxResponseSize: oe, kOnError: q, kResume: J, kHTTPContext: Y } = D(), X = z(), se = Buffer.alloc(0), ce = Buffer[Symbol.species], le = r.addListener, Z = r.removeAllListeners, ue;
 	async function de() {
 		let e = process.env.JEST_WORKER_ID ? B() : void 0, t;
 		try {
@@ -3226,7 +3226,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			if (n(!this.upgrade), n(this.statusCode < 200), e === 100) return r.destroy(o, new d("bad response", r.getSocketInfo(o))), -1;
 			if (t && !l.upgrade) return r.destroy(o, new d("bad upgrade", r.getSocketInfo(o))), -1;
 			if (n(this.timeoutType === ve), this.statusCode = e, this.shouldKeepAlive = i || l.method === "HEAD" && !o[v] && this.connection.toLowerCase() === "keep-alive", this.statusCode >= 200) {
-				let e = l.bodyTimeout == null ? a[re] : l.bodyTimeout;
+				let e = l.bodyTimeout == null ? a[ne] : l.bodyTimeout;
 				this.setTimeout(e, ye);
 			} else this.timeout && this.timeout.refresh && this.timeout.refresh();
 			if (l.method === "CONNECT" || t) return n(a[S] === 1), this.upgrade = !0, 2;
@@ -3331,7 +3331,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		if (t && !t.destroyed) {
 			if (e[w] === 0 ? !t[k] && t.unref && (t.unref(), t[k] = !0) : t[k] && t.ref && (t.ref(), t[k] = !1), e[w] === 0) t[b].timeoutType !== be && t[b].setTimeout(e[te], be);
 			else if (e[S] > 0 && t[b].statusCode < 200 && t[b].timeoutType !== ve) {
-				let n = e[E][e[F]], r = n.headersTimeout == null ? e[ne] : n.headersTimeout;
+				let n = e[E][e[F]], r = n.headersTimeout == null ? e[G] : n.headersTimeout;
 				t[b].setTimeout(r, ve);
 			}
 		}
@@ -3349,7 +3349,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		m && typeof m.read == "function" && m.read(0);
 		let y = r.bodyLength(m);
 		if (g = y ?? g, g === null && (g = t.contentLength), g === 0 && !_ && (g = null), Te(a) && g > 0 && t.contentLength !== null && t.contentLength !== g) {
-			if (e[ie]) return r.errorRequest(e, t, new o()), !1;
+			if (e[re]) return r.errorRequest(e, t, new o()), !1;
 			process.emitWarning(new o());
 		}
 		let b = e[V], S = (n) => {
@@ -3361,7 +3361,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			r.errorRequest(e, t, n);
 		}
 		if (t.aborted) return !1;
-		a === "HEAD" && (b[v] = !0), (u || a === "CONNECT") && (b[v] = !0), p != null && (b[v] = p), e[G] && b[K]++ >= e[G] && (b[v] = !0), d && (b[x] = !0);
+		a === "HEAD" && (b[v] = !0), (u || a === "CONNECT") && (b[v] = !0), p != null && (b[v] = p), e[ie] && b[K]++ >= e[ie] && (b[v] = !0), d && (b[x] = !0);
 		let C = `${a} ${s} HTTP/1.1\r\n`;
 		if (typeof l == "string" ? C += `host: ${l}\r\n` : C += e[N], u ? C += `connection: upgrade\r\nupgrade: ${u}\r\n` : e[R] && !b[v] ? C += "connection: keep-alive\r\n" : C += "connection: close\r\n", Array.isArray(h)) for (let e = 0; e < h.length; e += 2) {
 			let t = h[e + 0], n = h[e + 1];
@@ -3473,7 +3473,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			let l = Buffer.byteLength(e);
 			if (!l) return !0;
 			if (r !== null && a + l > r) {
-				if (i[ie]) throw new o();
+				if (i[re]) throw new o();
 				process.emitWarning(new o());
 			}
 			t.cork(), a === 0 && (!s && n.reset !== !1 && (t[v] = !0), r === null ? t.write(`${c}transfer-encoding: chunked\r\n`, "latin1") : t.write(`${c}content-length: ${r}\r\n\r\n`, "latin1")), r === null && t.write(`\r\n${l.toString(16)}\r\n`, "latin1"), this.bytesWritten += l;
@@ -3485,7 +3485,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			if (s.onRequestSent(), e[T] = !1, e[L]) throw e[L];
 			if (!e.destroyed) {
 				if (r === 0 ? i ? e.write(`${a}content-length: 0\r\n\r\n`, "latin1") : e.write(`${a}\r\n`, "latin1") : t === null && e.write("\r\n0\r\n\r\n", "latin1"), t !== null && r !== t) {
-					if (n[ie]) throw new o();
+					if (n[re]) throw new o();
 					process.emitWarning(new o());
 				}
 				e[b].timeout && e[b].timeoutType === ve && e[b].timeout.refresh && e[b].timeout.refresh(), n[J]();
@@ -3517,7 +3517,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			createConnection: () => t,
 			peerMaxConcurrentStreams: e[S]
 		});
-		r[k] = 0, r[d] = e, r[y] = t, i.addListener(r, "error", H), i.addListener(r, "frameError", U), i.addListener(r, "end", W), i.addListener(r, "goaway", ne), i.addListener(r, "close", function() {
+		r[k] = 0, r[d] = e, r[y] = t, i.addListener(r, "error", H), i.addListener(r, "frameError", U), i.addListener(r, "end", W), i.addListener(r, "goaway", G), i.addListener(r, "close", function() {
 			let { [d]: e } = this, { [y]: t } = e, r = this[y][v] || this[v] || new s("closed", i.getSocketInfo(t));
 			if (e[C] = null, e.destroyed) {
 				n(e[p] === 0);
@@ -3542,7 +3542,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			version: "h2",
 			defaultPipelining: Infinity,
 			write(...t) {
-				return ie(e, ...t);
+				return re(e, ...t);
 			},
 			resume() {
 				te(e);
@@ -3575,7 +3575,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		let e = new s("other side closed", i.getSocketInfo(this[y]));
 		this.destroy(e), i.destroy(this[y], e);
 	}
-	function ne(e) {
+	function G(e) {
 		let t = this[v] || new s(`HTTP/2: "GOAWAY" frame received with code ${e}`, i.getSocketInfo(this)), r = this[d];
 		if (r[y] = null, r[E] = null, this[C] != null && (this[C].destroy(t), this[C] = null), i.destroy(this[y], t), r[_] < r[h].length) {
 			let e = r[h][r[_]];
@@ -3583,10 +3583,10 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		}
 		n(r[f] === 0), r.emit("disconnect", r[l], [r], t), r[w]();
 	}
-	function re(e) {
+	function ne(e) {
 		return e !== "GET" && e !== "HEAD" && e !== "OPTIONS" && e !== "TRACE" && e !== "CONNECT";
 	}
-	function ie(e, t) {
+	function re(e, t) {
 		let r = e[C], { method: s, path: u, host: d, upgrade: f, expectContinue: p, signal: m, headers: v } = t, { body: x } = t;
 		if (f) return i.errorRequest(e, t, /* @__PURE__ */ Error("Upgrade not supported for H2")), !1;
 		let S = {};
@@ -3623,7 +3623,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			let [e, t] = A(x);
 			S["content-type"] = t, x = e.stream, M = e.length;
 		}
-		if (M ??= t.contentLength, (M === 0 || !j) && (M = null), re(s) && M > 0 && t.contentLength != null && t.contentLength !== M) {
+		if (M ??= t.contentLength, (M === 0 || !j) && (M = null), ne(s) && M > 0 && t.contentLength != null && t.contentLength !== M) {
 			if (e[b]) return i.errorRequest(e, t, new a()), !1;
 			process.emitWarning(new a());
 		}
@@ -3656,10 +3656,10 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		}), !0;
 		function V() {
 			/* istanbul ignore else: assertion */
-			!x || M === 0 ? G(O, T, null, e, t, e[y], M, j) : i.isBuffer(x) ? G(O, T, x, e, t, e[y], M, j) : i.isBlobLike(x) ? typeof x.stream == "function" ? q(O, T, x.stream(), e, t, e[y], M, j) : oe(O, T, x, e, t, e[y], M, j) : i.isStream(x) ? K(O, e[y], j, T, x, e, t, M) : i.isIterable(x) ? q(O, T, x, e, t, e[y], M, j) : n(!1);
+			!x || M === 0 ? ie(O, T, null, e, t, e[y], M, j) : i.isBuffer(x) ? ie(O, T, x, e, t, e[y], M, j) : i.isBlobLike(x) ? typeof x.stream == "function" ? q(O, T, x.stream(), e, t, e[y], M, j) : oe(O, T, x, e, t, e[y], M, j) : i.isStream(x) ? K(O, e[y], j, T, x, e, t, M) : i.isIterable(x) ? q(O, T, x, e, t, e[y], M, j) : n(!1);
 		}
 	}
-	function G(e, t, r, a, o, s, c, l) {
+	function ie(e, t, r, a, o, s, c, l) {
 		try {
 			r != null && i.isBuffer(r) && (n(c === r.byteLength, "buffer body must have content length"), t.cork(), t.write(r), t.uncork(), t.end(), o.onBodySent(r)), l || (s[u] = !0), o.onRequestSent(), a[w]();
 		} catch (t) {
@@ -3804,12 +3804,12 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 	}
 	t.exports = r;
 })), Y = /* @__PURE__ */ p(((e, t) => {
-	var n = m("node:assert"), r = m("node:net"), i = m("node:http"), a = j(), { channels: o } = M(), s = N(), c = F(), { InvalidArgumentError: l, InformationalError: u, ClientDestroyedError: d } = O(), f = L(), { kUrl: p, kServerName: h, kClient: g, kBusy: _, kConnect: v, kResuming: y, kRunning: b, kPending: x, kSize: S, kQueue: C, kConnected: w, kConnecting: T, kNeedDrain: E, kKeepAliveDefaultTimeout: k, kHostHeader: A, kPendingIdx: P, kRunningIdx: I, kError: R, kPipelining: z, kKeepAliveTimeoutValue: B, kMaxHeadersSize: ee, kKeepAliveMaxTimeout: V, kKeepAliveTimeoutThreshold: te, kHeadersTimeout: H, kBodyTimeout: U, kStrictContentLength: W, kConnector: ne, kMaxRedirections: re, kMaxRequests: ie, kCounter: G, kClose: ae, kDestroy: q, kDispatch: Y, kInterceptors: X, kLocalAddress: se, kMaxResponseSize: ce, kOnError: le, kHTTPContext: Z, kMaxConcurrentStreams: ue, kResume: de } = D(), fe = K(), pe = oe(), Q = !1, $ = Symbol("kClosedResolve"), me = () => {};
+	var n = m("node:assert"), r = m("node:net"), i = m("node:http"), a = j(), { channels: o } = M(), s = N(), c = F(), { InvalidArgumentError: l, InformationalError: u, ClientDestroyedError: d } = O(), f = L(), { kUrl: p, kServerName: h, kClient: g, kBusy: _, kConnect: v, kResuming: y, kRunning: b, kPending: x, kSize: S, kQueue: C, kConnected: w, kConnecting: T, kNeedDrain: E, kKeepAliveDefaultTimeout: k, kHostHeader: A, kPendingIdx: P, kRunningIdx: I, kError: R, kPipelining: z, kKeepAliveTimeoutValue: B, kMaxHeadersSize: ee, kKeepAliveMaxTimeout: V, kKeepAliveTimeoutThreshold: te, kHeadersTimeout: H, kBodyTimeout: U, kStrictContentLength: W, kConnector: G, kMaxRedirections: ne, kMaxRequests: re, kCounter: ie, kClose: ae, kDestroy: q, kDispatch: Y, kInterceptors: X, kLocalAddress: se, kMaxResponseSize: ce, kOnError: le, kHTTPContext: Z, kMaxConcurrentStreams: ue, kResume: de } = D(), fe = K(), pe = oe(), Q = !1, $ = Symbol("kClosedResolve"), me = () => {};
 	function he(e) {
 		return e[z] ?? e[Z]?.defaultPipelining ?? 1;
 	}
 	var ge = class extends c {
-		constructor(e, { interceptors: t, maxHeaderSize: n, headersTimeout: o, socketTimeout: s, requestTimeout: c, connectTimeout: u, bodyTimeout: d, idleTimeout: m, keepAlive: g, keepAliveTimeout: _, maxKeepAliveTimeout: v, keepAliveMaxTimeout: b, keepAliveTimeoutThreshold: x, socketPath: S, pipelining: w, tls: T, strictContentLength: D, maxCachedSessions: O, maxRedirections: j, connect: M, maxRequestsPerClient: N, localAddress: F, maxResponseSize: L, autoSelectFamily: R, autoSelectFamilyAttemptTimeout: G, maxConcurrentStreams: ae, allowH2: K } = {}) {
+		constructor(e, { interceptors: t, maxHeaderSize: n, headersTimeout: o, socketTimeout: s, requestTimeout: c, connectTimeout: u, bodyTimeout: d, idleTimeout: m, keepAlive: g, keepAliveTimeout: _, maxKeepAliveTimeout: v, keepAliveMaxTimeout: b, keepAliveTimeoutThreshold: x, socketPath: S, pipelining: w, tls: T, strictContentLength: D, maxCachedSessions: O, maxRedirections: j, connect: M, maxRequestsPerClient: N, localAddress: F, maxResponseSize: L, autoSelectFamily: R, autoSelectFamilyAttemptTimeout: ie, maxConcurrentStreams: ae, allowH2: K } = {}) {
 			if (super(), g !== void 0) throw new l("unsupported keepAlive, use pipelining=0 instead");
 			if (s !== void 0) throw new l("unsupported socketTimeout, use headersTimeout & bodyTimeout instead");
 			if (c !== void 0) throw new l("unsupported requestTimeout, use headersTimeout & bodyTimeout instead");
@@ -3828,7 +3828,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			if (N != null && (!Number.isInteger(N) || N < 0)) throw new l("maxRequestsPerClient must be a positive number");
 			if (F != null && (typeof F != "string" || r.isIP(F) === 0)) throw new l("localAddress must be valid string IP address");
 			if (L != null && (!Number.isInteger(L) || L < -1)) throw new l("maxResponseSize must be a positive number");
-			if (G != null && (!Number.isInteger(G) || G < -1)) throw new l("autoSelectFamilyAttemptTimeout must be a positive number");
+			if (ie != null && (!Number.isInteger(ie) || ie < -1)) throw new l("autoSelectFamilyAttemptTimeout must be a positive number");
 			if (K != null && typeof K != "boolean") throw new l("allowH2 must be a valid boolean value");
 			if (ae != null && (typeof ae != "number" || ae < 1)) throw new l("maxConcurrentStreams must be a positive integer, greater than 0");
 			typeof M != "function" && (M = f({
@@ -3839,10 +3839,10 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 				timeout: u,
 				...R ? {
 					autoSelectFamily: R,
-					autoSelectFamilyAttemptTimeout: G
+					autoSelectFamilyAttemptTimeout: ie
 				} : void 0,
 				...M
-			})), t?.Client && Array.isArray(t.Client) ? (this[X] = t.Client, Q || (Q = !0, process.emitWarning("Client.Options#interceptor is deprecated. Use Dispatcher#compose instead.", { code: "UNDICI-CLIENT-INTERCEPTOR-DEPRECATED" }))) : this[X] = [_e({ maxRedirections: j })], this[p] = a.parseOrigin(e), this[ne] = M, this[z] = w ?? 1, this[ee] = n || i.maxHeaderSize, this[k] = _ ?? 4e3, this[V] = b ?? 6e5, this[te] = x ?? 2e3, this[B] = this[k], this[h] = null, this[se] = F ?? null, this[y] = 0, this[E] = 0, this[A] = `host: ${this[p].hostname}${this[p].port ? `:${this[p].port}` : ""}\r\n`, this[U] = d ?? 3e5, this[H] = o ?? 3e5, this[W] = D ?? !0, this[re] = j, this[ie] = N, this[$] = null, this[ce] = L > -1 ? L : -1, this[ue] = ae ?? 100, this[Z] = null, this[C] = [], this[I] = 0, this[P] = 0, this[de] = (e) => xe(this, e), this[le] = (e) => ve(this, e);
+			})), t?.Client && Array.isArray(t.Client) ? (this[X] = t.Client, Q || (Q = !0, process.emitWarning("Client.Options#interceptor is deprecated. Use Dispatcher#compose instead.", { code: "UNDICI-CLIENT-INTERCEPTOR-DEPRECATED" }))) : this[X] = [_e({ maxRedirections: j })], this[p] = a.parseOrigin(e), this[G] = M, this[z] = w ?? 1, this[ee] = n || i.maxHeaderSize, this[k] = _ ?? 4e3, this[V] = b ?? 6e5, this[te] = x ?? 2e3, this[B] = this[k], this[h] = null, this[se] = F ?? null, this[y] = 0, this[E] = 0, this[A] = `host: ${this[p].hostname}${this[p].port ? `:${this[p].port}` : ""}\r\n`, this[U] = d ?? 3e5, this[H] = o ?? 3e5, this[W] = D ?? !0, this[ne] = j, this[re] = N, this[$] = null, this[ce] = L > -1 ? L : -1, this[ue] = ae ?? 100, this[Z] = null, this[C] = [], this[I] = 0, this[P] = 0, this[de] = (e) => xe(this, e), this[le] = (e) => ve(this, e);
 		}
 		get pipelining() {
 			return this[z];
@@ -3922,11 +3922,11 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 				servername: e[h],
 				localAddress: e[se]
 			},
-			connector: e[ne]
+			connector: e[G]
 		});
 		try {
 			let r = await new Promise((n, r) => {
-				e[ne]({
+				e[G]({
 					host: t,
 					hostname: i,
 					protocol: s,
@@ -3947,7 +3947,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			} catch (e) {
 				throw r.destroy().on("error", me), e;
 			}
-			e[T] = !1, r[G] = 0, r[ie] = e[ie], r[g] = e, r[R] = null, o.connected.hasSubscribers && o.connected.publish({
+			e[T] = !1, r[ie] = 0, r[re] = e[re], r[g] = e, r[R] = null, o.connected.hasSubscribers && o.connected.publish({
 				connectParams: {
 					host: t,
 					hostname: i,
@@ -3957,7 +3957,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 					servername: e[h],
 					localAddress: e[se]
 				},
-				connector: e[ne],
+				connector: e[G],
 				socket: r
 			}), e.emit("connect", e[p], [e]);
 		} catch (r) {
@@ -3972,7 +3972,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 					servername: e[h],
 					localAddress: e[se]
 				},
-				connector: e[ne],
+				connector: e[G],
 				error: r
 			}), r.code === "ERR_TLS_CERT_ALTNAME_INVALID") for (n(e[b] === 0); e[x] > 0 && e[C][e[P]].servername === e[h];) {
 				let t = e[C][e[P]++];
@@ -6291,7 +6291,7 @@ ${e.format(t)}
 		getHeadersList: S
 	};
 })), Re = /* @__PURE__ */ p(((e, t) => {
-	var { Headers: n, HeadersList: r, fill: i, getHeadersGuard: a, setHeadersGuard: o, setHeadersList: s } = Le(), { extractBody: c, cloneBody: l, mixinBody: u, hasFinalizationRegistry: d, streamRegistry: f, bodyUnusable: p } = ae(), h = j(), g = m("node:util"), { kEnumerableProperty: _ } = h, { isValidReasonPhrase: v, isCancelled: y, isAborted: b, isBlobLike: x, serializeJavascriptValueToJSONString: S, isErrorLike: C, isomorphicEncode: w, environmentSettingsObject: T } = W(), { redirectStatusSet: E, nullBodyStatus: O } = V(), { kState: k, kHeaders: A } = ne(), { webidl: M } = U(), { FormData: N } = ie(), { URLSerializer: P } = H(), { kConstruct: F } = D(), I = m("node:assert"), { types: L } = m("node:util"), R = new TextEncoder("utf-8"), z = class e {
+	var { Headers: n, HeadersList: r, fill: i, getHeadersGuard: a, setHeadersGuard: o, setHeadersList: s } = Le(), { extractBody: c, cloneBody: l, mixinBody: u, hasFinalizationRegistry: d, streamRegistry: f, bodyUnusable: p } = ae(), h = j(), g = m("node:util"), { kEnumerableProperty: _ } = h, { isValidReasonPhrase: v, isCancelled: y, isAborted: b, isBlobLike: x, serializeJavascriptValueToJSONString: S, isErrorLike: C, isomorphicEncode: w, environmentSettingsObject: T } = W(), { redirectStatusSet: E, nullBodyStatus: O } = V(), { kState: k, kHeaders: A } = G(), { webidl: M } = U(), { FormData: N } = re(), { URLSerializer: P } = H(), { kConstruct: F } = D(), I = m("node:assert"), { types: L } = m("node:util"), R = new TextEncoder("utf-8"), z = class e {
 		static error() {
 			return J(te(), "immutable");
 		}
@@ -6435,10 +6435,10 @@ ${e.format(t)}
 			aborted: e && e.name === "AbortError"
 		});
 	}
-	function re(e) {
+	function ne(e) {
 		return e.type === "error" && e.status === 0;
 	}
-	function G(e, t) {
+	function ie(e, t) {
 		return t = {
 			internalResponse: e,
 			...t
@@ -6452,22 +6452,22 @@ ${e.format(t)}
 		});
 	}
 	function K(e, t) {
-		if (t === "basic") return G(e, {
+		if (t === "basic") return ie(e, {
 			type: "basic",
 			headersList: e.headersList
 		});
-		if (t === "cors") return G(e, {
+		if (t === "cors") return ie(e, {
 			type: "cors",
 			headersList: e.headersList
 		});
-		if (t === "opaque") return G(e, {
+		if (t === "opaque") return ie(e, {
 			type: "opaque",
 			urlList: Object.freeze([]),
 			status: 0,
 			statusText: "",
 			body: null
 		});
-		if (t === "opaqueredirect") return G(e, {
+		if (t === "opaqueredirect") return ie(e, {
 			type: "opaqueredirect",
 			status: 0,
 			statusText: "",
@@ -6514,7 +6514,7 @@ ${e.format(t)}
 			converter: M.converters.HeadersInit
 		}
 	]), t.exports = {
-		isNetworkError: re,
+		isNetworkError: ne,
 		makeNetworkError: te,
 		makeResponse: ee,
 		makeAppropriateNetworkError: oe,
@@ -6552,7 +6552,7 @@ ${e.format(t)}
 		};
 	};
 })), Be = /* @__PURE__ */ p(((e, t) => {
-	var { extractBody: n, mixinBody: r, cloneBody: i, bodyUnusable: a } = ae(), { Headers: o, fill: s, HeadersList: c, setHeadersGuard: l, getHeadersGuard: u, setHeadersList: d, getHeadersList: f } = Le(), { FinalizationRegistry: p } = ze()(), h = j(), g = m("node:util"), { isValidHTTPToken: _, sameOrigin: v, environmentSettingsObject: y } = W(), { forbiddenMethodsSet: b, corsSafeListedMethodsSet: x, referrerPolicy: S, requestRedirect: C, requestMode: w, requestCredentials: T, requestCache: E, requestDuplex: O } = V(), { kEnumerableProperty: k, normalizedMethodRecordsBase: A, normalizedMethodRecords: M } = h, { kHeaders: N, kSignal: P, kState: F, kDispatcher: I } = ne(), { webidl: L } = U(), { URLSerializer: R } = H(), { kConstruct: z } = D(), B = m("node:assert"), { getMaxListeners: ee, setMaxListeners: te, getEventListeners: re, defaultMaxListeners: ie } = m("node:events"), G = Symbol("abortController"), K = new p(({ signal: e, abort: t }) => {
+	var { extractBody: n, mixinBody: r, cloneBody: i, bodyUnusable: a } = ae(), { Headers: o, fill: s, HeadersList: c, setHeadersGuard: l, getHeadersGuard: u, setHeadersList: d, getHeadersList: f } = Le(), { FinalizationRegistry: p } = ze()(), h = j(), g = m("node:util"), { isValidHTTPToken: _, sameOrigin: v, environmentSettingsObject: y } = W(), { forbiddenMethodsSet: b, corsSafeListedMethodsSet: x, referrerPolicy: S, requestRedirect: C, requestMode: w, requestCredentials: T, requestCache: E, requestDuplex: O } = V(), { kEnumerableProperty: k, normalizedMethodRecordsBase: A, normalizedMethodRecords: M } = h, { kHeaders: N, kSignal: P, kState: F, kDispatcher: I } = G(), { webidl: L } = U(), { URLSerializer: R } = H(), { kConstruct: z } = D(), B = m("node:assert"), { getMaxListeners: ee, setMaxListeners: te, getEventListeners: ne, defaultMaxListeners: re } = m("node:events"), ie = Symbol("abortController"), K = new p(({ signal: e, abort: t }) => {
 		e.removeEventListener("abort", t);
 	}), oe = /* @__PURE__ */ new WeakMap();
 	function q(e) {
@@ -6652,10 +6652,10 @@ ${e.format(t)}
 				if (!g || typeof g.aborted != "boolean" || typeof g.addEventListener != "function") throw TypeError("Failed to construct 'Request': member signal is not of type AbortSignal.");
 				if (g.aborted) E.abort(g.reason);
 				else {
-					this[G] = E;
+					this[ie] = E;
 					let e = q(new WeakRef(E));
 					try {
-						(typeof ee == "function" && ee(g) === ie || re(g, "abort").length >= ie) && te(1500, g);
+						(typeof ee == "function" && ee(g) === re || ne(g, "abort").length >= re) && te(1500, g);
 					} catch {}
 					h.addAbortListener(g, e), K.register(E, {
 						signal: g,
@@ -6942,7 +6942,7 @@ ${e.format(t)}
 		cloneRequest: se
 	};
 })), Ve = /* @__PURE__ */ p(((e, t) => {
-	var { makeNetworkError: n, makeAppropriateNetworkError: r, filterResponse: i, makeResponse: a, fromInnerResponse: o } = Re(), { HeadersList: s } = Le(), { Request: c, cloneRequest: l } = Be(), u = m("node:zlib"), { bytesMatch: d, makePolicyContainer: f, clonePolicyContainer: p, requestBadPort: h, TAOCheck: g, appendRequestOriginHeader: _, responseLocationURL: v, requestCurrentURL: y, setRequestReferrerPolicyOnRedirect: b, tryUpgradeRequestToAPotentiallyTrustworthyURL: x, createOpaqueTimingInfo: S, appendFetchMetadata: C, corsCheck: w, crossOriginResourcePolicyCheck: T, determineRequestsReferrer: E, coarsenedSharedCurrentTime: D, createDeferredPromise: O, isBlobLike: k, sameOrigin: A, isCancelled: M, isAborted: N, isErrorLike: P, fullyReadBody: F, readableStreamClose: I, isomorphicEncode: L, urlIsLocal: R, urlIsHttpHttpsScheme: z, urlHasHttpsScheme: B, clampAndCoarsenConnectionTimingInfo: ee, simpleRangeHeaderValue: te, buildContentRange: re, createInflate: ie, extractMimeType: G } = W(), { kState: K, kDispatcher: oe } = ne(), q = m("node:assert"), { safelyExtractBody: J, extractBody: Y } = ae(), { redirectStatusSet: X, nullBodyStatus: se, safeMethodsSet: ce, requestBodyHeader: le, subresourceSet: Z } = V(), ue = m("node:events"), { Readable: de, pipeline: fe, finished: pe } = m("node:stream"), { addAbortListener: Q, isErrored: $, isReadable: me, bufferToLowerCasedHeaderName: he } = j(), { dataURLProcessor: ge, serializeAMimeType: _e, minimizeSupportedMimeType: ve } = H(), { getGlobalDispatcher: ye } = je(), { webidl: be } = U(), { STATUS_CODES: xe } = m("node:http"), Se = ["GET", "HEAD"], Ce = typeof __UNDICI_IS_NODE__ < "u" || typeof esbuildDetection < "u" ? "node" : "undici", we, Te = class extends ue {
+	var { makeNetworkError: n, makeAppropriateNetworkError: r, filterResponse: i, makeResponse: a, fromInnerResponse: o } = Re(), { HeadersList: s } = Le(), { Request: c, cloneRequest: l } = Be(), u = m("node:zlib"), { bytesMatch: d, makePolicyContainer: f, clonePolicyContainer: p, requestBadPort: h, TAOCheck: g, appendRequestOriginHeader: _, responseLocationURL: v, requestCurrentURL: y, setRequestReferrerPolicyOnRedirect: b, tryUpgradeRequestToAPotentiallyTrustworthyURL: x, createOpaqueTimingInfo: S, appendFetchMetadata: C, corsCheck: w, crossOriginResourcePolicyCheck: T, determineRequestsReferrer: E, coarsenedSharedCurrentTime: D, createDeferredPromise: O, isBlobLike: k, sameOrigin: A, isCancelled: M, isAborted: N, isErrorLike: P, fullyReadBody: F, readableStreamClose: I, isomorphicEncode: L, urlIsLocal: R, urlIsHttpHttpsScheme: z, urlHasHttpsScheme: B, clampAndCoarsenConnectionTimingInfo: ee, simpleRangeHeaderValue: te, buildContentRange: ne, createInflate: re, extractMimeType: ie } = W(), { kState: K, kDispatcher: oe } = G(), q = m("node:assert"), { safelyExtractBody: J, extractBody: Y } = ae(), { redirectStatusSet: X, nullBodyStatus: se, safeMethodsSet: ce, requestBodyHeader: le, subresourceSet: Z } = V(), ue = m("node:events"), { Readable: de, pipeline: fe, finished: pe } = m("node:stream"), { addAbortListener: Q, isErrored: $, isReadable: me, bufferToLowerCasedHeaderName: he } = j(), { dataURLProcessor: ge, serializeAMimeType: _e, minimizeSupportedMimeType: ve } = H(), { getGlobalDispatcher: ye } = je(), { webidl: be } = U(), { STATUS_CODES: xe } = m("node:http"), Se = ["GET", "HEAD"], Ce = typeof __UNDICI_IS_NODE__ < "u" || typeof esbuildDetection < "u" ? "node" : "undici", we, Te = class extends ue {
 		constructor(e) {
 			super(), this.dispatcher = e, this.connection = null, this.dump = !1, this.state = "ongoing";
 		}
@@ -7073,7 +7073,7 @@ ${e.format(t)}
 					}
 					let l = r.slice(a, s, c);
 					i.body = Y(l)[0];
-					let u = L(`${l.size}`), d = re(a, s, o);
+					let u = L(`${l.size}`), d = ne(a, s, o);
 					i.status = 206, i.statusText = "Partial Content", i.headersList.set("content-length", u, !0), i.headersList.set("content-type", c, !0), i.headersList.set("content-range", d, !0);
 				} else {
 					let e = Y(r);
@@ -7114,7 +7114,7 @@ ${e.format(t)}
 				let o = 0;
 				if (e.request.mode !== "navigator" || !t.hasCrossOriginRedirects) {
 					o = t.status;
-					let e = G(t.headersList);
+					let e = ie(t.headersList);
 					e !== "failure" && (a.contentType = ve(e));
 				}
 				e.request.initiatorType != null && ke(n, e.request.url.href, e.request.initiatorType, globalThis, i, a, o);
@@ -7309,7 +7309,7 @@ ${e.format(t)}
 								flush: u.constants.Z_SYNC_FLUSH,
 								finishFlush: u.constants.Z_SYNC_FLUSH
 							}));
-							else if (n === "deflate") d.push(ie({
+							else if (n === "deflate") d.push(re({
 								flush: u.constants.Z_SYNC_FLUSH,
 								finishFlush: u.constants.Z_SYNC_FLUSH
 							}));
@@ -7879,7 +7879,7 @@ ${e.format(t)}
 		getFieldValues: o
 	};
 })), Ye = /* @__PURE__ */ p(((e, t) => {
-	var { kConstruct: n } = qe(), { urlEquals: r, getFieldValues: i } = Je(), { kEnumerableProperty: a, isDisturbed: o } = j(), { webidl: s } = U(), { Response: c, cloneResponse: l, fromInnerResponse: u } = Re(), { Request: d, fromInnerRequest: f } = Be(), { kState: p } = ne(), { fetching: h } = Ve(), { urlIsHttpHttpsScheme: g, createDeferredPromise: _, readAllBytes: v } = W(), y = m("node:assert"), b = class e {
+	var { kConstruct: n } = qe(), { urlEquals: r, getFieldValues: i } = Je(), { kEnumerableProperty: a, isDisturbed: o } = j(), { webidl: s } = U(), { Response: c, cloneResponse: l, fromInnerResponse: u } = Re(), { Request: d, fromInnerRequest: f } = Be(), { kState: p } = G(), { fetching: h } = Ve(), { urlIsHttpHttpsScheme: g, createDeferredPromise: _, readAllBytes: v } = W(), y = m("node:assert"), b = class e {
 		#e;
 		constructor() {
 			arguments[0] !== n && s.illegalConstructor(), s.util.markAsUncloneable(this), this.#e = arguments[1];
@@ -9742,7 +9742,7 @@ ${e.format(t)}
 		} catch (e) {
 			throw e && typeof e == "object" && Error.captureStackTrace(e), e;
 		}
-	}, t.exports.Headers = Le().Headers, t.exports.Response = Re().Response, t.exports.Request = Be().Request, t.exports.FormData = ie().FormData, t.exports.File = globalThis.File ?? m("node:buffer").File, t.exports.FileReader = Ke().FileReader;
+	}, t.exports.Headers = Le().Headers, t.exports.Response = Re().Response, t.exports.Request = Be().Request, t.exports.FormData = re().FormData, t.exports.File = globalThis.File ?? m("node:buffer").File, t.exports.FileReader = Ke().FileReader;
 	var { setGlobalOrigin: k, getGlobalOrigin: A } = te();
 	t.exports.setGlobalOrigin = k, t.exports.getGlobalOrigin = A;
 	var { CacheStorage: M } = Xe(), { kConstruct: N } = qe();
@@ -9753,8 +9753,8 @@ ${e.format(t)}
 	t.exports.parseMIMEType = B, t.exports.serializeAMimeType = ee;
 	var { CloseEvent: V, ErrorEvent: U, MessageEvent: W } = tt();
 	t.exports.WebSocket = ut().WebSocket, t.exports.CloseEvent = V, t.exports.ErrorEvent = U, t.exports.MessageEvent = W, t.exports.request = E(p.request), t.exports.stream = E(p.stream), t.exports.pipeline = E(p.pipeline), t.exports.connect = E(p.connect), t.exports.upgrade = E(p.upgrade), t.exports.MockClient = g, t.exports.MockPool = v, t.exports.MockAgent = _, t.exports.mockErrors = y;
-	var { EventSource: ne } = pt();
-	t.exports.EventSource = ne;
+	var { EventSource: G } = pt();
+	t.exports.EventSource = G;
 }));
 E(), mt();
 var ht;
@@ -10458,7 +10458,13 @@ var ln = () => {
 	}
 }, vn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, yn = async (e, t) => {
+}, yn = (e) => {
+	try {
+		return JSON.parse(e);
+	} catch {
+		return;
+	}
+}, bn = async (e, t) => {
 	sn("Checking for drift");
 	try {
 		let n = await mn(e, t);
@@ -10466,60 +10472,77 @@ var ln = () => {
 			let e = gn(n.stdout);
 			if (e?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
 				let r = vn(e.error.htmlReport, t), i = vn(e.error.driftResolutionFolderPath, t);
-				return bn(n.exitCode, !0, r, i), {
-					driftDetected: !0,
-					comparisonSupported: !0
+				return Sn(n.exitCode, !0, r, i), {
+					exitCode: n.exitCode,
+					result: {
+						driftDetected: !0,
+						comparisonSupported: !0,
+						reportPath: r,
+						driftResolutionFolder: i
+					}
 				};
 			}
-			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), bn(0), {
-				driftDetected: !1,
-				comparisonSupported: !1
-			}) : (e?.error?.message && an(e.error.message), bn(n.exitCode), {
-				driftDetected: !1,
-				comparisonSupported: !0
+			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), Sn(0), {
+				exitCode: 0,
+				result: {
+					driftDetected: !1,
+					comparisonSupported: !1
+				}
+			}) : (e?.error?.message && an(e.error.message), Sn(n.exitCode), {
+				exitCode: n.exitCode,
+				result: {
+					driftDetected: !1,
+					comparisonSupported: !0
+				}
 			});
 		}
-		return bn(n.exitCode, !1), {
-			driftDetected: !1,
-			comparisonSupported: !0
+		let r = yn(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		return Sn(n.exitCode, xn(r)), {
+			exitCode: n.exitCode,
+			result: {
+				driftDetected: xn(r),
+				comparisonSupported: !0,
+				reportPath: vn(r?.htmlReport, t),
+				driftResolutionFolder: vn(i?.driftResolutionFolder, t)
+			}
 		};
 	} finally {
 		cn();
 	}
-}, bn = (e, t, n, r) => {
+}, xn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), Sn = (e, t, n, r) => {
 	nn("exit-code", e.toString()), t !== void 0 && nn("drift-detected", t.toString()), n !== void 0 && nn("report-path", n), r !== void 0 && nn("drift-resolution-folder", r);
-}, xn = (e) => {
+}, Cn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
-}, Sn = (e) => [
+}, wn = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...xn(e),
+	...Cn(e),
 	...e.deploymentReportName ? [`-reportFilename=${e.deploymentReportName}`] : []
-], Cn = async (e) => yn(Sn(e), e.workingDirectory), wn = (e) => {
-	let t = ["migrate", ...xn(e)];
+], Tn = async (e) => bn(wn(e), e.workingDirectory), En = (e) => {
+	let t = ["migrate", ...Cn(e)];
 	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), e.baselineOnMigrate && t.push("-baselineOnMigrate=true"), e.saveSnapshot && t.push("-migrate.saveSnapshot=true"), t;
-}, Tn = async (e) => {
+}, Dn = async (e) => {
 	sn("Running migrations");
 	try {
-		let t = await mn(wn(e), e.workingDirectory);
+		let t = await mn(En(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = _n(t.stdout);
 			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), Dn(0);
+				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), kn(0);
 				return;
 			}
-			throw e?.error?.message && an(e.error.message), Dn(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && an(e.error.message), kn(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
 		}
-		let { migrationsApplied: n, schemaVersion: r } = En(t.stdout);
-		Dn(t.exitCode, n, r);
+		let { migrationsApplied: n, schemaVersion: r } = On(t.stdout);
+		kn(t.exitCode, n, r);
 	} finally {
 		cn();
 	}
-}, En = (e) => {
+}, On = (e) => {
 	try {
 		let t = JSON.parse(e);
 		return {
@@ -10532,9 +10555,9 @@ var ln = () => {
 			schemaVersion: "unknown"
 		};
 	}
-}, Dn = (e, t, n) => {
+}, kn = (e, t, n) => {
 	nn("exit-code", e.toString()), t !== void 0 && nn("migrations-applied", t.toString()), n !== void 0 && nn("schema-version", n);
-}, On = () => {
+}, An = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = tn("baseline-on-migrate"), l = tn("skip-drift-check"), u = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10550,7 +10573,7 @@ var ln = () => {
 		extraArgs: en("extra-args") || void 0,
 		deploymentReportName: en("deployment-report-name") || void 0
 	};
-}, kn = (e) => {
+}, jn = (e) => {
 	e.targetPassword && $t(e.targetPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10561,14 +10584,14 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = On();
+		let t = An();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (kn(t), e.edition === "enterprise") if (t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		if (jn(t), e.edition === "enterprise") if (t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
 		else {
-			let { driftDetected: e, comparisonSupported: n } = await Cn(t);
+			let { result: { driftDetected: e, comparisonSupported: n } } = await Tn(t);
 			if (e) {
 				rn("Drift detected. Aborting deployment.");
 				return;
@@ -10576,7 +10599,7 @@ await (async () => {
 			t.saveSnapshot = n;
 		}
 		else on(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		await Tn(t);
+		await Dn(t);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
 	}

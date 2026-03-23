@@ -10580,7 +10580,13 @@ var un = () => {
 	if (n) return On(n, e.workingDirectory);
 }, Fn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, In = async (e, t) => {
+}, In = (e) => {
+	try {
+		return JSON.parse(e);
+	} catch {
+		return;
+	}
+}, Ln = async (e, t) => {
 	cn("Checking for drift");
 	try {
 		let n = await hn(e, t);
@@ -10588,56 +10594,73 @@ var un = () => {
 			let e = _n(n.stdout);
 			if (e?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
 				let r = Fn(e.error.htmlReport, t), i = Fn(e.error.driftResolutionFolderPath, t);
-				return Ln(n.exitCode, !0, r, i), {
-					driftDetected: !0,
-					comparisonSupported: !0
+				return zn(n.exitCode, !0, r, i), {
+					exitCode: n.exitCode,
+					result: {
+						driftDetected: !0,
+						comparisonSupported: !0,
+						reportPath: r,
+						driftResolutionFolder: i
+					}
 				};
 			}
-			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Drift check could not be run because advanced comparison features are not supported for this database type."), Ln(0), {
-				driftDetected: !1,
-				comparisonSupported: !1
-			}) : (e?.error?.message && an(e.error.message), Ln(n.exitCode), {
-				driftDetected: !1,
-				comparisonSupported: !0
+			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Drift check could not be run because advanced comparison features are not supported for this database type."), zn(0), {
+				exitCode: 0,
+				result: {
+					driftDetected: !1,
+					comparisonSupported: !1
+				}
+			}) : (e?.error?.message && an(e.error.message), zn(n.exitCode), {
+				exitCode: n.exitCode,
+				result: {
+					driftDetected: !1,
+					comparisonSupported: !0
+				}
 			});
 		}
-		return Ln(n.exitCode, !1), {
-			driftDetected: !1,
-			comparisonSupported: !0
+		let r = In(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		return zn(n.exitCode, Rn(r)), {
+			exitCode: n.exitCode,
+			result: {
+				driftDetected: Rn(r),
+				comparisonSupported: !0,
+				reportPath: Fn(r?.htmlReport, t),
+				driftResolutionFolder: Fn(i?.driftResolutionFolder, t)
+			}
 		};
 	} finally {
 		ln();
 	}
-}, Ln = (e, t, n, r) => {
+}, Rn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), zn = (e, t, n, r) => {
 	nn("exit-code", e.toString()), t !== void 0 && nn("drift-detected", t.toString()), n !== void 0 && nn("report-path", n), r !== void 0 && nn("drift-resolution-folder", r);
-}, Rn = (e) => [
+}, Bn = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
 	...wn(e),
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], zn = async (e) => In(Rn(e), e.workingDirectory), Bn = (e) => {
+], Vn = async (e) => Ln(Bn(e), e.workingDirectory), Hn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Vn = async (e) => {
+}, Un = async (e) => {
 	cn("Running state-based prepare");
 	try {
 		let t = await hn(Cn(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = vn(t.stdout);
-			throw e?.error?.message && an(e.error.message), Hn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && an(e.error.message), Wn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
 		}
-		let n = Bn(t.stdout);
-		return Hn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
+		let n = Hn(t.stdout);
+		return Wn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
 	} finally {
 		ln();
 	}
-}, Hn = (e, t, n) => {
+}, Wn = (e, t, n) => {
 	nn("exit-code", e.toString()), t && nn("script-path", t), n && nn("undo-script-path", n);
-}, Un = () => {
+}, Gn = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = tn("generate-undo"), o = tn("fail-on-drift"), s = tn("fail-on-code-review"), l = tn("skip-drift-check"), u = tn("skip-code-review"), d = tn("skip-deployment-changes-report"), f = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10657,7 +10680,7 @@ var un = () => {
 		deploymentScriptName: en("deployment-script-name") || void 0,
 		undoScriptName: en("undo-script-name") || void 0
 	};
-}, Wn = (e) => {
+}, Kn = (e) => {
 	e.targetPassword && $t(e.targetPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10672,14 +10695,14 @@ await (async () => {
 			rn(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
 			return;
 		}
-		let t = Un();
+		let t = Gn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (Wn(t), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
+		if (Kn(t), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { driftDetected: e } = await zn(t);
+			let { result: { driftDetected: e } } = await Vn(t);
 			if (e) {
 				if (t.failOnDrift) {
 					rn("Drift detected. Aborting prepare.");
@@ -10689,7 +10712,7 @@ await (async () => {
 			}
 		}
 		await Dn(t, e.edition);
-		let { scriptPath: n } = await Vn(t);
+		let { scriptPath: n } = await Un(t);
 		if (!n) {
 			on("No script path returned from prepare. Skipping code review.");
 			return;
