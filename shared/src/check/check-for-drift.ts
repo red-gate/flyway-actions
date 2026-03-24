@@ -1,25 +1,29 @@
-import type { Drift, FlywayCheckOutput } from "../types.js";
+import type { ErrorOutput } from "../types.js";
 import * as core from "@actions/core";
-import { parseDriftErrorOutput, runFlyway } from "../flyway-runner.js";
+import { parseOutput, runFlyway } from "../flyway-runner.js";
 
-type CheckForDriftOutput = {
-  driftDetected?: boolean;
-  comparisonSupported: boolean;
-  reportPath?: string;
+type DriftItem = {
+  operation?: "drift";
+  onlyInSource?: unknown[];
+  onlyInTarget?: unknown[];
+  differences?: unknown[];
   driftResolutionFolder?: string;
+  driftDetected: boolean;
+  driftCheckSkipped: boolean;
 };
+
+type DriftSuccessOutput = { htmlReport?: string; individualResults?: (DriftItem | { operation?: string })[] };
+
+type DriftErrorOutput = { error?: ErrorOutput["error"] & { htmlReport?: string; driftResolutionFolderPath?: string } };
 
 type CheckForDriftResult = {
   exitCode: number;
-  result: CheckForDriftOutput;
-};
-
-const parseCheckOutput = (stdout: string): FlywayCheckOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as FlywayCheckOutput;
-  } catch {
-    return undefined;
-  }
+  result: {
+    driftDetected?: boolean;
+    comparisonSupported: boolean;
+    reportPath?: string;
+    driftResolutionFolder?: string;
+  };
 };
 
 const checkForDrift = async (args: string[], workingDirectory?: string): Promise<CheckForDriftResult> => {
@@ -28,7 +32,7 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
     const result = await runFlyway(args, workingDirectory);
 
     if (result.exitCode !== 0) {
-      const errorOutput = parseDriftErrorOutput(result.stdout);
+      const errorOutput = parseOutput<DriftErrorOutput>(result.stdout);
       if (errorOutput?.error?.errorCode === "CHECK_DRIFT_DETECTED") {
         return {
           exitCode: result.exitCode,
@@ -50,8 +54,8 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       return { exitCode: result.exitCode, result: { driftDetected: false, comparisonSupported: true } };
     }
 
-    const output = parseCheckOutput(result.stdout);
-    const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
+    const output = parseOutput<DriftSuccessOutput>(result.stdout);
+    const driftResult = output?.individualResults?.find((r): r is DriftItem => r.operation === "drift");
     return {
       exitCode: result.exitCode,
       result: {

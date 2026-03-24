@@ -1,6 +1,7 @@
 import type { FlywayStateDeploymentInputs } from "../types.js";
+import type { ErrorOutput } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
+import { parseOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getDeployArgs = (inputs: FlywayStateDeploymentInputs): string[] => {
@@ -21,7 +22,7 @@ const deploy = async (inputs: FlywayStateDeploymentInputs): Promise<void> => {
     const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseOutput<ErrorOutput>(result.stdout);
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",

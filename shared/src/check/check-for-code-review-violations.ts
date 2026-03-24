@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { runFlyway } from "../flyway-runner.js";
+import { parseOutput, runFlyway } from "../flyway-runner.js";
 
 type CodeResultItem = { violations?: { code?: string }[] };
 
@@ -30,13 +30,13 @@ const checkForCodeReviewViolations = async (
     const result = await runFlyway(args, workingDirectory);
 
     if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseOutput<CodeReviewErrorOutput>(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       const violations = extractViolations(errorOutput?.error?.results ?? []);
       return { exitCode: result.exitCode, result: { reportPath: errorOutput?.error?.htmlReport, ...violations } };
     }
 
-    const output = parseSuccessOutput(result.stdout);
+    const output = parseOutput<CodeReviewSuccessOutput>(result.stdout);
     const codeResults = output?.individualResults?.filter((r) => r.operation === "code");
     const resultItems = codeResults?.flatMap((r) => r.results ?? []) ?? [];
     const violations = extractViolations(resultItems);
@@ -52,22 +52,6 @@ const extractViolations = (results: CodeResultItem[]): { violationCount: number;
     .map((v) => v.code)
     .filter((c): c is string => !!c);
   return { violationCount: codes.length, violationCodes: [...new Set(codes)] };
-};
-
-const parseSuccessOutput = (stdout: string): CodeReviewSuccessOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as CodeReviewSuccessOutput;
-  } catch {
-    return undefined;
-  }
-};
-
-const parseErrorOutput = (stdout: string): CodeReviewErrorOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as CodeReviewErrorOutput;
-  } catch {
-    return undefined;
-  }
 };
 
 export { checkForCodeReviewViolations };

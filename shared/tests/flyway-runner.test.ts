@@ -14,7 +14,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { parseErrorOutput, parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } =
+const { parseOutput, parseExtraArgs, maskArgsForLog, runFlyway, getFlywayDetails } =
   await import("../src/flyway-runner.js");
 
 describe("parseExtraArgs", () => {
@@ -137,35 +137,25 @@ describe("maskArgsForLog", () => {
   });
 });
 
-describe("parseErrorOutput", () => {
-  it("should return the error message from valid error output", () => {
+describe("parseOutput", () => {
+  it("should parse valid JSON", () => {
     const stdout = JSON.stringify({ error: { errorCode: "FAULT", message: "Migration validation failed" } });
 
-    const errorOutput = parseErrorOutput(stdout);
+    const result = parseOutput(stdout);
 
-    expect(errorOutput?.error?.errorCode).toBe("FAULT");
-    expect(errorOutput?.error?.message).toBe("Migration validation failed");
+    expect(result).toEqual({ error: { errorCode: "FAULT", message: "Migration validation failed" } });
   });
 
   it("should return undefined for invalid JSON", () => {
-    expect(parseErrorOutput("not json")).toBeUndefined();
+    expect(parseOutput("not json")).toBeUndefined();
   });
 
-  it("should return undefined when error has no message", () => {
-    const stdout = JSON.stringify({ error: { errorCode: "FAULT" } });
+  it("should parse any JSON structure", () => {
+    const stdout = JSON.stringify({ htmlReport: "report.html", individualResults: [] });
 
-    const errorOutput = parseErrorOutput(stdout);
+    const result = parseOutput(stdout);
 
-    expect(errorOutput?.error?.errorCode).toBe("FAULT");
-    expect(errorOutput?.error?.message).toBeUndefined();
-  });
-
-  it("should return undefined when error field is missing", () => {
-    const stdout = JSON.stringify({ something: "else" });
-
-    const errorOutput = parseErrorOutput(stdout);
-
-    expect(errorOutput?.error).toBeUndefined();
+    expect(result).toEqual({ htmlReport: "report.html", individualResults: [] });
   });
 });
 

@@ -1,6 +1,7 @@
 import type { FlywayMigrationsUndoInputs, FlywayUndoOutput } from "../types.js";
+import type { ErrorOutput } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
+import { parseOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
 import { getCommonArgs } from "./arg-builders.js";
 
 const getUndoArgs = (inputs: FlywayMigrationsUndoInputs): string[] => {
@@ -24,7 +25,7 @@ const undo = async (inputs: FlywayMigrationsUndoInputs): Promise<void> => {
     const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseOutput<ErrorOutput>(result.stdout);
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
@@ -45,12 +46,8 @@ const undo = async (inputs: FlywayMigrationsUndoInputs): Promise<void> => {
 };
 
 const parseFlywayOutput = (stdout: string): { migrationsUndone: number; schemaVersion: string } => {
-  try {
-    const json = JSON.parse(stdout) as FlywayUndoOutput;
-    return { migrationsUndone: json.migrationsUndone ?? 0, schemaVersion: json.targetSchemaVersion ?? "unknown" };
-  } catch {
-    return { migrationsUndone: 0, schemaVersion: "unknown" };
-  }
+  const json = parseOutput<FlywayUndoOutput>(stdout);
+  return { migrationsUndone: json?.migrationsUndone ?? 0, schemaVersion: json?.targetSchemaVersion ?? "unknown" };
 };
 
 const setOutput = (exitCode: number, migrationsUndone?: number, schemaVersion?: string) => {

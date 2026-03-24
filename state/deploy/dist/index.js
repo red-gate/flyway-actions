@@ -10450,19 +10450,7 @@ var ln = () => {
 	} catch {
 		return;
 	}
-}, _n = (e) => {
-	try {
-		return JSON.parse(e);
-	} catch {
-		return;
-	}
-}, vn = (e) => {
-	try {
-		return JSON.parse(e);
-	} catch {
-		return;
-	}
-}, yn = async (e, t) => {
+}, _n = async (e, t) => {
 	sn("Checking for drift");
 	try {
 		let n = await mn(e, t);
@@ -10487,7 +10475,7 @@ var ln = () => {
 				}
 			});
 		}
-		let r = vn(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		let r = gn(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
 		return {
 			exitCode: n.exitCode,
 			result: {
@@ -10500,47 +10488,47 @@ var ln = () => {
 	} finally {
 		cn();
 	}
-}, bn = (e, t) => {
+}, vn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, xn = (e) => {
+}, yn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
-}, Sn = (e) => [
+}, bn = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...xn(e),
+	...yn(e),
 	...e.deploymentReportName ? [`-reportFilename=${e.deploymentReportName}`] : []
-], Cn = async (e) => {
-	let { exitCode: t, result: n } = await yn(Sn(e), e.workingDirectory), r = bn(n.reportPath, e.workingDirectory), i = bn(n.driftResolutionFolder, e.workingDirectory);
+], xn = async (e) => {
+	let { exitCode: t, result: n } = await _n(bn(e), e.workingDirectory), r = vn(n.reportPath, e.workingDirectory), i = vn(n.driftResolutionFolder, e.workingDirectory);
 	return nn("exit-code", t.toString()), n.driftDetected !== void 0 && nn("drift-detected", n.driftDetected.toString()), r !== void 0 && nn("report-path", r), i !== void 0 && nn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, wn = (e) => {
-	let t = ["deploy", ...xn(e)];
+}, Sn = (e) => {
+	let t = ["deploy", ...yn(e)];
 	return e.scriptPath && t.push(`-deploy.scriptFilename=${e.scriptPath}`), e.saveSnapshot && t.push("-deploy.saveSnapshot=true"), t;
-}, Tn = async (e) => {
+}, Cn = async (e) => {
 	sn("Running state-based deployment");
 	try {
-		let t = await mn(wn(e), e.workingDirectory);
+		let t = await mn(Sn(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
-			let e = _n(t.stdout);
+			let e = gn(t.stdout);
 			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), En(0);
+				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), wn(0);
 				return;
 			}
-			throw e?.error?.message && an(e.error.message), En(t.exitCode), Error(`Flyway deploy failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && an(e.error.message), wn(t.exitCode), Error(`Flyway deploy failed with exit code ${t.exitCode}`);
 		}
-		En(t.exitCode);
+		wn(t.exitCode);
 	} finally {
 		cn();
 	}
-}, En = (e) => {
+}, wn = (e) => {
 	nn("exit-code", e.toString());
-}, Dn = () => {
+}, Tn = () => {
 	let e = en("script-path") || void 0, t = en("target-environment") || void 0, n = en("target-url") || void 0, r = en("target-user") || void 0, i = en("target-password") || void 0, a = en("target-schemas") || void 0, o = tn("skip-drift-check"), s = en("working-directory");
 	return {
 		scriptPath: e,
@@ -10554,7 +10542,7 @@ var ln = () => {
 		extraArgs: en("extra-args") || void 0,
 		deploymentReportName: en("deployment-report-name") || void 0
 	};
-}, On = (e) => {
+}, En = (e) => {
 	e.targetPassword && $t(e.targetPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10569,21 +10557,21 @@ await (async () => {
 			rn(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
 			return;
 		}
-		let t = Dn();
+		let t = Tn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (On(t), t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		if (En(t), t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
 		else {
-			let { result: { driftDetected: e, comparisonSupported: n } } = await Cn(t);
+			let { result: { driftDetected: e, comparisonSupported: n } } = await xn(t);
 			if (e) {
 				rn("Drift detected. Aborting deployment.");
 				return;
 			}
 			t.saveSnapshot = n;
 		}
-		await Tn(t);
+		await Cn(t);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
 	}

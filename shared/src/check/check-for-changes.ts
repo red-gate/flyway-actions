@@ -1,9 +1,15 @@
+import type { ErrorOutput } from "../types.js";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "../flyway-runner.js";
+import { parseOutput, runFlyway } from "../flyway-runner.js";
 
-type Changes = { operation?: "changes"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
+type ChangeItem = {
+  operation?: "changes";
+  onlyInSource?: unknown[];
+  onlyInTarget?: unknown[];
+  differences?: unknown[];
+};
 
-type CheckChangesOutput = { htmlReport?: string; individualResults?: (Changes & { operation?: string })[] };
+type CheckChangesOutput = { htmlReport?: string; individualResults?: (ChangeItem & { operation?: string })[] };
 
 type CheckForChangesResult = {
   exitCode: number;
@@ -11,14 +17,6 @@ type CheckForChangesResult = {
     reportPath?: string;
     changedObjectCount: number;
   };
-};
-
-const parseOutput = (stdout: string): CheckChangesOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as CheckChangesOutput;
-  } catch {
-    return undefined;
-  }
 };
 
 const checkForChanges = async (
@@ -31,7 +29,7 @@ const checkForChanges = async (
     const result = await runFlyway(args, workingDirectory);
 
     if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseOutput<ErrorOutput>(result.stdout);
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
@@ -48,7 +46,7 @@ const checkForChanges = async (
       return { exitCode: result.exitCode };
     }
 
-    const output = parseOutput(result.stdout);
+    const output = parseOutput<CheckChangesOutput>(result.stdout);
 
     return {
       exitCode: result.exitCode,
@@ -60,7 +58,7 @@ const checkForChanges = async (
 };
 
 const countChangedObjects = (output: CheckChangesOutput | undefined): number => {
-  const changesResults = output?.individualResults?.filter((r): r is Changes => r.operation === "changes");
+  const changesResults = output?.individualResults?.filter((r): r is ChangeItem => r.operation === "changes");
   if (!changesResults?.length) {
     return 0;
   }

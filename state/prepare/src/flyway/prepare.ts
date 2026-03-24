@@ -1,19 +1,12 @@
 import type { FlywayStatePrepareInputs } from "../types.js";
+import type { ErrorOutput } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
-import { parseErrorOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
+import { parseOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
 import { getPrepareArgs } from "./arg-builders.js";
 
 type PrepareOutput = {
   scriptFilename?: string;
   undoFilename?: string;
-};
-
-const parsePrepareOutput = (stdout: string): PrepareOutput | undefined => {
-  try {
-    return JSON.parse(stdout) as PrepareOutput;
-  } catch {
-    return undefined;
-  }
 };
 
 type PrepareResult = {
@@ -27,13 +20,13 @@ const prepare = async (inputs: FlywayStatePrepareInputs): Promise<PrepareResult>
     const result = await runFlyway(args, inputs.workingDirectory);
 
     if (result.exitCode !== 0) {
-      const errorOutput = parseErrorOutput(result.stdout);
+      const errorOutput = parseOutput<ErrorOutput>(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       setOutput(result.exitCode);
       throw new Error(`Flyway prepare failed with exit code ${result.exitCode}`);
     }
 
-    const output = parsePrepareOutput(result.stdout);
+    const output = parseOutput<PrepareOutput>(result.stdout);
     setOutput(result.exitCode, output?.scriptFilename, output?.undoFilename);
     return { scriptPath: output?.scriptFilename };
   } finally {
