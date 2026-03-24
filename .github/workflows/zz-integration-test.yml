@@ -67,15 +67,15 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-projects/sqlite
-          pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
+          pre-deployment-report-name: migrations-checks-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Download report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-pre-deployment-report-${{ matrix.os }}.html
+          name: migrations-checks-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s flyway-pre-deployment-report-${{ matrix.os }}.html
+        run: test -s migrations-checks-pre-deployment-report-${{ matrix.os }}.html
       - name: Test outputs
         shell: bash
         run: |
@@ -128,9 +128,9 @@ jobs:
           target-url: jdbc:sqlite:database/drift.db
           fail-on-code-review: 'false'
           working-directory: sample-projects/sqlite
-          pre-deployment-report-name: flyway-drift-report-fail-true-${{ matrix.os }}
+          pre-deployment-report-name: migrations-checks-fail-on-drift-true-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
-          drift-resolution-scripts-name: flyway-drift-resolution-scripts-fail-true-${{ matrix.os }}
+          drift-resolution-scripts-name: migrations-checks-fail-on-drift-true-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
       - name: Verify checks failed due to drift
         shell: bash
@@ -138,14 +138,14 @@ jobs:
       - name: Download report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-drift-report-fail-true-${{ matrix.os }}.html
+          name: migrations-checks-fail-on-drift-true-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s flyway-drift-report-fail-true-${{ matrix.os }}.html
+        run: test -s migrations-checks-fail-on-drift-true-pre-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
-          name: flyway-drift-resolution-scripts-fail-true-${{ matrix.os }}
+          name: migrations-checks-fail-on-drift-true-drift-resolution-scripts-${{ matrix.os }}
       - name: Verify drift resolution scripts exist
         shell: bash
         run: test -n "$(find . -maxdepth 1 -name '*.sql')"
@@ -195,21 +195,21 @@ jobs:
           fail-on-drift: 'false'
           fail-on-code-review: 'false'
           working-directory: sample-projects/sqlite
-          pre-deployment-report-name: flyway-drift-report-fail-false-${{ matrix.os }}
+          pre-deployment-report-name: migrations-checks-fail-on-drift-false-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
-          drift-resolution-scripts-name: flyway-drift-resolution-scripts-fail-false-${{ matrix.os }}
+          drift-resolution-scripts-name: migrations-checks-fail-on-drift-false-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
       - name: Download report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-drift-report-fail-false-${{ matrix.os }}.html
+          name: migrations-checks-fail-on-drift-false-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s flyway-drift-report-fail-false-${{ matrix.os }}.html
+        run: test -s migrations-checks-fail-on-drift-false-pre-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
-          name: flyway-drift-resolution-scripts-fail-false-${{ matrix.os }}
+          name: migrations-checks-fail-on-drift-false-drift-resolution-scripts-${{ matrix.os }}
       - name: Verify drift resolution scripts exist
         shell: bash
         run: test -n "$(find . -maxdepth 1 -name '*.sql')"
@@ -308,7 +308,7 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
-          deployment-report-name: flyway-deployment-report-no-drift-${{ matrix.os }}
+          deployment-report-name: migrations-deploy-no-drift-deployment-report-${{ matrix.os }}
       - name: Test outputs
         shell: bash
         run: |
@@ -358,9 +358,9 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-projects/sqlite
-          deployment-report-name: flyway-deploy-deployment-report-${{ matrix.os }}
+          deployment-report-name: migrations-deploy-drift-deployment-report-${{ matrix.os }}
           deployment-report-retention-days: '1'
-          drift-resolution-scripts-name: flyway-deploy-drift-resolution-scripts-${{ matrix.os }}
+          drift-resolution-scripts-name: migrations-deploy-drift-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
       - name: Verify deploy failed due to drift
         shell: bash
@@ -368,14 +368,14 @@ jobs:
       - name: Download deployment report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-deploy-deployment-report-${{ matrix.os }}.html
+          name: migrations-deploy-drift-deployment-report-${{ matrix.os }}.html
       - name: Verify deployment report exists
         shell: bash
-        run: test -s flyway-deploy-deployment-report-${{ matrix.os }}.html
+        run: test -s migrations-deploy-drift-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
-          name: flyway-deploy-drift-resolution-scripts-${{ matrix.os }}
+          name: migrations-deploy-drift-drift-resolution-scripts-${{ matrix.os }}
       - name: Verify drift resolution scripts exist
         shell: bash
         run: test -n "$(find . -maxdepth 1 -name '*.sql')"
@@ -427,7 +427,7 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/undo.db
           working-directory: sample-projects/sqlite
-          undo-report-name: flyway-undo-report-no-drift-${{ matrix.os }}
+          undo-report-name: migrations-undo-no-drift-undo-report-${{ matrix.os }}
       - name: Test outputs
         shell: bash
         run: |
@@ -477,21 +477,21 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-projects/sqlite
-          undo-report-name: flyway-undo-report-${{ matrix.os }}
+          undo-report-name: migrations-undo-drift-undo-report-${{ matrix.os }}
           undo-report-retention-days: '1'
-          drift-resolution-scripts-name: flyway-undo-drift-resolution-${{ matrix.os }}
+          drift-resolution-scripts-name: migrations-undo-drift-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
       - name: Download undo report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-undo-report-${{ matrix.os }}.html
+          name: migrations-undo-drift-undo-report-${{ matrix.os }}.html
       - name: Verify undo report exists
         shell: bash
-        run: test -s flyway-undo-report-${{ matrix.os }}.html
+        run: test -s migrations-undo-drift-undo-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
-          name: flyway-undo-drift-resolution-${{ matrix.os }}
+          name: migrations-undo-drift-drift-resolution-scripts-${{ matrix.os }}
       - name: Verify drift resolution scripts exist
         shell: bash
         run: test -n "$(find . -maxdepth 1 -name '*.sql')"
@@ -548,9 +548,9 @@ jobs:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
           skip-code-review: 'true'
-          pre-deployment-report-name: flyway-pre-deployment-report-no-drift-${{ matrix.os }}
-          deployment-script-name: flyway-deployment-script-${{ matrix.os }}
-          undo-script-name: flyway-undo-script-${{ matrix.os }}
+          pre-deployment-report-name: state-prepare-no-drift-pre-deployment-report-${{ matrix.os }}
+          deployment-script-name: state-prepare-no-drift-deployment-script-${{ matrix.os }}
+          undo-script-name: state-prepare-no-drift-undo-script-${{ matrix.os }}
           deployment-script-retention-days: '1'
       - name: Test prepare outputs
         shell: bash
@@ -561,23 +561,23 @@ jobs:
           echo "Undo script path: ${{ steps.prepare.outputs.undo-script-path }}"
           echo "Changed object count: ${{ steps.prepare.outputs.changed-object-count }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "0"
-          [[ "${{ steps.prepare.outputs.script-path }}" == *flyway-deployment-script-${{ matrix.os }}.sql ]]
-          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *flyway-undo-script-${{ matrix.os }}.sql ]]
+          [[ "${{ steps.prepare.outputs.script-path }}" == *state-prepare-no-drift-deployment-script-${{ matrix.os }}.sql ]]
+          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *state-prepare-no-drift-undo-script-${{ matrix.os }}.sql ]]
           test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
       - name: Download deployment script
         uses: actions/download-artifact@v8
         with:
-          name: flyway-deployment-script-${{ matrix.os }}.sql
+          name: state-prepare-no-drift-deployment-script-${{ matrix.os }}.sql
       - name: Verify deployment script exists
         shell: bash
-        run: test -s flyway-deployment-script-${{ matrix.os }}.sql
+        run: test -s state-prepare-no-drift-deployment-script-${{ matrix.os }}.sql
       - name: Download undo script
         uses: actions/download-artifact@v8
         with:
-          name: flyway-undo-script-${{ matrix.os }}.sql
+          name: state-prepare-no-drift-undo-script-${{ matrix.os }}.sql
       - name: Verify undo script exists
         shell: bash
-        run: test -s flyway-undo-script-${{ matrix.os }}.sql
+        run: test -s state-prepare-no-drift-undo-script-${{ matrix.os }}.sql
 
   state-prepare-drift:
     strategy:
@@ -617,22 +617,22 @@ jobs:
           target-url: jdbc:sqlite:../sqlite/database/drift.db
           working-directory: sample-projects/sqlite-state
           skip-code-review: 'true'
-          pre-deployment-report-name: flyway-state-prepare-pre-deployment-report-${{ matrix.os }}
+          pre-deployment-report-name: state-prepare-drift-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
-          drift-resolution-scripts-name: flyway-state-prepare-drift-resolution-${{ matrix.os }}
+          drift-resolution-scripts-name: state-prepare-drift-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
           skip-deployment-script-upload: 'true'
       - name: Download pre deployment report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-state-prepare-pre-deployment-report-${{ matrix.os }}.html
+          name: state-prepare-drift-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify pre-deployment report exists
         shell: bash
-        run: test -s flyway-state-prepare-pre-deployment-report-${{ matrix.os }}.html
+        run: test -s state-prepare-drift-pre-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
-          name: flyway-state-prepare-drift-resolution-${{ matrix.os }}
+          name: state-prepare-drift-drift-resolution-scripts-${{ matrix.os }}
       - name: Verify drift resolution scripts exist
         shell: bash
         run: test -n "$(find . -maxdepth 1 -name '*.sql')"
@@ -739,7 +739,7 @@ jobs:
           target-url: jdbc:sqlite:state-target.db
           script-path: deployments/D__deployment.sql
           working-directory: sample-projects/sqlite
-          deployment-report-name: flyway-deployment-report-no-drift-state-${{ matrix.os }}
+          deployment-report-name: state-deploy-no-drift-deployment-report-${{ matrix.os }}
       - name: Test outputs
         shell: bash
         run: |
@@ -784,21 +784,21 @@ jobs:
           target-url: jdbc:sqlite:database/drift.db
           script-path: deployments/D__deployment.sql
           working-directory: sample-projects/sqlite
-          deployment-report-name: flyway-state-deploy-deployment-report-${{ matrix.os }}
+          deployment-report-name: state-deploy-drift-deployment-report-${{ matrix.os }}
           deployment-report-retention-days: '1'
-          drift-resolution-scripts-name: flyway-state-deploy-drift-resolution-${{ matrix.os }}
+          drift-resolution-scripts-name: state-deploy-drift-drift-resolution-scripts-${{ matrix.os }}
           drift-resolution-scripts-retention-days: '1'
       - name: Download deployment report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-state-deploy-deployment-report-${{ matrix.os }}.html
+          name: state-deploy-drift-deployment-report-${{ matrix.os }}.html
       - name: Verify deployment report exists
         shell: bash
-        run: test -s flyway-state-deploy-deployment-report-${{ matrix.os }}.html
+        run: test -s state-deploy-drift-deployment-report-${{ matrix.os }}.html
       - name: Download drift resolution scripts
         uses: actions/download-artifact@v8
         with:
-          name: flyway-state-deploy-drift-resolution-${{ matrix.os }}
+          name: state-deploy-drift-drift-resolution-scripts-${{ matrix.os }}
       - name: Verify drift resolution scripts exist
         shell: bash
         run: test -n "$(find . -maxdepth 1 -name '*.sql')"
