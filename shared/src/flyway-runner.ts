@@ -52,7 +52,7 @@ const maskArgsForLog = (args: string[]): string[] => {
 const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult> => {
   const { listeners, getOutput } = createStdoutStderrListeners();
   const jsonStderrListener = createJsonStderrListener();
-  const argsWithJson = [...args, "-outputType=json", "-outputLogsInJson=true"];
+  const argsWithJson = [...args, "-outputType=json", "-outputLogsInJson=true", "-skipCheckForUpdate"];
 
   core.info(`Running: flyway ${maskArgsForLog(argsWithJson).join(" ")}`);
 
@@ -74,7 +74,10 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
 const getFlywayDetails = async (): Promise<FlywayDetails> => {
   const { listener, getOutput } = createStdoutListener();
   try {
-    await exec.exec("flyway", ["version", "-outputType=json"], { silent: true, listeners: { stdout: listener } });
+    await exec.exec("flyway", ["version", "-outputType=json", "-skipCheckForUpdate"], {
+      silent: true,
+      listeners: { stdout: listener },
+    });
 
     const result = JSON.parse(getOutput()) as FlywayVersionOutput;
     return { installed: true, edition: (result.edition?.toLowerCase() as FlywayEdition) ?? "community" };

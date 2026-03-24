@@ -167,7 +167,7 @@ describe("runFlyway", () => {
 
     expect(exec).toHaveBeenCalledWith(
       "flyway",
-      ["migrate", "-url=jdbc:sqlite:test.db", "-outputType=json", "-outputLogsInJson=true"],
+      ["migrate", "-url=jdbc:sqlite:test.db", "-outputType=json", "-outputLogsInJson=true", "-skipCheckForUpdate"],
       expect.any(Object),
     );
   });
@@ -298,6 +298,10 @@ describe("getFlywayDetails", () => {
 
     await getFlywayDetails();
 
-    expect(exec).toHaveBeenCalledWith("flyway", ["version", "-outputType=json"], expect.any(Object));
+    expect(exec).toHaveBeenCalledWith(
+      "flyway",
+      ["version", "-outputType=json", "-skipCheckForUpdate"],
+      expect.any(Object),
+    );
   });
 });
