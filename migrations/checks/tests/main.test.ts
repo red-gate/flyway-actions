@@ -139,7 +139,7 @@ describe("run", () => {
 
   it("should set outputs from each check's JSON response", async () => {
     const driftOutput = JSON.stringify({
-      individualResults: [{ operation: "drift", differences: [{ name: "Table_1" }] }],
+      individualResults: [{ operation: "drift", driftDetected: true, differences: [{ name: "Table_1" }] }],
     });
     const codeOutput = JSON.stringify({
       individualResults: [{ operation: "code", results: [{ violations: [{ code: "RG06" }] }] }],

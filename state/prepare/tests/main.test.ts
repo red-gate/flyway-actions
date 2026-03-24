@@ -234,6 +234,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
+      driftOutput: { individualResults: [{ operation: "drift", driftDetected: false }] },
       codeReviewExitCode: 0,
       prepareExitCode: 0,
       prepareOutput: { scriptFilename: "deployments/D__deployment.sql" },

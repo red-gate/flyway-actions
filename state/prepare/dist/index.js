@@ -10625,7 +10625,7 @@ var un = () => {
 		return {
 			exitCode: n.exitCode,
 			result: {
-				driftDetected: In(r),
+				driftDetected: i?.driftDetected,
 				comparisonSupported: !0,
 				reportPath: r?.htmlReport,
 				driftResolutionFolder: i?.driftResolutionFolder
@@ -10634,42 +10634,42 @@ var un = () => {
 	} finally {
 		ln();
 	}
-}, In = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), Ln = (e, t) => {
+}, In = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, Rn = (e) => [
+}, Ln = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
 	...wn(e),
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], zn = async (e) => {
-	let { exitCode: t, result: n } = await Fn(Rn(e), e.workingDirectory), r = Ln(n.reportPath, e.workingDirectory), i = Ln(n.driftResolutionFolder, e.workingDirectory);
+], Rn = async (e) => {
+	let { exitCode: t, result: n } = await Fn(Ln(e), e.workingDirectory), r = In(n.reportPath, e.workingDirectory), i = In(n.driftResolutionFolder, e.workingDirectory);
 	return nn("exit-code", t.toString()), n.driftDetected !== void 0 && nn("drift-detected", n.driftDetected.toString()), r !== void 0 && nn("report-path", r), i !== void 0 && nn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, Bn = (e) => {
+}, zn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Vn = async (e) => {
+}, Bn = async (e) => {
 	cn("Running state-based prepare");
 	try {
 		let t = await hn(Cn(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = vn(t.stdout);
-			throw e?.error?.message && an(e.error.message), Hn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && an(e.error.message), Vn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
 		}
-		let n = Bn(t.stdout);
-		return Hn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
+		let n = zn(t.stdout);
+		return Vn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
 	} finally {
 		ln();
 	}
-}, Hn = (e, t, n) => {
+}, Vn = (e, t, n) => {
 	nn("exit-code", e.toString()), t && nn("script-path", t), n && nn("undo-script-path", n);
-}, Un = () => {
+}, Hn = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = tn("generate-undo"), o = tn("fail-on-drift"), s = tn("fail-on-code-review"), l = tn("skip-drift-check"), u = tn("skip-code-review"), d = tn("skip-deployment-changes-report"), f = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10689,7 +10689,7 @@ var un = () => {
 		deploymentScriptName: en("deployment-script-name") || void 0,
 		undoScriptName: en("undo-script-name") || void 0
 	};
-}, Wn = (e) => {
+}, Un = (e) => {
 	e.targetPassword && $t(e.targetPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10704,14 +10704,14 @@ await (async () => {
 			rn(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
 			return;
 		}
-		let t = Un();
+		let t = Hn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (Wn(t), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
+		if (Un(t), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e } } = await zn(t);
+			let { result: { driftDetected: e } } = await Rn(t);
 			if (e) {
 				if (t.failOnDrift) {
 					rn("Drift detected. Aborting prepare.");
@@ -10721,7 +10721,7 @@ await (async () => {
 			}
 		}
 		await Dn(t, e.edition);
-		let { scriptPath: n } = await Vn(t);
+		let { scriptPath: n } = await Bn(t);
 		if (!n) {
 			on("No script path returned from prepare. Skipping code review.");
 			return;

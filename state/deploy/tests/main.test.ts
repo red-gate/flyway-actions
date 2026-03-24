@@ -220,6 +220,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
+      driftOutput: { individualResults: [{ operation: "drift", driftDetected: false }] },
       deployExitCode: 0,
     });
     getInput.mockImplementation((name: string) => {

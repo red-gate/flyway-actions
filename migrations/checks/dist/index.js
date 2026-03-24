@@ -10627,7 +10627,7 @@ var ln = () => {
 		return {
 			exitCode: n.exitCode,
 			result: {
-				driftDetected: Rn(r),
+				driftDetected: i?.driftDetected,
 				comparisonSupported: !0,
 				reportPath: r?.htmlReport,
 				driftResolutionFolder: i?.driftResolutionFolder
@@ -10636,7 +10636,7 @@ var ln = () => {
 	} finally {
 		cn();
 	}
-}, Rn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), zn = (e, t) => {
+}, Rn = (e, t) => {
 	if (t !== "enterprise") {
 		on(`Skipping drift check: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
@@ -10651,21 +10651,21 @@ var ln = () => {
 		...Tn(e),
 		...e.failOnDrift ? ["-check.failOnDrift=true"] : []
 	];
-}, Bn = async (e, t) => {
-	let n = zn(e, t);
+}, zn = async (e, t) => {
+	let n = Rn(e, t);
 	if (!n) return;
 	let { exitCode: r, result: i } = await Ln(n, e.workingDirectory), a = vn(i.driftResolutionFolder, e.workingDirectory);
 	return (i.driftDetected || r === 0 && i.comparisonSupported && i.driftDetected !== void 0) && (nn("drift-detected", i.driftDetected.toString()), a !== void 0 && nn("drift-resolution-folder", a)), {
 		exitCode: r,
 		reportPath: i.reportPath
 	};
-}, Vn = (e) => {
+}, Bn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Hn = (e, t) => {
+}, Vn = (e, t) => {
 	if (t === "community") {
 		on("Skipping deployment script review: not available in Community edition");
 		return;
@@ -10679,8 +10679,8 @@ var ln = () => {
 		"-dryrun",
 		...wn(e)
 	];
-}, Un = async (e, t) => {
-	let n = Hn(e, t);
+}, Hn = async (e, t) => {
+	let n = Vn(e, t);
 	if (n) {
 		sn("Running Flyway check: deployment script review");
 		try {
@@ -10689,7 +10689,7 @@ var ln = () => {
 				let e = _n(t.stdout);
 				return e?.error?.message && an(e.error.message), { exitCode: t.exitCode };
 			}
-			let r = Vn(t.stdout);
+			let r = Bn(t.stdout);
 			return {
 				exitCode: t.exitCode,
 				reportPath: r?.htmlReport
@@ -10698,17 +10698,17 @@ var ln = () => {
 			cn();
 		}
 	}
-}, Wn = async (e, t) => {
+}, Un = async (e, t) => {
 	let n = [
-		await Un(e, t),
+		await Hn(e, t),
 		await Fn(e),
-		await Bn(e, t),
+		await zn(e, t),
 		await kn(e, t)
 	], r = n.find((e) => e?.reportPath)?.reportPath;
 	nn("report-path", vn(r ?? "report.html", e.workingDirectory));
 	let i = n.find((e) => e !== void 0 && e.exitCode !== 0);
 	if (nn("exit-code", (i?.exitCode ?? 0).toString()), i) throw Error("Flyway checks failed");
-}, Gn = () => {
+}, Wn = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = en("build-environment") || void 0, l = en("build-url") || void 0, u = en("build-user") || void 0, d = en("build-password") || void 0, f = en("build-schemas") || void 0, p = tn("build-ok-to-erase"), m = tn("skip-code-review"), h = tn("skip-drift-check"), g = tn("skip-deployment-changes-report"), _ = tn("skip-deployment-script-review"), v = tn("fail-on-code-review"), y = tn("fail-on-drift"), b = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10734,7 +10734,7 @@ var ln = () => {
 		preDeploymentReportName: en("pre-deployment-report-name") || void 0,
 		extraArgs: en("extra-args") || void 0
 	};
-}, Kn = (e) => {
+}, Gn = (e) => {
 	e.targetPassword && $t(e.targetPassword), e.buildPassword && $t(e.buildPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10745,12 +10745,12 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Gn();
+		let t = Wn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		Kn(t), await Wn(t, e.edition);
+		Gn(t), await Un(t, e.edition);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
 	}

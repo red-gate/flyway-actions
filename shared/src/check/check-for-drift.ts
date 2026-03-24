@@ -55,7 +55,7 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
     return {
       exitCode: result.exitCode,
       result: {
-        driftDetected: isDriftDetected(output),
+        driftDetected: driftResult?.driftDetected,
         comparisonSupported: true,
         reportPath: output?.htmlReport,
         driftResolutionFolder: driftResult?.driftResolutionFolder,
@@ -65,11 +65,6 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
     core.endGroup();
   }
 };
-
-const isDriftDetected = (output: FlywayCheckOutput | undefined): boolean =>
-  !!output?.individualResults
-    ?.filter((r): r is Drift => r.operation === "drift")
-    .some((r) => r.onlyInSource?.length || r.onlyInTarget?.length || r.differences?.length);
 
 export { checkForDrift };
 export type { CheckForDriftResult };
