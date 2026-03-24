@@ -1,6 +1,5 @@
 import { mockExec } from "../../src/test-utils.js";
 
-const setOutput = vi.fn();
 const error = vi.fn();
 const exec = vi.fn();
 
@@ -9,7 +8,6 @@ vi.doMock("@actions/core", () => ({
   error,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
-  setOutput,
 }));
 
 vi.doMock("@actions/exec", () => ({
@@ -31,8 +29,6 @@ describe("checkForCodeReviewViolations", () => {
     const result = await checkForCodeReviewViolations(["code"]);
 
     expect(result).toEqual(expect.objectContaining({ exitCode: 0, result: { violationCount: 0, violationCodes: [] } }));
-    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "0");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "");
   });
 
   it("should count violations and extract unique codes on success", async () => {
@@ -60,8 +56,6 @@ describe("checkForCodeReviewViolations", () => {
         violationCodes: ["AM04", "RG06"],
       },
     });
-    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "3");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "AM04,RG06");
   });
 
   it("should parse violations from error output on failure", async () => {
@@ -90,8 +84,6 @@ describe("checkForCodeReviewViolations", () => {
       },
     });
     expect(error).toHaveBeenCalledWith("Code Analysis Violation(s) detected");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "1");
-    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "AM04");
   });
 
   it("should handle error output without results", async () => {

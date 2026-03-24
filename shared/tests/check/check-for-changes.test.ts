@@ -1,6 +1,5 @@
 import { mockExec } from "../../src/test-utils.js";
 
-const setOutput = vi.fn();
 const info = vi.fn();
 const coreError = vi.fn();
 const exec = vi.fn();
@@ -10,7 +9,6 @@ vi.doMock("@actions/core", () => ({
   error: coreError,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
-  setOutput,
 }));
 
 vi.doMock("@actions/exec", () => ({
@@ -20,7 +18,7 @@ vi.doMock("@actions/exec", () => ({
 const { checkForChanges } = await import("../../src/check/check-for-changes.js");
 
 describe("checkForChanges", () => {
-  it("should return zero changes and set outputs when exit code is 0 with no changes", async () => {
+  it("should return zero changes when exit code is 0 with no changes", async () => {
     exec.mockImplementation(
       mockExec({
         stdout: { individualResults: [{ operation: "changes" }] },
@@ -29,8 +27,7 @@ describe("checkForChanges", () => {
 
     const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
 
-    expect(result).toEqual({ exitCode: 0, reportPath: undefined });
-    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "0");
+    expect(result).toEqual({ exitCode: 0, result: { changedObjectCount: 0 } });
   });
 
   it("should count changed objects from results", async () => {
@@ -49,9 +46,9 @@ describe("checkForChanges", () => {
       }),
     );
 
-    await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
+    const { result } = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
 
-    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "4");
+    expect(result.changedObjectCount).toBe(4);
   });
 
   it("should return report path from successful output", async () => {
@@ -64,7 +61,7 @@ describe("checkForChanges", () => {
       }),
     );
 
-    const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
+    const { result } = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
 
     expect(result.reportPath).toBe("/tmp/changes-report.html");
   });
@@ -85,13 +82,12 @@ describe("checkForChanges", () => {
     const result = await checkForChanges(["check", "-changes", "-url=jdbc:h2:mem:test"]);
 
     expect(result).toEqual({ exitCode: 0 });
-    expect(setOutput).not.toHaveBeenCalled();
     expect(info).toHaveBeenCalledWith(
       "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
     );
   });
 
-  it("should return zero changes on non-comparison error", async () => {
+  it("should not return result on non-comparison error", async () => {
     exec.mockImplementation(
       mockExec({
         stdout: { error: { errorCode: "FAULT", message: "Something went wrong" } },
@@ -102,7 +98,6 @@ describe("checkForChanges", () => {
     const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
 
     expect(result).toEqual({ exitCode: 1 });
-    expect(setOutput).not.toHaveBeenCalled();
   });
 
   it("should show build database warning for CHECK_BUILD_NO_PROVISIONER when warnAboutBuildDatabase is true", async () => {

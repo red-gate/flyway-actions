@@ -1,10 +1,11 @@
 const info = vi.fn();
+const setOutput = vi.fn();
 const checkForCodeReviewViolations = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
   error: vi.fn(),
-  setOutput: vi.fn(),
+  setOutput,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -118,5 +119,17 @@ describe("runCheckCode", () => {
     const args = checkForCodeReviewViolations.mock.calls[0][0] as string[];
 
     expect(args).toEqual(["check", "-code", "-check.scope=script", "-check.scriptFilename=V001__create.sql"]);
+  });
+
+  it("should set code-violation-count and code-violation-codes outputs", async () => {
+    checkForCodeReviewViolations.mockResolvedValue({
+      exitCode: 0,
+      result: { violationCount: 3, violationCodes: ["AM04", "RG06"] },
+    });
+
+    await runCheckCode({}, "V001__create.sql");
+
+    expect(setOutput).toHaveBeenCalledWith("code-violation-count", "3");
+    expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "AM04,RG06");
   });
 });

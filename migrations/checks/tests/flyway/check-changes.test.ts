@@ -1,10 +1,11 @@
 const info = vi.fn();
+const setOutput = vi.fn();
 const checkForChanges = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
   error: vi.fn(),
-  setOutput: vi.fn(),
+  setOutput,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -17,7 +18,7 @@ const { runCheckChanges } = await import("../../src/flyway/check-changes.js");
 
 describe("runCheckChanges", () => {
   beforeEach(() => {
-    checkForChanges.mockResolvedValue({ exitCode: 0 });
+    checkForChanges.mockResolvedValue({ exitCode: 0, result: { changedObjectCount: 0 } });
   });
 
   it("should skip when no build inputs provided", async () => {
@@ -115,11 +116,30 @@ describe("runCheckChanges", () => {
   it("should return exitCode and reportPath from result", async () => {
     checkForChanges.mockResolvedValue({
       exitCode: 0,
-      reportPath: "/tmp/report.html",
+      result: { reportPath: "/tmp/report.html", changedObjectCount: 2 },
     });
 
     const result = await runCheckChanges({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
 
     expect(result).toEqual({ exitCode: 0, reportPath: "/tmp/report.html" });
+  });
+
+  it("should set changed-object-count output", async () => {
+    checkForChanges.mockResolvedValue({
+      exitCode: 0,
+      result: { changedObjectCount: 4 },
+    });
+
+    await runCheckChanges({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("changed-object-count", "4");
+  });
+
+  it("should not set changed-object-count output when result is undefined", async () => {
+    checkForChanges.mockResolvedValue({ exitCode: 1 });
+
+    await runCheckChanges({ buildUrl: "jdbc:sqlite:build.db" }, "enterprise");
+
+    expect(setOutput).not.toHaveBeenCalledWith("changed-object-count", expect.anything());
   });
 });

@@ -27,7 +27,10 @@ const runCheckCode = async (inputs: FlywayStatePrepareInputs, scriptFilename: st
   if (!args) {
     return undefined;
   }
-  return checkForCodeReviewViolations(args, inputs.workingDirectory);
+  const codeReviewResult = await checkForCodeReviewViolations(args, inputs.workingDirectory);
+  core.setOutput("code-violation-count", codeReviewResult.result.violationCount.toString());
+  core.setOutput("code-violation-codes", codeReviewResult.result.violationCodes.join(","));
+  return codeReviewResult;
 };
 
 export { getCodeArgs, runCheckCode };

@@ -27,8 +27,10 @@ const runCheckChanges = async (inputs: FlywayMigrationsChecksInputs, edition: Fl
   if (!args) {
     return undefined;
   }
-  const result = await checkForChanges(args, inputs.workingDirectory, !inputs.buildOkToErase);
-  return { exitCode: result.exitCode, reportPath: result.reportPath };
+  const { exitCode, result } = await checkForChanges(args, inputs.workingDirectory, !inputs.buildOkToErase);
+  result && core.setOutput("changed-object-count", result.changedObjectCount.toString());
+
+  return { exitCode, reportPath: result?.reportPath };
 };
 
 export { runCheckChanges };

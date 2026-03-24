@@ -26,7 +26,10 @@ const runCheckChanges = async (inputs: FlywayStatePrepareInputs, edition: Flyway
     core.info('Skipping deployment changes report: "skip-deployment-changes-report" set to true');
     return undefined;
   }
-  return checkForChanges(getChangesArgs(inputs), inputs.workingDirectory);
+  const { exitCode, result } = await checkForChanges(getChangesArgs(inputs), inputs.workingDirectory);
+  result && core.setOutput("changed-object-count", result.changedObjectCount.toString());
+
+  return { exitCode, result };
 };
 
 export { runCheckChanges };

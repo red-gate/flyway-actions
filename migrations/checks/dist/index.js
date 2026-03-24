@@ -10473,16 +10473,19 @@ var ln = () => {
 			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? an("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && an(e.error.message), { exitCode: r.exitCode });
 		}
 		let i = yn(r.stdout);
-		return xn(i), {
+		return {
 			exitCode: r.exitCode,
-			reportPath: i?.htmlReport
+			result: {
+				reportPath: i?.htmlReport,
+				changedObjectCount: xn(i)
+			}
 		};
 	} finally {
 		cn();
 	}
 }, xn = (e) => {
 	let t = e?.individualResults?.filter((e) => e.operation === "changes");
-	t?.length && nn("changed-object-count", t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0).toString());
+	return t?.length ? t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0) : 0;
 }, Sn = "default_build", Cn = (e) => {
 	let t = ["check"];
 	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.preDeploymentReportName && t.push(`-reportFilename=${e.preDeploymentReportName}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
@@ -10520,20 +10523,20 @@ var ln = () => {
 }, kn = async (e, t) => {
 	let n = On(e, t);
 	if (!n) return;
-	let r = await bn(n, e.workingDirectory, !e.buildOkToErase);
-	return {
-		exitCode: r.exitCode,
-		reportPath: r.reportPath
+	let { exitCode: r, result: i } = await bn(n, e.workingDirectory, !e.buildOkToErase);
+	return i && nn("changed-object-count", i.changedObjectCount.toString()), {
+		exitCode: r,
+		reportPath: i?.reportPath
 	};
 }, An = async (e, t) => {
 	sn("Running code review");
 	try {
 		let n = await mn(e, t);
 		if (n.exitCode !== 0) {
-			let e = Pn(n.stdout);
+			let e = Nn(n.stdout);
 			e?.error?.message && an(e.error.message);
 			let t = jn(e?.error?.results ?? []);
-			return Mn(t), {
+			return {
 				exitCode: n.exitCode,
 				result: {
 					reportPath: e?.error?.htmlReport,
@@ -10541,8 +10544,8 @@ var ln = () => {
 				}
 			};
 		}
-		let r = Nn(n.stdout), i = jn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
-		return Mn(i), {
+		let r = Mn(n.stdout), i = jn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
+		return {
 			exitCode: n.exitCode,
 			result: {
 				reportPath: r?.htmlReport,
@@ -10559,7 +10562,11 @@ var ln = () => {
 		violationCodes: [...new Set(t)]
 	};
 }, Mn = (e) => {
-	nn("code-violation-count", e.violationCount.toString()), nn("code-violation-codes", e.violationCodes.join(","));
+	try {
+		return JSON.parse(e);
+	} catch {
+		return;
+	}
 }, Nn = (e) => {
 	try {
 		return JSON.parse(e);
@@ -10567,12 +10574,6 @@ var ln = () => {
 		return;
 	}
 }, Pn = (e) => {
-	try {
-		return JSON.parse(e);
-	} catch {
-		return;
-	}
-}, Fn = (e) => {
 	if (e.skipCodeReview) {
 		on("Skipping code review: \"skip-code-review\" set to true");
 		return;
@@ -10583,21 +10584,21 @@ var ln = () => {
 		...Tn(e),
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : []
 	];
-}, In = async (e) => {
-	let t = Fn(e);
+}, Fn = async (e) => {
+	let t = Pn(e);
 	if (!t) return;
 	let { exitCode: n, result: r } = await An(t, e.workingDirectory);
-	return {
+	return nn("code-violation-count", r.violationCount.toString()), nn("code-violation-codes", r.violationCodes.join(",")), {
 		exitCode: n,
 		reportPath: r.reportPath
 	};
-}, Ln = (e) => {
+}, In = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Rn = async (e, t) => {
+}, Ln = async (e, t) => {
 	sn("Checking for drift");
 	try {
 		let n = await mn(e, t);
@@ -10622,11 +10623,11 @@ var ln = () => {
 				}
 			});
 		}
-		let r = Ln(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		let r = In(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
 		return {
 			exitCode: n.exitCode,
 			result: {
-				driftDetected: zn(r),
+				driftDetected: Rn(r),
 				comparisonSupported: !0,
 				reportPath: r?.htmlReport,
 				driftResolutionFolder: i?.driftResolutionFolder
@@ -10635,7 +10636,7 @@ var ln = () => {
 	} finally {
 		cn();
 	}
-}, zn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), Bn = (e, t) => {
+}, Rn = (e) => !!e?.individualResults?.filter((e) => e.operation === "drift").some((e) => e.onlyInSource?.length || e.onlyInTarget?.length || e.differences?.length), zn = (e, t) => {
 	if (t !== "enterprise") {
 		on(`Skipping drift check: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
@@ -10650,21 +10651,21 @@ var ln = () => {
 		...Tn(e),
 		...e.failOnDrift ? ["-check.failOnDrift=true"] : []
 	];
-}, Vn = async (e, t) => {
-	let n = Bn(e, t);
+}, Bn = async (e, t) => {
+	let n = zn(e, t);
 	if (!n) return;
-	let { exitCode: r, result: i } = await Rn(n, e.workingDirectory), a = vn(i.driftResolutionFolder, e.workingDirectory);
+	let { exitCode: r, result: i } = await Ln(n, e.workingDirectory), a = vn(i.driftResolutionFolder, e.workingDirectory);
 	return (i.driftDetected || r === 0 && i.comparisonSupported && i.driftDetected !== void 0) && (nn("drift-detected", i.driftDetected.toString()), a !== void 0 && nn("drift-resolution-folder", a)), {
 		exitCode: r,
 		reportPath: i.reportPath
 	};
-}, Hn = (e) => {
+}, Vn = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, Un = (e, t) => {
+}, Hn = (e, t) => {
 	if (t === "community") {
 		on("Skipping deployment script review: not available in Community edition");
 		return;
@@ -10678,8 +10679,8 @@ var ln = () => {
 		"-dryrun",
 		...wn(e)
 	];
-}, Wn = async (e, t) => {
-	let n = Un(e, t);
+}, Un = async (e, t) => {
+	let n = Hn(e, t);
 	if (n) {
 		sn("Running Flyway check: deployment script review");
 		try {
@@ -10688,7 +10689,7 @@ var ln = () => {
 				let e = _n(t.stdout);
 				return e?.error?.message && an(e.error.message), { exitCode: t.exitCode };
 			}
-			let r = Hn(t.stdout);
+			let r = Vn(t.stdout);
 			return {
 				exitCode: t.exitCode,
 				reportPath: r?.htmlReport
@@ -10697,17 +10698,17 @@ var ln = () => {
 			cn();
 		}
 	}
-}, Gn = async (e, t) => {
+}, Wn = async (e, t) => {
 	let n = [
-		await Wn(e, t),
-		await In(e),
-		await Vn(e, t),
+		await Un(e, t),
+		await Fn(e),
+		await Bn(e, t),
 		await kn(e, t)
 	], r = n.find((e) => e?.reportPath)?.reportPath;
 	nn("report-path", vn(r ?? "report.html", e.workingDirectory));
 	let i = n.find((e) => e !== void 0 && e.exitCode !== 0);
 	if (nn("exit-code", (i?.exitCode ?? 0).toString()), i) throw Error("Flyway checks failed");
-}, Kn = () => {
+}, Gn = () => {
 	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = en("build-environment") || void 0, l = en("build-url") || void 0, u = en("build-user") || void 0, d = en("build-password") || void 0, f = en("build-schemas") || void 0, p = tn("build-ok-to-erase"), m = tn("skip-code-review"), h = tn("skip-drift-check"), g = tn("skip-deployment-changes-report"), _ = tn("skip-deployment-script-review"), v = tn("fail-on-code-review"), y = tn("fail-on-drift"), b = en("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10733,7 +10734,7 @@ var ln = () => {
 		preDeploymentReportName: en("pre-deployment-report-name") || void 0,
 		extraArgs: en("extra-args") || void 0
 	};
-}, qn = (e) => {
+}, Kn = (e) => {
 	e.targetPassword && $t(e.targetPassword), e.buildPassword && $t(e.buildPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10744,12 +10745,12 @@ await (async () => {
 			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Kn();
+		let t = Gn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		qn(t), await Gn(t, e.edition);
+		Kn(t), await Wn(t, e.edition);
 	} catch (e) {
 		e instanceof Error ? rn(e.message) : rn(String(e));
 	}

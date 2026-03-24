@@ -33,7 +33,6 @@ const checkForCodeReviewViolations = async (
       const errorOutput = parseErrorOutput(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       const violations = extractViolations(errorOutput?.error?.results ?? []);
-      setOutput(violations);
       return { exitCode: result.exitCode, result: { reportPath: errorOutput?.error?.htmlReport, ...violations } };
     }
 
@@ -41,7 +40,6 @@ const checkForCodeReviewViolations = async (
     const codeResults = output?.individualResults?.filter((r) => r.operation === "code");
     const resultItems = codeResults?.flatMap((r) => r.results ?? []) ?? [];
     const violations = extractViolations(resultItems);
-    setOutput(violations);
     return { exitCode: result.exitCode, result: { reportPath: output?.htmlReport, ...violations } };
   } finally {
     core.endGroup();
@@ -54,11 +52,6 @@ const extractViolations = (results: CodeResultItem[]): { violationCount: number;
     .map((v) => v.code)
     .filter((c): c is string => !!c);
   return { violationCount: codes.length, violationCodes: [...new Set(codes)] };
-};
-
-const setOutput = (violations: { violationCount: number; violationCodes: string[] }) => {
-  core.setOutput("code-violation-count", violations.violationCount.toString());
-  core.setOutput("code-violation-codes", violations.violationCodes.join(","));
 };
 
 const parseSuccessOutput = (stdout: string): CodeReviewSuccessOutput | undefined => {

@@ -7,7 +7,10 @@ type CheckChangesOutput = { htmlReport?: string; individualResults?: (Changes & 
 
 type CheckForChangesResult = {
   exitCode: number;
-  reportPath?: string;
+  result?: {
+    reportPath?: string;
+    changedObjectCount: number;
+  };
 };
 
 const parseOutput = (stdout: string): CheckChangesOutput | undefined => {
@@ -46,22 +49,25 @@ const checkForChanges = async (
     }
 
     const output = parseOutput(result.stdout);
-    setChangesOutputs(output);
-    return { exitCode: result.exitCode, reportPath: output?.htmlReport };
+
+    return {
+      exitCode: result.exitCode,
+      result: { reportPath: output?.htmlReport, changedObjectCount: countChangedObjects(output) },
+    };
   } finally {
     core.endGroup();
   }
 };
 
-const setChangesOutputs = (output: CheckChangesOutput | undefined): void => {
+const countChangedObjects = (output: CheckChangesOutput | undefined): number => {
   const changesResults = output?.individualResults?.filter((r): r is Changes => r.operation === "changes");
-  if (changesResults?.length) {
-    const changes = changesResults.reduce(
-      (acc, r) => acc + (r.onlyInSource?.length ?? 0) + (r.onlyInTarget?.length ?? 0) + (r.differences?.length ?? 0),
-      0,
-    );
-    core.setOutput("changed-object-count", changes.toString());
+  if (!changesResults?.length) {
+    return 0;
   }
+  return changesResults.reduce(
+    (acc, r) => acc + (r.onlyInSource?.length ?? 0) + (r.onlyInTarget?.length ?? 0) + (r.differences?.length ?? 0),
+    0,
+  );
 };
 
 export { checkForChanges };
