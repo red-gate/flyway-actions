@@ -2,9 +2,7 @@ import type { ErrorOutput } from "../types.js";
 import * as core from "@actions/core";
 import { parseOutput, runFlyway } from "../flyway-runner.js";
 
-type DriftErrorOutput = { error?: ErrorOutput["error"] & { htmlReport?: string; driftResolutionFolderPath?: string } };
-
-type Drift = {
+type DriftItem = {
   operation?: "drift";
   onlyInSource?: unknown[];
   onlyInTarget?: unknown[];
@@ -14,7 +12,9 @@ type Drift = {
   driftCheckSkipped: boolean;
 };
 
-type FlywayCheckOutput = { htmlReport?: string; individualResults?: (Drift | { operation?: string })[] };
+type DriftSuccessOutput = { htmlReport?: string; individualResults?: (DriftItem | { operation?: string })[] };
+
+type DriftErrorOutput = { error?: ErrorOutput["error"] & { htmlReport?: string; driftResolutionFolderPath?: string } };
 
 type CheckForDriftResult = {
   exitCode: number;
@@ -54,8 +54,8 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       return { exitCode: result.exitCode, result: { driftDetected: false, comparisonSupported: true } };
     }
 
-    const output = parseOutput<FlywayCheckOutput>(result.stdout);
-    const driftResult = output?.individualResults?.find((r): r is Drift => r.operation === "drift");
+    const output = parseOutput<DriftSuccessOutput>(result.stdout);
+    const driftResult = output?.individualResults?.find((r): r is DriftItem => r.operation === "drift");
     return {
       exitCode: result.exitCode,
       result: {
