@@ -239,6 +239,7 @@ describe("run", () => {
     setupFlywayMock({
       edition: "Enterprise",
       driftExitCode: 0,
+      driftOutput: { individualResults: [{ operation: "drift", driftDetected: false }] },
       undoExitCode: 0,
       undoOutput: { migrationsUndone: 1, targetSchemaVersion: "1" },
     });

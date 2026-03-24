@@ -25,7 +25,7 @@ describe("checkForDrift", () => {
     const { exitCode, result } = await checkForDrift(driftArgs("jdbc:sqlite:test.db"));
 
     expect(exitCode).toBe(0);
-    expect(result).toEqual({ driftDetected: false, comparisonSupported: true });
+    expect(result).toEqual({ driftDetected: undefined, comparisonSupported: true });
   });
 
   it("should detect drift from success-path output when individualResults contain drift items", async () => {
@@ -36,6 +36,7 @@ describe("checkForDrift", () => {
           individualResults: [
             {
               operation: "drift",
+              driftDetected: true,
               onlyInSource: ["table_a"],
               onlyInTarget: [],
               differences: [],
@@ -62,7 +63,9 @@ describe("checkForDrift", () => {
       mockExec({
         stdout: {
           htmlReport: "report.html",
-          individualResults: [{ operation: "drift", onlyInSource: [], onlyInTarget: [], differences: [] }],
+          individualResults: [
+            { operation: "drift", driftDetected: false, onlyInSource: [], onlyInTarget: [], differences: [] },
+          ],
         },
       }),
     );
