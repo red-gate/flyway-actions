@@ -55,7 +55,7 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-projects/sqlite
-          pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.os }}
+          pre-deployment-report-name: migrations-enterprise-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
@@ -65,7 +65,7 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
-          deployment-report-name: flyway-deployment-report-${{ matrix.os }}
+          deployment-report-name: migrations-enterprise-deployment-report-${{ matrix.os }}
       - name: Run undo
         id: undo
         uses: ./migrations/undo
@@ -74,14 +74,14 @@ jobs:
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
-          undo-report-name: flyway-undo-report-${{ matrix.os }}
+          undo-report-name: migrations-enterprise-undo-report-${{ matrix.os }}
       - name: Download report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-pre-deployment-report-${{ matrix.os }}.html
+          name: migrations-enterprise-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s flyway-pre-deployment-report-${{ matrix.os }}.html
+        run: test -s migrations-enterprise-pre-deployment-report-${{ matrix.os }}.html
       - name: Test outputs
         shell: bash
         run: |
@@ -151,7 +151,7 @@ jobs:
           build-ok-to-erase: 'true'
           fail-on-code-review: 'false'
           working-directory: sample-projects/h2
-          pre-deployment-report-name: flyway-pre-deployment-report-h2-${{ matrix.os }}
+          pre-deployment-report-name: migrations-enterprise-no-comparison-support-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
@@ -172,10 +172,10 @@ jobs:
       - name: Download report
         uses: actions/download-artifact@v8
         with:
-          name: flyway-pre-deployment-report-h2-${{ matrix.os }}.html
+          name: migrations-enterprise-no-comparison-support-pre-deployment-report-${{ matrix.os }}.html
       - name: Verify report exists
         shell: bash
-        run: test -s flyway-pre-deployment-report-h2-${{ matrix.os }}.html
+        run: test -s migrations-enterprise-no-comparison-support-pre-deployment-report-${{ matrix.os }}.html
       - name: Test outputs
         shell: bash
         run: |
@@ -235,7 +235,7 @@ jobs:
           target-url: jdbc:sqlite:database/no-drift.db
           fail-on-code-review: 'false'
           working-directory: sample-projects/sqlite
-          pre-deployment-report-name: flyway-community-pre-deployment-report-${{ matrix.os }}
+          pre-deployment-report-name: migrations-community-pre-deployment-report-${{ matrix.os }}
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
@@ -296,9 +296,9 @@ jobs:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
           fail-on-code-review: 'false'
-          pre-deployment-report-name: flyway-e2e-pre-deployment-report-${{ matrix.os }}
-          deployment-script-name: flyway-e2e-deployment-script-${{ matrix.os }}
-          undo-script-name: flyway-e2e-undo-script-${{ matrix.os }}
+          pre-deployment-report-name: state-enterprise-pre-deployment-report-${{ matrix.os }}
+          deployment-script-name: state-enterprise-deployment-script-${{ matrix.os }}
+          undo-script-name: state-enterprise-undo-script-${{ matrix.os }}
           deployment-script-retention-days: '1'
       - name: Run state deploy
         id: deploy
@@ -309,7 +309,7 @@ jobs:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
           script-path: ${{ steps.prepare.outputs.script-path }}
-          deployment-report-name: flyway-e2e-deployment-report-${{ matrix.os }}
+          deployment-report-name: state-enterprise-deployment-report-${{ matrix.os }}
       - name: Run state deploy with undo script
         id: undo
         uses: ./state/deploy
@@ -331,8 +331,8 @@ jobs:
           echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
           echo "Undo exit code: ${{ steps.undo.outputs.exit-code }}"
           test "${{ steps.prepare.outputs.exit-code }}" = "0"
-          [[ "${{ steps.prepare.outputs.script-path }}" == *flyway-e2e-deployment-script-${{ matrix.os }}.sql ]]
-          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *flyway-e2e-undo-script-${{ matrix.os }}.sql ]]
+          [[ "${{ steps.prepare.outputs.script-path }}" == *state-enterprise-deployment-script-${{ matrix.os }}.sql ]]
+          [[ "${{ steps.prepare.outputs.undo-script-path }}" == *state-enterprise-undo-script-${{ matrix.os }}.sql ]]
           test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.undo.outputs.exit-code }}" = "0"
