@@ -20,6 +20,7 @@ type CheckForDriftResult = {
   exitCode: number;
   result: {
     driftDetected?: boolean;
+    driftCheckSkipped?: boolean;
     comparisonSupported: boolean;
     reportPath?: string;
     driftResolutionFolder?: string;
@@ -60,6 +61,7 @@ const checkForDrift = async (args: string[], workingDirectory?: string): Promise
       exitCode: result.exitCode,
       result: {
         driftDetected: driftResult?.driftDetected,
+        driftCheckSkipped: driftResult?.driftCheckSkipped,
         comparisonSupported: true,
         reportPath: output?.htmlReport,
         driftResolutionFolder: driftResult?.driftResolutionFolder,
