@@ -48,19 +48,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run checks
         id: checks
         uses: ./migrations/checks
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           build-url: jdbc:sqlite:database/build.db
@@ -110,20 +109,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run checks
         id: checks
         uses: ./migrations/checks
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
           fail-on-code-review: 'false'
@@ -177,19 +175,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run checks
         id: checks
         uses: ./migrations/checks
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
           fail-on-drift: 'false'
@@ -241,20 +238,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run checks
         id: checks
         uses: ./migrations/checks
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
@@ -292,19 +288,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run migrations deploy
         id: deploy
         uses: ./migrations/deploy
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
@@ -341,20 +336,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run migrations deploy
         id: deploy
         uses: ./migrations/deploy
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-projects/sqlite
@@ -411,19 +405,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run migrations undo
         id: undo
         uses: ./migrations/undo
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/undo.db
           working-directory: sample-projects/sqlite
@@ -460,20 +453,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run migrations undo
         id: undo
         uses: ./migrations/undo
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
           working-directory: sample-projects/sqlite
@@ -530,19 +522,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state prepare
         id: prepare
         uses: ./state/prepare
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-environment: production
           target-url: jdbc:sqlite:state-prepare-target.db
@@ -598,20 +589,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state prepare with drift
         id: prepare
         uses: ./state/prepare
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-environment: production
           target-url: jdbc:sqlite:../sqlite/database/drift.db
@@ -667,20 +657,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state prepare with code review
         id: prepare
         uses: ./state/prepare
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-environment: production
           target-url: jdbc:sqlite:state-prepare-target.db
@@ -722,19 +711,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state deploy
         id: deploy
         uses: ./state/deploy
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:state-target.db
           script-path: deployments/D__deployment.sql
@@ -766,20 +754,19 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state deploy with drift
         id: deploy
         uses: ./state/deploy
         continue-on-error: true
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:sqlite:database/drift.db
           script-path: deployments/D__deployment.sql
@@ -833,19 +820,18 @@ jobs:
           url: ${{ vars.VAULT_URL }}
           role: "flyway-actions"
           secrets: |
-            build-secrets/data/repos/red-gate/flyway-actions/flyway FLYWAY_PERMIT_ENTERPRISE | FLYWAY_PERMIT_ENTERPRISE;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           edition: enterprise
           i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state deploy
         id: deploy
         uses: ./state/deploy
-        env:
-          REDGATE_LICENSING_PERMIT: ${{ env.FLYWAY_PERMIT_ENTERPRISE }}
         with:
           target-url: jdbc:h2:mem:test
           script-path: migrations/V1__create_users_table.sql
