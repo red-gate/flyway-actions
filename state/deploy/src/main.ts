@@ -3,6 +3,7 @@ import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { runCheckDrift } from "./flyway/check-drift.js";
 import { deploy } from "./flyway/deploy.js";
 import { getInputs, maskSecrets } from "./inputs.js";
+import { writeSummary } from "./write-summary.js";
 
 if (process.env.FLYWAY_INPUTS) {
   for (const [key, value] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS) as Record<string, string>)) {
@@ -35,21 +36,31 @@ const run = async (): Promise<void> => {
 
     maskSecrets(inputs);
 
+    let driftStatus: string | undefined;
+
     if (inputs.skipDriftCheck) {
       core.info('Skipping drift check: "skip-drift-check" set to true');
       inputs.saveSnapshot = true;
     } else {
       const {
-        result: { driftDetected, comparisonSupported },
+        result: { driftDetected, driftCheckSkipped, comparisonSupported },
       } = await runCheckDrift(inputs);
       if (driftDetected) {
+        driftStatus = "Drift detected";
+        await writeSummary({ driftStatus });
         core.setFailed("Drift detected. Aborting deployment.");
         return;
       }
       inputs.saveSnapshot = comparisonSupported;
+      driftStatus = comparisonSupported
+        ? !driftCheckSkipped
+          ? "No drift"
+          : "Drift check not run - skipped because no snapshot in database (expected for initial deployment)"
+        : "Drift check not run - drift analysis is not supported for this database type";
     }
 
     await deploy(inputs);
+    await writeSummary({ driftStatus });
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
