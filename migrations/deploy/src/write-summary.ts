@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import { pluralize } from "@flyway-actions/shared/pluralize";
 
 type DeploySummaryData = {
   driftStatus?: string;
@@ -10,7 +11,7 @@ const writeSummary = async (data: DeploySummaryData): Promise<void> => {
   await core.summary
     .addHeading("Flyway Deploy", 2)
     .addTable([
-      [{ data: "Migrations Applied", header: true }, data.migrationsApplied.toString()],
+      [{ data: "Migrations Applied", header: true }, pluralize("migration", data.migrationsApplied)],
       [{ data: "Schema Version", header: true }, data.schemaVersion],
       ...(data.driftStatus ? [[{ data: "Drift", header: true }, data.driftStatus]] : []),
     ])

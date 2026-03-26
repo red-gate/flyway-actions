@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import { pluralize } from "@flyway-actions/shared/pluralize";
 
 type PrepareSummaryData = {
   driftStatus?: string;
@@ -12,8 +13,8 @@ const formatCode = (result?: { exitCode: number; violationCount: number }): stri
   }
 
   return result.exitCode === 0
-    ? `Passed - ${result.violationCount} violations`
-    : `Failed${result.violationCount > 0 ? ` - ${result.violationCount} violations` : ""}`;
+    ? `Passed - ${pluralize("violation", result.violationCount)}`
+    : `Failed${result.violationCount > 0 ? ` - ${pluralize("violation", result.violationCount)}` : ""}`;
 };
 
 const formatChanges = (result?: { exitCode: number; changedObjectCount: number }): string => {
@@ -23,7 +24,7 @@ const formatChanges = (result?: { exitCode: number; changedObjectCount: number }
   if (result.exitCode !== 0) {
     return "Failed";
   }
-  return `${result.changedObjectCount} changed objects`;
+  return pluralize("changed object", result.changedObjectCount);
 };
 
 const writeSummary = async (data: PrepareSummaryData): Promise<void> => {

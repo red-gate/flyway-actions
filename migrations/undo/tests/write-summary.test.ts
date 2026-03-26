@@ -34,7 +34,7 @@ describe("writeSummary", () => {
 
     expect(addHeading).toHaveBeenCalledWith("Flyway Undo", 2);
     expect(addTable).toHaveBeenCalledWith([
-      [{ data: "Migrations Undone", header: true }, "3"],
+      [{ data: "Migrations Undone", header: true }, "3 migrations"],
       [{ data: "Schema Version", header: true }, "2.0"],
       [{ data: "Drift", header: true }, "No drift"],
     ]);
@@ -64,7 +64,7 @@ describe("writeSummary", () => {
     await writeSummary(data);
 
     expect(addTable).toHaveBeenCalledWith([
-      [{ data: "Migrations Undone", header: true }, "5"],
+      [{ data: "Migrations Undone", header: true }, "5 migrations"],
       [{ data: "Schema Version", header: true }, "4.0"],
     ]);
   });
@@ -77,6 +77,21 @@ describe("writeSummary", () => {
 
     await writeSummary(data);
 
-    expect(addTable).toHaveBeenCalledWith(expect.arrayContaining([[{ data: "Migrations Undone", header: true }, "0"]]));
+    expect(addTable).toHaveBeenCalledWith(
+      expect.arrayContaining([[{ data: "Migrations Undone", header: true }, "0 migrations"]]),
+    );
+  });
+
+  it("should show singular migration when one undone", async () => {
+    const data: UndoSummaryData = {
+      migrationsUndone: 1,
+      schemaVersion: "1.0",
+    };
+
+    await writeSummary(data);
+
+    expect(addTable).toHaveBeenCalledWith(
+      expect.arrayContaining([[{ data: "Migrations Undone", header: true }, "1 migration"]]),
+    );
   });
 });

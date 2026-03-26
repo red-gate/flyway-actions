@@ -9,7 +9,8 @@
     "./test-utils": "./src/test-utils.ts",
     "./check-for-drift": "./src/check/check-for-drift.ts",
     "./check-for-code-review-violations": "./src/check/check-for-code-review-violations.ts",
-    "./check-for-changes": "./src/check/check-for-changes.ts"
+    "./check-for-changes": "./src/check/check-for-changes.ts",
+    "./pluralize": "./src/pluralize.ts"
   },
   "scripts": {
     "test": "vitest run",

@@ -101,6 +101,26 @@ describe("writeSummary", () => {
     expect(addTable).toHaveBeenCalledWith(expect.arrayContaining([["Deployment Changes", "Failed"]]));
   });
 
+  it("should show singular violation", async () => {
+    const data: PrepareSummaryData = {
+      code: { exitCode: 1, violationCount: 1 },
+    };
+
+    await writeSummary(data);
+
+    expect(addTable).toHaveBeenCalledWith(expect.arrayContaining([["Code Review", "Failed - 1 violation"]]));
+  });
+
+  it("should show singular changed object on success", async () => {
+    const data: PrepareSummaryData = {
+      changes: { exitCode: 0, changedObjectCount: 1 },
+    };
+
+    await writeSummary(data);
+
+    expect(addTable).toHaveBeenCalledWith(expect.arrayContaining([["Deployment Changes", "1 changed object"]]));
+  });
+
   it("should show zero changed objects on success", async () => {
     const data: PrepareSummaryData = {
       changes: { exitCode: 0, changedObjectCount: 0 },
