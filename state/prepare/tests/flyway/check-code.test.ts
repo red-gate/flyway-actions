@@ -132,4 +132,37 @@ describe("runCheckCode", () => {
     expect(setOutput).toHaveBeenCalledWith("code-violation-count", "3");
     expect(setOutput).toHaveBeenCalledWith("code-violation-codes", "AM04,RG06");
   });
+
+  it("should set sarif-path output when sarifReportPath is present", async () => {
+    checkForCodeReviewViolations.mockResolvedValue({
+      exitCode: 0,
+      result: { sarifReportPath: "report.sarif", violationCount: 0, violationCodes: [] },
+    });
+
+    await runCheckCode({}, "V001__create.sql");
+
+    expect(setOutput).toHaveBeenCalledWith("sarif-path", "report.sarif");
+  });
+
+  it("should set sarif-path to empty string when sarifReportPath is absent", async () => {
+    checkForCodeReviewViolations.mockResolvedValue({
+      exitCode: 0,
+      result: { violationCount: 0, violationCodes: [] },
+    });
+
+    await runCheckCode({}, "V001__create.sql");
+
+    expect(setOutput).toHaveBeenCalledWith("sarif-path", "");
+  });
+
+  it("should prepend working directory to sarif-path", async () => {
+    checkForCodeReviewViolations.mockResolvedValue({
+      exitCode: 0,
+      result: { sarifReportPath: "report.sarif", violationCount: 0, violationCodes: [] },
+    });
+
+    await runCheckCode({ workingDirectory: "my-project" }, "V001__create.sql");
+
+    expect(setOutput).toHaveBeenCalledWith("sarif-path", expect.stringContaining("my-project"));
+  });
 });

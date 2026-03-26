@@ -18,6 +18,9 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
   const reportFile = results.find((r) => r?.reportPath)?.reportPath;
   core.setOutput("report-path", resolvePath(reportFile ?? "report.html", inputs.workingDirectory));
 
+  const sarifFile = codeResult?.sarifReportPath;
+  core.setOutput("sarif-path", sarifFile ? resolvePath(sarifFile, inputs.workingDirectory) : "");
+
   const failed = results.find((r) => r !== undefined && r.exitCode !== 0);
   core.setOutput("exit-code", (failed?.exitCode ?? 0).toString());
 

@@ -91,6 +91,10 @@ inputs:
     description: 'Number of days to retain the deployment and undo script artifacts'
     required: false
     default: '7'
+  skip-code-scanning-upload:
+    description: 'Skip uploading SARIF results to GitHub Code Scanning'
+    required: false
+    default: 'false'
 
 outputs:
   exit-code:
@@ -171,3 +175,10 @@ runs:
         archive: false
         retention-days: ${{ inputs.deployment-script-retention-days }}
         if-no-files-found: ignore
+    - name: Upload SARIF to GitHub Code Scanning
+      if: always() && inputs.skip-code-scanning-upload == 'false' && steps.prepare.outputs.sarif-path != ''
+      uses: github/codeql-action/upload-sarif@v3
+      continue-on-error: true
+      with:
+        sarif_file: ${{ steps.prepare.outputs.sarif-path }}
+        category: flyway-code-review
