@@ -83,9 +83,8 @@ inputs:
     required: false
     default: 'false'
   pre-deployment-report-name:
-    description: 'Name for the pre-deployment report artifact'
+    description: 'Name for the pre-deployment report artifact. Defaults to flyway-<target-environment>-pre-deployment-report'
     required: false
-    default: 'flyway-pre-deployment-report'
   pre-deployment-report-retention-days:
     description: 'Number of days to retain the pre-deployment report artifact'
     required: false
@@ -95,9 +94,8 @@ inputs:
     required: false
     default: 'false'
   drift-resolution-scripts-name:
-    description: 'Name for the drift resolution scripts artifact'
+    description: 'Name for the drift resolution scripts artifact. Defaults to flyway-checks-<target-environment>-drift-resolution-scripts'
     required: false
-    default: 'flyway-drift-resolution-scripts'
   drift-resolution-scripts-retention-days:
     description: 'Number of days to retain the drift resolution scripts artifact'
     required: false
@@ -146,7 +144,7 @@ runs:
       if: inputs.skip-pre-deployment-report-upload == 'false' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.pre-deployment-report-name }}
+        name: ${{ inputs.pre-deployment-report-name || format('flyway-{0}-pre-deployment-report', inputs.target-environment) }}
         path: ${{ steps.checks.outputs.report-path }}
         archive: false
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
@@ -155,7 +153,7 @@ runs:
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.drift-resolution-scripts-name }}
+        name: ${{ inputs.drift-resolution-scripts-name || format('flyway-checks-{0}-drift-resolution-scripts', inputs.target-environment) }}
         path: ${{ steps.checks.outputs.drift-resolution-folder }}
         retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
         if-no-files-found: ignore
