@@ -43,4 +43,7 @@ const runCheckDrift = async (inputs: FlywayMigrationsChecksInputs, edition: Flyw
   };
 };
 
+type CheckDriftResult = Awaited<ReturnType<typeof runCheckDrift>>;
+
 export { getDriftArgs, runCheckDrift };
+export type { CheckDriftResult };
