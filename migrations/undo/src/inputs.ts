@@ -14,7 +14,7 @@ const getInputs = (): FlywayMigrationsUndoInputs => {
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
-  const undoReportName = core.getInput("undo-report-name") || undefined;
+  const undoReportName = core.getInput("undo-report-name") || `flyway-${targetEnvironment ?? "default"}-undo-report`;
 
   return {
     targetEnvironment,

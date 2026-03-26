@@ -118,6 +118,40 @@ describe("getInputs", () => {
     expect(inputs.extraArgs).toBe("-X -someFlag=value");
   });
 
+  it("should return undo report name when provided", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "undo-report-name") {
+        return "my-undo-report";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.undoReportName).toBe("my-undo-report");
+  });
+
+  it("should default undo report name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.undoReportName).toBe("flyway-production-undo-report");
+  });
+
+  it("should default undo report name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.undoReportName).toBe("flyway-default-undo-report");
+  });
+
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
 
