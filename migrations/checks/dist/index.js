@@ -9795,8 +9795,7 @@ var vt = function(e, t, n, r) {
 		}
 		c((r = r.apply(e, t || [])).next());
 	});
-}, { access: yt, appendFile: bt, writeFile: xt } = s, St = "GITHUB_STEP_SUMMARY";
-new class {
+}, { access: yt, appendFile: bt, writeFile: xt } = s, St = "GITHUB_STEP_SUMMARY", Ct = new class {
 	constructor() {
 		this._buffer = "";
 	}
@@ -9900,8 +9899,7 @@ new class {
 		let n = this.wrap("a", e, { href: t });
 		return this.addRaw(n).addEOL();
 	}
-}();
-var Ct = function(e, t, n, r) {
+}(), wt = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -9927,12 +9925,12 @@ var Ct = function(e, t, n, r) {
 		}
 		c((r = r.apply(e, t || [])).next());
 	});
-}, { chmod: wt, copyFile: Tt, lstat: Et, mkdir: Dt, open: Ot, readdir: kt, rename: At, rm: jt, rmdir: Mt, stat: Nt, symlink: Pt, unlink: Ft } = a.promises, It = process.platform === "win32";
+}, { chmod: Tt, copyFile: Et, lstat: Dt, mkdir: Ot, open: kt, readdir: At, rename: jt, rm: Mt, rmdir: Nt, stat: Pt, symlink: Ft, unlink: It } = a.promises, Lt = process.platform === "win32";
 a.constants.O_RDONLY;
-function Lt(e) {
-	return Ct(this, void 0, void 0, function* () {
+function Rt(e) {
+	return wt(this, void 0, void 0, function* () {
 		try {
-			yield Nt(e);
+			yield Pt(e);
 		} catch (e) {
 			if (e.code === "ENOENT") return !1;
 			throw e;
@@ -9940,37 +9938,37 @@ function Lt(e) {
 		return !0;
 	});
 }
-function Rt(e) {
-	if (e = Bt(e), !e) throw Error("isRooted() parameter \"p\" cannot be empty");
-	return It ? e.startsWith("\\") || /^[A-Z]:/i.test(e) : e.startsWith("/");
+function zt(e) {
+	if (e = Vt(e), !e) throw Error("isRooted() parameter \"p\" cannot be empty");
+	return Lt ? e.startsWith("\\") || /^[A-Z]:/i.test(e) : e.startsWith("/");
 }
-function zt(e, t) {
-	return Ct(this, void 0, void 0, function* () {
+function Bt(e, t) {
+	return wt(this, void 0, void 0, function* () {
 		let n;
 		try {
-			n = yield Nt(e);
+			n = yield Pt(e);
 		} catch (t) {
 			t.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${e}': ${t}`);
 		}
 		if (n && n.isFile()) {
-			if (It) {
+			if (Lt) {
 				let n = c.extname(e).toUpperCase();
 				if (t.some((e) => e.toUpperCase() === n)) return e;
-			} else if (Vt(n)) return e;
+			} else if (Ht(n)) return e;
 		}
 		let r = e;
 		for (let i of t) {
 			e = r + i, n = void 0;
 			try {
-				n = yield Nt(e);
+				n = yield Pt(e);
 			} catch (t) {
 				t.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${e}': ${t}`);
 			}
 			if (n && n.isFile()) {
-				if (It) {
+				if (Lt) {
 					try {
 						let t = c.dirname(e), n = c.basename(e).toUpperCase();
-						for (let r of yield kt(t)) if (n === r.toUpperCase()) {
+						for (let r of yield At(t)) if (n === r.toUpperCase()) {
 							e = c.join(t, r);
 							break;
 						}
@@ -9978,19 +9976,19 @@ function zt(e, t) {
 						console.log(`Unexpected error attempting to determine the actual case of the file '${e}': ${t}`);
 					}
 					return e;
-				} else if (Vt(n)) return e;
+				} else if (Ht(n)) return e;
 			}
 		}
 		return "";
 	});
 }
-function Bt(e) {
-	return e ||= "", It ? (e = e.replace(/\//g, "\\"), e.replace(/\\\\+/g, "\\")) : e.replace(/\/\/+/g, "/");
-}
 function Vt(e) {
+	return e ||= "", Lt ? (e = e.replace(/\//g, "\\"), e.replace(/\\\\+/g, "\\")) : e.replace(/\/\/+/g, "/");
+}
+function Ht(e) {
 	return (e.mode & 1) > 0 || (e.mode & 8) > 0 && process.getgid !== void 0 && e.gid === process.getgid() || (e.mode & 64) > 0 && process.getuid !== void 0 && e.uid === process.getuid();
 }
-var Ht = function(e, t, n, r) {
+var Ut = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -10017,25 +10015,25 @@ var Ht = function(e, t, n, r) {
 		c((r = r.apply(e, t || [])).next());
 	});
 };
-function Ut(e, t) {
-	return Ht(this, void 0, void 0, function* () {
+function Wt(e, t) {
+	return Ut(this, void 0, void 0, function* () {
 		if (!e) throw Error("parameter 'tool' is required");
 		if (t) {
-			let t = yield Ut(e, !1);
-			if (!t) throw Error(It ? `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.` : `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+			let t = yield Wt(e, !1);
+			if (!t) throw Error(Lt ? `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.` : `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
 			return t;
 		}
-		let n = yield Wt(e);
+		let n = yield Gt(e);
 		return n && n.length > 0 ? n[0] : "";
 	});
 }
-function Wt(e) {
-	return Ht(this, void 0, void 0, function* () {
+function Gt(e) {
+	return Ut(this, void 0, void 0, function* () {
 		if (!e) throw Error("parameter 'tool' is required");
 		let t = [];
-		if (It && process.env.PATHEXT) for (let e of process.env.PATHEXT.split(c.delimiter)) e && t.push(e);
-		if (Rt(e)) {
-			let n = yield zt(e, t);
+		if (Lt && process.env.PATHEXT) for (let e of process.env.PATHEXT.split(c.delimiter)) e && t.push(e);
+		if (zt(e)) {
+			let n = yield Bt(e, t);
 			return n ? [n] : [];
 		}
 		if (e.includes(c.sep)) return [];
@@ -10043,13 +10041,13 @@ function Wt(e) {
 		if (process.env.PATH) for (let e of process.env.PATH.split(c.delimiter)) e && n.push(e);
 		let r = [];
 		for (let i of n) {
-			let n = yield zt(c.join(i, e), t);
+			let n = yield Bt(c.join(i, e), t);
 			n && r.push(n);
 		}
 		return r;
 	});
 }
-var Gt = function(e, t, n, r) {
+var Kt = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -10075,7 +10073,7 @@ var Gt = function(e, t, n, r) {
 		}
 		c((r = r.apply(e, t || [])).next());
 	});
-}, Kt = process.platform === "win32", qt = class extends l.EventEmitter {
+}, qt = process.platform === "win32", Jt = class extends l.EventEmitter {
 	constructor(e, t, n) {
 		if (super(), !e) throw Error("Parameter 'toolPath' cannot be null or empty.");
 		this.toolPath = e, this.args = t || [], this.options = n || {};
@@ -10085,7 +10083,7 @@ var Gt = function(e, t, n, r) {
 	}
 	_getCommandString(e, t) {
 		let n = this._getSpawnFileName(), r = this._getSpawnArgs(e), i = t ? "" : "[command]";
-		if (Kt) if (this._isCmdFile()) {
+		if (qt) if (this._isCmdFile()) {
 			i += n;
 			for (let e of r) i += ` ${e}`;
 		} else if (e.windowsVerbatimArguments) {
@@ -10111,10 +10109,10 @@ var Gt = function(e, t, n, r) {
 		}
 	}
 	_getSpawnFileName() {
-		return Kt && this._isCmdFile() ? process.env.COMSPEC || "cmd.exe" : this.toolPath;
+		return qt && this._isCmdFile() ? process.env.COMSPEC || "cmd.exe" : this.toolPath;
 	}
 	_getSpawnArgs(e) {
-		if (Kt && this._isCmdFile()) {
+		if (qt && this._isCmdFile()) {
 			let t = `/D /S /C "${this._windowsQuoteCmdArg(this.toolPath)}`;
 			for (let n of this.args) t += " ", t += e.windowsVerbatimArguments ? n : this._windowsQuoteCmdArg(n);
 			return t += "\"", [t];
@@ -10191,16 +10189,16 @@ var Gt = function(e, t, n, r) {
 		return n.cwd = e.cwd, n.env = e.env, n.windowsVerbatimArguments = e.windowsVerbatimArguments || this._isCmdFile(), e.windowsVerbatimArguments && (n.argv0 = `"${t}"`), n;
 	}
 	exec() {
-		return Gt(this, void 0, void 0, function* () {
-			return !Rt(this.toolPath) && (this.toolPath.includes("/") || Kt && this.toolPath.includes("\\")) && (this.toolPath = c.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield Ut(this.toolPath, !0), new Promise((e, n) => Gt(this, void 0, void 0, function* () {
+		return Kt(this, void 0, void 0, function* () {
+			return !zt(this.toolPath) && (this.toolPath.includes("/") || qt && this.toolPath.includes("\\")) && (this.toolPath = c.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield Wt(this.toolPath, !0), new Promise((e, n) => Kt(this, void 0, void 0, function* () {
 				this._debug(`exec tool: ${this.toolPath}`), this._debug("arguments:");
 				for (let e of this.args) this._debug(`   ${e}`);
 				let r = this._cloneExecOptions(this.options);
 				!r.silent && r.outStream && r.outStream.write(this._getCommandString(r) + t.EOL);
-				let i = new Yt(r, this.toolPath);
+				let i = new Xt(r, this.toolPath);
 				if (i.on("debug", (e) => {
 					this._debug(e);
-				}), this.options.cwd && !(yield Lt(this.options.cwd))) return n(/* @__PURE__ */ Error(`The cwd: ${this.options.cwd} does not exist!`));
+				}), this.options.cwd && !(yield Rt(this.options.cwd))) return n(/* @__PURE__ */ Error(`The cwd: ${this.options.cwd} does not exist!`));
 				let a = this._getSpawnFileName(), o = u.spawn(a, this._getSpawnArgs(r), this._getSpawnOptions(this.options, a)), s = "";
 				o.stdout && o.stdout.on("data", (e) => {
 					this.options.listeners && this.options.listeners.stdout && this.options.listeners.stdout(e), !r.silent && r.outStream && r.outStream.write(e), s = this._processLineBuffer(e, s, (e) => {
@@ -10228,7 +10226,7 @@ var Gt = function(e, t, n, r) {
 		});
 	}
 };
-function Jt(e) {
+function Yt(e) {
 	let t = [], n = !1, r = !1, i = "";
 	function a(e) {
 		r && e !== "\"" && (i += "\\"), i += e, r = !1;
@@ -10255,7 +10253,7 @@ function Jt(e) {
 	}
 	return i.length > 0 && t.push(i.trim()), t;
 }
-var Yt = class e extends l.EventEmitter {
+var Xt = class e extends l.EventEmitter {
 	constructor(e, t) {
 		if (super(), this.processClosed = !1, this.processError = "", this.processExitCode = 0, this.processExited = !1, this.processStderr = !1, this.delay = 1e4, this.done = !1, this.timeout = null, !t) throw Error("toolPath must not be empty");
 		this.options = e, this.toolPath = t, e.delay && (this.delay = e.delay);
@@ -10279,7 +10277,7 @@ var Yt = class e extends l.EventEmitter {
 			e._setResult();
 		}
 	}
-}, Xt = function(e, t, n, r) {
+}, Zt = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -10306,28 +10304,28 @@ var Yt = class e extends l.EventEmitter {
 		c((r = r.apply(e, t || [])).next());
 	});
 };
-function Zt(e, t, n) {
-	return Xt(this, void 0, void 0, function* () {
-		let r = Jt(e);
+function Qt(e, t, n) {
+	return Zt(this, void 0, void 0, function* () {
+		let r = Yt(e);
 		if (r.length === 0) throw Error("Parameter 'commandLine' cannot be null or empty.");
 		let i = r[0];
-		return t = r.slice(1).concat(t || []), new qt(i, t, n).exec();
+		return t = r.slice(1).concat(t || []), new Jt(i, t, n).exec();
 	});
 }
 n.platform(), n.arch();
-var Qt;
+var $t;
 (function(e) {
 	e[e.Success = 0] = "Success", e[e.Failure = 1] = "Failure";
-})(Qt ||= {});
-function $t(e) {
+})($t ||= {});
+function en(e) {
 	_("add-mask", {}, e);
 }
-function en(e, t) {
+function tn(e, t) {
 	let n = process.env[`INPUT_${e.replace(/ /g, "_").toUpperCase()}`] || "";
 	if (t && t.required && !n) throw Error(`Input required and not supplied: ${e}`);
 	return t && t.trimWhitespace === !1 ? n : n.trim();
 }
-function tn(e, t) {
+function nn(e, t) {
 	let n = [
 		"true",
 		"True",
@@ -10336,37 +10334,37 @@ function tn(e, t) {
 		"false",
 		"False",
 		"FALSE"
-	], i = en(e, t);
+	], i = tn(e, t);
 	if (n.includes(i)) return !0;
 	if (r.includes(i)) return !1;
 	throw TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${e}\nSupport boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 }
-function nn(e, n) {
+function rn(e, n) {
 	if (process.env.GITHUB_OUTPUT) return C("OUTPUT", w(e, n));
 	process.stdout.write(t.EOL), _("set-output", { name: e }, h(n));
 }
-function rn(e) {
-	process.exitCode = Qt.Failure, an(e);
+function an(e) {
+	process.exitCode = $t.Failure, on(e);
 }
-function an(e, t = {}) {
+function on(e, t = {}) {
 	_("error", g(t), e instanceof Error ? e.toString() : e);
 }
-function on(e) {
+function sn(e) {
 	process.stdout.write(e + t.EOL);
 }
-function sn(e) {
+function cn(e) {
 	v("group", e);
 }
-function cn() {
+function ln() {
 	v("endgroup");
 }
-var ln = () => {
+var un = () => {
 	let e = "";
 	return {
 		listener: (t) => e += t.toString(),
 		getOutput: () => e
 	};
-}, un = () => {
+}, dn = () => {
 	let e = "", t = "";
 	return {
 		listeners: {
@@ -10378,7 +10376,7 @@ var ln = () => {
 			stderr: t
 		})
 	};
-}, dn = () => {
+}, fn = () => {
 	let e = "";
 	return (t) => {
 		e += t.toString();
@@ -10386,17 +10384,17 @@ var ln = () => {
 		e = n.pop() ?? "";
 		for (let e of n) try {
 			let t = JSON.parse(e.trim());
-			t.message && (t.level === "ERROR" ? an(t.message) : on(t.message));
+			t.message && (t.level === "ERROR" ? on(t.message) : sn(t.message));
 		} catch {}
 	};
-}, fn = (e) => {
+}, pn = (e) => {
 	let t = [], n = "", r = !1, i = "";
 	for (let a = 0; a < e.length; a++) {
 		let o = e[a];
 		(o === "\"" || o === "'") && !r ? (r = !0, i = o) : o === i && r ? (r = !1, i = "") : o === " " && !r ? (n.trim() && t.push(n.trim()), n = "") : n += o;
 	}
 	return n.trim() && t.push(n.trim()), t;
-}, pn = (e) => {
+}, mn = (e) => {
 	let t = [
 		/^-url=/i,
 		/^-user=/i,
@@ -10410,15 +10408,15 @@ var ln = () => {
 		}
 		return e;
 	});
-}, mn = async (e, t) => {
-	let { listeners: n, getOutput: r } = un(), i = dn(), a = [
+}, hn = async (e, t) => {
+	let { listeners: n, getOutput: r } = dn(), i = fn(), a = [
 		...e,
 		"-outputType=json",
 		"-outputLogsInJson=true",
 		"-skipCheckForUpdate"
 	];
-	on(`Running: flyway ${pn(a).join(" ")}`);
-	let o = await Zt("flyway", a, {
+	sn(`Running: flyway ${mn(a).join(" ")}`);
+	let o = await Qt("flyway", a, {
 		silent: !0,
 		ignoreReturnCode: !0,
 		listeners: {
@@ -10427,15 +10425,15 @@ var ln = () => {
 		},
 		cwd: t || void 0
 	}), { stdout: s, stderr: c } = r();
-	return on(s), {
+	return sn(s), {
 		exitCode: o,
 		stdout: s,
 		stderr: c
 	};
-}, hn = async () => {
-	let { listener: e, getOutput: t } = ln();
+}, gn = async () => {
+	let { listener: e, getOutput: t } = un();
 	try {
-		return await Zt("flyway", [
+		return await Qt("flyway", [
 			"version",
 			"-outputType=json",
 			"-skipCheckForUpdate"
@@ -10447,88 +10445,141 @@ var ln = () => {
 			edition: JSON.parse(t()).edition?.toLowerCase() ?? "community"
 		};
 	} catch (e) {
-		return e instanceof Error ? an(e.message) : an(String(e)), { installed: !1 };
+		return e instanceof Error ? on(e.message) : on(String(e)), { installed: !1 };
 	}
-}, gn = (e) => {
+}, _n = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, _n = (e, t) => {
+}, vn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, vn = async (e, t, n) => {
-	sn("Running deployment changes report");
+}, yn = (e, t) => {
+	let n;
+	switch (!0) {
+		case bn(e):
+			n = {
+				stem: e,
+				singularSuffix: "",
+				pluralSuffix: "s"
+			};
+			break;
+		case e.endsWith("y"):
+			n = {
+				stem: e.substring(0, e.length - 1),
+				singularSuffix: "y",
+				pluralSuffix: "ies"
+			};
+			break;
+		case e.endsWith("x"):
+			n = {
+				stem: e.substring(0, e.length - 1),
+				singularSuffix: "x",
+				pluralSuffix: "xes"
+			};
+			break;
+		case e.endsWith("s"):
+			n = {
+				stem: e.substring(0, e.length - 1),
+				singularSuffix: "s",
+				pluralSuffix: "s"
+			};
+			break;
+		default: n = {
+			stem: e,
+			singularSuffix: "",
+			pluralSuffix: "s"
+		};
+	}
+	return t === void 0 ? `${n.stem}${n.pluralSuffix}` : `${t} ${n.stem}${t === 1 ? n.singularSuffix : n.pluralSuffix}`;
+}, bn = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), xn = (e) => e ? e.exitCode === 0 ? "Dry run script generated" : "Failed" : "Skipped", Sn = (e) => e ? e.exitCode === 0 ? `Passed - ${yn("violation", e.violationCount)}` : `Failed${e.violationCount > 0 ? ` - ${yn("violation", e.violationCount)}` : ""}` : "Skipped", Cn = (e) => e ? e.exitCode === 0 ? yn("changed object", e.changedObjectCount) : "Failed" : "Skipped", wn = async (e) => {
+	await Ct.addHeading("Flyway Checks", 2).addTable([
+		[{
+			data: "Check",
+			header: !0
+		}, {
+			data: "Result",
+			header: !0
+		}],
+		["Deployment Script Review", xn(e.dryrun)],
+		["Code Review", Sn(e.code)],
+		["Drift", e.driftStatus ?? "Skipped"],
+		["Deployment Changes", Cn(e.changes)]
+	]).write();
+}, Tn = async (e, t, n) => {
+	cn("Running deployment changes report");
 	try {
-		let r = await mn(e, t);
+		let r = await hn(e, t);
 		if (r.exitCode !== 0) {
-			let e = gn(r.stdout);
-			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? an("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && an(e.error.message), { exitCode: r.exitCode });
+			let e = _n(r.stdout);
+			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? on("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && on(e.error.message), { exitCode: r.exitCode });
 		}
-		let i = gn(r.stdout);
+		let i = _n(r.stdout);
 		return {
 			exitCode: r.exitCode,
 			result: {
 				reportPath: i?.htmlReport,
-				changedObjectCount: yn(i)
+				changedObjectCount: En(i)
 			}
 		};
 	} finally {
-		cn();
+		ln();
 	}
-}, yn = (e) => {
+}, En = (e) => {
 	let t = e?.individualResults?.filter((e) => e.operation === "changes");
 	return t?.length ? t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0) : 0;
-}, bn = "default_build", xn = (e) => {
+}, Dn = "default_build", On = (e) => {
 	let t = ["check"];
-	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.preDeploymentReportName && t.push(`-reportFilename=${e.preDeploymentReportName}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
-}, Sn = (e) => {
-	let t = [...Cn(e)];
+	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.preDeploymentReportName && t.push(`-reportFilename=${e.preDeploymentReportName}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+}, kn = (e) => {
+	let t = [...An(e)];
 	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), t;
-}, Cn = (e) => {
+}, An = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), t;
-}, wn = (e) => {
-	if (!Tn(e)) return [];
-	let t = e.buildEnvironment ?? bn, n = [];
+}, jn = (e) => {
+	if (!Mn(e)) return [];
+	let t = e.buildEnvironment ?? Dn, n = [];
 	return n.push(`-check.buildEnvironment=${t}`), e.buildUrl && n.push(`-environments.${t}.url=${e.buildUrl}`), e.buildUser && n.push(`-environments.${t}.user=${e.buildUser}`), e.buildPassword && n.push(`-environments.${t}.password=${e.buildPassword}`), e.buildSchemas && n.push(`-environments.${t}.schemas=${e.buildSchemas}`), e.buildOkToErase && n.push(`-environments.${t}.flyway.cleanDisabled=false`), n;
-}, Tn = (e) => !!(e.buildEnvironment || e.buildUrl), En = (e, t) => {
+}, Mn = (e) => !!(e.buildEnvironment || e.buildUrl), Nn = (e, t) => {
 	if (t !== "enterprise") {
-		on(`Skipping deployment changes report: not available in ${t === "community" ? "Community" : "Teams"} edition`);
+		sn(`Skipping deployment changes report: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
 	}
-	if (e.skipDeploymentChangesReport && Tn(e)) {
-		on("Skipping deployment changes report: \"skip-deployment-changes-report\" set to true");
+	if (e.skipDeploymentChangesReport && Mn(e)) {
+		sn("Skipping deployment changes report: \"skip-deployment-changes-report\" set to true");
 		return;
 	}
-	if (!Tn(e)) {
-		on("Skipping deployment changes report: no \"build-environment\" or \"build-url\" provided");
+	if (!Mn(e)) {
+		sn("Skipping deployment changes report: no \"build-environment\" or \"build-url\" provided");
 		return;
 	}
 	return [
-		...xn(e),
+		...On(e),
 		"-changes",
-		...Sn(e),
-		...wn(e)
+		...kn(e),
+		...jn(e)
 	];
-}, Dn = async (e, t) => {
-	let n = En(e, t);
+}, Pn = async (e, t) => {
+	let n = Nn(e, t);
 	if (!n) return;
-	let { exitCode: r, result: i } = await vn(n, e.workingDirectory, !e.buildOkToErase);
-	return i && nn("changed-object-count", i.changedObjectCount.toString()), {
+	let { exitCode: r, result: i } = await Tn(n, e.workingDirectory, !e.buildOkToErase);
+	return i && rn("changed-object-count", i.changedObjectCount.toString()), {
 		exitCode: r,
-		reportPath: i?.reportPath
+		reportPath: i?.reportPath,
+		changedObjectCount: i?.changedObjectCount
 	};
-}, On = async (e, t) => {
-	sn("Running code review");
+}, Fn = async (e, t) => {
+	cn("Running code review");
 	try {
-		let n = await mn(e, t);
+		let n = await hn(e, t);
 		if (n.exitCode !== 0) {
-			let e = gn(n.stdout);
-			e?.error?.message && an(e.error.message);
-			let t = kn(e?.error?.results ?? []);
+			let e = _n(n.stdout);
+			e?.error?.message && on(e.error.message);
+			let t = In(e?.error?.results ?? []);
 			return {
 				exitCode: n.exitCode,
 				result: {
@@ -10537,7 +10588,7 @@ var ln = () => {
 				}
 			};
 		}
-		let r = gn(n.stdout), i = kn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
+		let r = _n(n.stdout), i = In((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
 		return {
 			exitCode: n.exitCode,
 			result: {
@@ -10546,39 +10597,40 @@ var ln = () => {
 			}
 		};
 	} finally {
-		cn();
+		ln();
 	}
-}, kn = (e) => {
+}, In = (e) => {
 	let t = e.flatMap((e) => e.violations ?? []).map((e) => e.code).filter((e) => !!e);
 	return {
 		violationCount: t.length,
 		violationCodes: [...new Set(t)]
 	};
-}, An = (e) => {
+}, Ln = (e) => {
 	if (e.skipCodeReview) {
-		on("Skipping code review: \"skip-code-review\" set to true");
+		sn("Skipping code review: \"skip-code-review\" set to true");
 		return;
 	}
 	return [
-		...xn(e),
+		...On(e),
 		"-code",
-		...Cn(e),
+		...An(e),
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : []
 	];
-}, jn = async (e) => {
-	let t = An(e);
+}, Rn = async (e) => {
+	let t = Ln(e);
 	if (!t) return;
-	let { exitCode: n, result: r } = await On(t, e.workingDirectory);
-	return nn("code-violation-count", r.violationCount.toString()), nn("code-violation-codes", r.violationCodes.join(",")), {
+	let { exitCode: n, result: r } = await Fn(t, e.workingDirectory);
+	return rn("code-violation-count", r.violationCount.toString()), rn("code-violation-codes", r.violationCodes.join(",")), {
 		exitCode: n,
-		reportPath: r.reportPath
+		reportPath: r.reportPath,
+		violationCount: r.violationCount
 	};
-}, Mn = async (e, t) => {
-	sn("Checking for drift");
+}, zn = async (e, t) => {
+	cn("Checking for drift");
 	try {
-		let n = await mn(e, t);
+		let n = await hn(e, t);
 		if (n.exitCode !== 0) {
-			let e = gn(n.stdout);
+			let e = _n(n.stdout);
 			return e?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? {
 				exitCode: n.exitCode,
 				result: {
@@ -10587,10 +10639,10 @@ var ln = () => {
 					reportPath: e.error.htmlReport,
 					driftResolutionFolder: e.error.driftResolutionFolderPath
 				}
-			} : e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), {
+			} : e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Drift check could not be run because advanced comparison features are not supported for this database type."), {
 				exitCode: 0,
 				result: { comparisonSupported: !1 }
-			}) : (e?.error?.message && an(e.error.message), {
+			}) : (e?.error?.message && on(e.error.message), {
 				exitCode: n.exitCode,
 				result: {
 					driftDetected: !1,
@@ -10598,87 +10650,104 @@ var ln = () => {
 				}
 			});
 		}
-		let r = gn(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		let r = _n(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
 		return {
 			exitCode: n.exitCode,
 			result: {
 				driftDetected: i?.driftDetected,
+				driftCheckSkipped: i?.driftCheckSkipped,
 				comparisonSupported: !0,
 				reportPath: r?.htmlReport,
 				driftResolutionFolder: i?.driftResolutionFolder
 			}
 		};
 	} finally {
-		cn();
+		ln();
 	}
-}, Nn = (e, t) => {
+}, Bn = (e, t) => {
 	if (t !== "enterprise") {
-		on(`Skipping drift check: not available in ${t === "community" ? "Community" : "Teams"} edition`);
+		sn(`Skipping drift check: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
 	}
 	if (e.skipDriftCheck) {
-		on("Skipping drift check: \"skip-drift-check\" set to true");
+		sn("Skipping drift check: \"skip-drift-check\" set to true");
 		return;
 	}
 	return [
-		...xn(e),
+		...On(e),
 		"-drift",
-		...Cn(e),
+		...An(e),
 		...e.failOnDrift ? ["-check.failOnDrift=true"] : []
 	];
-}, Pn = async (e, t) => {
-	let n = Nn(e, t);
+}, Vn = async (e, t) => {
+	let n = Bn(e, t);
 	if (!n) return;
-	let { exitCode: r, result: i } = await Mn(n, e.workingDirectory), a = _n(i.driftResolutionFolder, e.workingDirectory);
-	return (i.driftDetected || r === 0 && i.comparisonSupported && i.driftDetected !== void 0) && (nn("drift-detected", i.driftDetected.toString()), a !== void 0 && nn("drift-resolution-folder", a)), {
+	let { exitCode: r, result: i } = await zn(n, e.workingDirectory), a = vn(i.driftResolutionFolder, e.workingDirectory);
+	return (i.driftDetected || r === 0 && i.comparisonSupported && i.driftDetected !== void 0) && (rn("drift-detected", i.driftDetected.toString()), a !== void 0 && rn("drift-resolution-folder", a)), {
 		exitCode: r,
-		reportPath: i.reportPath
+		reportPath: i.reportPath,
+		driftDetected: i.driftDetected,
+		driftCheckSkipped: i.driftCheckSkipped,
+		comparisonSupported: i.comparisonSupported
 	};
-}, Fn = (e, t) => {
+}, Hn = (e, t) => {
 	if (t === "community") {
-		on("Skipping deployment script review: not available in Community edition");
+		sn("Skipping deployment script review: not available in Community edition");
 		return;
 	}
 	if (e.skipDeploymentScriptReview) {
-		on("Skipping deployment script review: \"skip-deployment-script-review\" set to true");
+		sn("Skipping deployment script review: \"skip-deployment-script-review\" set to true");
 		return;
 	}
 	return [
-		...xn(e),
+		...On(e),
 		"-dryrun",
-		...Sn(e)
+		...kn(e)
 	];
-}, In = async (e, t) => {
-	let n = Fn(e, t);
+}, Un = async (e, t) => {
+	let n = Hn(e, t);
 	if (n) {
-		sn("Running Flyway check: deployment script review");
+		cn("Running Flyway check: deployment script review");
 		try {
-			let t = await mn(n, e.workingDirectory);
+			let t = await hn(n, e.workingDirectory);
 			if (t.exitCode !== 0) {
-				let e = gn(t.stdout);
-				return e?.error?.message && an(e.error.message), { exitCode: t.exitCode };
+				let e = _n(t.stdout);
+				return e?.error?.message && on(e.error.message), { exitCode: t.exitCode };
 			}
-			let r = gn(t.stdout);
+			let r = _n(t.stdout);
 			return {
 				exitCode: t.exitCode,
 				reportPath: r?.htmlReport
 			};
 		} finally {
-			cn();
+			ln();
 		}
 	}
-}, Ln = async (e, t) => {
-	let n = [
-		await In(e, t),
-		await jn(e),
-		await Pn(e, t),
-		await Dn(e, t)
-	], r = n.find((e) => e?.reportPath)?.reportPath;
-	nn("report-path", _n(r ?? "report.html", e.workingDirectory));
-	let i = n.find((e) => e !== void 0 && e.exitCode !== 0);
-	if (nn("exit-code", (i?.exitCode ?? 0).toString()), i) throw Error("Flyway checks failed");
-}, Rn = () => {
-	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = en("build-environment") || void 0, l = en("build-url") || void 0, u = en("build-user") || void 0, d = en("build-password") || void 0, f = en("build-schemas") || void 0, p = tn("build-ok-to-erase"), m = tn("skip-code-review"), h = tn("skip-drift-check"), g = tn("skip-deployment-changes-report"), _ = tn("skip-deployment-script-review"), v = tn("fail-on-code-review"), y = tn("fail-on-drift"), b = en("working-directory");
+}, Wn = async (e, t) => {
+	let n = await Un(e, t), r = await Rn(e), i = await Vn(e, t), a = await Pn(e, t), o = [
+		n,
+		r,
+		i,
+		a
+	], s = o.find((e) => e?.reportPath)?.reportPath;
+	rn("report-path", vn(s ?? "report.html", e.workingDirectory));
+	let c = o.find((e) => e !== void 0 && e.exitCode !== 0);
+	rn("exit-code", (c?.exitCode ?? 0).toString());
+	let l;
+	if (i && (l = i.driftDetected ? "Drift detected" : i.comparisonSupported ? i.driftCheckSkipped ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type"), await wn({
+		dryrun: n ? { exitCode: n.exitCode } : void 0,
+		code: r ? {
+			exitCode: r.exitCode,
+			violationCount: r.violationCount
+		} : void 0,
+		driftStatus: l,
+		changes: a ? {
+			exitCode: a.exitCode,
+			changedObjectCount: a.changedObjectCount ?? 0
+		} : void 0
+	}), c) throw Error("Flyway checks failed");
+}, Gn = () => {
+	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = tn("build-environment") || void 0, l = tn("build-url") || void 0, u = tn("build-user") || void 0, d = tn("build-password") || void 0, f = tn("build-schemas") || void 0, p = nn("build-ok-to-erase"), m = nn("skip-code-review"), h = nn("skip-drift-check"), g = nn("skip-deployment-changes-report"), _ = nn("skip-deployment-script-review"), v = nn("fail-on-code-review"), y = nn("fail-on-drift"), b = tn("working-directory");
 	return {
 		targetEnvironment: e,
 		targetUrl: t,
@@ -10700,28 +10769,28 @@ var ln = () => {
 		failOnCodeReview: v,
 		failOnDrift: y,
 		workingDirectory: b ? c.resolve(b) : void 0,
-		preDeploymentReportName: en("pre-deployment-report-name") || void 0,
-		extraArgs: en("extra-args") || void 0
+		preDeploymentReportName: tn("pre-deployment-report-name") || void 0,
+		extraArgs: tn("extra-args") || void 0
 	};
-}, zn = (e) => {
-	e.targetPassword && $t(e.targetPassword), e.buildPassword && $t(e.buildPassword);
+}, Kn = (e) => {
+	e.targetPassword && en(e.targetPassword), e.buildPassword && en(e.buildPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
 	try {
-		let e = await hn();
+		let e = await gn();
 		if (!e.installed) {
-			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
+			an("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Rn();
+		let t = Gn();
 		if (!t.targetEnvironment && !t.targetUrl) {
-			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
+			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		zn(t), await Ln(t, e.edition);
+		Kn(t), await Wn(t, e.edition);
 	} catch (e) {
-		e instanceof Error ? rn(e.message) : rn(String(e));
+		e instanceof Error ? an(e.message) : an(String(e));
 	}
 })();
 export {};
