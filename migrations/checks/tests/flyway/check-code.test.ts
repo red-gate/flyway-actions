@@ -106,7 +106,7 @@ describe("runCheckCode", () => {
 
     const result = await runCheckCode({});
 
-    expect(result).toEqual({ exitCode: 1, reportPath: "/tmp/report.html" });
+    expect(result).toEqual({ exitCode: 1, reportPath: "/tmp/report.html", violationCount: 1 });
   });
 
   it("should set code-violation-count and code-violation-codes outputs", async () => {

@@ -9795,8 +9795,7 @@ var vt = function(e, t, n, r) {
 		}
 		c((r = r.apply(e, t || [])).next());
 	});
-}, { access: yt, appendFile: bt, writeFile: xt } = s, St = "GITHUB_STEP_SUMMARY";
-new class {
+}, { access: yt, appendFile: bt, writeFile: xt } = s, St = "GITHUB_STEP_SUMMARY", Ct = new class {
 	constructor() {
 		this._buffer = "";
 	}
@@ -9900,8 +9899,7 @@ new class {
 		let n = this.wrap("a", e, { href: t });
 		return this.addRaw(n).addEOL();
 	}
-}();
-var Ct = function(e, t, n, r) {
+}(), wt = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -9927,12 +9925,12 @@ var Ct = function(e, t, n, r) {
 		}
 		c((r = r.apply(e, t || [])).next());
 	});
-}, { chmod: wt, copyFile: Tt, lstat: Et, mkdir: Dt, open: Ot, readdir: kt, rename: At, rm: jt, rmdir: Mt, stat: Nt, symlink: Pt, unlink: Ft } = a.promises, It = process.platform === "win32";
+}, { chmod: Tt, copyFile: Et, lstat: Dt, mkdir: Ot, open: kt, readdir: At, rename: jt, rm: Mt, rmdir: Nt, stat: Pt, symlink: Ft, unlink: It } = a.promises, Lt = process.platform === "win32";
 a.constants.O_RDONLY;
-function Lt(e) {
-	return Ct(this, void 0, void 0, function* () {
+function Rt(e) {
+	return wt(this, void 0, void 0, function* () {
 		try {
-			yield Nt(e);
+			yield Pt(e);
 		} catch (e) {
 			if (e.code === "ENOENT") return !1;
 			throw e;
@@ -9940,37 +9938,37 @@ function Lt(e) {
 		return !0;
 	});
 }
-function Rt(e) {
-	if (e = Bt(e), !e) throw Error("isRooted() parameter \"p\" cannot be empty");
-	return It ? e.startsWith("\\") || /^[A-Z]:/i.test(e) : e.startsWith("/");
+function zt(e) {
+	if (e = Vt(e), !e) throw Error("isRooted() parameter \"p\" cannot be empty");
+	return Lt ? e.startsWith("\\") || /^[A-Z]:/i.test(e) : e.startsWith("/");
 }
-function zt(e, t) {
-	return Ct(this, void 0, void 0, function* () {
+function Bt(e, t) {
+	return wt(this, void 0, void 0, function* () {
 		let n;
 		try {
-			n = yield Nt(e);
+			n = yield Pt(e);
 		} catch (t) {
 			t.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${e}': ${t}`);
 		}
 		if (n && n.isFile()) {
-			if (It) {
+			if (Lt) {
 				let n = c.extname(e).toUpperCase();
 				if (t.some((e) => e.toUpperCase() === n)) return e;
-			} else if (Vt(n)) return e;
+			} else if (Ht(n)) return e;
 		}
 		let r = e;
 		for (let i of t) {
 			e = r + i, n = void 0;
 			try {
-				n = yield Nt(e);
+				n = yield Pt(e);
 			} catch (t) {
 				t.code !== "ENOENT" && console.log(`Unexpected error attempting to determine if executable file exists '${e}': ${t}`);
 			}
 			if (n && n.isFile()) {
-				if (It) {
+				if (Lt) {
 					try {
 						let t = c.dirname(e), n = c.basename(e).toUpperCase();
-						for (let r of yield kt(t)) if (n === r.toUpperCase()) {
+						for (let r of yield At(t)) if (n === r.toUpperCase()) {
 							e = c.join(t, r);
 							break;
 						}
@@ -9978,19 +9976,19 @@ function zt(e, t) {
 						console.log(`Unexpected error attempting to determine the actual case of the file '${e}': ${t}`);
 					}
 					return e;
-				} else if (Vt(n)) return e;
+				} else if (Ht(n)) return e;
 			}
 		}
 		return "";
 	});
 }
-function Bt(e) {
-	return e ||= "", It ? (e = e.replace(/\//g, "\\"), e.replace(/\\\\+/g, "\\")) : e.replace(/\/\/+/g, "/");
-}
 function Vt(e) {
+	return e ||= "", Lt ? (e = e.replace(/\//g, "\\"), e.replace(/\\\\+/g, "\\")) : e.replace(/\/\/+/g, "/");
+}
+function Ht(e) {
 	return (e.mode & 1) > 0 || (e.mode & 8) > 0 && process.getgid !== void 0 && e.gid === process.getgid() || (e.mode & 64) > 0 && process.getuid !== void 0 && e.uid === process.getuid();
 }
-var Ht = function(e, t, n, r) {
+var Ut = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -10017,25 +10015,25 @@ var Ht = function(e, t, n, r) {
 		c((r = r.apply(e, t || [])).next());
 	});
 };
-function Ut(e, t) {
-	return Ht(this, void 0, void 0, function* () {
+function Wt(e, t) {
+	return Ut(this, void 0, void 0, function* () {
 		if (!e) throw Error("parameter 'tool' is required");
 		if (t) {
-			let t = yield Ut(e, !1);
-			if (!t) throw Error(It ? `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.` : `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
+			let t = yield Wt(e, !1);
+			if (!t) throw Error(Lt ? `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.` : `Unable to locate executable file: ${e}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
 			return t;
 		}
-		let n = yield Wt(e);
+		let n = yield Gt(e);
 		return n && n.length > 0 ? n[0] : "";
 	});
 }
-function Wt(e) {
-	return Ht(this, void 0, void 0, function* () {
+function Gt(e) {
+	return Ut(this, void 0, void 0, function* () {
 		if (!e) throw Error("parameter 'tool' is required");
 		let t = [];
-		if (It && process.env.PATHEXT) for (let e of process.env.PATHEXT.split(c.delimiter)) e && t.push(e);
-		if (Rt(e)) {
-			let n = yield zt(e, t);
+		if (Lt && process.env.PATHEXT) for (let e of process.env.PATHEXT.split(c.delimiter)) e && t.push(e);
+		if (zt(e)) {
+			let n = yield Bt(e, t);
 			return n ? [n] : [];
 		}
 		if (e.includes(c.sep)) return [];
@@ -10043,13 +10041,13 @@ function Wt(e) {
 		if (process.env.PATH) for (let e of process.env.PATH.split(c.delimiter)) e && n.push(e);
 		let r = [];
 		for (let i of n) {
-			let n = yield zt(c.join(i, e), t);
+			let n = yield Bt(c.join(i, e), t);
 			n && r.push(n);
 		}
 		return r;
 	});
 }
-var Gt = function(e, t, n, r) {
+var Kt = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -10075,7 +10073,7 @@ var Gt = function(e, t, n, r) {
 		}
 		c((r = r.apply(e, t || [])).next());
 	});
-}, Kt = process.platform === "win32", qt = class extends l.EventEmitter {
+}, qt = process.platform === "win32", Jt = class extends l.EventEmitter {
 	constructor(e, t, n) {
 		if (super(), !e) throw Error("Parameter 'toolPath' cannot be null or empty.");
 		this.toolPath = e, this.args = t || [], this.options = n || {};
@@ -10085,7 +10083,7 @@ var Gt = function(e, t, n, r) {
 	}
 	_getCommandString(e, t) {
 		let n = this._getSpawnFileName(), r = this._getSpawnArgs(e), i = t ? "" : "[command]";
-		if (Kt) if (this._isCmdFile()) {
+		if (qt) if (this._isCmdFile()) {
 			i += n;
 			for (let e of r) i += ` ${e}`;
 		} else if (e.windowsVerbatimArguments) {
@@ -10111,10 +10109,10 @@ var Gt = function(e, t, n, r) {
 		}
 	}
 	_getSpawnFileName() {
-		return Kt && this._isCmdFile() ? process.env.COMSPEC || "cmd.exe" : this.toolPath;
+		return qt && this._isCmdFile() ? process.env.COMSPEC || "cmd.exe" : this.toolPath;
 	}
 	_getSpawnArgs(e) {
-		if (Kt && this._isCmdFile()) {
+		if (qt && this._isCmdFile()) {
 			let t = `/D /S /C "${this._windowsQuoteCmdArg(this.toolPath)}`;
 			for (let n of this.args) t += " ", t += e.windowsVerbatimArguments ? n : this._windowsQuoteCmdArg(n);
 			return t += "\"", [t];
@@ -10191,16 +10189,16 @@ var Gt = function(e, t, n, r) {
 		return n.cwd = e.cwd, n.env = e.env, n.windowsVerbatimArguments = e.windowsVerbatimArguments || this._isCmdFile(), e.windowsVerbatimArguments && (n.argv0 = `"${t}"`), n;
 	}
 	exec() {
-		return Gt(this, void 0, void 0, function* () {
-			return !Rt(this.toolPath) && (this.toolPath.includes("/") || Kt && this.toolPath.includes("\\")) && (this.toolPath = c.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield Ut(this.toolPath, !0), new Promise((e, n) => Gt(this, void 0, void 0, function* () {
+		return Kt(this, void 0, void 0, function* () {
+			return !zt(this.toolPath) && (this.toolPath.includes("/") || qt && this.toolPath.includes("\\")) && (this.toolPath = c.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath)), this.toolPath = yield Wt(this.toolPath, !0), new Promise((e, n) => Kt(this, void 0, void 0, function* () {
 				this._debug(`exec tool: ${this.toolPath}`), this._debug("arguments:");
 				for (let e of this.args) this._debug(`   ${e}`);
 				let r = this._cloneExecOptions(this.options);
 				!r.silent && r.outStream && r.outStream.write(this._getCommandString(r) + t.EOL);
-				let i = new Yt(r, this.toolPath);
+				let i = new Xt(r, this.toolPath);
 				if (i.on("debug", (e) => {
 					this._debug(e);
-				}), this.options.cwd && !(yield Lt(this.options.cwd))) return n(/* @__PURE__ */ Error(`The cwd: ${this.options.cwd} does not exist!`));
+				}), this.options.cwd && !(yield Rt(this.options.cwd))) return n(/* @__PURE__ */ Error(`The cwd: ${this.options.cwd} does not exist!`));
 				let a = this._getSpawnFileName(), o = u.spawn(a, this._getSpawnArgs(r), this._getSpawnOptions(this.options, a)), s = "";
 				o.stdout && o.stdout.on("data", (e) => {
 					this.options.listeners && this.options.listeners.stdout && this.options.listeners.stdout(e), !r.silent && r.outStream && r.outStream.write(e), s = this._processLineBuffer(e, s, (e) => {
@@ -10228,7 +10226,7 @@ var Gt = function(e, t, n, r) {
 		});
 	}
 };
-function Jt(e) {
+function Yt(e) {
 	let t = [], n = !1, r = !1, i = "";
 	function a(e) {
 		r && e !== "\"" && (i += "\\"), i += e, r = !1;
@@ -10255,7 +10253,7 @@ function Jt(e) {
 	}
 	return i.length > 0 && t.push(i.trim()), t;
 }
-var Yt = class e extends l.EventEmitter {
+var Xt = class e extends l.EventEmitter {
 	constructor(e, t) {
 		if (super(), this.processClosed = !1, this.processError = "", this.processExitCode = 0, this.processExited = !1, this.processStderr = !1, this.delay = 1e4, this.done = !1, this.timeout = null, !t) throw Error("toolPath must not be empty");
 		this.options = e, this.toolPath = t, e.delay && (this.delay = e.delay);
@@ -10279,7 +10277,7 @@ var Yt = class e extends l.EventEmitter {
 			e._setResult();
 		}
 	}
-}, Xt = function(e, t, n, r) {
+}, Zt = function(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -10306,28 +10304,28 @@ var Yt = class e extends l.EventEmitter {
 		c((r = r.apply(e, t || [])).next());
 	});
 };
-function Zt(e, t, n) {
-	return Xt(this, void 0, void 0, function* () {
-		let r = Jt(e);
+function Qt(e, t, n) {
+	return Zt(this, void 0, void 0, function* () {
+		let r = Yt(e);
 		if (r.length === 0) throw Error("Parameter 'commandLine' cannot be null or empty.");
 		let i = r[0];
-		return t = r.slice(1).concat(t || []), new qt(i, t, n).exec();
+		return t = r.slice(1).concat(t || []), new Jt(i, t, n).exec();
 	});
 }
 n.platform(), n.arch();
-var Qt;
+var $t;
 (function(e) {
 	e[e.Success = 0] = "Success", e[e.Failure = 1] = "Failure";
-})(Qt ||= {});
-function $t(e) {
+})($t ||= {});
+function en(e) {
 	_("add-mask", {}, e);
 }
-function en(e, t) {
+function tn(e, t) {
 	let n = process.env[`INPUT_${e.replace(/ /g, "_").toUpperCase()}`] || "";
 	if (t && t.required && !n) throw Error(`Input required and not supplied: ${e}`);
 	return t && t.trimWhitespace === !1 ? n : n.trim();
 }
-function tn(e, t) {
+function nn(e, t) {
 	let n = [
 		"true",
 		"True",
@@ -10336,37 +10334,37 @@ function tn(e, t) {
 		"false",
 		"False",
 		"FALSE"
-	], i = en(e, t);
+	], i = tn(e, t);
 	if (n.includes(i)) return !0;
 	if (r.includes(i)) return !1;
 	throw TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${e}\nSupport boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 }
-function nn(e, n) {
+function rn(e, n) {
 	if (process.env.GITHUB_OUTPUT) return C("OUTPUT", w(e, n));
 	process.stdout.write(t.EOL), _("set-output", { name: e }, h(n));
 }
-function rn(e) {
-	process.exitCode = Qt.Failure, an(e);
+function an(e) {
+	process.exitCode = $t.Failure, on(e);
 }
-function an(e, t = {}) {
+function on(e, t = {}) {
 	_("error", g(t), e instanceof Error ? e.toString() : e);
 }
-function on(e) {
+function sn(e) {
 	process.stdout.write(e + t.EOL);
 }
-function sn(e) {
+function cn(e) {
 	v("group", e);
 }
-function cn() {
+function ln() {
 	v("endgroup");
 }
-var ln = () => {
+var un = () => {
 	let e = "";
 	return {
 		listener: (t) => e += t.toString(),
 		getOutput: () => e
 	};
-}, un = () => {
+}, dn = () => {
 	let e = "", t = "";
 	return {
 		listeners: {
@@ -10378,7 +10376,7 @@ var ln = () => {
 			stderr: t
 		})
 	};
-}, dn = () => {
+}, fn = () => {
 	let e = "";
 	return (t) => {
 		e += t.toString();
@@ -10386,17 +10384,17 @@ var ln = () => {
 		e = n.pop() ?? "";
 		for (let e of n) try {
 			let t = JSON.parse(e.trim());
-			t.message && (t.level === "ERROR" ? an(t.message) : on(t.message));
+			t.message && (t.level === "ERROR" ? on(t.message) : sn(t.message));
 		} catch {}
 	};
-}, fn = (e) => {
+}, pn = (e) => {
 	let t = [], n = "", r = !1, i = "";
 	for (let a = 0; a < e.length; a++) {
 		let o = e[a];
 		(o === "\"" || o === "'") && !r ? (r = !0, i = o) : o === i && r ? (r = !1, i = "") : o === " " && !r ? (n.trim() && t.push(n.trim()), n = "") : n += o;
 	}
 	return n.trim() && t.push(n.trim()), t;
-}, pn = (e) => {
+}, mn = (e) => {
 	let t = [
 		/^-url=/i,
 		/^-user=/i,
@@ -10410,15 +10408,15 @@ var ln = () => {
 		}
 		return e;
 	});
-}, mn = async (e, t) => {
-	let { listeners: n, getOutput: r } = un(), i = dn(), a = [
+}, hn = async (e, t) => {
+	let { listeners: n, getOutput: r } = dn(), i = fn(), a = [
 		...e,
 		"-outputType=json",
 		"-outputLogsInJson=true",
 		"-skipCheckForUpdate"
 	];
-	on(`Running: flyway ${pn(a).join(" ")}`);
-	let o = await Zt("flyway", a, {
+	sn(`Running: flyway ${mn(a).join(" ")}`);
+	let o = await Qt("flyway", a, {
 		silent: !0,
 		ignoreReturnCode: !0,
 		listeners: {
@@ -10427,15 +10425,15 @@ var ln = () => {
 		},
 		cwd: t || void 0
 	}), { stdout: s, stderr: c } = r();
-	return on(s), {
+	return sn(s), {
 		exitCode: o,
 		stdout: s,
 		stderr: c
 	};
-}, hn = async () => {
-	let { listener: e, getOutput: t } = ln();
+}, gn = async () => {
+	let { listener: e, getOutput: t } = un();
 	try {
-		return await Zt("flyway", [
+		return await Qt("flyway", [
 			"version",
 			"-outputType=json",
 			"-skipCheckForUpdate"
@@ -10447,20 +10445,20 @@ var ln = () => {
 			edition: JSON.parse(t()).edition?.toLowerCase() ?? "community"
 		};
 	} catch (e) {
-		return e instanceof Error ? an(e.message) : an(String(e)), { installed: !1 };
+		return e instanceof Error ? on(e.message) : on(String(e)), { installed: !1 };
 	}
-}, gn = (e) => {
+}, _n = (e) => {
 	try {
 		return JSON.parse(e);
 	} catch {
 		return;
 	}
-}, _n = async (e, t) => {
-	sn("Checking for drift");
+}, vn = async (e, t) => {
+	cn("Checking for drift");
 	try {
-		let n = await mn(e, t);
+		let n = await hn(e, t);
 		if (n.exitCode !== 0) {
-			let e = gn(n.stdout);
+			let e = _n(n.stdout);
 			return e?.error?.errorCode === "CHECK_DRIFT_DETECTED" ? {
 				exitCode: n.exitCode,
 				result: {
@@ -10469,10 +10467,10 @@ var ln = () => {
 					reportPath: e.error.htmlReport,
 					driftResolutionFolder: e.error.driftResolutionFolderPath
 				}
-			} : e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (on("Drift check could not be run because advanced comparison features are not supported for this database type."), {
+			} : e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (sn("Drift check could not be run because advanced comparison features are not supported for this database type."), {
 				exitCode: 0,
 				result: { comparisonSupported: !1 }
-			}) : (e?.error?.message && an(e.error.message), {
+			}) : (e?.error?.message && on(e.error.message), {
 				exitCode: n.exitCode,
 				result: {
 					driftDetected: !1,
@@ -10480,68 +10478,72 @@ var ln = () => {
 				}
 			});
 		}
-		let r = gn(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
+		let r = _n(n.stdout), i = r?.individualResults?.find((e) => e.operation === "drift");
 		return {
 			exitCode: n.exitCode,
 			result: {
 				driftDetected: i?.driftDetected,
+				driftCheckSkipped: i?.driftCheckSkipped,
 				comparisonSupported: !0,
 				reportPath: r?.htmlReport,
 				driftResolutionFolder: i?.driftResolutionFolder
 			}
 		};
 	} finally {
-		cn();
+		ln();
 	}
-}, vn = (e, t) => {
+}, yn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, yn = (e) => {
+}, bn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
-	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...fn(e.extraArgs)), t;
-}, bn = (e) => [
+	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+}, xn = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...yn(e),
+	...bn(e),
 	...e.deploymentReportName ? [`-reportFilename=${e.deploymentReportName}`] : []
-], xn = async (e) => {
-	let { exitCode: t, result: n } = await _n(bn(e), e.workingDirectory), r = vn(n.reportPath, e.workingDirectory), i = vn(n.driftResolutionFolder, e.workingDirectory);
-	return nn("exit-code", t.toString()), n.driftDetected !== void 0 && nn("drift-detected", n.driftDetected.toString()), r !== void 0 && nn("report-path", r), i !== void 0 && nn("drift-resolution-folder", i), {
+], Sn = async (e) => {
+	let { exitCode: t, result: n } = await vn(xn(e), e.workingDirectory), r = yn(n.reportPath, e.workingDirectory), i = yn(n.driftResolutionFolder, e.workingDirectory);
+	return rn("exit-code", t.toString()), n.driftDetected !== void 0 && rn("drift-detected", n.driftDetected.toString()), r !== void 0 && rn("report-path", r), i !== void 0 && rn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, Sn = (e) => {
-	let t = ["migrate", ...yn(e)];
+}, Cn = (e) => {
+	let t = ["migrate", ...bn(e)];
 	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), e.baselineOnMigrate && t.push("-baselineOnMigrate=true"), e.saveSnapshot && t.push("-migrate.saveSnapshot=true"), t;
-}, Cn = async (e) => {
-	sn("Running migrations");
+}, wn = async (e) => {
+	cn("Running migrations");
 	try {
-		let t = await mn(Sn(e), e.workingDirectory);
+		let t = await hn(Cn(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
-			let e = gn(t.stdout);
-			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-				on("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), Tn(0);
-				return;
-			}
-			throw e?.error?.message && an(e.error.message), Tn(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
+			let e = _n(t.stdout);
+			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") return sn("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), En(0), {
+				migrationsApplied: 0,
+				schemaVersion: "unknown"
+			};
+			throw e?.error?.message && on(e.error.message), En(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
 		}
-		let { migrationsApplied: n, schemaVersion: r } = wn(t.stdout);
-		Tn(t.exitCode, n, r);
+		let { migrationsApplied: n, schemaVersion: r } = Tn(t.stdout);
+		return En(t.exitCode, n, r), {
+			migrationsApplied: n,
+			schemaVersion: r
+		};
 	} finally {
-		cn();
+		ln();
 	}
-}, wn = (e) => {
-	let t = gn(e);
+}, Tn = (e) => {
+	let t = _n(e);
 	return {
 		migrationsApplied: t?.migrationsExecuted ?? 0,
 		schemaVersion: t?.targetSchemaVersion ?? "unknown"
 	};
-}, Tn = (e, t, n) => {
-	nn("exit-code", e.toString()), t !== void 0 && nn("migrations-applied", t.toString()), n !== void 0 && nn("schema-version", n);
-}, En = () => {
-	let e = en("target-environment") || void 0, t = en("target-url") || void 0, n = en("target-user") || void 0, r = en("target-password") || void 0, i = en("target-schemas") || void 0, a = en("target-migration-version") || void 0, o = en("cherry-pick") || void 0, s = tn("baseline-on-migrate"), l = tn("skip-drift-check"), u = en("working-directory");
+}, En = (e, t, n) => {
+	rn("exit-code", e.toString()), t !== void 0 && rn("migrations-applied", t.toString()), n !== void 0 && rn("schema-version", n);
+}, Dn = () => {
+	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = nn("baseline-on-migrate"), l = nn("skip-drift-check"), u = tn("working-directory");
 	return {
 		targetEnvironment: e,
 		targetUrl: t,
@@ -10553,38 +10555,102 @@ var ln = () => {
 		baselineOnMigrate: s,
 		skipDriftCheck: l,
 		workingDirectory: u ? c.resolve(u) : void 0,
-		extraArgs: en("extra-args") || void 0,
-		deploymentReportName: en("deployment-report-name") || void 0
+		extraArgs: tn("extra-args") || void 0,
+		deploymentReportName: tn("deployment-report-name") || void 0
 	};
-}, Dn = (e) => {
-	e.targetPassword && $t(e.targetPassword);
+}, On = (e) => {
+	e.targetPassword && en(e.targetPassword);
+}, kn = (e, t) => {
+	let n;
+	switch (!0) {
+		case An(e):
+			n = {
+				stem: e,
+				singularSuffix: "",
+				pluralSuffix: "s"
+			};
+			break;
+		case e.endsWith("y"):
+			n = {
+				stem: e.substring(0, e.length - 1),
+				singularSuffix: "y",
+				pluralSuffix: "ies"
+			};
+			break;
+		case e.endsWith("x"):
+			n = {
+				stem: e.substring(0, e.length - 1),
+				singularSuffix: "x",
+				pluralSuffix: "xes"
+			};
+			break;
+		case e.endsWith("s"):
+			n = {
+				stem: e.substring(0, e.length - 1),
+				singularSuffix: "s",
+				pluralSuffix: "s"
+			};
+			break;
+		default: n = {
+			stem: e,
+			singularSuffix: "",
+			pluralSuffix: "s"
+		};
+	}
+	return t === void 0 ? `${n.stem}${n.pluralSuffix}` : `${t} ${n.stem}${t === 1 ? n.singularSuffix : n.pluralSuffix}`;
+}, An = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), jn = async (e) => {
+	await Ct.addHeading("Flyway Deploy", 2).addTable([
+		[{
+			data: "Migrations Applied",
+			header: !0
+		}, kn("migration", e.migrationsApplied)],
+		[{
+			data: "Schema Version",
+			header: !0
+		}, e.schemaVersion],
+		...e.driftStatus ? [[{
+			data: "Drift",
+			header: !0
+		}, e.driftStatus]] : []
+	]).write();
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
 	try {
-		let e = await hn();
+		let e = await gn();
 		if (!e.installed) {
-			rn("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
+			an("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = En();
+		let t = Dn();
 		if (!t.targetEnvironment && !t.targetUrl) {
-			rn("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
+			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		if (Dn(t), e.edition === "enterprise") if (t.skipDriftCheck) on("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		On(t);
+		let n;
+		if (e.edition === "enterprise") if (t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
 		else {
-			let { result: { driftDetected: e, comparisonSupported: n } } = await xn(t);
+			let { result: { driftDetected: e, driftCheckSkipped: r, comparisonSupported: i } } = await Sn(t);
 			if (e) {
-				rn("Drift detected. Aborting deployment.");
+				n = "Drift detected", await jn({
+					driftStatus: n,
+					migrationsApplied: 0,
+					schemaVersion: "unknown"
+				}), an("Drift detected. Aborting deployment.");
 				return;
 			}
-			t.saveSnapshot = n;
+			t.saveSnapshot = i, n = i ? r ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		else on(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		await Cn(t);
+		else sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
+		let { migrationsApplied: r, schemaVersion: i } = await wn(t);
+		await jn({
+			driftStatus: n,
+			migrationsApplied: r,
+			schemaVersion: i
+		});
 	} catch (e) {
-		e instanceof Error ? rn(e.message) : rn(String(e));
+		e instanceof Error ? an(e.message) : an(String(e));
 	}
 })();
 export {};

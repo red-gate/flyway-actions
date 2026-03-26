@@ -23,11 +23,12 @@ describe("undo", () => {
   it("should set all outputs on success", async () => {
     exec.mockImplementation(mockExec({ stdout: { migrationsUndone: 3, targetSchemaVersion: "2.0" } }));
 
-    await undo({ targetUrl: "jdbc:sqlite:test.db" });
+    const result = await undo({ targetUrl: "jdbc:sqlite:test.db" });
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("migrations-undone", "3");
     expect(setOutput).toHaveBeenCalledWith("schema-version", "2.0");
+    expect(result).toEqual({ migrationsUndone: 3, schemaVersion: "2.0" });
   });
 
   it("should log and not error when database has no licensed comparison capability", async () => {
@@ -43,11 +44,12 @@ describe("undo", () => {
       }),
     );
 
-    await undo({ targetUrl: "jdbc:h2:mem:test" });
+    const result = await undo({ targetUrl: "jdbc:h2:mem:test" });
 
     expect(info).toHaveBeenCalledWith(
       "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
     );
+    expect(result).toEqual({ migrationsUndone: 0, schemaVersion: "unknown" });
   });
 
   it("should throw when undo fails with an unrecognised error", async () => {

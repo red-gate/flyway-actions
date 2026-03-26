@@ -18,7 +18,9 @@ const getUndoArgs = (inputs: FlywayMigrationsUndoInputs): string[] => {
   return args;
 };
 
-const undo = async (inputs: FlywayMigrationsUndoInputs): Promise<void> => {
+type UndoResult = { migrationsUndone: number; schemaVersion: string };
+
+const undo = async (inputs: FlywayMigrationsUndoInputs): Promise<UndoResult> => {
   core.startGroup("Running undo");
   try {
     const args = getUndoArgs(inputs);
@@ -31,7 +33,7 @@ const undo = async (inputs: FlywayMigrationsUndoInputs): Promise<void> => {
           "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
         );
         setOutput(0);
-        return;
+        return { migrationsUndone: 0, schemaVersion: "unknown" };
       }
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       setOutput(result.exitCode);
@@ -40,6 +42,7 @@ const undo = async (inputs: FlywayMigrationsUndoInputs): Promise<void> => {
 
     const { migrationsUndone, schemaVersion } = parseFlywayOutput(result.stdout);
     setOutput(result.exitCode, migrationsUndone, schemaVersion);
+    return { migrationsUndone, schemaVersion };
   } finally {
     core.endGroup();
   }
@@ -57,3 +60,4 @@ const setOutput = (exitCode: number, migrationsUndone?: number, schemaVersion?: 
 };
 
 export { getUndoArgs, parseFlywayOutput, undo };
+export type { UndoResult };

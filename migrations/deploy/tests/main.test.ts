@@ -12,7 +12,19 @@ const startGroup = vi.fn();
 const endGroup = vi.fn();
 const exec = vi.fn();
 
+const summary = {
+  addHeading: vi.fn(),
+  addTable: vi.fn(),
+  write: vi.fn().mockResolvedValue(undefined),
+};
+summary.addHeading.mockReturnValue(summary);
+summary.addTable.mockReturnValue(summary);
+
 const setupMocks = () => {
+  summary.addHeading.mockReturnValue(summary);
+  summary.addTable.mockReturnValue(summary);
+  summary.write.mockResolvedValue(undefined);
+
   vi.doMock("@actions/core", () => ({
     getInput,
     getBooleanInput,
@@ -23,6 +35,7 @@ const setupMocks = () => {
     error,
     startGroup,
     endGroup,
+    summary,
   }));
 
   vi.doMock("@actions/exec", () => ({
