@@ -126,6 +126,40 @@ describe("getInputs", () => {
     expect(inputs.extraArgs).toBe("-X -someFlag=value");
   });
 
+  it("should return deployment report name when provided", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "deployment-report-name") {
+        return "my-deployment-report";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentReportName).toBe("my-deployment-report");
+  });
+
+  it("should default deployment report name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentReportName).toBe("flyway-production-deployment-report");
+  });
+
+  it("should default deployment report name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentReportName).toBe("flyway-default-deployment-report");
+  });
+
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
 
