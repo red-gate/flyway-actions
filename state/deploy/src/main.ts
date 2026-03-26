@@ -46,8 +46,7 @@ const run = async (): Promise<void> => {
         result: { driftDetected, driftCheckSkipped, comparisonSupported },
       } = await runCheckDrift(inputs);
       if (driftDetected) {
-        driftStatus = "Drift detected";
-        await writeSummary({ driftStatus });
+        await writeSummary({ driftStatus: "Drift detected" });
         core.setFailed("Drift detected. Aborting deployment.");
         return;
       }

@@ -45,11 +45,11 @@ describe("writeSummary", () => {
     expect(addTable).toHaveBeenCalledWith([[{ data: "Drift", header: true }, "Drift detected"]]);
   });
 
-  it("should not include drift row when driftStatus is undefined", async () => {
+  it("should default drift status to 'Skipped' when driftStatus is undefined", async () => {
     const data: DeploySummaryData = {};
 
     await writeSummary(data);
 
-    expect(addTable).toHaveBeenCalledWith([]);
+    expect(addTable).toHaveBeenCalledWith([[{ data: "Drift", header: true }, "Skipped"]]);
   });
 });

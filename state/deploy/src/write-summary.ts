@@ -7,7 +7,7 @@ type DeploySummaryData = {
 const writeSummary = async (data: DeploySummaryData): Promise<void> => {
   await core.summary
     .addHeading("Flyway State Deploy", 2)
-    .addTable([...(data.driftStatus ? [[{ data: "Drift", header: true }, data.driftStatus]] : [])])
+    .addTable([[{ data: "Drift", header: true }, data.driftStatus ?? "Skipped"]])
     .write();
 };
 
