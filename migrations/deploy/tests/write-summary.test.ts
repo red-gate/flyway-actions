@@ -55,7 +55,7 @@ describe("writeSummary", () => {
     );
   });
 
-  it("should not include drift row when driftStatus is undefined", async () => {
+  it("should default drift status to 'Skipped' when driftStatus is undefined", async () => {
     const data: DeploySummaryData = {
       migrationsApplied: 5,
       schemaVersion: "4.0",
@@ -66,6 +66,7 @@ describe("writeSummary", () => {
     expect(addTable).toHaveBeenCalledWith([
       [{ data: "Migrations Applied", header: true }, "5 migrations"],
       [{ data: "Schema Version", header: true }, "4.0"],
+      [{ data: "Drift", header: true }, "Skipped"],
     ]);
   });
 
