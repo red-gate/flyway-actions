@@ -10544,7 +10544,7 @@ var un = () => {
 		skipDriftCheck: o,
 		workingDirectory: s ? c.resolve(s) : void 0,
 		extraArgs: tn("extra-args") || void 0,
-		deploymentReportName: tn("deployment-report-name") || void 0
+		deploymentReportName: tn("deployment-report-name") || `flyway-${t ?? "default"}-deployment-report`
 	};
 }, Dn = (e) => {
 	e.targetPassword && en(e.targetPassword);

@@ -10555,7 +10555,7 @@ var un = () => {
 		skipDriftCheck: s,
 		workingDirectory: l ? c.resolve(l) : void 0,
 		extraArgs: tn("extra-args") || void 0,
-		undoReportName: tn("undo-report-name") || void 0
+		undoReportName: tn("undo-report-name") || `flyway-${e ?? "default"}-undo-report`
 	};
 }, On = (e) => {
 	e.targetPassword && en(e.targetPassword);
