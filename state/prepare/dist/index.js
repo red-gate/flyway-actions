@@ -10527,6 +10527,7 @@ var dn = () => {
 				exitCode: n.exitCode,
 				result: {
 					reportPath: e?.error?.htmlReport,
+					sarifReportPath: e?.error?.sarifReport,
 					...t
 				}
 			};
@@ -10536,6 +10537,7 @@ var dn = () => {
 			exitCode: n.exitCode,
 			result: {
 				reportPath: r?.htmlReport,
+				sarifReportPath: r?.sarifReport,
 				...i
 			}
 		};
@@ -10549,6 +10551,8 @@ var dn = () => {
 		violationCodes: [...new Set(t)]
 	};
 }, kn = (e, t) => {
+	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
+}, An = (e, t) => {
 	if (e.skipCodeReview) {
 		cn("Skipping code review: \"skip-code-review\" set to true");
 		return;
@@ -10564,12 +10568,14 @@ var dn = () => {
 		"-check.scope=script",
 		`-check.scriptFilename=${t}`
 	];
-}, An = async (e, t) => {
-	let n = kn(e, t);
+}, jn = async (e, t) => {
+	let n = An(e, t);
 	if (!n) return;
 	let r = await Dn(n, e.workingDirectory);
-	return rn("code-violation-count", r.result.violationCount.toString()), rn("code-violation-codes", r.result.violationCodes.join(",")), r;
-}, jn = async (e, t) => {
+	rn("code-violation-count", r.result.violationCount.toString()), rn("code-violation-codes", r.result.violationCodes.join(","));
+	let i = r.result.sarifReportPath;
+	return rn("sarif-path", i ? kn(i, e.workingDirectory) : ""), r;
+}, Mn = async (e, t) => {
 	ln("Checking for drift");
 	try {
 		let n = await gn(e, t);
@@ -10608,8 +10614,6 @@ var dn = () => {
 	} finally {
 		un();
 	}
-}, Mn = (e, t) => {
-	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
 }, Nn = (e) => [
 	"check",
 	"-drift",
@@ -10617,7 +10621,7 @@ var dn = () => {
 	...Cn(e),
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
 ], Pn = async (e) => {
-	let { exitCode: t, result: n } = await jn(Nn(e), e.workingDirectory), r = Mn(n.reportPath, e.workingDirectory), i = Mn(n.driftResolutionFolder, e.workingDirectory);
+	let { exitCode: t, result: n } = await Mn(Nn(e), e.workingDirectory), r = kn(n.reportPath, e.workingDirectory), i = kn(n.driftResolutionFolder, e.workingDirectory);
 	return rn("exit-code", t.toString()), n.driftDetected !== void 0 && rn("drift-detected", n.driftDetected.toString()), r !== void 0 && rn("report-path", r), i !== void 0 && rn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
@@ -10752,7 +10756,7 @@ await (async () => {
 			});
 			return;
 		}
-		let a = await An(t, i);
+		let a = await jn(t, i);
 		if (await Un({
 			driftStatus: n,
 			code: a ? {

@@ -10584,6 +10584,7 @@ var un = () => {
 				exitCode: n.exitCode,
 				result: {
 					reportPath: e?.error?.htmlReport,
+					sarifReportPath: e?.error?.sarifReport,
 					...t
 				}
 			};
@@ -10593,6 +10594,7 @@ var un = () => {
 			exitCode: n.exitCode,
 			result: {
 				reportPath: r?.htmlReport,
+				sarifReportPath: r?.sarifReport,
 				...i
 			}
 		};
@@ -10623,6 +10625,7 @@ var un = () => {
 	return rn("code-violation-count", r.violationCount.toString()), rn("code-violation-codes", r.violationCodes.join(",")), {
 		exitCode: n,
 		reportPath: r.reportPath,
+		sarifReportPath: r.sarifReportPath,
 		violationCount: r.violationCount
 	};
 }, zn = async (e, t) => {
@@ -10731,21 +10734,23 @@ var un = () => {
 		a
 	], s = o.find((e) => e?.reportPath)?.reportPath;
 	rn("report-path", vn(s ?? "report.html", e.workingDirectory));
-	let c = o.find((e) => e !== void 0 && e.exitCode !== 0);
-	rn("exit-code", (c?.exitCode ?? 0).toString());
-	let l;
-	if (i && (l = i.driftDetected ? "Drift detected" : i.comparisonSupported ? i.driftCheckSkipped ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type"), await wn({
+	let c = r?.sarifReportPath;
+	rn("sarif-path", c ? vn(c, e.workingDirectory) : "");
+	let l = o.find((e) => e !== void 0 && e.exitCode !== 0);
+	rn("exit-code", (l?.exitCode ?? 0).toString());
+	let u;
+	if (i && (u = i.driftDetected ? "Drift detected" : i.comparisonSupported ? i.driftCheckSkipped ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type"), await wn({
 		dryrun: n ? { exitCode: n.exitCode } : void 0,
 		code: r ? {
 			exitCode: r.exitCode,
 			violationCount: r.violationCount
 		} : void 0,
-		driftStatus: l,
+		driftStatus: u,
 		changes: a ? {
 			exitCode: a.exitCode,
 			changedObjectCount: a.changedObjectCount ?? 0
 		} : void 0
-	}), c) throw Error("Flyway checks failed");
+	}), l) throw Error("Flyway checks failed");
 }, Gn = () => {
 	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = tn("build-environment") || void 0, l = tn("build-url") || void 0, u = tn("build-user") || void 0, d = tn("build-password") || void 0, f = tn("build-schemas") || void 0, p = nn("build-ok-to-erase"), m = nn("skip-code-review"), h = nn("skip-drift-check"), g = nn("skip-deployment-changes-report"), _ = nn("skip-deployment-script-review"), v = nn("fail-on-code-review"), y = nn("fail-on-drift"), b = tn("working-directory");
 	return {
