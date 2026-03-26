@@ -13,7 +13,7 @@ const writeSummary = async (data: UndoSummaryData): Promise<void> => {
     .addTable([
       [{ data: "Migrations Undone", header: true }, pluralize("migration", data.migrationsUndone)],
       [{ data: "Schema Version", header: true }, data.schemaVersion],
-      ...(data.driftStatus ? [[{ data: "Drift", header: true }, data.driftStatus]] : []),
+      [{ data: "Drift", header: true }, data.driftStatus ?? "Skipped"],
     ])
     .write();
 };
