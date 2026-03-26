@@ -26,8 +26,8 @@ jobs:
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/checks") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/deploy") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("migrations/undo") != null'
-          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("state/deploy") != null'
           echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("state/prepare") != null'
+          echo '${{ steps.list.outputs.actions }}' | jq -e '. | index("state/deploy") != null'
 
   migrations-checks:
     strategy:
