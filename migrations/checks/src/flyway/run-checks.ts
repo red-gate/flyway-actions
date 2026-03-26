@@ -1,4 +1,5 @@
 import type { FlywayMigrationsChecksInputs } from "../types.js";
+import type { CheckDriftResult } from "./check-drift.js";
 import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
 import { resolvePath } from "@flyway-actions/shared/resolve-path";
@@ -21,23 +22,10 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
   const failed = results.find((r) => r !== undefined && r.exitCode !== 0);
   core.setOutput("exit-code", (failed?.exitCode ?? 0).toString());
 
-  let driftStatus: string | undefined;
-  if (driftResult) {
-    if (driftResult.driftDetected) {
-      driftStatus = "Drift detected";
-    } else {
-      driftStatus = driftResult.comparisonSupported
-        ? !driftResult.driftCheckSkipped
-          ? "No drift"
-          : "Drift check not run - skipped because no snapshot in database (expected for initial deployment)"
-        : "Drift check not run - drift analysis is not supported for this database type";
-    }
-  }
-
   await writeSummary({
     dryrun: dryrunResult ? { exitCode: dryrunResult.exitCode } : undefined,
     code: codeResult ? { exitCode: codeResult.exitCode, violationCount: codeResult.violationCount } : undefined,
-    driftStatus,
+    driftStatus: getDriftStatus(driftResult),
     changes: changesResult
       ? { exitCode: changesResult.exitCode, changedObjectCount: changesResult.changedObjectCount ?? 0 }
       : undefined,
@@ -46,6 +34,20 @@ const runChecks = async (inputs: FlywayMigrationsChecksInputs, edition: FlywayEd
   if (failed) {
     throw new Error("Flyway checks failed");
   }
+};
+
+const getDriftStatus = (driftResult: CheckDriftResult): string | undefined => {
+  if (!driftResult) {
+    return undefined;
+  }
+  if (driftResult.driftDetected) {
+    return "Drift detected";
+  }
+  return driftResult.comparisonSupported
+    ? !driftResult.driftCheckSkipped
+      ? "No drift"
+      : "Drift check not run - skipped because no snapshot in database (expected for initial deployment)"
+    : "Drift check not run - drift analysis is not supported for this database type";
 };
 
 export { runChecks };

@@ -10549,10 +10549,10 @@ var un = () => {
 }, Dn = (e) => {
 	e.targetPassword && en(e.targetPassword);
 }, On = async (e) => {
-	await Ct.addHeading("Flyway State Deploy", 2).addTable([...e.driftStatus ? [[{
+	await Ct.addHeading("Flyway State Deploy", 2).addTable([[{
 		data: "Drift",
 		header: !0
-	}, e.driftStatus]] : []]).write();
+	}, e.driftStatus ?? "Skipped"]]).write();
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
@@ -10577,7 +10577,7 @@ await (async () => {
 		else {
 			let { result: { driftDetected: e, driftCheckSkipped: r, comparisonSupported: i } } = await Sn(t);
 			if (e) {
-				n = "Drift detected", await On({ driftStatus: n }), an("Drift detected. Aborting deployment.");
+				await On({ driftStatus: "Drift detected" }), an("Drift detected. Aborting deployment.");
 				return;
 			}
 			t.saveSnapshot = i, n = i ? r ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";

@@ -10607,10 +10607,10 @@ var un = () => {
 			data: "Schema Version",
 			header: !0
 		}, e.schemaVersion],
-		...e.driftStatus ? [[{
+		[{
 			data: "Drift",
 			header: !0
-		}, e.driftStatus]] : []
+		}, e.driftStatus ?? "Skipped"]
 	]).write();
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10632,8 +10632,8 @@ await (async () => {
 		else {
 			let { result: { driftDetected: e, driftCheckSkipped: r, comparisonSupported: i } } = await Sn(t);
 			if (e) {
-				n = "Drift detected", await jn({
-					driftStatus: n,
+				await jn({
+					driftStatus: "Drift detected",
 					migrationsUndone: 0,
 					schemaVersion: "unknown"
 				}), an("Drift detected. Aborting undo.");

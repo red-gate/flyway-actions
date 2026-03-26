@@ -41,8 +41,7 @@ const run = async (): Promise<void> => {
           result: { driftDetected, driftCheckSkipped, comparisonSupported },
         } = await runCheckDrift(inputs);
         if (driftDetected) {
-          driftStatus = "Drift detected";
-          await writeSummary({ driftStatus, migrationsUndone: 0, schemaVersion: "unknown" });
+          await writeSummary({ driftStatus: "Drift detected", migrationsUndone: 0, schemaVersion: "unknown" });
           core.setFailed("Drift detected. Aborting undo.");
           return;
         }

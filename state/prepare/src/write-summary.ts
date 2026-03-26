@@ -11,7 +11,6 @@ const formatCode = (result?: { exitCode: number; violationCount: number }): stri
   if (!result) {
     return "Skipped";
   }
-
   return result.exitCode === 0
     ? `Passed - ${pluralize("violation", result.violationCount)}`
     : `Failed${result.violationCount > 0 ? ` - ${pluralize("violation", result.violationCount)}` : ""}`;

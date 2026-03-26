@@ -10732,21 +10732,21 @@ var un = () => {
 	], s = o.find((e) => e?.reportPath)?.reportPath;
 	rn("report-path", vn(s ?? "report.html", e.workingDirectory));
 	let c = o.find((e) => e !== void 0 && e.exitCode !== 0);
-	rn("exit-code", (c?.exitCode ?? 0).toString());
-	let l;
-	if (i && (l = i.driftDetected ? "Drift detected" : i.comparisonSupported ? i.driftCheckSkipped ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type"), await wn({
+	if (rn("exit-code", (c?.exitCode ?? 0).toString()), await wn({
 		dryrun: n ? { exitCode: n.exitCode } : void 0,
 		code: r ? {
 			exitCode: r.exitCode,
 			violationCount: r.violationCount
 		} : void 0,
-		driftStatus: l,
+		driftStatus: Gn(i),
 		changes: a ? {
 			exitCode: a.exitCode,
 			changedObjectCount: a.changedObjectCount ?? 0
 		} : void 0
 	}), c) throw Error("Flyway checks failed");
-}, Gn = () => {
+}, Gn = (e) => {
+	if (e) return e.driftDetected ? "Drift detected" : e.comparisonSupported ? e.driftCheckSkipped ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
+}, Kn = () => {
 	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = tn("build-environment") || void 0, l = tn("build-url") || void 0, u = tn("build-user") || void 0, d = tn("build-password") || void 0, f = tn("build-schemas") || void 0, p = nn("build-ok-to-erase"), m = nn("skip-code-review"), h = nn("skip-drift-check"), g = nn("skip-deployment-changes-report"), _ = nn("skip-deployment-script-review"), v = nn("fail-on-code-review"), y = nn("fail-on-drift"), b = tn("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10772,7 +10772,7 @@ var un = () => {
 		preDeploymentReportName: tn("pre-deployment-report-name") || void 0,
 		extraArgs: tn("extra-args") || void 0
 	};
-}, Kn = (e) => {
+}, qn = (e) => {
 	e.targetPassword && en(e.targetPassword), e.buildPassword && en(e.buildPassword);
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10783,12 +10783,12 @@ await (async () => {
 			an("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Gn();
+		let t = Kn();
 		if (!t.targetEnvironment && !t.targetUrl) {
 			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		Kn(t), await Wn(t, e.edition);
+		qn(t), await Wn(t, e.edition);
 	} catch (e) {
 		e instanceof Error ? an(e.message) : an(String(e));
 	}

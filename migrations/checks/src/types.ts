@@ -33,10 +33,7 @@ type Drift = {
 
 type Changes = { operation?: "changes"; onlyInSource?: unknown[]; onlyInTarget?: unknown[]; differences?: unknown[] };
 
-type Code = {
-  operation?: "code";
-  results?: CodeResultItem[];
-};
+type Code = { operation?: "code"; results?: CodeResultItem[] };
 
 type Dryrun = { operation?: "dryrun" };
 
