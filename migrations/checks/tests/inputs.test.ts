@@ -130,7 +130,7 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
   });
 
-  it("should return pre-deployment report name", () => {
+  it("should return pre-deployment report name when provided", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "pre-deployment-report-name") {
         return "my-deployment-report";
@@ -141,6 +141,27 @@ describe("getInputs", () => {
     const inputs = getInputs();
 
     expect(inputs.preDeploymentReportName).toBe("my-deployment-report");
+  });
+
+  it("should default pre-deployment report name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.preDeploymentReportName).toBe("flyway-production-pre-deployment-report");
+  });
+
+  it("should default pre-deployment report name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.preDeploymentReportName).toBe("flyway-default-pre-deployment-report");
   });
 
   it("should return extra args", () => {
@@ -194,7 +215,7 @@ describe("getInputs", () => {
     expect(inputs.buildSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
-    expect(inputs.preDeploymentReportName).toBeUndefined();
+    expect(inputs.preDeploymentReportName).toBe("flyway-default-pre-deployment-report");
   });
 });
 

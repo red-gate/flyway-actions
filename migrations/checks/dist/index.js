@@ -10769,7 +10769,7 @@ var un = () => {
 		failOnCodeReview: v,
 		failOnDrift: y,
 		workingDirectory: b ? c.resolve(b) : void 0,
-		preDeploymentReportName: tn("pre-deployment-report-name") || void 0,
+		preDeploymentReportName: tn("pre-deployment-report-name") || `flyway-${e ?? "default"}-pre-deployment-report`,
 		extraArgs: tn("extra-args") || void 0
 	};
 }, qn = (e) => {

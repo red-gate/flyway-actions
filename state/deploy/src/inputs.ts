@@ -13,7 +13,8 @@ const getInputs = (): FlywayStateDeploymentInputs => {
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
-  const deploymentReportName = core.getInput("deployment-report-name") || undefined;
+  const deploymentReportName =
+    core.getInput("deployment-report-name") || `flyway-${targetEnvironment ?? "default"}-deployment-report`;
 
   return {
     scriptPath,

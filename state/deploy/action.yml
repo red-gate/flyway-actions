@@ -8,7 +8,7 @@ branding:
 
 inputs:
   script-path:
-    description: 'Path for the generated deployment script'
+    description: 'Path to the script to deploy'
     required: false
   target-environment:
     description: 'Target database to deploy to'
@@ -41,9 +41,8 @@ inputs:
     required: false
     default: 'false'
   deployment-report-name:
-    description: 'Name for the deployment report artifact'
+    description: 'Name for the deployment report artifact. Defaults to flyway-<target-environment>-deployment-report'
     required: false
-    default: 'flyway-deployment-report'
   deployment-report-retention-days:
     description: 'Number of days to retain the deployment report artifact'
     required: false
@@ -53,9 +52,8 @@ inputs:
     required: false
     default: 'false'
   drift-resolution-scripts-name:
-    description: 'Name for the drift resolution scripts artifact'
+    description: 'Name for the drift resolution scripts artifact. Defaults to flyway-deploy-<target-environment>-drift-resolution-scripts'
     required: false
-    default: 'flyway-drift-resolution-scripts'
   drift-resolution-scripts-retention-days:
     description: 'Number of days to retain the drift resolution scripts artifact'
     required: false
@@ -95,7 +93,7 @@ runs:
       if: inputs.skip-deployment-report-upload == 'false' && steps.deploy.outputs.report-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.deployment-report-name }}
+        name: ${{ inputs.deployment-report-name || format('flyway-{0}-deployment-report', inputs.target-environment) }}
         path: ${{ steps.deploy.outputs.report-path }}
         archive: false
         retention-days: ${{ inputs.deployment-report-retention-days }}
@@ -104,7 +102,7 @@ runs:
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.deploy.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.drift-resolution-scripts-name }}
+        name: ${{ inputs.drift-resolution-scripts-name || format('flyway-deploy-{0}-drift-resolution-scripts', inputs.target-environment) }}
         path: ${{ steps.deploy.outputs.drift-resolution-folder }}
         retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
         if-no-files-found: ignore

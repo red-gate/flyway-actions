@@ -24,7 +24,8 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const failOnDrift = core.getBooleanInput("fail-on-drift");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
-  const preDeploymentReportName = core.getInput("pre-deployment-report-name") || undefined;
+  const preDeploymentReportName =
+    core.getInput("pre-deployment-report-name") || `flyway-${targetEnvironment ?? "default"}-pre-deployment-report`;
   const extraArgs = core.getInput("extra-args") || undefined;
 
   return {

@@ -103,13 +103,13 @@ steps:
 
 When running under Flyway Enterprise, the action uploads the pre-deployment report as a workflow artifact.
 
-| Input                                  | Description                                                     | Required | Default                        |
-|----------------------------------------|-----------------------------------------------------------------|----------|--------------------------------|
-| `pre-deployment-report-name`           | Name for the pre-deployment report artifact                     | No       | `flyway-pre-deployment-report` |
-| `pre-deployment-report-retention-days` | Number of days to retain the pre-deployment report artifact     | No       | `7`                            |
-| `skip-pre-deployment-report-upload`    | Skip uploading the pre-deployment report as a workflow artifact | No       | `false`                        |
+| Input                                  | Description                                                     | Required | Default                                             |
+|----------------------------------------|-----------------------------------------------------------------|----------|-----------------------------------------------------|
+| `pre-deployment-report-name`           | Name for the pre-deployment report artifact                     | No       | `flyway-<target-environment>-pre-deployment-report` |
+| `pre-deployment-report-retention-days` | Number of days to retain the pre-deployment report artifact     | No       | `7`                                                 |
+| `skip-pre-deployment-report-upload`    | Skip uploading the pre-deployment report as a workflow artifact | No       | `false`                                             |
 
-If the prepare action runs more than once in the same workflow (e.g. against multiple target databases), use a unique `pre-deployment-report-name` for each run to avoid artifact name conflicts:
+The default artifact name includes the target environment, so each environment automatically gets a unique report name. If the prepare action runs more than once in the same workflow with the same target environment, use a unique `pre-deployment-report-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:
@@ -119,20 +119,19 @@ steps:
   - uses: red-gate/flyway-actions/state/prepare@v2
     with:
       target-environment: ${{ matrix.target }}
-      pre-deployment-report-name: flyway-pre-deployment-report-${{ matrix.target }}
 ```
 
 ### Drift Resolution Scripts Upload
 
 When drift is detected, Flyway generates SQL scripts that can be used to resolve the drift. The action uploads these as a workflow artifact.
 
-| Input                                     | Description                                                    | Required | Default                           |
-|-------------------------------------------|----------------------------------------------------------------|----------|-----------------------------------|
-| `drift-resolution-scripts-name`           | Name for the drift resolution scripts artifact                 | No       | `flyway-drift-resolution-scripts` |
-| `drift-resolution-scripts-retention-days` | Number of days to retain the drift resolution scripts artifact | No       | `7`                               |
-| `skip-drift-resolution-scripts-upload`    | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                           |
+| Input                                     | Description                                                    | Required | Default                                                        |
+|-------------------------------------------|----------------------------------------------------------------|----------|----------------------------------------------------------------|
+| `drift-resolution-scripts-name`           | Name for the drift resolution scripts artifact                 | No       | `flyway-prepare-<target-environment>-drift-resolution-scripts` |
+| `drift-resolution-scripts-retention-days` | Number of days to retain the drift resolution scripts artifact | No       | `7`                                                            |
+| `skip-drift-resolution-scripts-upload`    | Skip uploading drift resolution scripts as a workflow artifact | No       | `false`                                                        |
 
-As with drift reports, use a unique `drift-resolution-scripts-name` when running against multiple targets:
+The default artifact name includes the target environment, so each environment automatically gets a unique name. If the action runs more than once in the same workflow with the same target environment, use a unique `drift-resolution-scripts-name` for each run to avoid artifact name conflicts:
 
 ```yaml
 strategy:
@@ -142,7 +141,6 @@ steps:
   - uses: red-gate/flyway-actions/state/prepare@v2
     with:
       target-environment: ${{ matrix.target }}
-      drift-resolution-scripts-name: flyway-drift-resolution-${{ matrix.target }}
 ```
 
 ### Deployment and Undo Script Upload

@@ -101,7 +101,7 @@ describe("getInputs", () => {
     expect(inputs.skipDriftCheck).toBe(true);
   });
 
-  it("should get deployment-report-name input", () => {
+  it("should return deployment report name when provided", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "deployment-report-name") {
         return "custom-deployment-report";
@@ -112,6 +112,27 @@ describe("getInputs", () => {
     const inputs = getInputs();
 
     expect(inputs.deploymentReportName).toBe("custom-deployment-report");
+  });
+
+  it("should default deployment report name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentReportName).toBe("flyway-production-deployment-report");
+  });
+
+  it("should default deployment report name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentReportName).toBe("flyway-default-deployment-report");
   });
 
   it("should get working directory and extra args", () => {
@@ -140,7 +161,7 @@ describe("getInputs", () => {
     expect(inputs.targetSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
-    expect(inputs.deploymentReportName).toBeUndefined();
+    expect(inputs.deploymentReportName).toBe("flyway-default-deployment-report");
   });
 });
 

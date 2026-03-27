@@ -128,7 +128,7 @@ describe("getInputs", () => {
     expect(inputs.skipDeploymentChangesReport).toBe(true);
   });
 
-  it("should get pre-deployment-report-name input", () => {
+  it("should return pre-deployment report name when provided", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "pre-deployment-report-name") {
         return "custom-report";
@@ -139,6 +139,27 @@ describe("getInputs", () => {
     const inputs = getInputs();
 
     expect(inputs.preDeploymentReportName).toBe("custom-report");
+  });
+
+  it("should default pre-deployment report name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.preDeploymentReportName).toBe("flyway-production-pre-deployment-report");
+  });
+
+  it("should default pre-deployment report name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.preDeploymentReportName).toBe("flyway-default-pre-deployment-report");
   });
 
   it("should get deployment-script-name input", () => {
@@ -192,7 +213,7 @@ describe("getInputs", () => {
     expect(inputs.targetSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
-    expect(inputs.preDeploymentReportName).toBeUndefined();
+    expect(inputs.preDeploymentReportName).toBe("flyway-default-pre-deployment-report");
     expect(inputs.deploymentScriptName).toBeUndefined();
     expect(inputs.undoScriptName).toBeUndefined();
   });

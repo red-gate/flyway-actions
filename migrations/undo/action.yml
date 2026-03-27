@@ -44,9 +44,8 @@ inputs:
     required: false
     default: 'false'
   undo-report-name:
-    description: 'Name for the undo report artifact'
+    description: 'Name for the undo report artifact. Defaults to flyway-<target-environment>-undo-report'
     required: false
-    default: 'flyway-undo-report'
   undo-report-retention-days:
     description: 'Number of days to retain the undo report artifact'
     required: false
@@ -56,9 +55,8 @@ inputs:
     required: false
     default: 'false'
   drift-resolution-scripts-name:
-    description: 'Name for the drift resolution scripts artifact'
+    description: 'Name for the drift resolution scripts artifact. Defaults to flyway-undo-<target-environment>-drift-resolution-scripts'
     required: false
-    default: 'flyway-drift-resolution-scripts'
   drift-resolution-scripts-retention-days:
     description: 'Number of days to retain the drift resolution scripts artifact'
     required: false
@@ -104,7 +102,7 @@ runs:
       if: inputs.skip-undo-report-upload == 'false' && steps.undo.outputs.report-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.undo-report-name }}
+        name: ${{ inputs.undo-report-name || format('flyway-{0}-undo-report', inputs.target-environment) }}
         path: ${{ steps.undo.outputs.report-path }}
         archive: false
         retention-days: ${{ inputs.undo-report-retention-days }}
@@ -113,7 +111,7 @@ runs:
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.undo.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.drift-resolution-scripts-name }}
+        name: ${{ inputs.drift-resolution-scripts-name || format('flyway-undo-{0}-drift-resolution-scripts', inputs.target-environment) }}
         path: ${{ steps.undo.outputs.drift-resolution-folder }}
         retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
         if-no-files-found: ignore

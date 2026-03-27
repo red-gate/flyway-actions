@@ -10653,7 +10653,7 @@ var dn = () => {
 		skipDeploymentChangesReport: d,
 		workingDirectory: f ? c.resolve(f) : void 0,
 		extraArgs: tn("extra-args") || void 0,
-		preDeploymentReportName: tn("pre-deployment-report-name") || void 0,
+		preDeploymentReportName: tn("pre-deployment-report-name") || `flyway-${e ?? "default"}-pre-deployment-report`,
 		deploymentScriptName: tn("deployment-script-name") || void 0,
 		undoScriptName: tn("undo-script-name") || void 0
 	};
