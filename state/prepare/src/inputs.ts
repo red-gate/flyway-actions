@@ -19,8 +19,9 @@ const getInputs = (): FlywayStatePrepareInputs => {
   const extraArgs = core.getInput("extra-args") || undefined;
   const preDeploymentReportName =
     core.getInput("pre-deployment-report-name") || `flyway-${targetEnvironment ?? "default"}-pre-deployment-report`;
-  const deploymentScriptName = core.getInput("deployment-script-name") || undefined;
-  const undoScriptName = core.getInput("undo-script-name") || undefined;
+  const deploymentScriptName =
+    core.getInput("deployment-script-name") || `D__${targetEnvironment ?? "default"}_deployment`;
+  const undoScriptName = core.getInput("undo-script-name") || `DU__${targetEnvironment ?? "default"}_undo`;
 
   return {
     targetEnvironment,

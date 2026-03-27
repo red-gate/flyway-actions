@@ -150,10 +150,31 @@ describe("getInputs", () => {
     expect(inputs.extraArgs).toBe("-X -someFlag=value");
   });
 
+  it("should default script-path to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.scriptPath).toBe(path.join("deployments", "D__production_deployment.sql"));
+  });
+
+  it("should default script-path with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.scriptPath).toBe(path.join("deployments", "D__default_deployment.sql"));
+  });
+
   it("should return undefined for optional inputs not provided", () => {
     const inputs = getInputs();
 
-    expect(inputs.scriptPath).toBeUndefined();
+    expect(inputs.scriptPath).toBe(path.join("deployments", "D__default_deployment.sql"));
     expect(inputs.targetUrl).toBeUndefined();
     expect(inputs.targetUser).toBeUndefined();
     expect(inputs.targetPassword).toBeUndefined();

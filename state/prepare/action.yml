@@ -80,10 +80,10 @@ inputs:
     required: false
     default: 'false'
   deployment-script-name:
-    description: 'Custom name for the deployment script artifact and output file (without file extension). When not provided, Flyway controls the output filename.'
+    description: 'Custom name for the deployment script artifact and output file (without file extension). This will be put in a deployments folder. Defaults to D__<target-environment>_deployment'
     required: false
   undo-script-name:
-    description: 'Custom name for the undo script artifact and output file (without file extension). When not provided, Flyway controls the output filename.'
+    description: 'Custom name for the undo script artifact and output file (without file extension). This will be put in a deployments folder. Defaults to DU__<target-environment>_undo'
     required: false
   deployment-script-retention-days:
     description: 'Number of days to retain the deployment and undo script artifacts'
@@ -156,7 +156,7 @@ runs:
       if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.script-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.deployment-script-name }}
+        name: ${{ inputs.deployment-script-name || format('D__{0}_deployment', inputs.target-environment) }}
         path: ${{ steps.prepare.outputs.script-path }}
         archive: false
         retention-days: ${{ inputs.deployment-script-retention-days }}
@@ -164,7 +164,7 @@ runs:
       if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.undo-script-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.undo-script-name }}
+        name: ${{ inputs.undo-script-name || format('DU__{0}_undo', inputs.target-environment) }}
         path: ${{ steps.prepare.outputs.undo-script-path }}
         archive: false
         retention-days: ${{ inputs.deployment-script-retention-days }}

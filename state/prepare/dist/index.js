@@ -10654,8 +10654,8 @@ var dn = () => {
 		workingDirectory: f ? c.resolve(f) : void 0,
 		extraArgs: tn("extra-args") || void 0,
 		preDeploymentReportName: tn("pre-deployment-report-name") || `flyway-${e ?? "default"}-pre-deployment-report`,
-		deploymentScriptName: tn("deployment-script-name") || void 0,
-		undoScriptName: tn("undo-script-name") || void 0
+		deploymentScriptName: tn("deployment-script-name") || `D__${e ?? "default"}_deployment`,
+		undoScriptName: tn("undo-script-name") || `DU__${e ?? "default"}_undo`
 	};
 }, Rn = (e) => {
 	e.targetPassword && en(e.targetPassword);

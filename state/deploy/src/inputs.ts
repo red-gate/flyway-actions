@@ -3,8 +3,9 @@ import * as path from "path";
 import * as core from "@actions/core";
 
 const getInputs = (): FlywayStateDeploymentInputs => {
-  const scriptPath = core.getInput("script-path") || undefined;
   const targetEnvironment = core.getInput("target-environment") || undefined;
+  const scriptPath =
+    core.getInput("script-path") || path.join("deployments", `D__${targetEnvironment ?? "default"}_deployment.sql`);
   const targetUrl = core.getInput("target-url") || undefined;
   const targetUser = core.getInput("target-user") || undefined;
   const targetPassword = core.getInput("target-password") || undefined;
