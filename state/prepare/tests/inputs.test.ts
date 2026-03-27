@@ -175,6 +175,27 @@ describe("getInputs", () => {
     expect(inputs.deploymentScriptName).toBe("custom-deploy");
   });
 
+  it("should default deployment-script-name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentScriptName).toBe("D__production_deployment");
+  });
+
+  it("should default deployment-script-name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.deploymentScriptName).toBe("D__default_deployment");
+  });
+
   it("should get undo-script-name input", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "undo-script-name") {
@@ -186,6 +207,27 @@ describe("getInputs", () => {
     const inputs = getInputs();
 
     expect(inputs.undoScriptName).toBe("custom-undo");
+  });
+
+  it("should default undo-script-name to include target environment", () => {
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-environment") {
+        return "production";
+      }
+      return "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.undoScriptName).toBe("DU__production_undo");
+  });
+
+  it("should default undo-script-name with 'default' when no target environment", () => {
+    getInput.mockReturnValue("");
+
+    const inputs = getInputs();
+
+    expect(inputs.undoScriptName).toBe("DU__default_undo");
   });
 
   it("should get working directory and extra args", () => {
@@ -214,8 +256,8 @@ describe("getInputs", () => {
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
     expect(inputs.preDeploymentReportName).toBe("flyway-default-pre-deployment-report");
-    expect(inputs.deploymentScriptName).toBeUndefined();
-    expect(inputs.undoScriptName).toBeUndefined();
+    expect(inputs.deploymentScriptName).toBe("D__default_deployment");
+    expect(inputs.undoScriptName).toBe("DU__default_undo");
   });
 });
 
