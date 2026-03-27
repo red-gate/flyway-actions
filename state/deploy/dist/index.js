@@ -10533,10 +10533,10 @@ var un = () => {
 }, Tn = (e) => {
 	rn("exit-code", e.toString());
 }, En = () => {
-	let e = tn("script-path") || void 0, t = tn("target-environment") || void 0, n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = tn("working-directory");
+	let e = tn("target-environment") || void 0, t = tn("script-path") || c.join("deployments", `D__${e ?? "default"}_deployment.sql`), n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = tn("working-directory");
 	return {
-		scriptPath: e,
-		targetEnvironment: t,
+		scriptPath: t,
+		targetEnvironment: e,
 		targetUrl: n,
 		targetUser: r,
 		targetPassword: i,
@@ -10544,7 +10544,7 @@ var un = () => {
 		skipDriftCheck: o,
 		workingDirectory: s ? c.resolve(s) : void 0,
 		extraArgs: tn("extra-args") || void 0,
-		deploymentReportName: tn("deployment-report-name") || `flyway-${t ?? "default"}-deployment-report`
+		deploymentReportName: tn("deployment-report-name") || `flyway-${e ?? "default"}-deployment-report`
 	};
 }, Dn = (e) => {
 	e.targetPassword && en(e.targetPassword);
