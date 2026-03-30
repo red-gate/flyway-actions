@@ -10,6 +10,7 @@ type FlywayStatePrepareInputs = {
   skipDriftCheck?: boolean;
   skipCodeReview?: boolean;
   skipDeploymentChangesReport?: boolean;
+  provisionMode?: string;
   workingDirectory?: string;
   extraArgs?: string;
   preDeploymentReportName?: string;

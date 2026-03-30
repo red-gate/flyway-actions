@@ -86,6 +86,17 @@ steps:
     cherry-pick: '2.0,2.1,3.0'
 ```
 
+### Reprovision Build Environment
+
+```yaml
+- uses: red-gate/flyway-actions/migrations/deploy@v2
+  with:
+    target-environment: build
+    target-user: ${{ secrets.DB_USER }}
+    target-password: ${{ secrets.DB_PASSWORD }}
+    provision-mode: reprovision
+```
+
 ## Inputs
 
 | Input                      | Description                                                      | Required                                 | Default |
@@ -99,6 +110,7 @@ steps:
 | `cherry-pick`              | Comma-separated list of migration versions to apply              | No                                       |         |
 | `baseline-on-migrate`      | Whether to automatically baseline the target database on migrate | No                                       | true    |
 | `skip-drift-check`         | Skip the drift check                                             | No                                       | false   |
+| `provision-mode`           | Controls how Flyway runs the provisioner, if one is configured   | No                                       |         |
 | `working-directory`        | Working directory for Flyway                                     | No                                       |         |
 | `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`)   | No                                       |         |
 

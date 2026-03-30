@@ -82,19 +82,31 @@ steps:
     script-path: deployment.sql
 ```
 
+### Reprovision Build Environment
+
+```yaml
+- uses: red-gate/flyway-actions/state/deploy@v2
+  with:
+    target-environment: build
+    target-user: ${{ secrets.DB_USER }}
+    target-password: ${{ secrets.DB_PASSWORD }}
+    provision-mode: reprovision
+```
+
 ## Inputs
 
-| Input                | Description                                      | Required                                 | Default                                              |
-|----------------------|--------------------------------------------------|------------------------------------------|------------------------------------------------------|
-| `script-path`        | Path to the script to deploy                     | No                                       | `deployments/D__<target-environment>_deployment.sql` |
-| `target-environment` | Target database to deploy to                     | Required if `target-url` not set         |                                                      |
-| `target-url`         | JDBC URL for the target database                 | Required if `target-environment` not set |                                                      |
-| `target-user`        | Database user                                    | No                                       |                                                      |
-| `target-password`    | Database password                                | No                                       |                                                      |
-| `target-schemas`     | Comma-separated list of schemas                  | No                                       |                                                      |
-| `skip-drift-check`   | Skip the drift check                             | No                                       | false                                                |
-| `working-directory`  | Working directory for Flyway                     | No                                       |                                                      |
-| `extra-args`         | Additional Flyway CLI arguments                  | No                                       |                                                      |
+| Input                | Description                                                    | Required                                 | Default                                              |
+|----------------------|----------------------------------------------------------------|------------------------------------------|------------------------------------------------------|
+| `script-path`        | Path to the script to deploy                                   | No                                       | `deployments/D__<target-environment>_deployment.sql` |
+| `target-environment` | Target database to deploy to                                   | Required if `target-url` not set         |                                                      |
+| `target-url`         | JDBC URL for the target database                               | Required if `target-environment` not set |                                                      |
+| `target-user`        | Database user                                                  | No                                       |                                                      |
+| `target-password`    | Database password                                              | No                                       |                                                      |
+| `target-schemas`     | Comma-separated list of schemas                                | No                                       |                                                      |
+| `skip-drift-check`   | Skip the drift check                                           | No                                       | false                                                |
+| `provision-mode`     | Controls how Flyway runs the provisioner, if one is configured | No                                       |                                                      |
+| `working-directory`  | Working directory for Flyway                                   | No                                       |                                                      |
+| `extra-args`         | Additional Flyway CLI arguments                                | No                                       |                                                      |
 
 ### Deployment Report Upload
 

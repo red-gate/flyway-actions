@@ -6,6 +6,7 @@ type FlywayStateDeploymentInputs = {
   targetPassword?: string;
   targetSchemas?: string;
   skipDriftCheck?: boolean;
+  provisionMode?: string;
   workingDirectory?: string;
   extraArgs?: string;
   deploymentReportName?: string;

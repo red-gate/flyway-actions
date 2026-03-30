@@ -14,6 +14,7 @@ const getInputs = (): FlywayStatePrepareInputs => {
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
   const skipCodeReview = core.getBooleanInput("skip-code-review");
   const skipDeploymentChangesReport = core.getBooleanInput("skip-deployment-changes-report");
+  const provisionMode = core.getInput("provision-mode") || undefined;
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
@@ -35,6 +36,7 @@ const getInputs = (): FlywayStatePrepareInputs => {
     skipDriftCheck,
     skipCodeReview,
     skipDeploymentChangesReport,
+    provisionMode,
     workingDirectory,
     extraArgs,
     preDeploymentReportName,

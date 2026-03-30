@@ -27,6 +27,10 @@ const getCommonArgs = (inputs: FlywayStateDeploymentInputs): string[] => {
     args.push(`${targetPrefix}schemas=${inputs.targetSchemas}`);
   }
 
+  if (inputs.provisionMode) {
+    args.push(`-provisionMode=${inputs.provisionMode}`);
+  }
+
   if (inputs.workingDirectory) {
     args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }

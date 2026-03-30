@@ -14,7 +14,7 @@ describe("getPrepareArgs", () => {
     expect(args).toContain("-source=schemaModel");
   });
 
-  it("should use -target instead of -environment", () => {
+  it("should set both -target and -environment", () => {
     const inputs: FlywayStatePrepareInputs = {
       targetEnvironment: "production",
       targetUrl: "jdbc:postgresql://localhost/db",
@@ -23,7 +23,7 @@ describe("getPrepareArgs", () => {
     const args = getPrepareArgs(inputs);
 
     expect(args).toContain("-target=production");
-    expect(args).not.toContain("-environment=production");
+    expect(args).toContain("-environment=production");
   });
 
   it("should scope params to named environment", () => {
@@ -57,6 +57,27 @@ describe("getPrepareArgs", () => {
     const args = getPrepareArgs(inputs);
 
     expect(args).toContain("-types=deploy");
+  });
+
+  it("should include provision mode", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+      provisionMode: "reprovision",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args).toContain("-provisionMode=reprovision");
+  });
+
+  it("should not include provision mode when not set", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args.some((a) => a.includes("provisionMode"))).toBe(false);
   });
 
   it("should include working directory", () => {

@@ -50,6 +50,9 @@ inputs:
   working-directory:
     description: 'Working directory for Flyway'
     required: false
+  provision-mode:
+    description: 'Controls how Flyway runs the provisioner when running prepare, if one is configured'
+    required: false
   extra-args:
     description: 'Additional Flyway CLI arguments'
     required: false

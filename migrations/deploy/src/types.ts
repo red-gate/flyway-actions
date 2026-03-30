@@ -8,6 +8,7 @@ type FlywayMigrationsDeploymentInputs = {
   cherryPick?: string;
   baselineOnMigrate?: boolean;
   skipDriftCheck?: boolean;
+  provisionMode?: string;
   workingDirectory?: string;
   extraArgs?: string;
   deploymentReportName?: string;

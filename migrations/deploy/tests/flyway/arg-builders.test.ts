@@ -66,6 +66,23 @@ describe("getCommonArgs", () => {
     });
   });
 
+  it("should include provision mode", () => {
+    const inputs: FlywayMigrationsDeploymentInputs = {
+      ...baseInputs,
+      provisionMode: "reprovision",
+    };
+
+    const args = getCommonArgs(inputs);
+
+    expect(args).toContain("-provisionMode=reprovision");
+  });
+
+  it("should not include provision mode when not set", () => {
+    const args = getCommonArgs(baseInputs);
+
+    expect(args.some((a) => a.includes("provisionMode"))).toBe(false);
+  });
+
   it("should include working directory", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       ...baseInputs,

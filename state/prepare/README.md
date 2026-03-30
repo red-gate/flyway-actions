@@ -81,23 +81,35 @@ steps:
     generate-undo: false
 ```
 
+### Reprovision Build Environment
+
+```yaml
+- uses: red-gate/flyway-actions/state/prepare@v2
+  with:
+    target-environment: build
+    target-user: ${{ secrets.DB_USER }}
+    target-password: ${{ secrets.DB_PASSWORD }}
+    provision-mode: reprovision
+```
+
 ## Inputs
 
-| Input                            | Description                                   | Required                                 | Default   |
-|----------------------------------|-----------------------------------------------|------------------------------------------|-----------|
-| `target-environment`             | Target database environment                   | Required if `target-url` not set         | `default` |
-| `target-url`                     | JDBC URL for the target database              | Required if `target-environment` not set |           |
-| `target-user`                    | Database user                                 | No                                       |           |
-| `target-password`                | Database password                             | No                                       |           |
-| `target-schemas`                 | Comma-separated list of schemas               | No                                       |           |
-| `generate-undo`                  | Generate undo script alongside deploy script  | No                                       | `true`    |
-| `fail-on-drift`                  | Fail when drift is detected                   | No                                       | `true`    |
-| `skip-drift-check`               | Skip the drift check                          | No                                       | `false`   |
-| `fail-on-code-review`            | Fail when code review violations are detected | No                                       | `true`    |
-| `skip-code-review`               | Skip the code review check                    | No                                       | `false`   |
-| `skip-deployment-changes-report` | Skip the deployment changes report            | No                                       | `false`   |
-| `working-directory`              | Working directory for Flyway                  | No                                       |           |
-| `extra-args`                     | Additional Flyway CLI arguments               | No                                       |           |
+| Input                            | Description                                                                          | Required                                 | Default   |
+|----------------------------------|--------------------------------------------------------------------------------------|------------------------------------------|-----------|
+| `target-environment`             | Target database environment                                                          | Required if `target-url` not set         | `default` |
+| `target-url`                     | JDBC URL for the target database                                                     | Required if `target-environment` not set |           |
+| `target-user`                    | Database user                                                                        | No                                       |           |
+| `target-password`                | Database password                                                                    | No                                       |           |
+| `target-schemas`                 | Comma-separated list of schemas                                                      | No                                       |           |
+| `generate-undo`                  | Generate undo script alongside deploy script                                         | No                                       | `true`    |
+| `fail-on-drift`                  | Fail when drift is detected                                                          | No                                       | `true`    |
+| `skip-drift-check`               | Skip the drift check                                                                 | No                                       | `false`   |
+| `fail-on-code-review`            | Fail when code review violations are detected                                        | No                                       | `true`    |
+| `skip-code-review`               | Skip the code review check                                                           | No                                       | `false`   |
+| `skip-deployment-changes-report` | Skip the deployment changes report                                                   | No                                       | `false`   |
+| `provision-mode`                 | Controls how Flyway runs the provisioner when running prepare, if one is configuredd | No                                       |           |
+| `working-directory`              | Working directory for Flyway                                                         | No                                       |           |
+| `extra-args`                     | Additional Flyway CLI arguments                                                      | No                                       |           |
 
 ### Pre-deployment Report Upload
 

@@ -10498,7 +10498,7 @@ var un = () => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
-	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.provisionMode && t.push(`-provisionMode=${e.provisionMode}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
 }, xn = (e) => [
 	"check",
 	"-drift",
@@ -10543,7 +10543,7 @@ var un = () => {
 }, En = (e, t, n) => {
 	rn("exit-code", e.toString()), t !== void 0 && rn("migrations-applied", t.toString()), n !== void 0 && rn("schema-version", n);
 }, Dn = () => {
-	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = nn("baseline-on-migrate"), l = nn("skip-drift-check"), u = tn("working-directory");
+	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = nn("baseline-on-migrate"), l = nn("skip-drift-check"), u = tn("provision-mode") || void 0, d = tn("working-directory");
 	return {
 		targetEnvironment: e,
 		targetUrl: t,
@@ -10554,7 +10554,8 @@ var un = () => {
 		cherryPick: o,
 		baselineOnMigrate: s,
 		skipDriftCheck: l,
-		workingDirectory: u ? c.resolve(u) : void 0,
+		provisionMode: u,
+		workingDirectory: d ? c.resolve(d) : void 0,
 		extraArgs: tn("extra-args") || void 0,
 		deploymentReportName: tn("deployment-report-name") || `flyway-${e ?? "default"}-deployment-report`
 	};
