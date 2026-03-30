@@ -50,6 +50,10 @@ const getPrepareArgs = (inputs: FlywayStatePrepareInputs): string[] => {
     args.push(`-undoFilename=deployments/${inputs.undoScriptName}.sql`);
   }
 
+  if (inputs.provisionMode) {
+    args.push(`-provisionMode=${inputs.provisionMode}`);
+  }
+
   if (inputs.workingDirectory) {
     args.push(`-workingDirectory=${inputs.workingDirectory}`);
   }

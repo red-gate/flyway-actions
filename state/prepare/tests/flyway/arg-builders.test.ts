@@ -59,6 +59,27 @@ describe("getPrepareArgs", () => {
     expect(args).toContain("-types=deploy");
   });
 
+  it("should include provision mode", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+      provisionMode: "reprovision",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args).toContain("-provisionMode=reprovision");
+  });
+
+  it("should not include provision mode when not set", () => {
+    const inputs: FlywayStatePrepareInputs = {
+      targetUrl: "jdbc:sqlite:test.db",
+    };
+
+    const args = getPrepareArgs(inputs);
+
+    expect(args.some((a) => a.includes("provisionMode"))).toBe(false);
+  });
+
   it("should include working directory", () => {
     const inputs: FlywayStatePrepareInputs = {
       targetUrl: "jdbc:sqlite:test.db",
