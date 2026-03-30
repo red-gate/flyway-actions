@@ -10498,7 +10498,7 @@ var un = () => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
-	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
+	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.provisionMode && t.push(`-provisionMode=${e.provisionMode}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
 }, xn = (e) => [
 	"check",
 	"-drift",
@@ -10533,7 +10533,7 @@ var un = () => {
 }, Tn = (e) => {
 	rn("exit-code", e.toString());
 }, En = () => {
-	let e = tn("target-environment") || void 0, t = tn("script-path") || c.join("deployments", `D__${e ?? "default"}_deployment.sql`), n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = tn("working-directory");
+	let e = tn("target-environment") || void 0, t = tn("script-path") || c.join("deployments", `D__${e ?? "default"}_deployment.sql`), n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = tn("provision-mode") || void 0, l = tn("working-directory");
 	return {
 		scriptPath: t,
 		targetEnvironment: e,
@@ -10542,7 +10542,8 @@ var un = () => {
 		targetPassword: i,
 		targetSchemas: a,
 		skipDriftCheck: o,
-		workingDirectory: s ? c.resolve(s) : void 0,
+		provisionMode: s,
+		workingDirectory: l ? c.resolve(l) : void 0,
 		extraArgs: tn("extra-args") || void 0,
 		deploymentReportName: tn("deployment-report-name") || `flyway-${e ?? "default"}-deployment-report`
 	};

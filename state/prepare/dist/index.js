@@ -10488,8 +10488,10 @@ var dn = () => {
 		"prepare",
 		"-source=schemaModel",
 		...xn(e, "target")
-	], n = e.generateUndo ? "deploy,undo" : "deploy";
-	return t.push(`-types=${n}`), e.deploymentScriptName && t.push(`-scriptFilename=deployments/${e.deploymentScriptName}.sql`), e.undoScriptName && t.push(`-undoFilename=deployments/${e.undoScriptName}.sql`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
+	];
+	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
+	let n = e.generateUndo ? "deploy,undo" : "deploy";
+	return t.push(`-types=${n}`), e.deploymentScriptName && t.push(`-scriptFilename=deployments/${e.deploymentScriptName}.sql`), e.undoScriptName && t.push(`-undoFilename=deployments/${e.undoScriptName}.sql`), e.provisionMode && t.push(`-provisionMode=${e.provisionMode}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
 }, Cn = (e) => {
 	let t = [...xn(e, "environment")];
 	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
@@ -10638,7 +10640,7 @@ var dn = () => {
 }, In = (e, t, n) => {
 	rn("exit-code", e.toString()), t && rn("script-path", t), n && rn("undo-script-path", n);
 }, Ln = () => {
-	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = nn("generate-undo"), o = nn("fail-on-drift"), s = nn("fail-on-code-review"), l = nn("skip-drift-check"), u = nn("skip-code-review"), d = nn("skip-deployment-changes-report"), f = tn("working-directory");
+	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = nn("generate-undo"), o = nn("fail-on-drift"), s = nn("fail-on-code-review"), l = nn("skip-drift-check"), u = nn("skip-code-review"), d = nn("skip-deployment-changes-report"), f = tn("provision-mode") || void 0, p = tn("working-directory");
 	return {
 		targetEnvironment: e,
 		targetUrl: t,
@@ -10651,7 +10653,8 @@ var dn = () => {
 		skipDriftCheck: l,
 		skipCodeReview: u,
 		skipDeploymentChangesReport: d,
-		workingDirectory: f ? c.resolve(f) : void 0,
+		provisionMode: f,
+		workingDirectory: p ? c.resolve(p) : void 0,
 		extraArgs: tn("extra-args") || void 0,
 		preDeploymentReportName: tn("pre-deployment-report-name") || `flyway-${e ?? "default"}-pre-deployment-report`,
 		deploymentScriptName: tn("deployment-script-name") || `D__${e ?? "default"}_deployment`,
