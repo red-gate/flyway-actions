@@ -14,7 +14,7 @@ describe("getPrepareArgs", () => {
     expect(args).toContain("-source=schemaModel");
   });
 
-  it("should use -target instead of -environment", () => {
+  it("should set both -target and -environment", () => {
     const inputs: FlywayStatePrepareInputs = {
       targetEnvironment: "production",
       targetUrl: "jdbc:postgresql://localhost/db",
@@ -23,7 +23,7 @@ describe("getPrepareArgs", () => {
     const args = getPrepareArgs(inputs);
 
     expect(args).toContain("-target=production");
-    expect(args).not.toContain("-environment=production");
+    expect(args).toContain("-environment=production");
   });
 
   it("should scope params to named environment", () => {

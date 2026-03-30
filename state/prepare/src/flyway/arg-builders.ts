@@ -35,6 +35,10 @@ const getTargetConnectionArgs = (inputs: FlywayStatePrepareInputs, environmentFl
 const getPrepareArgs = (inputs: FlywayStatePrepareInputs): string[] => {
   const args: string[] = ["prepare", "-source=schemaModel", ...getTargetConnectionArgs(inputs, "target")];
 
+  if (inputs.targetEnvironment) {
+    args.push(`-environment=${inputs.targetEnvironment}`);
+  }
+
   const types = inputs.generateUndo ? "deploy,undo" : "deploy";
   args.push(`-types=${types}`);
 
