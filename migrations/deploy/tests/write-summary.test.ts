@@ -28,6 +28,7 @@ describe("writeSummary", () => {
       driftStatus: "No drift",
       migrationsApplied: 3,
       schemaVersion: "2.0",
+      migrations: [],
     };
 
     await writeSummary(data);
@@ -46,6 +47,7 @@ describe("writeSummary", () => {
       driftStatus: "Drift detected",
       migrationsApplied: 0,
       schemaVersion: "unknown",
+      migrations: [],
     };
 
     await writeSummary(data);
@@ -59,6 +61,7 @@ describe("writeSummary", () => {
     const data: DeploySummaryData = {
       migrationsApplied: 5,
       schemaVersion: "4.0",
+      migrations: [],
     };
 
     await writeSummary(data);
@@ -74,6 +77,7 @@ describe("writeSummary", () => {
     const data: DeploySummaryData = {
       migrationsApplied: 0,
       schemaVersion: "1.0",
+      migrations: [],
     };
 
     await writeSummary(data);
@@ -87,6 +91,7 @@ describe("writeSummary", () => {
     const data: DeploySummaryData = {
       migrationsApplied: 1,
       schemaVersion: "1.0",
+      migrations: [],
     };
 
     await writeSummary(data);

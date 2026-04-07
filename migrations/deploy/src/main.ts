@@ -41,7 +41,12 @@ const run = async (): Promise<void> => {
           result: { driftDetected, driftCheckSkipped, comparisonSupported },
         } = await runCheckDrift(inputs);
         if (driftDetected) {
-          await writeSummary({ driftStatus: "Drift detected", migrationsApplied: 0, schemaVersion: "unknown" });
+          await writeSummary({
+            driftStatus: "Drift detected",
+            migrationsApplied: 0,
+            schemaVersion: "unknown",
+            migrations: [],
+          });
           core.setFailed("Drift detected. Aborting deployment.");
           return;
         }
@@ -56,8 +61,8 @@ const run = async (): Promise<void> => {
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
 
-    const { migrationsApplied, schemaVersion } = await migrate(inputs);
-    await writeSummary({ driftStatus, migrationsApplied, schemaVersion });
+    const { migrationsApplied, schemaVersion, migrations } = await migrate(inputs);
+    await writeSummary({ driftStatus, migrationsApplied, schemaVersion, migrations });
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

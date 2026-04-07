@@ -1,3 +1,4 @@
+import type { Migration } from "./types.js";
 import * as core from "@actions/core";
 import { pluralize } from "@flyway-actions/shared/pluralize";
 
@@ -5,6 +6,7 @@ type DeploySummaryData = {
   driftStatus?: string;
   migrationsApplied: number;
   schemaVersion: string;
+  migrations: Required<Migration>[];
 };
 
 const writeSummary = async (data: DeploySummaryData): Promise<void> => {
