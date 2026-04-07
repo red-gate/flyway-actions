@@ -10522,23 +10522,33 @@ var un = () => {
 			let e = _n(t.stdout);
 			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") return sn("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), En(0), {
 				migrationsApplied: 0,
-				schemaVersion: "unknown"
+				schemaVersion: "unknown",
+				migrations: []
 			};
 			throw e?.error?.message && on(e.error.message), En(t.exitCode), Error(`Flyway migrate failed with exit code ${t.exitCode}`);
 		}
-		let { migrationsApplied: n, schemaVersion: r } = Tn(t.stdout);
+		let { migrationsApplied: n, schemaVersion: r, migrations: i } = Tn(t.stdout);
 		return En(t.exitCode, n, r), {
 			migrationsApplied: n,
-			schemaVersion: r
+			schemaVersion: r,
+			migrations: i
 		};
 	} finally {
 		ln();
 	}
 }, Tn = (e) => {
-	let t = _n(e);
+	let t = _n(e), n = (t?.migrations ?? []).map((e) => ({
+		category: e.category ?? "unknown",
+		version: e.version ?? "",
+		description: e.description ?? "",
+		type: e.type ?? "unknown",
+		filepath: e.filepath ?? "",
+		executionTime: e.executionTime ?? 0
+	}));
 	return {
 		migrationsApplied: t?.migrationsExecuted ?? 0,
-		schemaVersion: t?.targetSchemaVersion ?? "unknown"
+		schemaVersion: t?.targetSchemaVersion ?? "unknown",
+		migrations: n
 	};
 }, En = (e, t, n) => {
 	rn("exit-code", e.toString()), t !== void 0 && rn("migrations-applied", t.toString()), n !== void 0 && rn("schema-version", n);
@@ -10600,20 +10610,57 @@ var un = () => {
 	}
 	return t === void 0 ? `${n.stem}${n.pluralSuffix}` : `${t} ${n.stem}${t === 1 ? n.singularSuffix : n.pluralSuffix}`;
 }, An = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), jn = async (e) => {
-	await Ct.addHeading("Flyway Deploy", 2).addTable([
-		[{
+	let t = Ct.addHeading("Flyway Deploy", 2).addTable([[
+		{
 			data: "Migrations Applied",
 			header: !0
-		}, kn("migration", e.migrationsApplied)],
-		[{
+		},
+		{
 			data: "Schema Version",
 			header: !0
-		}, e.schemaVersion],
-		[{
+		},
+		{
 			data: "Drift",
 			header: !0
-		}, e.driftStatus ?? "Skipped"]
-	]).write();
+		}
+	], [
+		kn("migration", e.migrationsApplied),
+		e.schemaVersion,
+		e.driftStatus ?? "Skipped"
+	]]);
+	e.migrations.length > 0 && t.addTable([[
+		{
+			data: "Category",
+			header: !0
+		},
+		{
+			data: "Version",
+			header: !0
+		},
+		{
+			data: "Description",
+			header: !0
+		},
+		{
+			data: "Execution Time (ms)",
+			header: !0
+		},
+		{
+			data: "Type",
+			header: !0
+		},
+		{
+			data: "Filepath",
+			header: !0
+		}
+	], ...e.migrations.map((e) => [
+		e.category,
+		e.version,
+		e.description,
+		`${e.executionTime}ms`,
+		e.type,
+		e.filepath
+	])]), await t.write();
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
 await (async () => {
@@ -10637,18 +10684,20 @@ await (async () => {
 				await jn({
 					driftStatus: "Drift detected",
 					migrationsApplied: 0,
-					schemaVersion: "unknown"
+					schemaVersion: "unknown",
+					migrations: []
 				}), an("Drift detected. Aborting deployment.");
 				return;
 			}
 			t.saveSnapshot = i, n = i ? r ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
 		else sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		let { migrationsApplied: r, schemaVersion: i } = await wn(t);
+		let { migrationsApplied: r, schemaVersion: i, migrations: a } = await wn(t);
 		await jn({
 			driftStatus: n,
 			migrationsApplied: r,
-			schemaVersion: i
+			schemaVersion: i,
+			migrations: a
 		});
 	} catch (e) {
 		e instanceof Error ? an(e.message) : an(String(e));
