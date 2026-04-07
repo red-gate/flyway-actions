@@ -35,9 +35,12 @@ describe("writeSummary", () => {
 
     expect(addHeading).toHaveBeenCalledWith("Flyway Deploy", 2);
     expect(addTable).toHaveBeenCalledWith([
-      [{ data: "Migrations Applied", header: true }, "3 migrations"],
-      [{ data: "Schema Version", header: true }, "2.0"],
-      [{ data: "Drift", header: true }, "No drift"],
+      [
+        { data: "Migrations Applied", header: true },
+        { data: "Schema Version", header: true },
+        { data: "Drift", header: true },
+      ],
+      ["3 migrations", "2.0", "No drift"],
     ]);
     expect(write).toHaveBeenCalled();
   });
@@ -52,9 +55,14 @@ describe("writeSummary", () => {
 
     await writeSummary(data);
 
-    expect(addTable).toHaveBeenCalledWith(
-      expect.arrayContaining([[{ data: "Drift", header: true }, "Drift detected"]]),
-    );
+    expect(addTable).toHaveBeenCalledWith([
+      [
+        { data: "Migrations Applied", header: true },
+        { data: "Schema Version", header: true },
+        { data: "Drift", header: true },
+      ],
+      ["0 migrations", "unknown", "Drift detected"],
+    ]);
   });
 
   it("should default drift status to 'Skipped' when driftStatus is undefined", async () => {
@@ -67,9 +75,12 @@ describe("writeSummary", () => {
     await writeSummary(data);
 
     expect(addTable).toHaveBeenCalledWith([
-      [{ data: "Migrations Applied", header: true }, "5 migrations"],
-      [{ data: "Schema Version", header: true }, "4.0"],
-      [{ data: "Drift", header: true }, "Skipped"],
+      [
+        { data: "Migrations Applied", header: true },
+        { data: "Schema Version", header: true },
+        { data: "Drift", header: true },
+      ],
+      ["5 migrations", "4.0", "Skipped"],
     ]);
   });
 
@@ -82,9 +93,14 @@ describe("writeSummary", () => {
 
     await writeSummary(data);
 
-    expect(addTable).toHaveBeenCalledWith(
-      expect.arrayContaining([[{ data: "Migrations Applied", header: true }, "0 migrations"]]),
-    );
+    expect(addTable).toHaveBeenCalledWith([
+      [
+        { data: "Migrations Applied", header: true },
+        { data: "Schema Version", header: true },
+        { data: "Drift", header: true },
+      ],
+      ["0 migrations", "1.0", "Skipped"],
+    ]);
   });
 
   it("should show singular migration when one applied", async () => {
@@ -96,8 +112,13 @@ describe("writeSummary", () => {
 
     await writeSummary(data);
 
-    expect(addTable).toHaveBeenCalledWith(
-      expect.arrayContaining([[{ data: "Migrations Applied", header: true }, "1 migration"]]),
-    );
+    expect(addTable).toHaveBeenCalledWith([
+      [
+        { data: "Migrations Applied", header: true },
+        { data: "Schema Version", header: true },
+        { data: "Drift", header: true },
+      ],
+      ["1 migration", "1.0", "Skipped"],
+    ]);
   });
 });

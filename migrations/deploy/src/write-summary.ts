@@ -13,9 +13,12 @@ const writeSummary = async (data: DeploySummaryData): Promise<void> => {
   await core.summary
     .addHeading("Flyway Deploy", 2)
     .addTable([
-      [{ data: "Migrations Applied", header: true }, pluralize("migration", data.migrationsApplied)],
-      [{ data: "Schema Version", header: true }, data.schemaVersion],
-      [{ data: "Drift", header: true }, data.driftStatus ?? "Skipped"],
+      [
+        { data: "Migrations Applied", header: true },
+        { data: "Schema Version", header: true },
+        { data: "Drift", header: true },
+      ],
+      [pluralize("migration", data.migrationsApplied), data.schemaVersion, data.driftStatus ?? "Skipped"],
     ])
     .write();
 };
