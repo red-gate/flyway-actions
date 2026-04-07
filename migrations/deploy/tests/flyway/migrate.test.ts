@@ -21,14 +21,76 @@ const { getMigrateArgs, migrate, parseFlywayOutput } = await import("../../src/f
 
 describe("migrate", () => {
   it("should set all outputs on success", async () => {
-    exec.mockImplementation(mockExec({ stdout: { migrationsExecuted: 3, targetSchemaVersion: "2.0" } }));
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          migrationsExecuted: 3,
+          targetSchemaVersion: "2.0",
+          migrations: [
+            {
+              category: "Versioned",
+              version: "1",
+              description: "initial",
+              type: "SQL",
+              filepath: "V1__initial.sql",
+              executionTime: 10,
+            },
+            {
+              category: "Versioned",
+              version: "2",
+              description: "add-users",
+              type: "SQL",
+              filepath: "V2__add-users.sql",
+              executionTime: 20,
+            },
+            {
+              category: "Repeatable",
+              version: "",
+              description: "views",
+              type: "SQL",
+              filepath: "R__views.sql",
+              executionTime: 5,
+            },
+          ],
+        },
+      }),
+    );
 
     const result = await migrate({ targetUrl: "jdbc:sqlite:test.db" });
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "0");
     expect(setOutput).toHaveBeenCalledWith("migrations-applied", "3");
     expect(setOutput).toHaveBeenCalledWith("schema-version", "2.0");
-    expect(result).toEqual({ migrationsApplied: 3, schemaVersion: "2.0" });
+    expect(result).toEqual({
+      migrationsApplied: 3,
+      schemaVersion: "2.0",
+      migrations: [
+        {
+          category: "Versioned",
+          version: "1",
+          description: "initial",
+          type: "SQL",
+          filepath: "V1__initial.sql",
+          executionTime: 10,
+        },
+        {
+          category: "Versioned",
+          version: "2",
+          description: "add-users",
+          type: "SQL",
+          filepath: "V2__add-users.sql",
+          executionTime: 20,
+        },
+        {
+          category: "Repeatable",
+          version: "",
+          description: "views",
+          type: "SQL",
+          filepath: "R__views.sql",
+          executionTime: 5,
+        },
+      ],
+    });
   });
 
   it("should log and not error when database has no licensed comparison capability", async () => {
@@ -49,7 +111,7 @@ describe("migrate", () => {
     expect(info).toHaveBeenCalledWith(
       "No snapshot was generated or stored in the target database as snapshots are not supported for this database type.",
     );
-    expect(result).toEqual({ migrationsApplied: 0, schemaVersion: "unknown" });
+    expect(result).toEqual({ migrationsApplied: 0, schemaVersion: "unknown", migrations: [] });
   });
 
   it("should throw when migrate fails with an unrecognised error", async () => {
@@ -70,22 +132,63 @@ describe("migrate", () => {
 });
 
 describe("parseFlywayOutput", () => {
-  it("should parse migrationsExecuted and targetSchemaVersion from JSON", () => {
-    const stdout = JSON.stringify({ database: "testdb", migrationsExecuted: 5, targetSchemaVersion: "3.0" });
+  it("should parse migrationsExecuted, targetSchemaVersion, and migrations from JSON", () => {
+    const stdout = JSON.stringify({
+      database: "testdb",
+      migrationsExecuted: 2,
+      targetSchemaVersion: "3.0",
+      migrations: [
+        {
+          category: "Versioned",
+          version: "2",
+          description: "add-tables",
+          type: "SQL",
+          filepath: "V2__add-tables.sql",
+          executionTime: 15,
+        },
+        {
+          category: "Versioned",
+          version: "3",
+          description: "add-indexes",
+          type: "SQL",
+          filepath: "V3__add-indexes.sql",
+          executionTime: 8,
+        },
+      ],
+    });
 
     const result = parseFlywayOutput(stdout);
 
-    expect(result.migrationsApplied).toBe(5);
+    expect(result.migrationsApplied).toBe(2);
     expect(result.schemaVersion).toBe("3.0");
+    expect(result.migrations).toEqual([
+      {
+        category: "Versioned",
+        version: "2",
+        description: "add-tables",
+        type: "SQL",
+        filepath: "V2__add-tables.sql",
+        executionTime: 15,
+      },
+      {
+        category: "Versioned",
+        version: "3",
+        description: "add-indexes",
+        type: "SQL",
+        filepath: "V3__add-indexes.sql",
+        executionTime: 8,
+      },
+    ]);
   });
 
   it("should handle zero migrations", () => {
-    const stdout = JSON.stringify({ migrationsExecuted: 0, targetSchemaVersion: "2.0" });
+    const stdout = JSON.stringify({ migrationsExecuted: 0, targetSchemaVersion: "2.0", migrations: [] });
 
     const result = parseFlywayOutput(stdout);
 
     expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("2.0");
+    expect(result.migrations).toEqual([]);
   });
 
   it("should return defaults for empty string", () => {
@@ -93,6 +196,7 @@ describe("parseFlywayOutput", () => {
 
     expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("unknown");
+    expect(result.migrations).toEqual([]);
   });
 
   it("should return defaults for invalid JSON", () => {
@@ -100,6 +204,7 @@ describe("parseFlywayOutput", () => {
 
     expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("unknown");
+    expect(result.migrations).toEqual([]);
   });
 
   it("should handle null targetSchemaVersion", () => {
@@ -109,6 +214,7 @@ describe("parseFlywayOutput", () => {
 
     expect(result.migrationsApplied).toBe(1);
     expect(result.schemaVersion).toBe("unknown");
+    expect(result.migrations).toEqual([]);
   });
 
   it("should default migrationsExecuted to zero when missing", () => {
@@ -118,6 +224,21 @@ describe("parseFlywayOutput", () => {
 
     expect(result.migrationsApplied).toBe(0);
     expect(result.schemaVersion).toBe("4.0");
+    expect(result.migrations).toEqual([]);
+  });
+
+  it("should default missing migration fields", () => {
+    const stdout = JSON.stringify({
+      migrationsExecuted: 1,
+      targetSchemaVersion: "1.0",
+      migrations: [{ category: "Versioned" }],
+    });
+
+    const result = parseFlywayOutput(stdout);
+
+    expect(result.migrations).toEqual([
+      { category: "Versioned", version: "", description: "", type: "unknown", filepath: "", executionTime: 0 },
+    ]);
   });
 });
 

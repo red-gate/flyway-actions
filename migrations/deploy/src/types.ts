@@ -15,6 +15,15 @@ type FlywayMigrationsDeploymentInputs = {
   saveSnapshot?: boolean;
 };
 
-type FlywayMigrateOutput = { migrationsExecuted?: number; targetSchemaVersion?: string };
+type Migration = {
+  category?: string;
+  version?: string;
+  description?: string;
+  type?: string;
+  filepath?: string;
+  executionTime?: number;
+};
 
-export type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs };
+type FlywayMigrateOutput = { migrationsExecuted?: number; targetSchemaVersion?: string; migrations?: Migration[] };
+
+export type { FlywayMigrateOutput, FlywayMigrationsDeploymentInputs, Migration };
