@@ -121,4 +121,57 @@ describe("writeSummary", () => {
       ["1 migration", "1.0", "Skipped"],
     ]);
   });
+
+  it("should not add migrations table when migrations array is empty", async () => {
+    const data: DeploySummaryData = {
+      migrationsApplied: 0,
+      schemaVersion: "1.0",
+      migrations: [],
+    };
+
+    await writeSummary(data);
+
+    expect(addTable).toHaveBeenCalledTimes(1);
+  });
+
+  it("should add migrations table when migrations are present", async () => {
+    const data: DeploySummaryData = {
+      migrationsApplied: 2,
+      schemaVersion: "3.0",
+      migrations: [
+        {
+          category: "Versioned",
+          version: "2",
+          description: "create users table",
+          type: "SQL",
+          filepath: "V2__create_users_table.sql",
+          executionTime: 120,
+        },
+        {
+          category: "Versioned",
+          version: "3",
+          description: "add email column",
+          type: "SQL",
+          filepath: "V3__add_email_column.sql",
+          executionTime: 45,
+        },
+      ],
+    };
+
+    await writeSummary(data);
+
+    expect(addTable).toHaveBeenCalledTimes(2);
+    expect(addTable).toHaveBeenCalledWith([
+      [
+        { data: "Category", header: true },
+        { data: "Version", header: true },
+        { data: "Description", header: true },
+        { data: "Execution Time (ms)", header: true },
+        { data: "Type", header: true },
+        { data: "Filepath", header: true },
+      ],
+      ["Versioned", "2", "create users table", "120ms", "SQL", "V2__create_users_table.sql"],
+      ["Versioned", "3", "add email column", "45ms", "SQL", "V3__add_email_column.sql"],
+    ]);
+  });
 });

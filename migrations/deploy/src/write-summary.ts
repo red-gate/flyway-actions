@@ -10,17 +10,30 @@ type DeploySummaryData = {
 };
 
 const writeSummary = async (data: DeploySummaryData): Promise<void> => {
-  await core.summary
-    .addHeading("Flyway Deploy", 2)
-    .addTable([
+  const summary = core.summary.addHeading("Flyway Deploy", 2).addTable([
+    [
+      { data: "Migrations Applied", header: true },
+      { data: "Schema Version", header: true },
+      { data: "Drift", header: true },
+    ],
+    [pluralize("migration", data.migrationsApplied), data.schemaVersion, data.driftStatus ?? "Skipped"],
+  ]);
+
+  if (data.migrations.length > 0) {
+    summary.addTable([
       [
-        { data: "Migrations Applied", header: true },
-        { data: "Schema Version", header: true },
-        { data: "Drift", header: true },
+        { data: "Category", header: true },
+        { data: "Version", header: true },
+        { data: "Description", header: true },
+        { data: "Execution Time (ms)", header: true },
+        { data: "Type", header: true },
+        { data: "Filepath", header: true },
       ],
-      [pluralize("migration", data.migrationsApplied), data.schemaVersion, data.driftStatus ?? "Skipped"],
-    ])
-    .write();
+      ...data.migrations.map((m) => [m.category, m.version, m.description, `${m.executionTime}ms`, m.type, m.filepath]),
+    ]);
+  }
+
+  await summary.write();
 };
 
 export { writeSummary };
