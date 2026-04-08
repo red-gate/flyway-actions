@@ -12,7 +12,7 @@ const getUndoArgs = (inputs: FlywayMigrationsUndoInputs): string[] => {
   if (inputs.cherryPick) {
     args.push(`-cherryPick=${inputs.cherryPick}`);
   }
-  if (inputs.saveSnapshot) {
+  if (!inputs.skipSnapshot) {
     args.push("-undo.saveSnapshot=true");
   }
   return args;

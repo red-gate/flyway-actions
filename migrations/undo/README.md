@@ -114,6 +114,7 @@ steps:
 | `target-migration-version` | Undo migrations down to this version                           | No                                       |         |
 | `cherry-pick`              | Comma-separated list of migration versions to undo             | No                                       |         |
 | `skip-drift-check`         | Skip the drift check                                           | No                                       | false   |
+| `skip-snapshot`            | Skip storing a snapshot after undo                             | No                                       | false   |
 | `working-directory`        | Working directory for Flyway                                   | No                                       |         |
 | `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`) | No                                       |         |
 

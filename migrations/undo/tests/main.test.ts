@@ -143,6 +143,56 @@ describe("run", () => {
     );
   });
 
+  it("should not include saveSnapshot when skip-snapshot is enabled", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      driftExitCode: 0,
+      undoExitCode: 0,
+      undoOutput: { migrationsUndone: 1, targetSchemaVersion: "1" },
+    });
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
+      return "";
+    });
+    getBooleanInput.mockImplementation((name: string) => name === "skip-snapshot");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(exec).not.toHaveBeenCalledWith(
+      "flyway",
+      expect.arrayContaining(["-undo.saveSnapshot=true"]),
+      expect.any(Object),
+    );
+  });
+
+  it("should not include saveSnapshot when skip-snapshot is enabled and drift check is skipped", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      undoExitCode: 0,
+      undoOutput: { migrationsUndone: 1, targetSchemaVersion: "1" },
+    });
+    getInput.mockImplementation((name: string) => {
+      if (name === "target-url") {
+        return "jdbc:sqlite:test.db";
+      }
+      return "";
+    });
+    getBooleanInput.mockReturnValue(true);
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping snapshot storage"));
+    expect(exec).not.toHaveBeenCalledWith(
+      "flyway",
+      expect.arrayContaining(["-undo.saveSnapshot=true"]),
+      expect.any(Object),
+    );
+  });
+
   it("should fail when flyway returns non-zero exit code", async () => {
     setupFlywayMock({ edition: "Community", undoExitCode: 1 });
     getInput.mockImplementation((name: string) => {
