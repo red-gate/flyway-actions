@@ -121,7 +121,7 @@ describe("getCommonArgs", () => {
       targetMigrationVersion: "5.0",
       cherryPick: "2.0,2.1",
       baselineOnMigrate: true,
-      saveSnapshot: true,
+      skipSnapshot: true,
       skipDriftCheck: true,
       deploymentReportName: "report",
     };
@@ -131,7 +131,7 @@ describe("getCommonArgs", () => {
     expect(args.some((a) => a.includes("target"))).toBe(false);
     expect(args.some((a) => a.includes("cherryPick"))).toBe(false);
     expect(args.some((a) => a.includes("baselineOnMigrate"))).toBe(false);
-    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args.some((a) => a.includes("skipSnapshot"))).toBe(false);
     expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
     expect(args.some((a) => a.includes("deploymentReportName"))).toBe(false);
   });

@@ -103,7 +103,7 @@ describe("getCommonArgs", () => {
       targetUrl: "jdbc:postgresql://localhost/db",
       targetMigrationVersion: "5.0",
       cherryPick: "2.0,2.1",
-      saveSnapshot: true,
+      skipSnapshot: true,
       skipDriftCheck: true,
       undoReportName: "report",
     };
@@ -112,7 +112,7 @@ describe("getCommonArgs", () => {
 
     expect(args.some((a) => a.includes("target"))).toBe(false);
     expect(args.some((a) => a.includes("cherryPick"))).toBe(false);
-    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args.some((a) => a.includes("skipSnapshot"))).toBe(false);
     expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
     expect(args.some((a) => a.includes("undoReportName"))).toBe(false);
   });
