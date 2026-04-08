@@ -249,7 +249,7 @@ describe("getMigrateArgs", () => {
     const args = getMigrateArgs(inputs);
 
     expect(args).toContain("migrate");
-    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args).toContain("-migrate.saveSnapshot=true");
   });
 
   it("should build args with target-migration-version", () => {
@@ -295,10 +295,9 @@ describe("getMigrateArgs", () => {
     expect(args.some((a) => a.includes("baselineOnMigrate"))).toBe(false);
   });
 
-  it("should include -migrate.saveSnapshot=true when saveSnapshot is true", () => {
+  it("should include -migrate.saveSnapshot=true by default", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
-      saveSnapshot: true,
     };
 
     const args = getMigrateArgs(inputs);
@@ -306,9 +305,10 @@ describe("getMigrateArgs", () => {
     expect(args).toContain("-migrate.saveSnapshot=true");
   });
 
-  it("should omit -saveSnapshot when saveSnapshot is not set", () => {
+  it("should omit -migrate.saveSnapshot=true when skipSnapshot is true", () => {
     const inputs: FlywayMigrationsDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
+      skipSnapshot: true,
     };
 
     const args = getMigrateArgs(inputs);

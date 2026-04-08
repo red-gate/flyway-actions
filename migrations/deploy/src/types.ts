@@ -8,11 +8,11 @@ type FlywayMigrationsDeploymentInputs = {
   cherryPick?: string;
   baselineOnMigrate?: boolean;
   skipDriftCheck?: boolean;
+  skipSnapshot?: boolean;
   provisionMode?: string;
   workingDirectory?: string;
   extraArgs?: string;
   deploymentReportName?: string;
-  saveSnapshot?: boolean;
 };
 
 type Migration = {

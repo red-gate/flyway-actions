@@ -110,6 +110,7 @@ steps:
 | `cherry-pick`              | Comma-separated list of migration versions to apply              | No                                       |         |
 | `baseline-on-migrate`      | Whether to automatically baseline the target database on migrate | No                                       | true    |
 | `skip-drift-check`         | Skip the drift check                                             | No                                       | false   |
+| `skip-snapshot`            | Skip storing a snapshot after deployment                         | No                                       | false   |
 | `provision-mode`           | Controls how Flyway runs the provisioner, if one is configured   | No                                       |         |
 | `working-directory`        | Working directory for Flyway                                     | No                                       |         |
 | `extra-args`               | Additional Flyway CLI arguments (e.g. `-sqlMigrationPrefix=M`)   | No                                       |         |

@@ -31,11 +31,14 @@ const run = async (): Promise<void> => {
     maskSecrets(inputs);
 
     let driftStatus: string | undefined;
+    let skipSnapshot = inputs.skipSnapshot;
 
     if (flywayDetails.edition === "enterprise") {
+      if (inputs.skipSnapshot) {
+        core.info('Skipping snapshot storage: "skip-snapshot" set to true');
+      }
       if (inputs.skipDriftCheck) {
         core.info('Skipping drift check: "skip-drift-check" set to true');
-        inputs.saveSnapshot = true;
       } else {
         const {
           result: { driftDetected, driftCheckSkipped, comparisonSupported },
@@ -50,7 +53,7 @@ const run = async (): Promise<void> => {
           core.setFailed("Drift detected. Aborting deployment.");
           return;
         }
-        inputs.saveSnapshot = comparisonSupported;
+        skipSnapshot = skipSnapshot || !comparisonSupported;
         driftStatus = comparisonSupported
           ? !driftCheckSkipped
             ? "No drift"
@@ -58,10 +61,11 @@ const run = async (): Promise<void> => {
           : "Drift check not run - drift analysis is not supported for this database type";
       }
     } else {
+      skipSnapshot = true;
       core.info(`Skipping drift check as edition is not Enterprise (actual edition: ${flywayDetails.edition}).`);
     }
 
-    const { migrationsApplied, schemaVersion, migrations } = await migrate(inputs);
+    const { migrationsApplied, schemaVersion, migrations } = await migrate({ ...inputs, skipSnapshot });
     await writeSummary({ driftStatus, migrationsApplied, schemaVersion, migrations });
   } catch (error) {
     if (error instanceof Error) {
