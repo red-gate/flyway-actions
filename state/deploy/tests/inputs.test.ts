@@ -101,6 +101,14 @@ describe("getInputs", () => {
     expect(inputs.skipDriftCheck).toBe(true);
   });
 
+  it("should get skip-snapshot input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "skip-snapshot");
+
+    const inputs = getInputs();
+
+    expect(inputs.skipSnapshot).toBe(true);
+  });
+
   it("should return deployment report name when provided", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "deployment-report-name") {

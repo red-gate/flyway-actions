@@ -104,6 +104,7 @@ steps:
 | `target-password`    | Database password                                              | No                                       |                                                      |
 | `target-schemas`     | Comma-separated list of schemas                                | No                                       |                                                      |
 | `skip-drift-check`   | Skip the drift check                                           | No                                       | false                                                |
+| `skip-snapshot`      | Skip storing a snapshot after deployment                       | No                                       | false                                                |
 | `provision-mode`     | Controls how Flyway runs the provisioner, if one is configured | No                                       |                                                      |
 | `working-directory`  | Working directory for Flyway                                   | No                                       |                                                      |
 | `extra-args`         | Additional Flyway CLI arguments                                | No                                       |                                                      |
