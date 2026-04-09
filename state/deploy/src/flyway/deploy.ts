@@ -9,7 +9,7 @@ const getDeployArgs = (inputs: FlywayStateDeploymentInputs): string[] => {
   if (inputs.scriptPath) {
     args.push(`-deploy.scriptFilename=${inputs.scriptPath}`);
   }
-  if (inputs.saveSnapshot) {
+  if (!inputs.skipSnapshot) {
     args.push("-deploy.saveSnapshot=true");
   }
   return args;

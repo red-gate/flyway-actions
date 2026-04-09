@@ -37,10 +37,13 @@ const run = async (): Promise<void> => {
     maskSecrets(inputs);
 
     let driftStatus: string | undefined;
+    let skipSnapshot = inputs.skipSnapshot;
 
+    if (inputs.skipSnapshot) {
+      core.info('Skipping snapshot storage: "skip-snapshot" set to true');
+    }
     if (inputs.skipDriftCheck) {
       core.info('Skipping drift check: "skip-drift-check" set to true');
-      inputs.saveSnapshot = true;
     } else {
       const {
         result: { driftDetected, driftCheckSkipped, comparisonSupported },
@@ -50,7 +53,7 @@ const run = async (): Promise<void> => {
         core.setFailed("Drift detected. Aborting deployment.");
         return;
       }
-      inputs.saveSnapshot = comparisonSupported;
+      skipSnapshot = skipSnapshot || !comparisonSupported;
       driftStatus = comparisonSupported
         ? !driftCheckSkipped
           ? "No drift"
@@ -58,7 +61,7 @@ const run = async (): Promise<void> => {
         : "Drift check not run - drift analysis is not supported for this database type";
     }
 
-    await deploy(inputs);
+    await deploy({ ...inputs, skipSnapshot });
     await writeSummary({ driftStatus });
   } catch (error) {
     if (error instanceof Error) {

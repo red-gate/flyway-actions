@@ -10513,7 +10513,7 @@ var un = () => {
 	};
 }, Cn = (e) => {
 	let t = ["deploy", ...bn(e)];
-	return e.scriptPath && t.push(`-deploy.scriptFilename=${e.scriptPath}`), e.saveSnapshot && t.push("-deploy.saveSnapshot=true"), t;
+	return e.scriptPath && t.push(`-deploy.scriptFilename=${e.scriptPath}`), e.skipSnapshot || t.push("-deploy.saveSnapshot=true"), t;
 }, wn = async (e) => {
 	cn("Running state-based deployment");
 	try {
@@ -10533,7 +10533,7 @@ var un = () => {
 }, Tn = (e) => {
 	rn("exit-code", e.toString());
 }, En = () => {
-	let e = tn("target-environment") || void 0, t = tn("script-path") || c.join("deployments", `D__${e ?? "default"}_deployment.sql`), n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = tn("provision-mode") || void 0, l = tn("working-directory");
+	let e = tn("target-environment") || void 0, t = tn("script-path") || c.join("deployments", `D__${e ?? "default"}_deployment.sql`), n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = nn("skip-snapshot"), l = tn("provision-mode") || void 0, u = tn("working-directory");
 	return {
 		scriptPath: t,
 		targetEnvironment: e,
@@ -10542,8 +10542,9 @@ var un = () => {
 		targetPassword: i,
 		targetSchemas: a,
 		skipDriftCheck: o,
-		provisionMode: s,
-		workingDirectory: l ? c.resolve(l) : void 0,
+		skipSnapshot: s,
+		provisionMode: l,
+		workingDirectory: u ? c.resolve(u) : void 0,
 		extraArgs: tn("extra-args") || void 0,
 		deploymentReportName: tn("deployment-report-name") || `flyway-${e ?? "default"}-deployment-report`
 	};
@@ -10573,17 +10574,20 @@ await (async () => {
 			return;
 		}
 		Dn(t);
-		let n;
-		if (t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		let n, r = t.skipSnapshot;
+		if (t.skipSnapshot && sn("Skipping snapshot storage: \"skip-snapshot\" set to true"), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e, driftCheckSkipped: r, comparisonSupported: i } } = await Sn(t);
+			let { result: { driftDetected: e, driftCheckSkipped: i, comparisonSupported: a } } = await Sn(t);
 			if (e) {
 				await On({ driftStatus: "Drift detected" }), an("Drift detected. Aborting deployment.");
 				return;
 			}
-			t.saveSnapshot = i, n = i ? r ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
+			r ||= !a, n = a ? i ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		await wn(t), await On({ driftStatus: n });
+		await wn({
+			...t,
+			skipSnapshot: r
+		}), await On({ driftStatus: n });
 	} catch (e) {
 		e instanceof Error ? an(e.message) : an(String(e));
 	}

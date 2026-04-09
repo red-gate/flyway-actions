@@ -10513,7 +10513,7 @@ var un = () => {
 	};
 }, Cn = (e) => {
 	let t = ["undo", ...bn(e)];
-	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), e.saveSnapshot && t.push("-undo.saveSnapshot=true"), t;
+	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), e.skipSnapshot || t.push("-undo.saveSnapshot=true"), t;
 }, wn = async (e) => {
 	cn("Running undo");
 	try {
@@ -10543,7 +10543,7 @@ var un = () => {
 }, En = (e, t, n) => {
 	rn("exit-code", e.toString()), t !== void 0 && rn("migrations-undone", t.toString()), n !== void 0 && rn("schema-version", n);
 }, Dn = () => {
-	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = nn("skip-drift-check"), l = tn("working-directory");
+	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = nn("skip-drift-check"), l = nn("skip-snapshot"), u = tn("working-directory");
 	return {
 		targetEnvironment: e,
 		targetUrl: t,
@@ -10553,7 +10553,8 @@ var un = () => {
 		targetMigrationVersion: a,
 		cherryPick: o,
 		skipDriftCheck: s,
-		workingDirectory: l ? c.resolve(l) : void 0,
+		skipSnapshot: l,
+		workingDirectory: u ? c.resolve(u) : void 0,
 		extraArgs: tn("extra-args") || void 0,
 		undoReportName: tn("undo-report-name") || `flyway-${e ?? "default"}-undo-report`
 	};
@@ -10627,10 +10628,10 @@ await (async () => {
 			return;
 		}
 		On(t);
-		let n;
-		if (e.edition === "enterprise") if (t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true"), t.saveSnapshot = !0;
+		let n, r = t.skipSnapshot;
+		if (e.edition === "enterprise") if (t.skipSnapshot && sn("Skipping snapshot storage: \"skip-snapshot\" set to true"), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e, driftCheckSkipped: r, comparisonSupported: i } } = await Sn(t);
+			let { result: { driftDetected: e, driftCheckSkipped: i, comparisonSupported: a } } = await Sn(t);
 			if (e) {
 				await jn({
 					driftStatus: "Drift detected",
@@ -10639,14 +10640,17 @@ await (async () => {
 				}), an("Drift detected. Aborting undo.");
 				return;
 			}
-			t.saveSnapshot = i, n = i ? r ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
+			r ||= !a, n = a ? i ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		else sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		let { migrationsUndone: r, schemaVersion: i } = await wn(t);
+		else r = !0, sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
+		let { migrationsUndone: i, schemaVersion: a } = await wn({
+			...t,
+			skipSnapshot: r
+		});
 		await jn({
 			driftStatus: n,
-			migrationsUndone: r,
-			schemaVersion: i
+			migrationsUndone: i,
+			schemaVersion: a
 		});
 	} catch (e) {
 		e instanceof Error ? an(e.message) : an(String(e));

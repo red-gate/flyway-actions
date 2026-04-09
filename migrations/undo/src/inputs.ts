@@ -11,6 +11,7 @@ const getInputs = (): FlywayMigrationsUndoInputs => {
   const targetMigrationVersion = core.getInput("target-migration-version") || undefined;
   const cherryPick = core.getInput("cherry-pick") || undefined;
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
+  const skipSnapshot = core.getBooleanInput("skip-snapshot");
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
@@ -25,6 +26,7 @@ const getInputs = (): FlywayMigrationsUndoInputs => {
     targetMigrationVersion,
     cherryPick,
     skipDriftCheck,
+    skipSnapshot,
     workingDirectory,
     extraArgs,
     undoReportName,

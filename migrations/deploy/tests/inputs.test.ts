@@ -111,6 +111,14 @@ describe("getInputs", () => {
     expect(inputs.skipDriftCheck).toBe(true);
   });
 
+  it("should get skip-snapshot input", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "skip-snapshot");
+
+    const inputs = getInputs();
+
+    expect(inputs.skipSnapshot).toBe(true);
+  });
+
   it("should get working directory and extra args", () => {
     getInput.mockImplementation((name: string) => {
       const values: Record<string, string> = {

@@ -12,6 +12,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
   const cherryPick = core.getInput("cherry-pick") || undefined;
   const baselineOnMigrate = core.getBooleanInput("baseline-on-migrate");
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
+  const skipSnapshot = core.getBooleanInput("skip-snapshot");
   const provisionMode = core.getInput("provision-mode") || undefined;
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
@@ -29,6 +30,7 @@ const getInputs = (): FlywayMigrationsDeploymentInputs => {
     cherryPick,
     baselineOnMigrate,
     skipDriftCheck,
+    skipSnapshot,
     provisionMode,
     workingDirectory,
     extraArgs,

@@ -119,7 +119,7 @@ describe("getCommonArgs", () => {
     const inputs: FlywayStateDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
       scriptPath: "/scripts",
-      saveSnapshot: true,
+      skipSnapshot: true,
       skipDriftCheck: true,
       deploymentReportName: "report",
     };
@@ -127,7 +127,7 @@ describe("getCommonArgs", () => {
     const args = getCommonArgs(inputs);
 
     expect(args.some((a) => a.includes("scriptPath"))).toBe(false);
-    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args.some((a) => a.includes("skipSnapshot"))).toBe(false);
     expect(args.some((a) => a.includes("skipDriftCheck"))).toBe(false);
     expect(args.some((a) => a.includes("deploymentReportName"))).toBe(false);
   });

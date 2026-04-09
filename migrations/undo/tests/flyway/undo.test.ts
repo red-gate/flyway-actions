@@ -128,7 +128,7 @@ describe("getUndoArgs", () => {
     const args = getUndoArgs(inputs);
 
     expect(args).toContain("undo");
-    expect(args.some((a) => a.includes("saveSnapshot"))).toBe(false);
+    expect(args).toContain("-undo.saveSnapshot=true");
   });
 
   it("should build args with target-migration-version", () => {
@@ -153,10 +153,9 @@ describe("getUndoArgs", () => {
     expect(args).toContain("-cherryPick=2.0,2.1");
   });
 
-  it("should include -undo.saveSnapshot=true when saveSnapshot is true", () => {
+  it("should include -undo.saveSnapshot=true by default", () => {
     const inputs: FlywayMigrationsUndoInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
-      saveSnapshot: true,
     };
 
     const args = getUndoArgs(inputs);
@@ -164,9 +163,10 @@ describe("getUndoArgs", () => {
     expect(args).toContain("-undo.saveSnapshot=true");
   });
 
-  it("should omit -saveSnapshot when saveSnapshot is not set", () => {
+  it("should omit -undo.saveSnapshot=true when skipSnapshot is true", () => {
     const inputs: FlywayMigrationsUndoInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
+      skipSnapshot: true,
     };
 
     const args = getUndoArgs(inputs);

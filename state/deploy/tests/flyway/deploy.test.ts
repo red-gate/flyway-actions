@@ -92,10 +92,9 @@ describe("getDeployArgs", () => {
     expect(args.some((a) => a.includes("scriptFilename"))).toBe(false);
   });
 
-  it("should include -deploy.saveSnapshot=true when saveSnapshot is true", () => {
+  it("should include -deploy.saveSnapshot=true by default", () => {
     const inputs: FlywayStateDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
-      saveSnapshot: true,
     };
 
     const args = getDeployArgs(inputs);
@@ -103,9 +102,10 @@ describe("getDeployArgs", () => {
     expect(args).toContain("-deploy.saveSnapshot=true");
   });
 
-  it("should omit saveSnapshot when not set", () => {
+  it("should omit -deploy.saveSnapshot=true when skipSnapshot is true", () => {
     const inputs: FlywayStateDeploymentInputs = {
       targetUrl: "jdbc:postgresql://localhost/db",
+      skipSnapshot: true,
     };
 
     const args = getDeployArgs(inputs);

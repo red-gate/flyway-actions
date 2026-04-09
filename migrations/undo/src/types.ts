@@ -7,10 +7,10 @@ type FlywayMigrationsUndoInputs = {
   targetMigrationVersion?: string;
   cherryPick?: string;
   skipDriftCheck?: boolean;
+  skipSnapshot?: boolean;
   workingDirectory?: string;
   extraArgs?: string;
   undoReportName?: string;
-  saveSnapshot?: boolean;
 };
 
 type FlywayUndoOutput = { migrationsUndone?: number; targetSchemaVersion?: string };
