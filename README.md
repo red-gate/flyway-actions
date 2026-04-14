@@ -313,6 +313,10 @@ Reference secrets using the `${{ secrets.SECRET_NAME }}` syntax:
 - **Limit secret scope with environments** — attach secrets to environments that have [protection rules](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#environment-protection-rules) (e.g. required reviewers, branch restrictions) to control who can trigger deployments that use those secrets.
 - **Pass secrets explicitly** — GitHub does not inject secrets automatically. Each step that needs a secret must reference it via `with` or `env`.
 
+## Production Database Connectivity
+
+See [Connecting to Production Databases](docs/production-database-connectivity.md) for guidance on establishing network access between GitHub Actions runners and production databases.
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE.md).
