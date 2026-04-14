@@ -2,6 +2,8 @@
 
 GitHub Actions workflows need network access to your database to run checks and deployments. Production databases are typically behind firewalls or private networks that GitHub-hosted runners cannot reach by default. This page covers the main approaches for establishing connectivity and the trade-offs of each.
 
+For general background, see the GitHub docs on [connecting to a private network](https://docs.github.com/en/actions/using-github-hosted-runners/connecting-to-a-private-network) and [deploying with GitHub Actions](https://docs.github.com/actions/deployment/about-deployments/deploying-with-github-actions). The guidance below is specific to database connections and Flyway workflows.
+
 ## Self-Hosted Runners
 
 Deploy [self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners) inside your private network so they can reach your database directly.
