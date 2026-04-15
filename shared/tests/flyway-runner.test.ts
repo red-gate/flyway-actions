@@ -209,6 +209,18 @@ describe("runFlyway", () => {
     );
   });
 
+  it("should set FLYWAY_CALLER environment variable", async () => {
+    exec.mockResolvedValue(0);
+
+    await runFlyway(["migrate"]);
+
+    expect(exec).toHaveBeenCalledWith(
+      "flyway",
+      expect.any(Array),
+      expect.objectContaining({ env: expect.objectContaining({ FLYWAY_CALLER: "flyway-github-actions" }) }),
+    );
+  });
+
   it("should log masked command", async () => {
     exec.mockResolvedValue(0);
 
@@ -291,6 +303,18 @@ describe("getFlywayDetails", () => {
 
     expect(error).toHaveBeenCalledWith(expect.stringContaining("not valid JSON"));
     expect(result).toEqual({ installed: false });
+  });
+
+  it("should set FLYWAY_CALLER environment variable", async () => {
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "10.0.0" } }));
+
+    await getFlywayDetails();
+
+    expect(exec).toHaveBeenCalledWith(
+      "flyway",
+      expect.any(Array),
+      expect.objectContaining({ env: expect.objectContaining({ FLYWAY_CALLER: "flyway-github-actions" }) }),
+    );
   });
 
   it("should pass version command with json output type", async () => {
