@@ -61,6 +61,7 @@ const runFlyway = async (args: string[], cwd?: string): Promise<FlywayRunResult>
     ignoreReturnCode: true,
     listeners: { stdout: listeners.stdout, stderr: jsonStderrListener },
     cwd: cwd || undefined,
+    env: { ...process.env, FLYWAY_CALLER: "flyway-github-actions" },
   };
   const exitCode = await exec.exec("flyway", argsWithJson, options);
 
@@ -77,6 +78,7 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
     await exec.exec("flyway", ["version", "-outputType=json", "-skipCheckForUpdate"], {
       silent: true,
       listeners: { stdout: listener },
+      env: { ...process.env, FLYWAY_CALLER: "flyway-github-actions" },
     });
 
     const result = JSON.parse(getOutput()) as FlywayVersionOutput;
