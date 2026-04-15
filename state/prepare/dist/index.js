@@ -10426,7 +10426,11 @@ var dn = () => {
 			stdout: n.stdout,
 			stderr: i
 		},
-		cwd: t || void 0
+		cwd: t || void 0,
+		env: {
+			...process.env,
+			FLYWAY_CALLER: "flyway-github-actions"
+		}
 	}), { stdout: s, stderr: c } = r();
 	return cn(s), {
 		exitCode: o,
@@ -10442,7 +10446,11 @@ var dn = () => {
 			"-skipCheckForUpdate"
 		], {
 			silent: !0,
-			listeners: { stdout: e }
+			listeners: { stdout: e },
+			env: {
+				...process.env,
+				FLYWAY_CALLER: "flyway-github-actions"
+			}
 		}), {
 			installed: !0,
 			edition: JSON.parse(t()).edition?.toLowerCase() ?? "community"
