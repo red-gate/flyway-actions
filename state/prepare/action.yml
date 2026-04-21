@@ -139,6 +139,7 @@ runs:
       env:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
     - name: Upload pre-deployment report
+      id: upload-pre-deployment-report
       if: inputs.skip-pre-deployment-report-upload == 'false' && steps.prepare.outputs.report-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
@@ -148,6 +149,7 @@ runs:
         retention-days: ${{ inputs.pre-deployment-report-retention-days }}
         if-no-files-found: ignore
     - name: Upload drift resolution scripts
+      id: upload-drift-resolution-scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.prepare.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
@@ -156,6 +158,7 @@ runs:
         retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
         if-no-files-found: ignore
     - name: Upload deployment script
+      id: upload-deployment-script
       if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.script-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
@@ -164,6 +167,7 @@ runs:
         archive: false
         retention-days: ${{ inputs.deployment-script-retention-days }}
     - name: Upload undo script
+      id: upload-undo-script
       if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.undo-script-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
@@ -172,3 +176,20 @@ runs:
         archive: false
         retention-days: ${{ inputs.deployment-script-retention-days }}
         if-no-files-found: ignore
+    - name: Append artifacts to summary
+      if: always() && (steps.upload-pre-deployment-report.outputs.artifact-url != '' || steps.upload-drift-resolution-scripts.outputs.artifact-url != '' || steps.upload-deployment-script.outputs.artifact-url != '' || steps.upload-undo-script.outputs.artifact-url != '')
+      shell: bash
+      run: |
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        if [[ -n "${{ steps.upload-pre-deployment-report.outputs.artifact-url }}" ]]; then
+          echo "- [${{ inputs.pre-deployment-report-name || format('flyway-{0}-pre-deployment-report', inputs.target-environment) }}](${{ steps.upload-pre-deployment-report.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [[ -n "${{ steps.upload-drift-resolution-scripts.outputs.artifact-url }}" ]]; then
+          echo "- [${{ inputs.drift-resolution-scripts-name || format('flyway-prepare-{0}-drift-resolution-scripts', inputs.target-environment) }}](${{ steps.upload-drift-resolution-scripts.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [[ -n "${{ steps.upload-deployment-script.outputs.artifact-url }}" ]]; then
+          echo "- [${{ inputs.deployment-script-name || format('D__{0}_deployment', inputs.target-environment) }}](${{ steps.upload-deployment-script.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [[ -n "${{ steps.upload-undo-script.outputs.artifact-url }}" ]]; then
+          echo "- [${{ inputs.undo-script-name || format('DU__{0}_undo', inputs.target-environment) }}](${{ steps.upload-undo-script.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        fi

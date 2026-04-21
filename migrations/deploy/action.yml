@@ -110,6 +110,7 @@ runs:
       env:
         FLYWAY_INPUTS: ${{ toJSON(inputs) }}
     - name: Upload deployment report
+      id: upload-deployment-report
       if: inputs.skip-deployment-report-upload == 'false' && steps.deploy.outputs.report-path != '' && always()
       uses: actions/upload-artifact@v7
       with:
@@ -119,6 +120,7 @@ runs:
         retention-days: ${{ inputs.deployment-report-retention-days }}
         if-no-files-found: ignore
     - name: Upload drift resolution scripts
+      id: upload-drift-resolution-scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.deploy.outputs.drift-resolution-folder != '' && always()
       uses: actions/upload-artifact@v7
       with:
@@ -126,3 +128,14 @@ runs:
         path: ${{ steps.deploy.outputs.drift-resolution-folder }}
         retention-days: ${{ inputs.drift-resolution-scripts-retention-days }}
         if-no-files-found: ignore
+    - name: Append artifacts to summary
+      if: always() && (steps.upload-deployment-report.outputs.artifact-url != '' || steps.upload-drift-resolution-scripts.outputs.artifact-url != '')
+      shell: bash
+      run: |
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        if [[ -n "${{ steps.upload-deployment-report.outputs.artifact-url }}" ]]; then
+          echo "- [${{ inputs.deployment-report-name || format('flyway-{0}-deployment-report', inputs.target-environment) }}](${{ steps.upload-deployment-report.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [[ -n "${{ steps.upload-drift-resolution-scripts.outputs.artifact-url }}" ]]; then
+          echo "- [${{ inputs.drift-resolution-scripts-name || format('flyway-deploy-{0}-drift-resolution-scripts', inputs.target-environment) }}](${{ steps.upload-drift-resolution-scripts.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        fi
