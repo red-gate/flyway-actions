@@ -10,7 +10,7 @@ import * as f from "path";
 import * as p from "events";
 import "child_process";
 import "timers";
-var m = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports), h = /* @__PURE__ */ e(import.meta.url);
+var m = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t.exports), h = /* @__PURE__ */ e(import.meta.url);
 function g(e) {
 	return e == null ? "" : typeof e == "string" || e instanceof String ? e : JSON.stringify(e);
 }
@@ -2678,11 +2678,12 @@ var T = /* @__PURE__ */ m(((e) => {
 })), re = /* @__PURE__ */ m(((e, t) => {
 	var { Blob: n, File: r } = h("node:buffer"), { kState: i } = W(), { webidl: a } = H(), o = class e {
 		constructor(e, t, n = {}) {
+			let r = t, a = n.type, o = n.lastModified ?? Date.now();
 			this[i] = {
 				blobLike: e,
-				name: t,
-				type: n.type,
-				lastModified: n.lastModified ?? Date.now()
+				name: r,
+				type: a,
+				lastModified: o
 			};
 		}
 		stream(...t) {
