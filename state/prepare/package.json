@@ -16,9 +16,9 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
   },
   "dependencies": {
-    "@actions/core": "3.0.0",
+    "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0",
-    "@actions/http-client": "4.0.0",
+    "@actions/http-client": "4.0.1",
     "@actions/io": "3.0.2",
     "@flyway-actions/shared": "workspace:*"
   },

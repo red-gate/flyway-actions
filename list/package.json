@@ -16,7 +16,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
   },
   "dependencies": {
-    "@actions/core": "3.0.0"
+    "@actions/core": "3.0.1"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
