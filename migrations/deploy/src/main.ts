@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
+import { getVersionError } from "@flyway-actions/shared/version-check";
 import { runCheckDrift } from "./flyway/check-drift.js";
 import { migrate } from "./flyway/migrate.js";
 import { getInputs, maskSecrets } from "./inputs.js";
@@ -18,6 +19,11 @@ const run = async (): Promise<void> => {
     const flywayDetails = await getFlywayDetails();
     if (!flywayDetails.installed) {
       core.setFailed("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
+      return;
+    }
+    const versionFailure = getVersionError(flywayDetails.version);
+    if (versionFailure) {
+      core.setFailed(versionFailure);
       return;
     }
     const inputs = getInputs();

@@ -47,7 +47,7 @@ const setupChecksMock = (edition: string, checkExitCode = 0, outputByFlag?: Reco
   exec.mockImplementation((_cmd: string, args?: string[], options?: ExecOptions) => {
     callCount++;
     if (callCount === 1) {
-      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "10.0.0" })));
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition, version: "12.0.0" })));
       return Promise.resolve(0);
     }
     if (outputByFlag && args) {
@@ -83,6 +83,20 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway is not installed"));
+  });
+
+  it("should fail when flyway version is below the minimum", async () => {
+    exec.mockImplementation((_cmd: string, _args?: string[], options?: ExecOptions) => {
+      options?.listeners?.stdout?.(Buffer.from(JSON.stringify({ edition: "Enterprise", version: "11.20.0" })));
+      return Promise.resolve(0);
+    });
+    setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("11.20.0"));
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("12.0.0"));
   });
 
   it("should fail when neither url nor environment is provided", async () => {
