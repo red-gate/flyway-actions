@@ -96,6 +96,9 @@ See the [SQLFluff documentation](https://docs.sqlfluff.com/en/stable/configurati
 ### Basic Example
 
 ```yaml
+permissions:
+  contents: read
+  security-events: write
 steps:
   - uses: actions/checkout@v4
   - uses: red-gate/setup-flyway@v3
@@ -111,6 +114,8 @@ steps:
       target-password: ${{ secrets.DB_PASSWORD }}
       working-directory: my-flyway-project
 ```
+
+`security-events: write` is required for the action to upload code review results to GitHub Code Scanning. See [Code Scanning](#code-scanning) below.
 
 ### With Build Database (for Deployment Changes Report)
 
@@ -291,6 +296,7 @@ If either requirement is not met, the upload is silently skipped.
 | `changed-object-count` | Number of changed objects in the deployment (empty if skipped)         |
 | `code-violation-count` | Number of code review violations found (empty if skipped)              |
 | `code-violation-codes` | Comma-separated list of code review violation codes (empty if skipped) |
+| `sarif-path`           | Path to the SARIF report from code review (empty if not generated)     |
 
 There is currently a limitation where `code-violation-count` and `code-violation-codes` are not set on the output when `fail-on-code-review` is set to `true`.
 This will be fixed in an upcoming release.
