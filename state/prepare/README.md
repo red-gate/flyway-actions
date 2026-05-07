@@ -54,6 +54,9 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
 ### Basic Example
 
 ```yaml
+permissions:
+  contents: read
+  security-events: write
 steps:
   - uses: actions/checkout@v4
   - uses: red-gate/setup-flyway@v3
@@ -69,6 +72,8 @@ steps:
       target-password: ${{ secrets.DB_PASSWORD }}
       working-directory: my-flyway-project
 ```
+
+`security-events: write` is required for the action to upload code review results to GitHub Code Scanning. See [Code Scanning](#code-scanning) below.
 
 ### Without Undo Script Generation
 
@@ -178,6 +183,20 @@ steps:
       target-environment: ${{ matrix.target }}
 ```
 
+### Code Scanning
+
+When using Flyway 12.2+, code review results are automatically uploaded to [GitHub Code Scanning](https://docs.github.com/en/code-security/code-scanning) in SARIF format. Results appear in the Security tab and as PR annotations.
+
+This requires:
+- GitHub Advanced Security to be enabled on the repository (available by default on public repos, requires GitHub Enterprise for private repos)
+- The workflow to have `security-events: write` permission
+
+If either requirement is not met, the upload is silently skipped.
+
+| Input                        | Description                                            | Required | Default |
+|------------------------------|--------------------------------------------------------|----------|---------|
+| `skip-code-scanning-upload`  | Skip uploading SARIF results to GitHub Code Scanning   | No       | `false` |
+
 ## Outputs
 
 | Output                 | Description                                                         |
@@ -187,6 +206,7 @@ steps:
 | `changed-object-count` | Number of changed objects in the deployment (empty if skipped)      |
 | `code-violation-count` | Number of code review violations found (empty if skipped)           |
 | `code-violation-codes` | Comma-separated list of violation codes (empty if skipped)          |
+| `sarif-path`           | Path to the SARIF report from code review (empty if not generated)  |
 | `script-path`          | Path to the generated deployment script                             |
 | `undo-script-path`     | Path to the generated undo script                                   |
 

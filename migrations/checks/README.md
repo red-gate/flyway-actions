@@ -96,6 +96,9 @@ See the [SQLFluff documentation](https://docs.sqlfluff.com/en/stable/configurati
 ### Basic Example
 
 ```yaml
+permissions:
+  contents: read
+  security-events: write
 steps:
   - uses: actions/checkout@v4
   - uses: red-gate/setup-flyway@v3
@@ -111,6 +114,8 @@ steps:
       target-password: ${{ secrets.DB_PASSWORD }}
       working-directory: my-flyway-project
 ```
+
+`security-events: write` is required for the action to upload code review results to GitHub Code Scanning. See [Code Scanning](#code-scanning) below.
 
 ### With Build Database (for Deployment Changes Report)
 
@@ -261,6 +266,20 @@ steps:
       working-directory: my-flyway-project
 ```
 
+### Code Scanning
+
+When using Flyway 12.2+, code review results are automatically uploaded to [GitHub Code Scanning](https://docs.github.com/en/code-security/code-scanning) in SARIF format. Results appear in the Security tab and as PR annotations.
+
+This requires:
+- GitHub Advanced Security to be enabled on the repository (available by default on public repos, requires GitHub Enterprise for private repos)
+- The workflow to have `security-events: write` permission
+
+If either requirement is not met, the upload is silently skipped.
+
+| Input                        | Description                                            | Required | Default |
+|------------------------------|--------------------------------------------------------|----------|---------|
+| `skip-code-scanning-upload`  | Skip uploading SARIF results to GitHub Code Scanning   | No       | `false` |
+
 ### Other
 
 | Input               | Description                                                    | Required | Default |
@@ -277,6 +296,7 @@ steps:
 | `changed-object-count` | Number of changed objects in the deployment (empty if skipped)         |
 | `code-violation-count` | Number of code review violations found (empty if skipped)              |
 | `code-violation-codes` | Comma-separated list of code review violation codes (empty if skipped) |
+| `sarif-path`           | Path to the SARIF report from code review (empty if not generated)     |
 
 There is currently a limitation where `code-violation-count` and `code-violation-codes` are not set on the output when `fail-on-code-review` is set to `true`.
 This will be fixed in an upcoming release.

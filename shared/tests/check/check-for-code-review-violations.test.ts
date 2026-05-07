@@ -36,6 +36,7 @@ describe("checkForCodeReviewViolations", () => {
       mockExec({
         stdout: {
           htmlReport: "report.html",
+          sarifReport: "report.sarif",
           individualResults: [
             {
               operation: "code",
@@ -52,6 +53,7 @@ describe("checkForCodeReviewViolations", () => {
       exitCode: 0,
       result: {
         reportPath: "report.html",
+        sarifReportPath: "report.sarif",
         violationCount: 3,
         violationCodes: ["AM04", "RG06"],
       },
@@ -67,6 +69,7 @@ describe("checkForCodeReviewViolations", () => {
             message: "Code Analysis Violation(s) detected",
             results: [{ violations: [{ code: "AM04" }] }],
             htmlReport: "/tmp/report.html",
+            sarifReport: "/tmp/report.sarif",
           },
         },
         exitCode: 1,
@@ -79,6 +82,7 @@ describe("checkForCodeReviewViolations", () => {
       exitCode: 1,
       result: {
         reportPath: "/tmp/report.html",
+        sarifReportPath: "/tmp/report.sarif",
         violationCount: 1,
         violationCodes: ["AM04"],
       },
