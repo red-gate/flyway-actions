@@ -10438,7 +10438,7 @@ var un = () => {
 }, gn = async () => {
 	let { listener: e, getOutput: t } = un();
 	try {
-		return await Qt("flyway", [
+		await Qt("flyway", [
 			"version",
 			"-outputType=json",
 			"-skipCheckForUpdate"
@@ -10449,9 +10449,12 @@ var un = () => {
 				...process.env,
 				FLYWAY_CALLER: "flyway-github-actions"
 			}
-		}), {
+		});
+		let n = JSON.parse(t());
+		return {
 			installed: !0,
-			edition: JSON.parse(t()).edition?.toLowerCase() ?? "community"
+			edition: n.edition?.toLowerCase() ?? "community",
+			version: n.version ?? ""
 		};
 	} catch (e) {
 		return e instanceof Error ? on(e.message) : on(String(e)), { installed: !1 };
@@ -10462,7 +10465,20 @@ var un = () => {
 	} catch {
 		return;
 	}
-}, vn = async (e, t) => {
+}, vn = "12.0.0", yn = (e) => {
+	let t = /^(\d+)\.(\d+)\.(\d+)/.exec(e.trim());
+	if (t) return {
+		major: Number(t[1]),
+		minor: Number(t[2]),
+		patch: Number(t[3])
+	};
+}, bn = (e, t) => e.major === t.major ? e.minor === t.minor ? e.patch - t.patch : e.minor - t.minor : e.major - t.major, xn = (e) => {
+	let t = yn(e), n = yn(vn);
+	return !t || !n ? !1 : bn(t, n) >= 0;
+}, Sn = (e) => xn(e) ? { success: !0 } : {
+	success: !1,
+	message: `Flyway version ${e.trim() || "unknown"} is below the minimum required version ${vn}. Please upgrade Flyway.`
+}, Cn = async (e, t) => {
 	cn("Checking for drift");
 	try {
 		let n = await hn(e, t);
@@ -10501,47 +10517,47 @@ var un = () => {
 	} finally {
 		ln();
 	}
-}, yn = (e, t) => {
+}, wn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, bn = (e) => {
+}, Tn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.provisionMode && t.push(`-provisionMode=${e.provisionMode}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
-}, xn = (e) => [
+}, En = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...bn(e),
+	...Tn(e),
 	...e.deploymentReportName ? [`-reportFilename=${e.deploymentReportName}`] : []
-], Sn = async (e) => {
-	let { exitCode: t, result: n } = await vn(xn(e), e.workingDirectory), r = yn(n.reportPath, e.workingDirectory), i = yn(n.driftResolutionFolder, e.workingDirectory);
+], Dn = async (e) => {
+	let { exitCode: t, result: n } = await Cn(En(e), e.workingDirectory), r = wn(n.reportPath, e.workingDirectory), i = wn(n.driftResolutionFolder, e.workingDirectory);
 	return rn("exit-code", t.toString()), n.driftDetected !== void 0 && rn("drift-detected", n.driftDetected.toString()), r !== void 0 && rn("report-path", r), i !== void 0 && rn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, Cn = (e) => {
-	let t = ["deploy", ...bn(e)];
+}, On = (e) => {
+	let t = ["deploy", ...Tn(e)];
 	return e.scriptPath && t.push(`-deploy.scriptFilename=${e.scriptPath}`), e.skipSnapshot || t.push("-deploy.saveSnapshot=true"), t;
-}, wn = async (e) => {
+}, kn = async (e) => {
 	cn("Running state-based deployment");
 	try {
-		let t = await hn(Cn(e), e.workingDirectory);
+		let t = await hn(On(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = _n(t.stdout);
 			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
-				sn("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), Tn(0);
+				sn("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), An(0);
 				return;
 			}
-			throw e?.error?.message && on(e.error.message), Tn(t.exitCode), Error(`Flyway deploy failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && on(e.error.message), An(t.exitCode), Error(`Flyway deploy failed with exit code ${t.exitCode}`);
 		}
-		Tn(t.exitCode);
+		An(t.exitCode);
 	} finally {
 		ln();
 	}
-}, Tn = (e) => {
+}, An = (e) => {
 	rn("exit-code", e.toString());
-}, En = () => {
+}, jn = () => {
 	let e = tn("target-environment") || void 0, t = tn("script-path") || c.join("deployments", `D__${e ?? "default"}_deployment.sql`), n = tn("target-url") || void 0, r = tn("target-user") || void 0, i = tn("target-password") || void 0, a = tn("target-schemas") || void 0, o = nn("skip-drift-check"), s = nn("skip-snapshot"), l = tn("provision-mode") || void 0, u = tn("working-directory");
 	return {
 		scriptPath: t,
@@ -10557,9 +10573,9 @@ var un = () => {
 		extraArgs: tn("extra-args") || void 0,
 		deploymentReportName: tn("deployment-report-name") || `flyway-${e ?? "default"}-deployment-report`
 	};
-}, Dn = (e) => {
+}, Mn = (e) => {
 	e.targetPassword && en(e.targetPassword);
-}, On = async (e) => {
+}, Nn = async (e) => {
 	await Ct.addHeading("Flyway State Deploy", 2).addTable([[{
 		data: "Drift",
 		header: !0
@@ -10573,30 +10589,35 @@ await (async () => {
 			an("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
+		let t = Sn(e.version);
+		if (!t.success) {
+			an(t.message);
+			return;
+		}
 		if (e.edition !== "enterprise") {
 			an(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
 			return;
 		}
-		let t = En();
-		if (!t.targetEnvironment && !t.targetUrl) {
+		let n = jn();
+		if (!n.targetEnvironment && !n.targetUrl) {
 			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		Dn(t);
-		let n, r = t.skipSnapshot;
-		if (t.skipSnapshot && sn("Skipping snapshot storage: \"skip-snapshot\" set to true"), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
+		Mn(n);
+		let r, i = n.skipSnapshot;
+		if (n.skipSnapshot && sn("Skipping snapshot storage: \"skip-snapshot\" set to true"), n.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e, driftCheckSkipped: i, comparisonSupported: a } } = await Sn(t);
+			let { result: { driftDetected: e, driftCheckSkipped: t, comparisonSupported: a } } = await Dn(n);
 			if (e) {
-				await On({ driftStatus: "Drift detected" }), an("Drift detected. Aborting deployment.");
+				await Nn({ driftStatus: "Drift detected" }), an("Drift detected. Aborting deployment.");
 				return;
 			}
-			r ||= !a, n = a ? i ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
+			i ||= !a, r = a ? t ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		await wn({
-			...t,
-			skipSnapshot: r
-		}), await On({ driftStatus: n });
+		await kn({
+			...n,
+			skipSnapshot: i
+		}), await Nn({ driftStatus: r });
 	} catch (e) {
 		e instanceof Error ? an(e.message) : an(String(e));
 	}

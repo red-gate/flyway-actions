@@ -10441,7 +10441,7 @@ var dn = () => {
 }, _n = async () => {
 	let { listener: e, getOutput: t } = dn();
 	try {
-		return await Qt("flyway", [
+		await Qt("flyway", [
 			"version",
 			"-outputType=json",
 			"-skipCheckForUpdate"
@@ -10452,9 +10452,12 @@ var dn = () => {
 				...process.env,
 				FLYWAY_CALLER: "flyway-github-actions"
 			}
-		}), {
+		});
+		let n = JSON.parse(t());
+		return {
 			installed: !0,
-			edition: JSON.parse(t()).edition?.toLowerCase() ?? "community"
+			edition: n.edition?.toLowerCase() ?? "community",
+			version: n.version ?? ""
 		};
 	} catch (e) {
 		return e instanceof Error ? on(e.message) : on(String(e)), { installed: !1 };
@@ -10465,7 +10468,20 @@ var dn = () => {
 	} catch {
 		return;
 	}
-}, yn = async (e, t, n) => {
+}, yn = "12.0.0", bn = (e) => {
+	let t = /^(\d+)\.(\d+)\.(\d+)/.exec(e.trim());
+	if (t) return {
+		major: Number(t[1]),
+		minor: Number(t[2]),
+		patch: Number(t[3])
+	};
+}, xn = (e, t) => e.major === t.major ? e.minor === t.minor ? e.patch - t.patch : e.minor - t.minor : e.major - t.major, Sn = (e) => {
+	let t = bn(e), n = bn(yn);
+	return !t || !n ? !1 : xn(t, n) >= 0;
+}, Cn = (e) => Sn(e) ? { success: !0 } : {
+	success: !1,
+	message: `Flyway version ${e.trim() || "unknown"} is below the minimum required version ${yn}. Please upgrade Flyway.`
+}, wn = async (e, t, n) => {
 	ln("Running deployment changes report");
 	try {
 		let r = await gn(e, t);
@@ -10478,41 +10494,41 @@ var dn = () => {
 			exitCode: r.exitCode,
 			result: {
 				reportPath: i?.htmlReport,
-				changedObjectCount: bn(i)
+				changedObjectCount: Tn(i)
 			}
 		};
 	} finally {
 		un();
 	}
-}, bn = (e) => {
+}, Tn = (e) => {
 	let t = e?.individualResults?.filter((e) => e.operation === "changes");
 	return t?.length ? t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0) : 0;
-}, xn = (e, t) => {
+}, En = (e, t) => {
 	let n = [];
 	e.targetEnvironment && n.push(`-${t}=${e.targetEnvironment}`);
 	let r = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && n.push(`${r}url=${e.targetUrl}`), e.targetUser && n.push(`${r}user=${e.targetUser}`), e.targetPassword && n.push(`${r}password=${e.targetPassword}`), e.targetSchemas && n.push(`${r}schemas=${e.targetSchemas}`), n;
-}, Sn = (e) => {
+}, Dn = (e) => {
 	let t = [
 		"prepare",
 		"-source=schemaModel",
-		...xn(e, "target")
+		...En(e, "target")
 	];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.generateUndo ? "deploy,undo" : "deploy";
 	return t.push(`-types=${n}`), e.deploymentScriptName && t.push(`-scriptFilename=deployments/${e.deploymentScriptName}.sql`), e.undoScriptName && t.push(`-undoFilename=deployments/${e.undoScriptName}.sql`), e.provisionMode && t.push(`-provisionMode=${e.provisionMode}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
-}, Cn = (e) => {
-	let t = [...xn(e, "environment")];
+}, On = (e) => {
+	let t = [...En(e, "environment")];
 	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
-}, wn = (e) => xn(e, "environment"), Tn = (e) => [
+}, kn = (e) => En(e, "environment"), An = (e) => [
 	"check",
 	"-changes",
-	...wn(e),
+	...kn(e),
 	"-changesSource=schemaModel",
 	...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
 	...e.extraArgs ? mn(e.extraArgs) : [],
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], En = async (e, t) => {
+], jn = async (e, t) => {
 	if (t !== "enterprise") {
 		cn(`Skipping deployment changes report: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
@@ -10521,19 +10537,19 @@ var dn = () => {
 		cn("Skipping deployment changes report: \"skip-deployment-changes-report\" set to true");
 		return;
 	}
-	let { exitCode: n, result: r } = await yn(Tn(e), e.workingDirectory);
+	let { exitCode: n, result: r } = await wn(An(e), e.workingDirectory);
 	return r && rn("changed-object-count", r.changedObjectCount.toString()), {
 		exitCode: n,
 		result: r
 	};
-}, Dn = async (e, t) => {
+}, Mn = async (e, t) => {
 	ln("Running code review");
 	try {
 		let n = await gn(e, t);
 		if (n.exitCode !== 0) {
 			let e = vn(n.stdout);
 			e?.error?.message && on(e.error.message);
-			let t = On(e?.error?.results ?? []);
+			let t = Nn(e?.error?.results ?? []);
 			return {
 				exitCode: n.exitCode,
 				result: {
@@ -10542,7 +10558,7 @@ var dn = () => {
 				}
 			};
 		}
-		let r = vn(n.stdout), i = On((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
+		let r = vn(n.stdout), i = Nn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
 		return {
 			exitCode: n.exitCode,
 			result: {
@@ -10553,13 +10569,13 @@ var dn = () => {
 	} finally {
 		un();
 	}
-}, On = (e) => {
+}, Nn = (e) => {
 	let t = e.flatMap((e) => e.violations ?? []).map((e) => e.code).filter((e) => !!e);
 	return {
 		violationCount: t.length,
 		violationCodes: [...new Set(t)]
 	};
-}, kn = (e, t) => {
+}, Pn = (e, t) => {
 	if (e.skipCodeReview) {
 		cn("Skipping code review: \"skip-code-review\" set to true");
 		return;
@@ -10567,7 +10583,7 @@ var dn = () => {
 	return [
 		"check",
 		"-code",
-		...wn(e),
+		...kn(e),
 		...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
 		...e.extraArgs ? mn(e.extraArgs) : [],
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : [],
@@ -10575,12 +10591,12 @@ var dn = () => {
 		"-check.scope=script",
 		`-check.scriptFilename=${t}`
 	];
-}, An = async (e, t) => {
-	let n = kn(e, t);
+}, Fn = async (e, t) => {
+	let n = Pn(e, t);
 	if (!n) return;
-	let r = await Dn(n, e.workingDirectory);
+	let r = await Mn(n, e.workingDirectory);
 	return rn("code-violation-count", r.result.violationCount.toString()), rn("code-violation-codes", r.result.violationCodes.join(",")), r;
-}, jn = async (e, t) => {
+}, In = async (e, t) => {
 	ln("Checking for drift");
 	try {
 		let n = await gn(e, t);
@@ -10619,36 +10635,36 @@ var dn = () => {
 	} finally {
 		un();
 	}
-}, Mn = (e, t) => {
+}, Ln = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, Nn = (e) => [
+}, Rn = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...Cn(e),
+	...On(e),
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], Pn = async (e) => {
-	let { exitCode: t, result: n } = await jn(Nn(e), e.workingDirectory), r = Mn(n.reportPath, e.workingDirectory), i = Mn(n.driftResolutionFolder, e.workingDirectory);
+], zn = async (e) => {
+	let { exitCode: t, result: n } = await In(Rn(e), e.workingDirectory), r = Ln(n.reportPath, e.workingDirectory), i = Ln(n.driftResolutionFolder, e.workingDirectory);
 	return rn("exit-code", t.toString()), n.driftDetected !== void 0 && rn("drift-detected", n.driftDetected.toString()), r !== void 0 && rn("report-path", r), i !== void 0 && rn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, Fn = async (e) => {
+}, Bn = async (e) => {
 	ln("Running state-based prepare");
 	try {
-		let t = await gn(Sn(e), e.workingDirectory);
+		let t = await gn(Dn(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = vn(t.stdout);
-			throw e?.error?.message && on(e.error.message), In(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && on(e.error.message), Vn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
 		}
 		let n = vn(t.stdout);
-		return In(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
+		return Vn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
 	} finally {
 		un();
 	}
-}, In = (e, t, n) => {
+}, Vn = (e, t, n) => {
 	rn("exit-code", e.toString()), t && rn("script-path", t), n && rn("undo-script-path", n);
-}, Ln = () => {
+}, Hn = () => {
 	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = nn("generate-undo"), o = nn("fail-on-drift"), s = nn("fail-on-code-review"), l = nn("skip-drift-check"), u = nn("skip-code-review"), d = nn("skip-deployment-changes-report"), f = tn("provision-mode") || void 0, p = tn("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10669,12 +10685,12 @@ var dn = () => {
 		deploymentScriptName: tn("deployment-script-name") || `D__${e ?? "default"}_deployment`,
 		undoScriptName: tn("undo-script-name") || `DU__${e ?? "default"}_undo`
 	};
-}, Rn = (e) => {
+}, Un = (e) => {
 	e.targetPassword && en(e.targetPassword);
-}, zn = (e, t) => {
+}, Wn = (e, t) => {
 	let n;
 	switch (!0) {
-		case Bn(e):
+		case Gn(e):
 			n = {
 				stem: e,
 				singularSuffix: "",
@@ -10709,7 +10725,7 @@ var dn = () => {
 		};
 	}
 	return t === void 0 ? `${n.stem}${n.pluralSuffix}` : `${t} ${n.stem}${t === 1 ? n.singularSuffix : n.pluralSuffix}`;
-}, Bn = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), Vn = (e) => e ? e.exitCode === 0 ? `Passed - ${zn("violation", e.violationCount)}` : `Failed${e.violationCount > 0 ? ` - ${zn("violation", e.violationCount)}` : ""}` : "Skipped", Hn = (e) => e ? e.exitCode === 0 ? zn("changed object", e.changedObjectCount) : "Failed" : "Skipped", Un = async (e) => {
+}, Gn = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), Kn = (e) => e ? e.exitCode === 0 ? `Passed - ${Wn("violation", e.violationCount)}` : `Failed${e.violationCount > 0 ? ` - ${Wn("violation", e.violationCount)}` : ""}` : "Skipped", qn = (e) => e ? e.exitCode === 0 ? Wn("changed object", e.changedObjectCount) : "Failed" : "Skipped", Jn = async (e) => {
 	await Ct.addHeading("Flyway State Prepare", 2).addTable([
 		[{
 			data: "Check",
@@ -10719,8 +10735,8 @@ var dn = () => {
 			header: !0
 		}],
 		["Drift", e.driftStatus ?? "Skipped"],
-		["Code Review", Vn(e.code)],
-		["Deployment Changes", Hn(e.changes)]
+		["Code Review", Kn(e.code)],
+		["Deployment Changes", qn(e.changes)]
 	]).write();
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10731,52 +10747,57 @@ await (async () => {
 			an("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
+		let t = Cn(e.version);
+		if (!t.success) {
+			an(t.message);
+			return;
+		}
 		if (e.edition !== "enterprise") {
 			an(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
 			return;
 		}
-		let t = Ln();
-		if (!t.targetEnvironment && !t.targetUrl) {
+		let n = Hn();
+		if (!n.targetEnvironment && !n.targetUrl) {
 			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		Rn(t);
-		let n;
-		if (t.skipDriftCheck) cn("Skipping drift check: \"skip-drift-check\" set to true");
+		Un(n);
+		let r;
+		if (n.skipDriftCheck) cn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e, driftCheckSkipped: r, comparisonSupported: i } } = await Pn(t);
+			let { result: { driftDetected: e, driftCheckSkipped: t, comparisonSupported: i } } = await zn(n);
 			if (e) {
-				if (n = "Drift detected", t.failOnDrift) {
-					await Un({ driftStatus: n }), an("Drift detected. Aborting prepare.");
+				if (r = "Drift detected", n.failOnDrift) {
+					await Jn({ driftStatus: r }), an("Drift detected. Aborting prepare.");
 					return;
 				}
 				sn("Drift detected. Continuing because fail-on-drift is disabled.");
-			} else n = i ? r ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
+			} else r = i ? t ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		let r = await En(t, e.edition), { scriptPath: i } = await Fn(t);
-		if (!i) {
-			sn("No script path returned from prepare. Skipping code review."), await Un({
-				driftStatus: n,
-				changes: r?.result ? {
-					exitCode: r.exitCode,
-					changedObjectCount: r.result.changedObjectCount
+		let i = await jn(n, e.edition), { scriptPath: a } = await Bn(n);
+		if (!a) {
+			sn("No script path returned from prepare. Skipping code review."), await Jn({
+				driftStatus: r,
+				changes: i?.result ? {
+					exitCode: i.exitCode,
+					changedObjectCount: i.result.changedObjectCount
 				} : void 0
 			});
 			return;
 		}
-		let a = await An(t, i);
-		if (await Un({
-			driftStatus: n,
-			code: a ? {
-				exitCode: a.exitCode,
-				violationCount: a.result.violationCount
+		let o = await Fn(n, a);
+		if (await Jn({
+			driftStatus: r,
+			code: o ? {
+				exitCode: o.exitCode,
+				violationCount: o.result.violationCount
 			} : void 0,
-			changes: r?.result ? {
-				exitCode: r.exitCode,
-				changedObjectCount: r.result.changedObjectCount
+			changes: i?.result ? {
+				exitCode: i.exitCode,
+				changedObjectCount: i.result.changedObjectCount
 			} : void 0
-		}), a && a.result.violationCount > 0 && t.failOnCodeReview) {
-			rn("exit-code", "1"), an(`Code review failed with ${a.result.violationCount} violation(s).`);
+		}), o && o.result.violationCount > 0 && n.failOnCodeReview) {
+			rn("exit-code", "1"), an(`Code review failed with ${o.result.violationCount} violation(s).`);
 			return;
 		}
 	} catch (e) {
