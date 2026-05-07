@@ -180,6 +180,20 @@ steps:
       target-environment: ${{ matrix.target }}
 ```
 
+### Code Scanning
+
+When using Flyway 12.2+, code review results are automatically uploaded to [GitHub Code Scanning](https://docs.github.com/en/code-security/code-scanning) in SARIF format. Results appear in the Security tab and as PR annotations.
+
+This requires:
+- GitHub Advanced Security to be enabled on the repository (available by default on public repos, requires GitHub Enterprise for private repos)
+- The workflow to have `security-events: write` permission
+
+If either requirement is not met, the upload is silently skipped.
+
+| Input                        | Description                                            | Required | Default |
+|------------------------------|--------------------------------------------------------|----------|---------|
+| `skip-code-scanning-upload`  | Skip uploading SARIF results to GitHub Code Scanning   | No       | `false` |
+
 ## Outputs
 
 | Output                 | Description                                                         |

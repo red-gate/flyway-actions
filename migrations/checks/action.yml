@@ -100,6 +100,10 @@ inputs:
     description: 'Number of days to retain the drift resolution scripts artifact'
     required: false
     default: '7'
+  skip-code-scanning-upload:
+    description: 'Skip uploading SARIF results to GitHub Code Scanning'
+    required: false
+    default: 'false'
 
 outputs:
   exit-code:
@@ -170,3 +174,10 @@ runs:
         if [[ -n "${{ steps.upload-drift-resolution-scripts.outputs.artifact-url }}" ]]; then
           echo "- [${{ inputs.drift-resolution-scripts-name || format('flyway-checks-{0}-drift-resolution-scripts', inputs.target-environment) }}](${{ steps.upload-drift-resolution-scripts.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
         fi
+    - name: Upload SARIF to GitHub Code Scanning
+      if: always() && inputs.skip-code-scanning-upload == 'false' && steps.checks.outputs.sarif-path != ''
+      uses: github/codeql-action/upload-sarif@v3
+      continue-on-error: true
+      with:
+        sarif_file: ${{ steps.checks.outputs.sarif-path }}
+        category: flyway-code-review

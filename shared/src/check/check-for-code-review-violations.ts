@@ -5,17 +5,25 @@ type CodeResultItem = { violations?: { code?: string }[] };
 
 type CodeReviewSuccessOutput = {
   htmlReport?: string;
+  sarifReport?: string;
   individualResults?: { operation?: string; results?: CodeResultItem[] }[];
 };
 
 type CodeReviewErrorOutput = {
-  error?: { errorCode?: string; message?: string; results?: CodeResultItem[]; htmlReport?: string };
+  error?: {
+    errorCode?: string;
+    message?: string;
+    results?: CodeResultItem[];
+    htmlReport?: string;
+    sarifReport?: string;
+  };
 };
 
 type CheckForCodeReviewResult = {
   exitCode: number;
   result: {
     reportPath?: string;
+    sarifReportPath?: string;
     violationCount: number;
     violationCodes: string[];
   };
@@ -33,14 +41,24 @@ const checkForCodeReviewViolations = async (
       const errorOutput = parseOutput<CodeReviewErrorOutput>(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       const violations = extractViolations(errorOutput?.error?.results ?? []);
-      return { exitCode: result.exitCode, result: { reportPath: errorOutput?.error?.htmlReport, ...violations } };
+      return {
+        exitCode: result.exitCode,
+        result: {
+          reportPath: errorOutput?.error?.htmlReport,
+          sarifReportPath: errorOutput?.error?.sarifReport,
+          ...violations,
+        },
+      };
     }
 
     const output = parseOutput<CodeReviewSuccessOutput>(result.stdout);
     const codeResults = output?.individualResults?.filter((r) => r.operation === "code");
     const resultItems = codeResults?.flatMap((r) => r.results ?? []) ?? [];
     const violations = extractViolations(resultItems);
-    return { exitCode: result.exitCode, result: { reportPath: output?.htmlReport, ...violations } };
+    return {
+      exitCode: result.exitCode,
+      result: { reportPath: output?.htmlReport, sarifReportPath: output?.sarifReport, ...violations },
+    };
   } finally {
     core.endGroup();
   }

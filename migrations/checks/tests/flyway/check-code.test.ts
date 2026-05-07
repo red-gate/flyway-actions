@@ -98,15 +98,36 @@ describe("runCheckCode", () => {
     expect(args).not.toContain(expect.stringContaining("default_build"));
   });
 
-  it("should return exitCode and reportPath from result", async () => {
+  it("should return exitCode, reportPath, and sarifReportPath from result", async () => {
     checkForCodeReviewViolations.mockResolvedValue({
       exitCode: 1,
-      result: { reportPath: "/tmp/report.html", violationCount: 1, violationCodes: ["RG06"] },
+      result: {
+        reportPath: "/tmp/report.html",
+        sarifReportPath: "/tmp/report.sarif",
+        violationCount: 1,
+        violationCodes: ["RG06"],
+      },
     });
 
     const result = await runCheckCode({});
 
-    expect(result).toEqual({ exitCode: 1, reportPath: "/tmp/report.html", violationCount: 1 });
+    expect(result).toEqual({
+      exitCode: 1,
+      reportPath: "/tmp/report.html",
+      sarifReportPath: "/tmp/report.sarif",
+      violationCount: 1,
+    });
+  });
+
+  it("should return undefined sarifReportPath when not present in result", async () => {
+    checkForCodeReviewViolations.mockResolvedValue({
+      exitCode: 0,
+      result: { reportPath: "/tmp/report.html", violationCount: 0, violationCodes: [] },
+    });
+
+    const result = await runCheckCode({});
+
+    expect(result).toEqual(expect.objectContaining({ sarifReportPath: undefined }));
   });
 
   it("should set code-violation-count and code-violation-codes outputs", async () => {
