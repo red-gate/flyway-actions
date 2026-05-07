@@ -10609,6 +10609,7 @@ var un = () => {
 				exitCode: n.exitCode,
 				result: {
 					reportPath: e?.error?.htmlReport,
+					sarifReportPath: e?.error?.sarifReport,
 					...t
 				}
 			};
@@ -10618,6 +10619,7 @@ var un = () => {
 			exitCode: n.exitCode,
 			result: {
 				reportPath: r?.htmlReport,
+				sarifReportPath: r?.sarifReport,
 				...i
 			}
 		};
@@ -10648,6 +10650,7 @@ var un = () => {
 	return rn("code-violation-count", r.violationCount.toString()), rn("code-violation-codes", r.violationCodes.join(",")), {
 		exitCode: n,
 		reportPath: r.reportPath,
+		sarifReportPath: r.sarifReportPath,
 		violationCount: r.violationCount
 	};
 }, Wn = async (e, t) => {
@@ -10756,8 +10759,10 @@ var un = () => {
 		a
 	], s = o.find((e) => e?.reportPath)?.reportPath;
 	rn("report-path", Cn(s ?? "report.html", e.workingDirectory));
-	let c = o.find((e) => e !== void 0 && e.exitCode !== 0);
-	if (rn("exit-code", (c?.exitCode ?? 0).toString()), await kn({
+	let c = r?.sarifReportPath;
+	rn("sarif-path", c ? Cn(c, e.workingDirectory) : "");
+	let l = o.find((e) => e !== void 0 && e.exitCode !== 0);
+	if (rn("exit-code", (l?.exitCode ?? 0).toString()), await kn({
 		dryrun: n ? { exitCode: n.exitCode } : void 0,
 		code: r ? {
 			exitCode: r.exitCode,
@@ -10768,7 +10773,7 @@ var un = () => {
 			exitCode: a.exitCode,
 			changedObjectCount: a.changedObjectCount ?? 0
 		} : void 0
-	}), c) throw Error("Flyway checks failed");
+	}), l) throw Error("Flyway checks failed");
 }, Xn = (e) => {
 	if (e) return e.driftDetected ? "Drift detected" : e.comparisonSupported ? e.driftCheckSkipped ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 }, Zn = () => {
