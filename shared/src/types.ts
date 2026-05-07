@@ -1,10 +1,10 @@
 type FlywayEdition = "community" | "teams" | "enterprise";
 
-type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition };
+type FlywayDetails = { installed: false } | { installed: true; edition: FlywayEdition; version: string };
 
 type FlywayRunResult = { exitCode: number; stdout: string; stderr: string };
 
-type FlywayVersionOutput = { edition?: string };
+type FlywayVersionOutput = { edition?: string; version?: string };
 
 type JsonLogModel = { level?: "DEBUG" | "INFO" | "WARN" | "ERROR" | "NOTICE"; message?: string };
 
