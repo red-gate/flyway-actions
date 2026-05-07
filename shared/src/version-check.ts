@@ -29,12 +29,17 @@ const meetsMinimumVersion = (actual: string): boolean => {
   return compareVersions(actualParsed, minimumParsed) >= 0;
 };
 
-const getVersionError = (actual: string): string | undefined => {
+type VersionCheckResult = { success: true } | { success: false; message: string };
+
+const checkMinimumFlywayVersion = (actual: string): VersionCheckResult => {
   if (meetsMinimumVersion(actual)) {
-    return undefined;
+    return { success: true };
   }
   const reportedVersion = actual.trim() || "unknown";
-  return `Flyway version ${reportedVersion} is below the minimum required version ${MIN_FLYWAY_VERSION}. Please upgrade Flyway.`;
+  return {
+    success: false,
+    message: `Flyway version ${reportedVersion} is below the minimum required version ${MIN_FLYWAY_VERSION}. Please upgrade Flyway.`,
+  };
 };
 
-export { getVersionError };
+export { checkMinimumFlywayVersion };

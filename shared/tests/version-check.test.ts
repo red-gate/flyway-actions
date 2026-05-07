@@ -1,51 +1,85 @@
-import { getVersionError } from "../src/version-check.js";
+import { checkMinimumFlywayVersion } from "../src/version-check.js";
 
-describe("getVersionError", () => {
-  it("should return undefined when version equals minimum", () => {
-    expect(getVersionError("12.0.0")).toBeUndefined();
+describe("checkMinimumFlywayVersion", () => {
+  it("should return success when version equals minimum", () => {
+    expect(checkMinimumFlywayVersion("12.0.0")).toEqual({ success: true });
   });
 
-  it("should return undefined when patch version is greater", () => {
-    expect(getVersionError("12.0.1")).toBeUndefined();
+  it("should return success when patch version is greater", () => {
+    expect(checkMinimumFlywayVersion("12.0.1")).toEqual({ success: true });
   });
 
-  it("should return undefined when minor version is greater", () => {
-    expect(getVersionError("12.1.0")).toBeUndefined();
+  it("should return success when minor version is greater", () => {
+    expect(checkMinimumFlywayVersion("12.1.0")).toEqual({ success: true });
   });
 
-  it("should return undefined when major version is greater", () => {
-    expect(getVersionError("13.0.0")).toBeUndefined();
+  it("should return success when major version is greater", () => {
+    expect(checkMinimumFlywayVersion("13.0.0")).toEqual({ success: true });
   });
 
   it("should ignore suffixes such as -rc1066 when version meets minimum", () => {
-    expect(getVersionError("12.0.0-rc1066")).toBeUndefined();
+    expect(checkMinimumFlywayVersion("12.0.0-rc1066")).toEqual({ success: true });
   });
 
   it("should return a failure message when patch version is lower", () => {
-    const message = getVersionError("11.99.9");
+    const result = checkMinimumFlywayVersion("11.99.9");
 
-    expect(message).toContain("11.99.9");
-    expect(message).toContain("12.0.0");
-    expect(message).toContain("upgrade Flyway");
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.message).toContain("11.99.9");
+      expect(result.message).toContain("12.0.0");
+      expect(result.message).toContain("upgrade Flyway");
+    }
   });
 
   it("should return a failure message when minor version is lower", () => {
-    expect(getVersionError("11.20.0")).toContain("11.20.0");
+    const result = checkMinimumFlywayVersion("11.20.0");
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.message).toContain("11.20.0");
+    }
   });
 
   it("should return a failure message when major version is lower", () => {
-    expect(getVersionError("10.22.0")).toContain("10.22.0");
+    const result = checkMinimumFlywayVersion("10.22.0");
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.message).toContain("10.22.0");
+    }
   });
 
   it("should report unknown when actual is empty", () => {
-    expect(getVersionError("")).toContain("unknown");
+    const result = checkMinimumFlywayVersion("");
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.message).toContain("unknown");
+    }
   });
 
   it("should report the raw value when actual is non-numeric", () => {
-    expect(getVersionError("nightly")).toContain("nightly");
+    const result = checkMinimumFlywayVersion("nightly");
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.message).toContain("nightly");
+    }
   });
 
   it("should ignore suffixes when version is below minimum", () => {
-    expect(getVersionError("11.99.9-rc1066")).toContain("11.99.9-rc1066");
+    const result = checkMinimumFlywayVersion("11.99.9-rc1066");
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.message).toContain("11.99.9-rc1066");
+    }
   });
 });
