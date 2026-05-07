@@ -2,6 +2,7 @@ import type { FlywayStatePrepareInputs } from "../types.js";
 import * as core from "@actions/core";
 import { checkForCodeReviewViolations } from "@flyway-actions/shared/check-for-code-review-violations";
 import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
+import { resolvePath } from "@flyway-actions/shared/resolve-path";
 import { getTargetEnvironmentArgs } from "./arg-builders.js";
 
 const getCodeArgs = (inputs: FlywayStatePrepareInputs, scriptFilename: string): string[] | undefined => {
@@ -30,6 +31,8 @@ const runCheckCode = async (inputs: FlywayStatePrepareInputs, scriptFilename: st
   const codeReviewResult = await checkForCodeReviewViolations(args, inputs.workingDirectory);
   core.setOutput("code-violation-count", codeReviewResult.result.violationCount.toString());
   core.setOutput("code-violation-codes", codeReviewResult.result.violationCodes.join(","));
+  const sarifPath = codeReviewResult.result.sarifReportPath;
+  core.setOutput("sarif-path", sarifPath ? resolvePath(sarifPath, inputs.workingDirectory) : "");
   return codeReviewResult;
 };
 
