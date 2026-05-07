@@ -90,7 +90,7 @@ describe("run", () => {
     const defaultCodeReviewOutput = {
       individualResults: [{ operation: "code", results: [] }],
     };
-    const calls: MockExecOptions[] = [{ stdout: { edition, version: "10.0.0" } }];
+    const calls: MockExecOptions[] = [{ stdout: { edition, version: "12.0.0" } }];
     if (driftExitCode !== undefined && edition.toLowerCase() === "enterprise") {
       calls.push({ stdout: driftOutput ?? defaultDriftOutput, exitCode: driftExitCode });
     }
@@ -108,6 +108,17 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway is not installed"));
+  });
+
+  it("should fail when flyway version is below the minimum", async () => {
+    exec.mockImplementation(mockExecSequence([{ stdout: { edition: "Enterprise", version: "11.20.0" } }]));
+    getInput.mockImplementation((name: string) => (name === "target-url" ? "jdbc:sqlite:test.db" : ""));
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("11.20.0"));
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("12.0.0"));
   });
 
   it("should fail for non-enterprise edition", async () => {

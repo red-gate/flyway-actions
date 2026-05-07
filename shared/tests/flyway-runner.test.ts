@@ -273,27 +273,35 @@ describe("getFlywayDetails", () => {
   });
 
   it("should detect Community edition", async () => {
-    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "10.0.0" } }));
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "12.0.0" } }));
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: "community" });
+    expect(result).toEqual({ installed: true, edition: "community", version: "12.0.0" });
   });
 
   it("should detect Teams edition", async () => {
-    exec.mockImplementation(mockExec({ stdout: { edition: "TEAMS", version: "10.5.0" } }));
+    exec.mockImplementation(mockExec({ stdout: { edition: "TEAMS", version: "12.0.0" } }));
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: "teams" });
+    expect(result).toEqual({ installed: true, edition: "teams", version: "12.0.0" });
   });
 
   it("should detect Enterprise edition", async () => {
-    exec.mockImplementation(mockExec({ stdout: { edition: "ENTERPRISE", version: "11.0.0" } }));
+    exec.mockImplementation(mockExec({ stdout: { edition: "ENTERPRISE", version: "12.0.0" } }));
 
     const result = await getFlywayDetails();
 
-    expect(result).toEqual({ installed: true, edition: "enterprise" });
+    expect(result).toEqual({ installed: true, edition: "enterprise", version: "12.0.0" });
+  });
+
+  it("should default version to empty string when missing", async () => {
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY" } }));
+
+    const result = await getFlywayDetails();
+
+    expect(result).toEqual({ installed: true, edition: "community", version: "" });
   });
 
   it("should return installed false for unparseable output", async () => {
@@ -306,7 +314,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should set FLYWAY_CALLER environment variable", async () => {
-    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "10.0.0" } }));
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "12.0.0" } }));
 
     await getFlywayDetails();
 
@@ -318,7 +326,7 @@ describe("getFlywayDetails", () => {
   });
 
   it("should pass version command with json output type", async () => {
-    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "10.0.0" } }));
+    exec.mockImplementation(mockExec({ stdout: { edition: "COMMUNITY", version: "12.0.0" } }));
 
     await getFlywayDetails();
 

@@ -82,7 +82,11 @@ const getFlywayDetails = async (): Promise<FlywayDetails> => {
     });
 
     const result = JSON.parse(getOutput()) as FlywayVersionOutput;
-    return { installed: true, edition: (result.edition?.toLowerCase() as FlywayEdition) ?? "community" };
+    return {
+      installed: true,
+      edition: (result.edition?.toLowerCase() as FlywayEdition) ?? "community",
+      version: result.version ?? "",
+    };
   } catch (error) {
     if (error instanceof Error) {
       core.error(error.message);

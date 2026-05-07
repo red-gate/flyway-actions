@@ -10438,7 +10438,7 @@ var un = () => {
 }, gn = async () => {
 	let { listener: e, getOutput: t } = un();
 	try {
-		return await Qt("flyway", [
+		await Qt("flyway", [
 			"version",
 			"-outputType=json",
 			"-skipCheckForUpdate"
@@ -10449,9 +10449,12 @@ var un = () => {
 				...process.env,
 				FLYWAY_CALLER: "flyway-github-actions"
 			}
-		}), {
+		});
+		let n = JSON.parse(t());
+		return {
 			installed: !0,
-			edition: JSON.parse(t()).edition?.toLowerCase() ?? "community"
+			edition: n.edition?.toLowerCase() ?? "community",
+			version: n.version ?? ""
 		};
 	} catch (e) {
 		return e instanceof Error ? on(e.message) : on(String(e)), { installed: !1 };
@@ -10462,7 +10465,20 @@ var un = () => {
 	} catch {
 		return;
 	}
-}, vn = async (e, t) => {
+}, vn = "12.0.0", yn = (e) => {
+	let t = /^(\d+)\.(\d+)\.(\d+)/.exec(e.trim());
+	if (t) return {
+		major: Number(t[1]),
+		minor: Number(t[2]),
+		patch: Number(t[3])
+	};
+}, bn = (e, t) => e.major === t.major ? e.minor === t.minor ? e.patch - t.patch : e.minor - t.minor : e.major - t.major, xn = (e) => {
+	let t = yn(e), n = yn(vn);
+	return !t || !n ? !1 : bn(t, n) >= 0;
+}, Sn = (e) => xn(e) ? { success: !0 } : {
+	success: !1,
+	message: `Flyway version ${e.trim() || "unknown"} is below the minimum required version ${vn}. Please upgrade Flyway.`
+}, Cn = async (e, t) => {
 	cn("Checking for drift");
 	try {
 		let n = await hn(e, t);
@@ -10501,57 +10517,57 @@ var un = () => {
 	} finally {
 		ln();
 	}
-}, yn = (e, t) => {
+}, wn = (e, t) => {
 	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
-}, bn = (e) => {
+}, Tn = (e) => {
 	let t = [];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && t.push(`${n}url=${e.targetUrl}`), e.targetUser && t.push(`${n}user=${e.targetUser}`), e.targetPassword && t.push(`${n}password=${e.targetPassword}`), e.targetSchemas && t.push(`${n}schemas=${e.targetSchemas}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...pn(e.extraArgs)), t;
-}, xn = (e) => [
+}, En = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...bn(e),
+	...Tn(e),
 	...e.undoReportName ? [`-reportFilename=${e.undoReportName}`] : []
-], Sn = async (e) => {
-	let { exitCode: t, result: n } = await vn(xn(e), e.workingDirectory), r = yn(n.reportPath, e.workingDirectory), i = yn(n.driftResolutionFolder, e.workingDirectory);
+], Dn = async (e) => {
+	let { exitCode: t, result: n } = await Cn(En(e), e.workingDirectory), r = wn(n.reportPath, e.workingDirectory), i = wn(n.driftResolutionFolder, e.workingDirectory);
 	return rn("exit-code", t.toString()), n.driftDetected !== void 0 && rn("drift-detected", n.driftDetected.toString()), r !== void 0 && rn("report-path", r), i !== void 0 && rn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, Cn = (e) => {
-	let t = ["undo", ...bn(e)];
+}, On = (e) => {
+	let t = ["undo", ...Tn(e)];
 	return e.targetMigrationVersion && t.push(`-target=${e.targetMigrationVersion}`), e.cherryPick && t.push(`-cherryPick=${e.cherryPick}`), e.skipSnapshot || t.push("-undo.saveSnapshot=true"), t;
-}, wn = async (e) => {
+}, kn = async (e) => {
 	cn("Running undo");
 	try {
-		let t = await hn(Cn(e), e.workingDirectory);
+		let t = await hn(On(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = _n(t.stdout);
-			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") return sn("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), En(0), {
+			if (e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") return sn("No snapshot was generated or stored in the target database as snapshots are not supported for this database type."), jn(0), {
 				migrationsUndone: 0,
 				schemaVersion: "unknown"
 			};
-			throw e?.error?.message && on(e.error.message), En(t.exitCode), Error(`Flyway undo failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && on(e.error.message), jn(t.exitCode), Error(`Flyway undo failed with exit code ${t.exitCode}`);
 		}
-		let { migrationsUndone: n, schemaVersion: r } = Tn(t.stdout);
-		return En(t.exitCode, n, r), {
+		let { migrationsUndone: n, schemaVersion: r } = An(t.stdout);
+		return jn(t.exitCode, n, r), {
 			migrationsUndone: n,
 			schemaVersion: r
 		};
 	} finally {
 		ln();
 	}
-}, Tn = (e) => {
+}, An = (e) => {
 	let t = _n(e);
 	return {
 		migrationsUndone: t?.migrationsUndone ?? 0,
 		schemaVersion: t?.targetSchemaVersion ?? "unknown"
 	};
-}, En = (e, t, n) => {
+}, jn = (e, t, n) => {
 	rn("exit-code", e.toString()), t !== void 0 && rn("migrations-undone", t.toString()), n !== void 0 && rn("schema-version", n);
-}, Dn = () => {
+}, Mn = () => {
 	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = tn("target-migration-version") || void 0, o = tn("cherry-pick") || void 0, s = nn("skip-drift-check"), l = nn("skip-snapshot"), u = tn("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10567,12 +10583,12 @@ var un = () => {
 		extraArgs: tn("extra-args") || void 0,
 		undoReportName: tn("undo-report-name") || `flyway-${e ?? "default"}-undo-report`
 	};
-}, On = (e) => {
+}, Nn = (e) => {
 	e.targetPassword && en(e.targetPassword);
-}, kn = (e, t) => {
+}, Pn = (e, t) => {
 	let n;
 	switch (!0) {
-		case An(e):
+		case Fn(e):
 			n = {
 				stem: e,
 				singularSuffix: "",
@@ -10607,12 +10623,12 @@ var un = () => {
 		};
 	}
 	return t === void 0 ? `${n.stem}${n.pluralSuffix}` : `${t} ${n.stem}${t === 1 ? n.singularSuffix : n.pluralSuffix}`;
-}, An = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), jn = async (e) => {
+}, Fn = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), In = async (e) => {
 	await Ct.addHeading("Flyway Undo", 2).addTable([
 		[{
 			data: "Migrations Undone",
 			header: !0
-		}, kn("migration", e.migrationsUndone)],
+		}, Pn("migration", e.migrationsUndone)],
 		[{
 			data: "Schema Version",
 			header: !0
@@ -10631,35 +10647,40 @@ await (async () => {
 			an("Flyway is not installed or not in PATH. Run red-gate/setup-flyway before this action.");
 			return;
 		}
-		let t = Dn();
-		if (!t.targetEnvironment && !t.targetUrl) {
+		let t = Sn(e.version);
+		if (!t.success) {
+			an(t.message);
+			return;
+		}
+		let n = Mn();
+		if (!n.targetEnvironment && !n.targetUrl) {
 			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		On(t);
-		let n, r = t.skipSnapshot;
-		if (e.edition === "enterprise") if (t.skipSnapshot && sn("Skipping snapshot storage: \"skip-snapshot\" set to true"), t.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
+		Nn(n);
+		let r, i = n.skipSnapshot;
+		if (e.edition === "enterprise") if (n.skipSnapshot && sn("Skipping snapshot storage: \"skip-snapshot\" set to true"), n.skipDriftCheck) sn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e, driftCheckSkipped: i, comparisonSupported: a } } = await Sn(t);
+			let { result: { driftDetected: e, driftCheckSkipped: t, comparisonSupported: a } } = await Dn(n);
 			if (e) {
-				await jn({
+				await In({
 					driftStatus: "Drift detected",
 					migrationsUndone: 0,
 					schemaVersion: "unknown"
 				}), an("Drift detected. Aborting undo.");
 				return;
 			}
-			r ||= !a, n = a ? i ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
+			i ||= !a, r = a ? t ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		else r = !0, sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
-		let { migrationsUndone: i, schemaVersion: a } = await wn({
-			...t,
-			skipSnapshot: r
+		else i = !0, sn(`Skipping drift check as edition is not Enterprise (actual edition: ${e.edition}).`);
+		let { migrationsUndone: a, schemaVersion: o } = await kn({
+			...n,
+			skipSnapshot: i
 		});
-		await jn({
-			driftStatus: n,
-			migrationsUndone: i,
-			schemaVersion: a
+		await In({
+			driftStatus: r,
+			migrationsUndone: a,
+			schemaVersion: o
 		});
 	} catch (e) {
 		e instanceof Error ? an(e.message) : an(String(e));
