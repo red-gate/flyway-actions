@@ -110,6 +110,9 @@ outputs:
   code-violation-codes:
     description: 'Comma-separated list of code review violation codes (empty if skipped)'
     value: ${{ steps.prepare.outputs.code-violation-codes }}
+  sarif-path:
+    description: 'Path to the SARIF report from code review (empty if not generated or skipped)'
+    value: ${{ steps.prepare.outputs.sarif-path }}
   changed-object-count:
     description: 'Number of changed objects detected (empty if skipped)'
     value: ${{ steps.prepare.outputs.changed-object-count }}
@@ -199,8 +202,9 @@ runs:
         fi
     - name: Upload SARIF to GitHub Code Scanning
       if: always() && inputs.skip-code-scanning-upload == 'false' && steps.prepare.outputs.sarif-path != ''
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       continue-on-error: true
       with:
         sarif_file: ${{ steps.prepare.outputs.sarif-path }}
         category: flyway-code-review
+        wait-for-processing: false
