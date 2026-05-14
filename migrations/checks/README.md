@@ -42,7 +42,7 @@ The drift checks and the deployment changes report will not run.
 ### Flyway Community
 
 The code review will run, but without Redgate rules.
-You will need to [install SQLFluff](#installing-sqlfluff-for-community-and-teams) and configure it manually for the code review to work.
+You will need to install SQLFluff and configure it manually for the code review to work.
 The deployment report will contain the code review output only.
 The drift checks, the deployment changes report, and the deployment script generation will not run.
 
