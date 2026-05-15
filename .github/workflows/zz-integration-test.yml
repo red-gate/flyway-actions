@@ -41,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -102,7 +102,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -168,7 +168,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -231,7 +231,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -281,7 +281,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -329,7 +329,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -398,7 +398,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -446,7 +446,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -515,7 +515,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -582,7 +582,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -650,7 +650,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -704,7 +704,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -747,7 +747,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
@@ -813,7 +813,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Retrieve secrets from Vault
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@v4.0.0
         with:
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
