@@ -29,6 +29,8 @@ These actions can be used both for database deployment pipelines, and for valida
 
 ## Usage
 
+> **Tip:** You can generate a ready-to-run GitHub Actions workflow from Flyway Desktop's [Automated Deployment page](https://documentation.red-gate.com/fd/tutorial-generate-a-github-actions-deployment-workflow-with-flyway-desktop-342852947.html). See also [Automating deployment using a CI/CD tool](https://documentation.red-gate.com/fd/automating-deployment-using-a-ci-cd-tool-311660904.html).
+
 ### Automated deployment using migrations (Flyway Enterprise)
 ```yaml
 name: Deploy to test

@@ -50,6 +50,8 @@ This action requires Flyway to be installed. Use [`red-gate/setup-flyway@v3`](ht
 
 ## Usage
 
+> **Tip:** You can generate a ready-to-run GitHub Actions workflow that uses this action from Flyway Desktop's [Automated Deployment page](https://documentation.red-gate.com/fd/tutorial-generate-a-github-actions-deployment-workflow-with-flyway-desktop-342852947.html).
+
 ### Basic Example
 
 ```yaml
