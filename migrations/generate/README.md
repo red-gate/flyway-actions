@@ -68,7 +68,7 @@ jobs:
           build-user: ${{ secrets.DB_USER }}
           build-password: ${{ secrets.DB_PASSWORD }}
           working-directory: my-flyway-project
-          description: add_orders_table
+          migration-description: add_orders_table
 ```
 
 ## Inputs
@@ -76,8 +76,8 @@ jobs:
 | Input               | Description                                                                                       | Required | Default                                                 |
 |---------------------|---------------------------------------------------------------------------------------------------|----------|---------------------------------------------------------|
 | `source`            | Source for the diff                                                                               | No       | `schemaModel`                                           |
-| `types`             | Comma-separated migration types to generate (e.g. `versioned,undo`). Defaults to reading the TOML | No       |                                                         |
-| `description`       | Description used in the generated migration filename                                              | No       |                                                         |
+| `migration-types`       | Comma-separated migration types to generate (e.g. `versioned,undo`). Defaults to reading the TOML | No       |                                                         |
+| `migration-description` | Description used in the generated migration filename                                              | No       |                                                         |
 | `build-environment` | Build database environment used as the diff target                                                | No       |                                                         |
 | `build-url`         | JDBC URL for the build database                                                                   | No       |                                                         |
 | `build-user`        | Database user for the build database                                                              | No       |                                                         |

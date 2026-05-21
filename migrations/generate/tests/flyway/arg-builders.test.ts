@@ -93,7 +93,7 @@ describe("getGenerateArgs", () => {
   });
 
   it("should include types when provided", () => {
-    const args = getGenerateArgs({ types: "versioned,undo" });
+    const args = getGenerateArgs({ migrationTypes: "versioned,undo" });
 
     expect(args).toContain("-types=versioned,undo");
   });
@@ -105,7 +105,7 @@ describe("getGenerateArgs", () => {
   });
 
   it("should include description when provided", () => {
-    const args = getGenerateArgs({ description: "add_orders_table" });
+    const args = getGenerateArgs({ migrationDescription: "add_orders_table" });
 
     expect(args).toContain("-description=add_orders_table");
   });

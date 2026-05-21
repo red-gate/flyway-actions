@@ -70,12 +70,12 @@ const getDiffArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
 const getGenerateArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
   const args: string[] = ["generate"];
 
-  if (inputs.types) {
-    args.push(`-types=${inputs.types}`);
+  if (inputs.migrationTypes) {
+    args.push(`-types=${inputs.migrationTypes}`);
   }
 
-  if (inputs.description) {
-    args.push(`-description=${inputs.description}`);
+  if (inputs.migrationDescription) {
+    args.push(`-description=${inputs.migrationDescription}`);
   }
 
   args.push(...getSharedArgs(inputs));

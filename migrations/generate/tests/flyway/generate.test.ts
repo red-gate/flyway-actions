@@ -103,7 +103,7 @@ describe("generate", () => {
   it("should pass types and description args", async () => {
     exec.mockImplementation(mockExec({ stdout: { scripts: [] } }));
 
-    await generate({ types: "versioned,undo", description: "add_orders" });
+    await generate({ migrationTypes: "versioned,undo", migrationDescription: "add_orders" });
 
     expect(exec).toHaveBeenCalledWith(
       "flyway",

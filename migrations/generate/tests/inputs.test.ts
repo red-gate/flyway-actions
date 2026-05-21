@@ -26,20 +26,20 @@ describe("getInputs", () => {
     expect(inputs.source).toBe("schemaModel");
   });
 
-  it("should return types when provided", () => {
-    getInput.mockImplementation((name: string) => (name === "types" ? "versioned,undo" : ""));
+  it("should return migration-types when provided", () => {
+    getInput.mockImplementation((name: string) => (name === "migration-types" ? "versioned,undo" : ""));
 
     const inputs = getInputs();
 
-    expect(inputs.types).toBe("versioned,undo");
+    expect(inputs.migrationTypes).toBe("versioned,undo");
   });
 
-  it("should return description when provided", () => {
-    getInput.mockImplementation((name: string) => (name === "description" ? "add_orders_table" : ""));
+  it("should return migration-description when provided", () => {
+    getInput.mockImplementation((name: string) => (name === "migration-description" ? "add_orders_table" : ""));
 
     const inputs = getInputs();
 
-    expect(inputs.description).toBe("add_orders_table");
+    expect(inputs.migrationDescription).toBe("add_orders_table");
   });
 
   it("should get build connection inputs", () => {
@@ -83,8 +83,8 @@ describe("getInputs", () => {
     const inputs = getInputs();
 
     expect(inputs.source).toBeUndefined();
-    expect(inputs.types).toBeUndefined();
-    expect(inputs.description).toBeUndefined();
+    expect(inputs.migrationTypes).toBeUndefined();
+    expect(inputs.migrationDescription).toBeUndefined();
     expect(inputs.buildEnvironment).toBeUndefined();
     expect(inputs.buildUrl).toBeUndefined();
     expect(inputs.buildUser).toBeUndefined();

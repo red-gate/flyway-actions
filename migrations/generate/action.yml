@@ -11,10 +11,10 @@ inputs:
     description: 'Source for the diff (e.g. schemaModel)'
     required: false
     default: 'schemaModel'
-  types:
+  migration-types:
     description: 'Comma-separated migration types to generate (e.g. versioned,undo). Defaults to reading flyway.toml'
     required: false
-  description:
+  migration-description:
     description: 'Description used in the generated migration filename'
     required: false
   build-environment:

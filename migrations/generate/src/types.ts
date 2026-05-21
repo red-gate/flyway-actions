@@ -1,7 +1,7 @@
 type FlywayMigrationsGenerateInputs = {
   source?: string;
-  types?: string;
-  description?: string;
+  migrationTypes?: string;
+  migrationDescription?: string;
   buildEnvironment?: string;
   buildUrl?: string;
   buildUser?: string;

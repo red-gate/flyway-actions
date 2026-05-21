@@ -4,8 +4,8 @@ import * as core from "@actions/core";
 
 const getInputs = (): FlywayMigrationsGenerateInputs => {
   const source = core.getInput("source") || undefined;
-  const types = core.getInput("types") || undefined;
-  const description = core.getInput("description") || undefined;
+  const migrationTypes = core.getInput("migration-types") || undefined;
+  const migrationDescription = core.getInput("migration-description") || undefined;
   const buildEnvironment = core.getInput("build-environment") || undefined;
   const buildUrl = core.getInput("build-url") || undefined;
   const buildUser = core.getInput("build-user") || undefined;
@@ -22,8 +22,8 @@ const getInputs = (): FlywayMigrationsGenerateInputs => {
 
   return {
     source,
-    types,
-    description,
+    migrationTypes,
+    migrationDescription,
     buildEnvironment,
     buildUrl,
     buildUser,

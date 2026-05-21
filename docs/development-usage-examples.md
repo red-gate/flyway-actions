@@ -40,5 +40,5 @@ jobs:
           build-user: ${{ secrets.DB_USER }}
           build-password: ${{ secrets.DB_PASSWORD }}
           working-directory: my-flyway-project
-          description: add_orders_table
+          migration-description: add_orders_table
 ```
