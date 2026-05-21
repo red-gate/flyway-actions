@@ -1,6 +1,12 @@
 # Flyway Migrations Generate Action
 
-A GitHub Action to generate Flyway migrations by comparing your schema model against a [build environment](https://documentation.red-gate.com/flyway/flyway-concepts/environments/shadow-and-build-environments).
+A GitHub Action that turns schema model edits into Flyway migration scripts and (by default) commits them back to the pull request that introduced the change.
+
+The intended workflow is:
+
+1. A developer edits the schema model in their feature branch and opens a pull request.
+2. This action runs on the PR, compares the updated schema model against a [build environment](https://documentation.red-gate.com/flyway/flyway-concepts/environments/shadow-and-build-environments), and generates the migration scripts that would apply those changes.
+3. The generated migrations are committed onto the PR branch, so reviewers see and review the SQL alongside the schema model changes — no need for the author to write migrations by hand.
 
 ## Behavior
 
