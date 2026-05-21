@@ -19,6 +19,7 @@ describe("findActions", () => {
     expect(actions).toEqual([
       "migrations/checks",
       "migrations/deploy",
+      "migrations/generate",
       "migrations/undo",
       "state/deploy",
       "state/prepare",
