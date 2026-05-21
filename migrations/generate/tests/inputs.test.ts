@@ -2,10 +2,12 @@ import type { FlywayMigrationsGenerateInputs } from "../src/types.js";
 import * as path from "path";
 
 const getInput = vi.fn();
+const getBooleanInput = vi.fn();
 const setSecret = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   getInput,
+  getBooleanInput,
   setSecret,
 }));
 
@@ -90,12 +92,56 @@ describe("getInputs", () => {
     expect(inputs.buildSchemas).toBeUndefined();
     expect(inputs.workingDirectory).toBeUndefined();
     expect(inputs.extraArgs).toBeUndefined();
+    expect(inputs.commitBranch).toBeUndefined();
+  });
+
+  it("should read commit-migrations boolean", () => {
+    getBooleanInput.mockImplementation((name: string) => name === "commit-migrations");
+
+    const inputs = getInputs();
+
+    expect(inputs.commitMigrations).toBe(true);
+  });
+
+  it("should default commit message, user name and email", () => {
+    const inputs = getInputs();
+
+    expect(inputs.commitMessage).toBe("Generate Flyway migrations");
+    expect(inputs.commitUserName).toBe("github-actions[bot]");
+    expect(inputs.commitUserEmail).toBe("41898282+github-actions[bot]@users.noreply.github.com");
+  });
+
+  it("should override commit metadata from inputs", () => {
+    getInput.mockImplementation((name: string) => {
+      const values: Record<string, string> = {
+        "commit-message": "chore: my message",
+        "commit-user-name": "Alice",
+        "commit-user-email": "alice@example.com",
+        "commit-branch": "feature/migrations",
+      };
+      return values[name] || "";
+    });
+
+    const inputs = getInputs();
+
+    expect(inputs.commitMessage).toBe("chore: my message");
+    expect(inputs.commitUserName).toBe("Alice");
+    expect(inputs.commitUserEmail).toBe("alice@example.com");
+    expect(inputs.commitBranch).toBe("feature/migrations");
   });
 });
+
+const commitDefaults = {
+  commitMigrations: false,
+  commitMessage: "chore: generate Flyway migrations",
+  commitUserName: "github-actions[bot]",
+  commitUserEmail: "bot@example.com",
+};
 
 describe("maskSecrets", () => {
   it("should mask build password", () => {
     const inputs: FlywayMigrationsGenerateInputs = {
+      ...commitDefaults,
       buildPassword: "shh",
     };
 
@@ -106,6 +152,7 @@ describe("maskSecrets", () => {
 
   it("should not call setSecret when no password present", () => {
     const inputs: FlywayMigrationsGenerateInputs = {
+      ...commitDefaults,
       buildUrl: "jdbc:postgresql://localhost/build",
       buildUser: "admin",
     };

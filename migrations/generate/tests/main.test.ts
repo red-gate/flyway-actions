@@ -2,6 +2,7 @@ import type { MockExecOptions } from "@flyway-actions/shared/test-utils";
 import { mockExecSequence } from "@flyway-actions/shared/test-utils";
 
 const getInput = vi.fn();
+const getBooleanInput = vi.fn();
 const setOutput = vi.fn();
 const setFailed = vi.fn();
 const setSecret = vi.fn();
@@ -35,6 +36,7 @@ const setupMocks = () => {
 
   vi.doMock("@actions/core", () => ({
     getInput,
+    getBooleanInput,
     setOutput,
     setFailed,
     setSecret,
@@ -58,15 +60,19 @@ type SetupFlywayMockOptions = {
   generateOutput?: Record<string, unknown>;
 };
 
-const getDiffCalls = () => (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.includes("diff"));
+const getDiffCalls = () =>
+  (exec.mock.calls as [string, string[]][]).filter((call) => call[0] === "flyway" && call[1]?.includes("diff"));
 
 const getGenerateCalls = () =>
-  (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.includes("generate"));
+  (exec.mock.calls as [string, string[]][]).filter((call) => call[0] === "flyway" && call[1]?.includes("generate"));
+
+const getGitCalls = () => (exec.mock.calls as [string, string[]][]).filter((call) => call[0] === "git");
 
 describe("run", () => {
   beforeEach(() => {
     vi.resetModules();
     setupMocks();
+    getBooleanInput.mockReturnValue(false);
   });
 
   const setupFlywayMock = ({
@@ -173,5 +179,62 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(setSecret).toHaveBeenCalledWith("shh");
+  });
+
+  it("should not invoke git when commit-migrations is disabled", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      generateOutput: {
+        scripts: [{ type: "versioned", location: "migrations/V001__add.sql", differences: [], warnings: [] }],
+      },
+    });
+    getInput.mockReturnValue("");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getGitCalls()).toHaveLength(0);
+    expect(setOutput).toHaveBeenCalledWith("committed", "false");
+  });
+
+  it("should commit and push when commit-migrations is enabled and scripts were generated", async () => {
+    process.env.GITHUB_REF_NAME = "main";
+    let flywayCallIndex = 0;
+    const flywayResponses: { stdout: Record<string, unknown> }[] = [
+      { stdout: { edition: "Enterprise", version: "12.0.0" } },
+      { stdout: {} },
+      {
+        stdout: {
+          scripts: [{ type: "versioned", location: "migrations/V001__add.sql", differences: [], warnings: [] }],
+        },
+      },
+    ];
+    exec.mockImplementation(
+      (cmd: string, args: string[], options?: { listeners?: { stdout?: (b: Buffer) => void } }) => {
+        if (cmd === "flyway") {
+          const next = flywayResponses[flywayCallIndex] ?? flywayResponses[flywayResponses.length - 1];
+          flywayCallIndex++;
+          options?.listeners?.stdout?.(Buffer.from(JSON.stringify(next.stdout)));
+          return Promise.resolve(0);
+        }
+        if (cmd === "git" && args[0] === "diff" && args.includes("--quiet")) {
+          return Promise.resolve(1);
+        }
+        return Promise.resolve(0);
+      },
+    );
+    getInput.mockReturnValue("");
+    getBooleanInput.mockImplementation((name: string) => name === "commit-migrations");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    const gitCalls = getGitCalls();
+
+    expect(gitCalls.some((c) => c[1][0] === "commit")).toBe(true);
+    expect(gitCalls.some((c) => c[1].join(" ") === "push origin HEAD:main")).toBe(true);
+    expect(setOutput).toHaveBeenCalledWith("committed", "true");
+
+    delete process.env.GITHUB_REF_NAME;
   });
 });

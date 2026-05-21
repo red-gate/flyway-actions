@@ -38,6 +38,25 @@ inputs:
   extra-args:
     description: 'Additional Flyway CLI arguments'
     required: false
+  commit-migrations:
+    description: 'Commit and push the generated migrations to the repository'
+    required: false
+    default: 'true'
+  commit-message:
+    description: 'Commit message used when commit-migrations is enabled'
+    required: false
+    default: 'Generate Flyway migrations'
+  commit-user-name:
+    description: 'Git user.name used when commit-migrations is enabled'
+    required: false
+    default: 'github-actions[bot]'
+  commit-user-email:
+    description: 'Git user.email used when commit-migrations is enabled'
+    required: false
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
+  commit-branch:
+    description: 'Branch to push the commit to. Defaults to the current branch (GITHUB_REF_NAME)'
+    required: false
 
 outputs:
   exit-code:
@@ -46,6 +65,9 @@ outputs:
   script-paths:
     description: 'JSON array of paths to the generated migration files'
     value: ${{ steps.generate.outputs.script-paths }}
+  committed:
+    description: 'Whether the generated migrations were committed and pushed'
+    value: ${{ steps.generate.outputs.committed }}
 
 runs:
   using: 'composite'

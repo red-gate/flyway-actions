@@ -3,6 +3,7 @@ import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { checkMinimumFlywayVersion } from "@flyway-actions/shared/version-check";
 import { diff } from "./flyway/diff.js";
 import { generate } from "./flyway/generate.js";
+import { commitAndPush } from "./git/commit.js";
 import { getInputs, maskSecrets } from "./inputs.js";
 import { writeSummary } from "./write-summary.js";
 
@@ -38,6 +39,11 @@ const run = async (): Promise<void> => {
 
     await diff(inputs);
     const { scripts } = await generate(inputs);
+
+    await commitAndPush(
+      inputs,
+      scripts.map((s) => s.location),
+    );
 
     await writeSummary({ scripts });
   } catch (error) {

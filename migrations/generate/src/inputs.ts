@@ -14,6 +14,11 @@ const getInputs = (): FlywayMigrationsGenerateInputs => {
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
+  const commitMigrations = core.getBooleanInput("commit-migrations");
+  const commitMessage = core.getInput("commit-message") || "Generate Flyway migrations";
+  const commitUserName = core.getInput("commit-user-name") || "github-actions[bot]";
+  const commitUserEmail = core.getInput("commit-user-email") || "41898282+github-actions[bot]@users.noreply.github.com";
+  const commitBranch = core.getInput("commit-branch") || undefined;
 
   return {
     source,
@@ -26,6 +31,11 @@ const getInputs = (): FlywayMigrationsGenerateInputs => {
     buildSchemas,
     workingDirectory,
     extraArgs,
+    commitMigrations,
+    commitMessage,
+    commitUserName,
+    commitUserEmail,
+    commitBranch,
   };
 };
 
