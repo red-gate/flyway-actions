@@ -1,0 +1,7 @@
+databaseType = "Sqlite"
+name = "Sqlite generate sample project"
+id = "8a3d2c7e-5b91-4f2e-9c84-71e6f23a89b1"
+
+[flyway]
+locations = [ "filesystem:migrations" ]
+schemaModelLocation = "schema-model"

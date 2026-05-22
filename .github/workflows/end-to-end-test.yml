@@ -321,3 +321,55 @@ jobs:
           test "${{ steps.prepare.outputs.changed-object-count }}" = "3"
           test "${{ steps.deploy.outputs.exit-code }}" = "0"
           test "${{ steps.undo.outputs.exit-code }}" = "0"
+
+  migrations-generate:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Retrieve secrets from Vault
+        uses: hashicorp/vault-action@v4.0.0
+        with:
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          url: ${{ vars.VAULT_URL }}
+          role: "flyway-actions"
+          secrets: |
+            build-secrets/data/repos/red-gate/flyway-actions/service-account email | REDGATE_EMAIL;
+            build-secrets/data/repos/red-gate/flyway-actions/service-account token | FLYWAY_TOKEN;
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: enterprise
+          i-agree-to-the-eula: true
+          email: ${{ env.REDGATE_EMAIL }}
+          token: ${{ env.FLYWAY_TOKEN }}
+      - name: Run generate
+        id: generate
+        uses: ./migrations/generate
+        with:
+          build-url: jdbc:sqlite:generate-build-${{ matrix.os }}.db
+          working-directory: sample-projects/sqlite-generate
+          commit-migrations: 'false'
+          migration-description: integration_test
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          paths='${{ steps.generate.outputs.script-paths }}'
+          echo "Generate exit code: ${{ steps.generate.outputs.exit-code }}"
+          echo "Script paths: $paths"
+          echo "Committed: ${{ steps.generate.outputs.committed }}"
+          test "${{ steps.generate.outputs.exit-code }}" = "0"
+          test "${{ steps.generate.outputs.committed }}" = "false"
+          count=$(echo "$paths" | jq 'length')
+          test "$count" = "1"
+          firstPath=$(echo "$paths" | jq -r '.[0]')
+          echo "$firstPath" | grep -E 'V[^/\\]*__integration_test\.sql$'
+          test -f "$firstPath"
