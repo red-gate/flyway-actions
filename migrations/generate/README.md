@@ -71,25 +71,34 @@ jobs:
           migration-description: add_orders_table
 ```
 
+### Iterating on the schema model after a migration is generated
+
+Each run of the action diffs the current schema model against the migrations already in the branch and generates a *new* migration for whatever's still missing. If you push another schema model change after the action has already committed a migration, you'll end up with two migration scripts on the PR — one per push. To keep the PR to a single migration, before pushing your follow-up schema change either:
+
+- drop the previous auto-generated commit via an interactive rebase (`git rebase -i <base>` and remove the auto-commit's line, then force-push), or
+- delete the previously generated migration file from the branch and commit that deletion alongside your schema model change.
+
+The next run will then regenerate a single combined migration covering all schema model edits.
+
 ## Inputs
 
-| Input               | Description                                                                                       | Required | Default                                                 |
-|---------------------|---------------------------------------------------------------------------------------------------|----------|---------------------------------------------------------|
-| `source`            | Source for the diff                                                                               | No       | `schemaModel`                                           |
+| Input                   | Description                                                                                       | Required | Default                                                 |
+|-------------------------|---------------------------------------------------------------------------------------------------|----------|---------------------------------------------------------|
+| `source`                | Source for the diff                                                                               | No       | `schemaModel`                                           |
 | `migration-types`       | Comma-separated migration types to generate (e.g. `versioned,undo`). Defaults to reading the TOML | No       |                                                         |
 | `migration-description` | Description used in the generated migration filename                                              | No       |                                                         |
-| `build-environment` | Build database environment used as the diff target                                                | No       |                                                         |
-| `build-url`         | JDBC URL for the build database                                                                   | No       |                                                         |
-| `build-user`        | Database user for the build database                                                              | No       |                                                         |
-| `build-password`    | Database password for the build database                                                          | No       |                                                         |
-| `build-schemas`     | Comma-separated list of schemas for the build database                                            | No       |                                                         |
-| `working-directory` | Working directory for Flyway                                                                      | No       |                                                         |
-| `extra-args`        | Additional Flyway CLI arguments                                                                   | No       |                                                         |
-| `commit-migrations` | Commit and push the generated migrations                                                          | No       | `true`                                                  |
-| `commit-message`    | Commit message used when `commit-migrations` is enabled                                           | No       | `Generate Flyway migrations`                            |
-| `commit-user-name`  | Git `user.name` used when `commit-migrations` is enabled                                          | No       | `github-actions[bot]`                                   |
-| `commit-user-email` | Git `user.email` used when `commit-migrations` is enabled                                         | No       | `41898282+github-actions[bot]@users.noreply.github.com` |
-| `commit-branch`     | Branch to push the commit to. Defaults to the current branch (`GITHUB_REF_NAME`)                  | No       |                                                         |
+| `build-environment`     | Build database environment used as the diff target                                                | No       |                                                         |
+| `build-url`             | JDBC URL for the build database                                                                   | No       |                                                         |
+| `build-user`            | Database user for the build database                                                              | No       |                                                         |
+| `build-password`        | Database password for the build database                                                          | No       |                                                         |
+| `build-schemas`         | Comma-separated list of schemas for the build database                                            | No       |                                                         |
+| `working-directory`     | Working directory for Flyway                                                                      | No       |                                                         |
+| `extra-args`            | Additional Flyway CLI arguments                                                                   | No       |                                                         |
+| `commit-migrations`     | Commit and push the generated migrations                                                          | No       | `true`                                                  |
+| `commit-message`        | Commit message used when `commit-migrations` is enabled                                           | No       | `Generate Flyway migrations`                            |
+| `commit-user-name`      | Git `user.name` used when `commit-migrations` is enabled                                          | No       | `github-actions[bot]`                                   |
+| `commit-user-email`     | Git `user.email` used when `commit-migrations` is enabled                                         | No       | `41898282+github-actions[bot]@users.noreply.github.com` |
+| `commit-branch`         | Branch to push the commit to. Defaults to the current branch (`GITHUB_REF_NAME`)                  | No       |                                                         |
 
 If you do not pass any `build-*` inputs, the build environment is taken from your `flyway.toml`.
 
