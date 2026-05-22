@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import { getFlywayDetails } from "@flyway-actions/shared/flyway-runner";
 import { checkMinimumFlywayVersion } from "@flyway-actions/shared/version-check";
+import { deleteDiffArtifact } from "./flyway/cleanup.js";
 import { diff } from "./flyway/diff.js";
 import { generate } from "./flyway/generate.js";
 import { commitAndPush } from "./git/commit.js";
@@ -37,15 +38,20 @@ const run = async (): Promise<void> => {
     const inputs = getInputs();
     maskSecrets(inputs);
 
-    await diff(inputs);
-    const { scripts } = await generate(inputs);
+    const { artifactPath } = await diff(inputs);
 
-    await commitAndPush(
-      inputs,
-      scripts.map((s) => s.location),
-    );
+    try {
+      const { scripts } = await generate(inputs);
 
-    await writeSummary({ scripts });
+      await commitAndPush(
+        inputs,
+        scripts.map((s) => s.location),
+      );
+
+      await writeSummary({ scripts });
+    } finally {
+      await deleteDiffArtifact(artifactPath);
+    }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);

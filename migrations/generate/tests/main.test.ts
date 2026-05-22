@@ -7,10 +7,12 @@ const setOutput = vi.fn();
 const setFailed = vi.fn();
 const setSecret = vi.fn();
 const info = vi.fn();
+const warning = vi.fn();
 const error = vi.fn();
 const startGroup = vi.fn();
 const endGroup = vi.fn();
 const exec = vi.fn();
+const unlink = vi.fn();
 
 const summary = {
   addHeading: vi.fn(),
@@ -41,6 +43,7 @@ const setupMocks = () => {
     setFailed,
     setSecret,
     info,
+    warning,
     error,
     startGroup,
     endGroup,
@@ -49,6 +52,10 @@ const setupMocks = () => {
 
   vi.doMock("@actions/exec", () => ({
     exec,
+  }));
+
+  vi.doMock("node:fs/promises", () => ({
+    unlink,
   }));
 };
 
@@ -73,6 +80,7 @@ describe("run", () => {
     vi.resetModules();
     setupMocks();
     getBooleanInput.mockReturnValue(false);
+    unlink.mockResolvedValue(undefined);
   });
 
   const setupFlywayMock = ({
@@ -236,5 +244,49 @@ describe("run", () => {
     expect(setOutput).toHaveBeenCalledWith("committed", "true");
 
     delete process.env.GITHUB_REF_NAME;
+  });
+
+  it("should delete the diff artifact after a successful generate", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      diffOutput: { artifactFilename: "/tmp/diff-artifact" },
+      generateOutput: { scripts: [] },
+    });
+    getInput.mockReturnValue("");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(unlink).toHaveBeenCalledWith("/tmp/diff-artifact");
+  });
+
+  it("should delete the diff artifact even when generate fails", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      diffOutput: { artifactFilename: "/tmp/diff-artifact" },
+      generateExitCode: 1,
+      generateOutput: { error: { errorCode: "FAULT", message: "Generate failed" } },
+    });
+    getInput.mockReturnValue("");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining("Flyway generate failed"));
+    expect(unlink).toHaveBeenCalledWith("/tmp/diff-artifact");
+  });
+
+  it("should skip artifact deletion when diff did not report an artifact path", async () => {
+    setupFlywayMock({
+      edition: "Enterprise",
+      diffOutput: {},
+      generateOutput: { scripts: [] },
+    });
+    getInput.mockReturnValue("");
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(unlink).not.toHaveBeenCalled();
   });
 });

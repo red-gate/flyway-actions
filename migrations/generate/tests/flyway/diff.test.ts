@@ -57,4 +57,20 @@ describe("diff", () => {
 
     expect(setOutput).not.toHaveBeenCalled();
   });
+
+  it("should return the artifact path from the diff output", async () => {
+    exec.mockImplementation(mockExec({ stdout: { artifactFilename: "/tmp/diff-artifact" } }));
+
+    const result = await diff({ source: "schemaModel" });
+
+    expect(result.artifactPath).toBe("/tmp/diff-artifact");
+  });
+
+  it("should return an undefined artifact path when the field is missing", async () => {
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    const result = await diff({ source: "schemaModel" });
+
+    expect(result.artifactPath).toBeUndefined();
+  });
 });

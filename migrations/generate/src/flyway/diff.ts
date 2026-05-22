@@ -4,7 +4,11 @@ import * as core from "@actions/core";
 import { parseOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
 import { getDiffArgs } from "./arg-builders.js";
 
-const diff = async (inputs: FlywayMigrationsGenerateInputs): Promise<void> => {
+type DiffOutput = { artifactFilename?: string };
+
+type DiffResult = { artifactPath?: string };
+
+const diff = async (inputs: FlywayMigrationsGenerateInputs): Promise<DiffResult> => {
   core.startGroup("Running diff");
   try {
     const args = getDiffArgs(inputs);
@@ -16,9 +20,13 @@ const diff = async (inputs: FlywayMigrationsGenerateInputs): Promise<void> => {
       core.setOutput("exit-code", result.exitCode.toString());
       throw new Error(`Flyway diff failed with exit code ${result.exitCode}`);
     }
+
+    const output = parseOutput<DiffOutput>(result.stdout);
+    return { artifactPath: output?.artifactFilename };
   } finally {
     core.endGroup();
   }
 };
 
 export { diff };
+export type { DiffResult };
