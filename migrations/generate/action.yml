@@ -1,0 +1,71 @@
+name: 'Flyway Migrations Generate Action'
+description: 'A GitHub Action to generate versioned Flyway migrations from your schema model'
+author: 'Redgate'
+
+branding:
+  icon: 'database'
+  color: 'red'
+
+inputs:
+  source:
+    description: 'Source for the diff (e.g. schemaModel)'
+    required: false
+    default: 'schemaModel'
+  migration-types:
+    description: 'Comma-separated migration types to generate (e.g. versioned,undo). Defaults to reading flyway.toml'
+    required: false
+  migration-description:
+    description: 'Description used in the generated migration filename'
+    required: false
+  build-environment:
+    description: 'Build database environment used as the diff target'
+    required: false
+  build-url:
+    description: 'JDBC URL for the build database'
+    required: false
+  build-user:
+    description: 'Database user for the build database'
+    required: false
+  build-password:
+    description: 'Database password for the build database'
+    required: false
+  build-schemas:
+    description: 'Comma-separated list of schemas for the build database'
+    required: false
+  working-directory:
+    description: 'Working directory for Flyway'
+    required: false
+  extra-args:
+    description: 'Additional Flyway CLI arguments'
+    required: false
+  commit-migrations:
+    description: 'Commit and push the generated migrations to the repository'
+    required: false
+    default: 'true'
+  commit-message:
+    description: 'Commit message used when commit-migrations is enabled'
+    required: false
+    default: 'Generate Flyway migrations'
+  commit-user-name:
+    description: 'Git user.name used when commit-migrations is enabled'
+    required: false
+    default: 'github-actions[bot]'
+  commit-user-email:
+    description: 'Git user.email used when commit-migrations is enabled'
+    required: false
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
+  commit-branch:
+    description: 'Branch to push the commit to. Defaults to the current branch (GITHUB_REF_NAME)'
+    required: false
+
+outputs:
+  exit-code:
+    description: 'Flyway exit code'
+  script-paths:
+    description: 'JSON array of paths to the generated migration files'
+  committed:
+    description: 'Whether the generated migrations were committed and pushed'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
