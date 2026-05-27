@@ -92,6 +92,10 @@ inputs:
     description: 'Number of days to retain the deployment and undo script artifacts'
     required: false
     default: '7'
+  skip-code-scanning-upload:
+    description: 'Skip uploading SARIF results to GitHub Code Scanning'
+    required: false
+    default: 'false'
 
 outputs:
   exit-code:
@@ -106,6 +110,9 @@ outputs:
   code-violation-codes:
     description: 'Comma-separated list of code review violation codes (empty if skipped)'
     value: ${{ steps.prepare.outputs.code-violation-codes }}
+  sarif-path:
+    description: 'Path to the SARIF report from code review (empty if not generated or skipped)'
+    value: ${{ steps.prepare.outputs.sarif-path }}
   changed-object-count:
     description: 'Number of changed objects detected (empty if skipped)'
     value: ${{ steps.prepare.outputs.changed-object-count }}
@@ -193,3 +200,11 @@ runs:
         if [[ -n "${{ steps.upload-undo-script.outputs.artifact-url }}" ]]; then
           echo "- [${{ inputs.undo-script-name || format('DU__{0}_undo', inputs.target-environment) }}](${{ steps.upload-undo-script.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
         fi
+    - name: Upload SARIF to GitHub Code Scanning
+      if: always() && inputs.skip-code-scanning-upload == 'false' && steps.prepare.outputs.sarif-path != ''
+      uses: github/codeql-action/upload-sarif@v4
+      continue-on-error: true
+      with:
+        sarif_file: ${{ steps.prepare.outputs.sarif-path }}
+        category: flyway-code-review
+        wait-for-processing: false

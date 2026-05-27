@@ -195,4 +195,28 @@ describe("runChecks", () => {
 
     expect(setOutput).toHaveBeenCalledWith("report-path", "/tmp/reports/custom-report.html");
   });
+
+  it("should set sarif-path from sarifReport in code review output", async () => {
+    exec.mockImplementation(mockExec({ stdout: { sarifReport: "report.sarif" } }));
+
+    await runChecks(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("sarif-path", "report.sarif");
+  });
+
+  it("should set sarif-path to empty string when no sarifReport in output", async () => {
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks(baseInputs, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("sarif-path", "");
+  });
+
+  it("should prepend working directory to sarif-path", async () => {
+    exec.mockImplementation(mockExec({ stdout: { sarifReport: "report.sarif" } }));
+
+    await runChecks({ workingDirectory: "my-project" }, "enterprise");
+
+    expect(setOutput).toHaveBeenCalledWith("sarif-path", path.join("my-project", "report.sarif"));
+  });
 });
