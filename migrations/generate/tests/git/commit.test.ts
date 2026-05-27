@@ -1,4 +1,4 @@
-import type { FlywayMigrationsGenerateInputs } from "../../src/types.js";
+import type { CommitInputs } from "../../src/types.js";
 
 const setOutput = vi.fn();
 const info = vi.fn();
@@ -19,11 +19,11 @@ vi.doMock("@actions/exec", () => ({
 
 const { commitAndPush } = await import("../../src/git/commit.js");
 
-const baseInputs: FlywayMigrationsGenerateInputs = {
-  commitMigrations: true,
-  commitMessage: "chore: generate Flyway migrations",
-  commitUserName: "github-actions[bot]",
-  commitUserEmail: "bot@example.com",
+const baseCommit: CommitInputs = {
+  migrations: true,
+  message: "chore: generate Flyway migrations",
+  userName: "github-actions[bot]",
+  userEmail: "bot@example.com",
 };
 
 beforeEach(() => {
@@ -36,7 +36,7 @@ afterEach(() => {
 
 describe("commitAndPush", () => {
   it("should be a no-op when commit-migrations is disabled", async () => {
-    const result = await commitAndPush({ ...baseInputs, commitMigrations: false }, ["a.sql"]);
+    const result = await commitAndPush({ ...baseCommit, migrations: false }, undefined, ["a.sql"]);
 
     expect(result.committed).toBe(false);
     expect(exec).not.toHaveBeenCalled();
@@ -44,7 +44,7 @@ describe("commitAndPush", () => {
   });
 
   it("should be a no-op when no scripts were generated", async () => {
-    const result = await commitAndPush(baseInputs, []);
+    const result = await commitAndPush(baseCommit, undefined, []);
 
     expect(result.committed).toBe(false);
     expect(exec).not.toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe("commitAndPush", () => {
   it("should throw when the branch cannot be determined", async () => {
     delete process.env.GITHUB_REF_NAME;
 
-    await expect(commitAndPush(baseInputs, ["a.sql"])).rejects.toThrow("Could not determine the branch");
+    await expect(commitAndPush(baseCommit, undefined, ["a.sql"])).rejects.toThrow("Could not determine the branch");
   });
 
   it("should commit and push when changes are staged", async () => {
@@ -66,7 +66,7 @@ describe("commitAndPush", () => {
       return Promise.resolve(0);
     });
 
-    const result = await commitAndPush(baseInputs, ["migrations/V001__add.sql"]);
+    const result = await commitAndPush(baseCommit, undefined, ["migrations/V001__add.sql"]);
 
     expect(result.committed).toBe(true);
     expect(exec).toHaveBeenCalledWith("git", ["config", "user.name", "github-actions[bot]"], expect.any(Object));
@@ -85,7 +85,7 @@ describe("commitAndPush", () => {
       return Promise.resolve(0);
     });
 
-    const result = await commitAndPush(baseInputs, ["a.sql"]);
+    const result = await commitAndPush(baseCommit, undefined, ["a.sql"]);
 
     expect(result.committed).toBe(false);
     expect(info).toHaveBeenCalledWith("No staged changes after add. Skipping commit.");
@@ -99,7 +99,7 @@ describe("commitAndPush", () => {
       args.includes("--quiet") ? Promise.resolve(1) : Promise.resolve(0),
     );
 
-    await commitAndPush({ ...baseInputs, commitBranch: "feature/migrations" }, ["a.sql"]);
+    await commitAndPush({ ...baseCommit, branch: "feature/migrations" }, undefined, ["a.sql"]);
 
     expect(exec).toHaveBeenCalledWith("git", ["push", "origin", "HEAD:feature/migrations"], expect.any(Object));
   });
@@ -109,7 +109,7 @@ describe("commitAndPush", () => {
       args.includes("--quiet") ? Promise.resolve(1) : Promise.resolve(0),
     );
 
-    await commitAndPush({ ...baseInputs, workingDirectory: "/repo/sub" }, ["a.sql"]);
+    await commitAndPush(baseCommit, "/repo/sub", ["a.sql"]);
 
     expect(exec).toHaveBeenCalledWith(
       "git",

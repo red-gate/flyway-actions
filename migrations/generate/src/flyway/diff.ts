@@ -1,4 +1,4 @@
-import type { FlywayMigrationsGenerateInputs } from "../types.js";
+import type { FlywayCommandInputs } from "../types.js";
 import type { ErrorOutput } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
 import { parseOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
@@ -8,7 +8,7 @@ type DiffOutput = { artifactFilename?: string };
 
 type DiffResult = { artifactPath?: string };
 
-const diff = async (inputs: FlywayMigrationsGenerateInputs): Promise<DiffResult> => {
+const diff = async (inputs: FlywayCommandInputs): Promise<DiffResult> => {
   core.startGroup("Running diff");
   try {
     const args = getDiffArgs(inputs);

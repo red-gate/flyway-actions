@@ -1,19 +1,18 @@
-import type { FlywayMigrationsGenerateInputs } from "../types.js";
+import type { FlywayCommandInputs } from "../types.js";
 import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
 
 const DEFAULT_BUILD_ENVIRONMENT = "default_build";
 
-const hasBuildInputs = (inputs: FlywayMigrationsGenerateInputs): boolean =>
-  !!(inputs.buildEnvironment || inputs.buildUrl);
+const hasBuildInputs = (inputs: FlywayCommandInputs): boolean => !!(inputs.buildEnvironment || inputs.buildUrl);
 
-const getBuildEnvironmentName = (inputs: FlywayMigrationsGenerateInputs): string | undefined => {
+const getBuildEnvironmentName = (inputs: FlywayCommandInputs): string | undefined => {
   if (!hasBuildInputs(inputs)) {
     return undefined;
   }
   return inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
 };
 
-const getBuildEnvironmentArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
+const getBuildEnvironmentArgs = (inputs: FlywayCommandInputs): string[] => {
   const environmentName = getBuildEnvironmentName(inputs);
   if (!environmentName) {
     return [];
@@ -36,7 +35,7 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsGenerateInputs): string
   return args;
 };
 
-const getSharedArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
+const getSharedArgs = (inputs: FlywayCommandInputs): string[] => {
   const args: string[] = [];
 
   if (inputs.workingDirectory) {
@@ -50,7 +49,7 @@ const getSharedArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
   return args;
 };
 
-const getDiffArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
+const getDiffArgs = (inputs: FlywayCommandInputs): string[] => {
   const args: string[] = ["diff", "-target=migrations", ...getBuildEnvironmentArgs(inputs)];
 
   if (inputs.source) {
@@ -67,7 +66,7 @@ const getDiffArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
   return args;
 };
 
-const getGenerateArgs = (inputs: FlywayMigrationsGenerateInputs): string[] => {
+const getGenerateArgs = (inputs: FlywayCommandInputs): string[] => {
   const args: string[] = ["generate"];
 
   if (inputs.migrationTypes) {

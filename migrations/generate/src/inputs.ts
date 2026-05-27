@@ -3,39 +3,27 @@ import * as path from "path";
 import * as core from "@actions/core";
 
 const getInputs = (): FlywayMigrationsGenerateInputs => {
-  const source = core.getInput("source") || undefined;
-  const migrationTypes = core.getInput("migration-types") || undefined;
-  const migrationDescription = core.getInput("migration-description") || undefined;
-  const buildEnvironment = core.getInput("build-environment") || undefined;
-  const buildUrl = core.getInput("build-url") || undefined;
-  const buildUser = core.getInput("build-user") || undefined;
-  const buildPassword = core.getInput("build-password") || undefined;
-  const buildSchemas = core.getInput("build-schemas") || undefined;
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
-  const extraArgs = core.getInput("extra-args") || undefined;
-  const commitMigrations = core.getBooleanInput("commit-migrations");
-  const commitMessage = core.getInput("commit-message") || "Generate Flyway migrations";
-  const commitUserName = core.getInput("commit-user-name") || "github-actions[bot]";
-  const commitUserEmail = core.getInput("commit-user-email") || "41898282+github-actions[bot]@users.noreply.github.com";
-  const commitBranch = core.getInput("commit-branch") || undefined;
 
   return {
-    source,
-    migrationTypes,
-    migrationDescription,
-    buildEnvironment,
-    buildUrl,
-    buildUser,
-    buildPassword,
-    buildSchemas,
+    source: core.getInput("source") || undefined,
+    migrationTypes: core.getInput("migration-types") || undefined,
+    migrationDescription: core.getInput("migration-description") || undefined,
+    buildEnvironment: core.getInput("build-environment") || undefined,
+    buildUrl: core.getInput("build-url") || undefined,
+    buildUser: core.getInput("build-user") || undefined,
+    buildPassword: core.getInput("build-password") || undefined,
+    buildSchemas: core.getInput("build-schemas") || undefined,
     workingDirectory,
-    extraArgs,
-    commitMigrations,
-    commitMessage,
-    commitUserName,
-    commitUserEmail,
-    commitBranch,
+    extraArgs: core.getInput("extra-args") || undefined,
+    commit: {
+      migrations: core.getBooleanInput("commit-migrations"),
+      message: core.getInput("commit-message"),
+      userName: core.getInput("commit-user-name"),
+      userEmail: core.getInput("commit-user-email"),
+      branch: core.getInput("commit-branch") || undefined,
+    },
   };
 };
 

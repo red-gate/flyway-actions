@@ -1,4 +1,4 @@
-import type { FlywayMigrationsGenerateInputs } from "../../src/types.js";
+import type { FlywayCommandInputs } from "../../src/types.js";
 
 const { getDiffArgs, getGenerateArgs } = await import("../../src/flyway/arg-builders.js");
 
@@ -40,7 +40,7 @@ describe("getDiffArgs", () => {
   });
 
   it("should include build environment args", () => {
-    const inputs: FlywayMigrationsGenerateInputs = {
+    const inputs: FlywayCommandInputs = {
       buildEnvironment: "build",
       buildUrl: "jdbc:postgresql://localhost/build",
       buildUser: "admin",

@@ -1,11 +1,15 @@
-import type { FlywayMigrationsGenerateInputs } from "../types.js";
+import type { CommitInputs } from "../types.js";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 
 type CommitResult = { committed: boolean };
 
-const commitAndPush = async (inputs: FlywayMigrationsGenerateInputs, scriptPaths: string[]): Promise<CommitResult> => {
-  if (!inputs.commitMigrations) {
+const commitAndPush = async (
+  commit: CommitInputs,
+  workingDirectory: string | undefined,
+  scriptPaths: string[],
+): Promise<CommitResult> => {
+  if (!commit.migrations) {
     setOutput(false);
     return { committed: false };
   }
@@ -15,7 +19,7 @@ const commitAndPush = async (inputs: FlywayMigrationsGenerateInputs, scriptPaths
     return { committed: false };
   }
 
-  const branch = inputs.commitBranch || process.env.GITHUB_REF_NAME;
+  const branch = commit.branch || process.env.GITHUB_REF_NAME;
   if (!branch) {
     throw new Error(
       'Could not determine the branch to push to. Set the "commit-branch" input or run from a branch context.',
@@ -24,13 +28,10 @@ const commitAndPush = async (inputs: FlywayMigrationsGenerateInputs, scriptPaths
 
   core.startGroup("Committing generated migrations");
   try {
-    const options = { cwd: inputs.workingDirectory };
-    const userName = inputs.commitUserName ?? "github-actions[bot]";
-    const userEmail = inputs.commitUserEmail ?? "41898282+github-actions[bot]@users.noreply.github.com";
-    const message = inputs.commitMessage ?? "Generate Flyway migrations";
+    const options = { cwd: workingDirectory };
 
-    await exec.exec("git", ["config", "user.name", userName], options);
-    await exec.exec("git", ["config", "user.email", userEmail], options);
+    await exec.exec("git", ["config", "user.name", commit.userName], options);
+    await exec.exec("git", ["config", "user.email", commit.userEmail], options);
     await exec.exec("git", ["add", "--", ...scriptPaths], options);
 
     const diffExit = await exec.exec("git", ["diff", "--cached", "--quiet"], {
@@ -43,7 +44,7 @@ const commitAndPush = async (inputs: FlywayMigrationsGenerateInputs, scriptPaths
       return { committed: false };
     }
 
-    await exec.exec("git", ["commit", "-m", message], options);
+    await exec.exec("git", ["commit", "-m", commit.message], options);
     await exec.exec("git", ["push", "origin", `HEAD:${branch}`], options);
 
     setOutput(true);

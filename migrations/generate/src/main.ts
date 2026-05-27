@@ -36,7 +36,8 @@ const run = async (): Promise<void> => {
       const { scripts } = await generate(inputs);
 
       await commitAndPush(
-        inputs,
+        inputs.commit,
+        inputs.workingDirectory,
         scripts.map((s) => s.location),
       );
 

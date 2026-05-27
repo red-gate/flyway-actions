@@ -1,4 +1,4 @@
-import type { FlywayMigrationsGenerateInputs } from "../types.js";
+import type { FlywayCommandInputs } from "../types.js";
 import type { ErrorOutput } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
 import { parseOutput, runFlyway } from "@flyway-actions/shared/flyway-runner";
@@ -37,7 +37,7 @@ type Script = {
 
 type GenerateResult = { scripts: Script[] };
 
-const generate = async (inputs: FlywayMigrationsGenerateInputs): Promise<GenerateResult> => {
+const generate = async (inputs: FlywayCommandInputs): Promise<GenerateResult> => {
   core.startGroup("Running generate");
   try {
     const args = getGenerateArgs(inputs);
