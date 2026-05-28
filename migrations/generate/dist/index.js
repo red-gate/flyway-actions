@@ -10555,7 +10555,7 @@ var dn = () => {
 }, Rn = async (e, t, n) => {
 	if (!e.migrations) return zn(!1), { committed: !1 };
 	if (!n.length) return cn("No generated migrations to commit."), zn(!1), { committed: !1 };
-	let r = e.branch || process.env.GITHUB_REF_NAME;
+	let r = e.branch || process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
 	if (!r) throw Error("Could not determine the branch to push to. Set the \"commit-branch\" input or run from a branch context.");
 	ln("Committing generated migrations");
 	try {
