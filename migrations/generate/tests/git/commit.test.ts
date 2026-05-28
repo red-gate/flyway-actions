@@ -28,11 +28,11 @@ const baseCommit: CommitInputs = {
 
 beforeEach(() => {
   process.env.GITHUB_REF_NAME = "main";
+  delete process.env.GITHUB_HEAD_REF;
 });
 
 afterEach(() => {
   delete process.env.GITHUB_REF_NAME;
-  delete process.env.GITHUB_HEAD_REF;
 });
 
 describe("commitAndPush", () => {

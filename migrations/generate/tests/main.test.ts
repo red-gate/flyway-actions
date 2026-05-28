@@ -207,6 +207,7 @@ describe("run", () => {
 
   it("should commit and push when commit-migrations is enabled and scripts were generated", async () => {
     process.env.GITHUB_REF_NAME = "main";
+    delete process.env.GITHUB_HEAD_REF;
     let flywayCallIndex = 0;
     const flywayResponses: { stdout: Record<string, unknown> }[] = [
       { stdout: { edition: "Enterprise", version: "12.0.0" } },
