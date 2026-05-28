@@ -55,7 +55,7 @@ inputs:
     required: false
     default: '41898282+github-actions[bot]@users.noreply.github.com'
   commit-branch:
-    description: 'Branch to push the commit to. Defaults to the current branch (GITHUB_REF_NAME)'
+    description: 'Branch to push the commit to. Defaults to the PR head branch (GITHUB_HEAD_REF) on pull_request events, otherwise the current branch (GITHUB_REF_NAME)'
     required: false
 
 outputs:

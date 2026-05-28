@@ -19,7 +19,7 @@ const commitAndPush = async (
     return { committed: false };
   }
 
-  const branch = commit.branch || process.env.GITHUB_REF_NAME;
+  const branch = commit.branch || process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
   if (!branch) {
     throw new Error(
       'Could not determine the branch to push to. Set the "commit-branch" input or run from a branch context.',

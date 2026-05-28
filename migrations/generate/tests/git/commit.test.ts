@@ -32,6 +32,7 @@ beforeEach(() => {
 
 afterEach(() => {
   delete process.env.GITHUB_REF_NAME;
+  delete process.env.GITHUB_HEAD_REF;
 });
 
 describe("commitAndPush", () => {
@@ -92,6 +93,31 @@ describe("commitAndPush", () => {
     expect(exec).not.toHaveBeenCalledWith("git", expect.arrayContaining(["commit"]), expect.any(Object));
     expect(exec).not.toHaveBeenCalledWith("git", expect.arrayContaining(["push"]), expect.any(Object));
     expect(setOutput).toHaveBeenCalledWith("committed", "false");
+  });
+
+  it("should push to the PR head branch on pull_request events", async () => {
+    process.env.GITHUB_REF_NAME = "21/merge";
+    process.env.GITHUB_HEAD_REF = "feature/migrations";
+
+    exec.mockImplementation((_cmd: string, args: string[]) =>
+      args.includes("--quiet") ? Promise.resolve(1) : Promise.resolve(0),
+    );
+
+    await commitAndPush(baseCommit, undefined, ["a.sql"]);
+
+    expect(exec).toHaveBeenCalledWith("git", ["push", "origin", "HEAD:feature/migrations"], expect.any(Object));
+  });
+
+  it("should prefer commit-branch over GITHUB_HEAD_REF and GITHUB_REF_NAME", async () => {
+    process.env.GITHUB_HEAD_REF = "feature/migrations";
+
+    exec.mockImplementation((_cmd: string, args: string[]) =>
+      args.includes("--quiet") ? Promise.resolve(1) : Promise.resolve(0),
+    );
+
+    await commitAndPush({ ...baseCommit, branch: "explicit-branch" }, undefined, ["a.sql"]);
+
+    expect(exec).toHaveBeenCalledWith("git", ["push", "origin", "HEAD:explicit-branch"], expect.any(Object));
   });
 
   it("should push to the configured branch when commit-branch is set", async () => {
