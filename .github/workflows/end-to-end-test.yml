@@ -25,6 +25,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -116,6 +117,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -204,6 +206,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -258,6 +261,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6

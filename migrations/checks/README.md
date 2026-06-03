@@ -101,6 +101,7 @@ See the [SQLFluff documentation](https://docs.sqlfluff.com/en/stable/configurati
 permissions:
   contents: read
   security-events: write
+  actions: read
 steps:
   - uses: actions/checkout@v4
   - uses: red-gate/setup-flyway@v3
@@ -117,7 +118,7 @@ steps:
       working-directory: my-flyway-project
 ```
 
-`security-events: write` is required for the action to upload code review results to GitHub Code Scanning. See [Code Scanning](#code-scanning) below.
+`security-events: write` is required for the action to upload code review results to GitHub Code Scanning. Private repositories also need `actions: read`. See [Code Scanning](#code-scanning) below.
 
 ### With Build Database (for Deployment Changes Report)
 
@@ -274,9 +275,9 @@ When using Flyway 12.2+, code review results are automatically uploaded to [GitH
 
 This requires:
 - GitHub Advanced Security to be enabled on the repository (available by default on public repos, requires GitHub Enterprise for private repos)
-- The workflow to have `security-events: write` permission
+- The workflow to have `security-events: write` permission, plus `actions: read` on private repositories
 
-If either requirement is not met, the upload is silently skipped.
+If a requirement is not met, the upload fails but does not fail the action. Without `actions: read` on a private repository the upload fails early with `Resource not accessible by integration`; grant it to surface the accurate Code Scanning error instead.
 
 | Input                        | Description                                            | Required | Default |
 |------------------------------|--------------------------------------------------------|----------|---------|
