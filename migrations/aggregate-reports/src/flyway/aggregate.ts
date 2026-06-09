@@ -24,21 +24,18 @@ const aggregate = async (inputs: FlywayAggregateReportsInputs): Promise<void> =>
     const args = getAggregateArgs(inputs);
     const result = await runFlyway(args, inputs.workingDirectory);
 
-    setOutput(result.exitCode, inputs.reportPath);
+    core.setOutput("exit-code", result.exitCode.toString());
 
     if (result.exitCode !== 0) {
       const errorOutput = parseOutput<ErrorOutput>(result.stdout);
       errorOutput?.error?.message && core.error(errorOutput.error.message);
       throw new Error(`Flyway aggregate failed with exit code ${result.exitCode}`);
     }
+
+    core.setOutput("report-path", inputs.reportPath);
   } finally {
     core.endGroup();
   }
-};
-
-const setOutput = (exitCode: number, reportPath: string) => {
-  core.setOutput("exit-code", exitCode.toString());
-  core.setOutput("report-path", reportPath);
 };
 
 export { aggregate, getAggregateArgs };

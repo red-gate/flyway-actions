@@ -10473,20 +10473,19 @@ var on = () => {
 	rn("Running Flyway aggregate-reports");
 	try {
 		let t = await dn(yn(e), e.workingDirectory);
-		if (xn(t.exitCode, e.reportPath), t.exitCode !== 0) {
+		if ($t("exit-code", t.exitCode.toString()), t.exitCode !== 0) {
 			let e = pn(t.stdout);
 			throw e?.error?.message && tn(e.error.message), Error(`Flyway aggregate failed with exit code ${t.exitCode}`);
 		}
+		$t("report-path", e.reportPath);
 	} finally {
 		an();
 	}
-}, xn = (e, t) => {
-	$t("exit-code", e.toString()), $t("report-path", t);
-}, Sn = () => {
+}, xn = () => {
 	let e = Qt("reports-folder", { required: !0 }), t = Qt("working-directory"), n = t ? c.resolve(t) : void 0, r = Qt("extra-args") || void 0;
 	return {
 		reportsFolder: e,
-		reportPath: c.resolve("aggregate-report.html"),
+		reportPath: c.resolve(n ?? process.cwd(), "aggregate-report.html"),
 		workingDirectory: n,
 		extraArgs: r
 	};
@@ -10504,7 +10503,7 @@ await (async () => {
 			en(t.message);
 			return;
 		}
-		await bn(Sn());
+		await bn(xn());
 	} catch (e) {
 		e instanceof Error ? en(e.message) : en(String(e));
 	}

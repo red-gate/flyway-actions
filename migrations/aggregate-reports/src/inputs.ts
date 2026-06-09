@@ -7,7 +7,7 @@ const getInputs = (): FlywayAggregateReportsInputs => {
   const rawWorkingDirectory = core.getInput("working-directory");
   const workingDirectory = rawWorkingDirectory ? path.resolve(rawWorkingDirectory) : undefined;
   const extraArgs = core.getInput("extra-args") || undefined;
-  const reportPath = path.resolve("aggregate-report.html");
+  const reportPath = path.resolve(workingDirectory ?? process.cwd(), "aggregate-report.html");
 
   return {
     reportsFolder,

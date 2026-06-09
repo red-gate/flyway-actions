@@ -51,13 +51,13 @@ describe("aggregate", () => {
     expect(error).toHaveBeenCalledWith("Something went wrong");
   });
 
-  it("should still set outputs when aggregate fails", async () => {
+  it("should set exit-code but not report-path when aggregate fails", async () => {
     exec.mockImplementation(mockExec({ stdout: {}, exitCode: 1 }));
 
     await expect(aggregate(baseInputs)).rejects.toThrow();
 
     expect(setOutput).toHaveBeenCalledWith("exit-code", "1");
-    expect(setOutput).toHaveBeenCalledWith("report-path", "/workspace/aggregate-report.html");
+    expect(setOutput).not.toHaveBeenCalledWith("report-path", expect.anything());
   });
 });
 
