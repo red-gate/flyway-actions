@@ -1,0 +1,30 @@
+{
+  "name": "@flyway-actions/aggregate-reports",
+  "version": "1.0.0",
+  "description": "GitHub Action to aggregate Flyway JSON drift reports into a single HTML report",
+  "author": "Redgate",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint -c ../../eslint.config.mjs src/ tests/ --max-warnings 0",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "dependencies": {
+    "@actions/core": "3.0.1",
+    "@actions/exec": "3.0.0",
+    "@flyway-actions/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.9.1",
+    "@vitest/coverage-v8": "4.1.8",
+    "vite": "8.0.16",
+    "vite-plugin-checker": "0.14.1",
+    "vitest": "4.1.8"
+  }
+}

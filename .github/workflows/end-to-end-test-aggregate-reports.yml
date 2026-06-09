@@ -70,6 +70,17 @@ jobs:
 
       - name: Run aggregate-reports
         id: aggregate-reports
-        uses: ./aggregate-reports
+        uses: ./migrations/aggregate-reports
         with:
-          working-directory: sample-projects/sqlite
+          reports-folder: sample-projects/sample-drift-reports
+          aggregate-report-name: aggregate-reports-e2e-report
+          aggregate-report-retention-days: '1'
+
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Exit code: ${{ steps.aggregate-reports.outputs.exit-code }}"
+          echo "Report path: ${{ steps.aggregate-reports.outputs.report-path }}"
+          test "${{ steps.aggregate-reports.outputs.exit-code }}" = "0"
+          test -s "${{ steps.aggregate-reports.outputs.report-path }}"

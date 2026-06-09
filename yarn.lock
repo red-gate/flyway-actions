@@ -193,6 +193,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@flyway-actions/aggregate-reports@workspace:migrations/aggregate-reports":
+  version: 0.0.0-use.local
+  resolution: "@flyway-actions/aggregate-reports@workspace:migrations/aggregate-reports"
+  dependencies:
+    "@actions/core": "npm:3.0.1"
+    "@actions/exec": "npm:3.0.0"
+    "@flyway-actions/shared": "workspace:*"
+    "@types/node": "npm:25.9.1"
+    "@vitest/coverage-v8": "npm:4.1.8"
+    vite: "npm:8.0.16"
+    vite-plugin-checker: "npm:0.14.1"
+    vitest: "npm:4.1.8"
+  languageName: unknown
+  linkType: soft
+
 "@flyway-actions/list@workspace:list":
   version: 0.0.0-use.local
   resolution: "@flyway-actions/list@workspace:list"

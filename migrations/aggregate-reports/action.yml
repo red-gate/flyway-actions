@@ -1,0 +1,77 @@
+name: 'Flyway Aggregate Reports Action'
+description: 'A GitHub Action to aggregate Flyway JSON drift reports into a single HTML report'
+author: 'Redgate'
+
+branding:
+  icon: 'database'
+  color: 'red'
+
+inputs:
+  reports-folder:
+    description: 'Path to a folder containing the JSON drift reports to aggregate'
+    required: true
+  working-directory:
+    description: 'Working directory for Flyway'
+    required: false
+  extra-args:
+    description: 'Additional Flyway CLI arguments'
+    required: false
+  skip-aggregate-report-upload:
+    description: 'Skip uploading the aggregate report as a workflow artifact'
+    required: false
+    default: 'false'
+  aggregate-report-name:
+    description: 'Name for the aggregate report artifact'
+    required: false
+    default: 'flyway-aggregate-report'
+  aggregate-report-retention-days:
+    description: 'Number of days to retain the aggregate report artifact'
+    required: false
+    default: '7'
+
+outputs:
+  exit-code:
+    description: 'Flyway exit code'
+    value: ${{ steps.aggregate.outputs.exit-code }}
+  report-path:
+    description: 'Path to the generated aggregate HTML report'
+    value: ${{ steps.aggregate.outputs.report-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check for Node.js
+      if: runner.environment != 'github-hosted'
+      id: check-node
+      run: |
+        if ! command -v node &>/dev/null; then
+          echo "node-not-found=true" >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash
+    - name: Install Node.js
+      if: steps.check-node.outputs.node-not-found == 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+    - name: Run Flyway aggregate
+      id: aggregate
+      run: node "${{ github.action_path }}/dist/index.js"
+      shell: bash
+      env:
+        FLYWAY_INPUTS: ${{ toJSON(inputs) }}
+    - name: Upload aggregate report
+      id: upload-aggregate-report
+      if: inputs.skip-aggregate-report-upload == 'false' && steps.aggregate.outputs.report-path != '' && always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.aggregate-report-name }}
+        path: ${{ steps.aggregate.outputs.report-path }}
+        archive: false
+        retention-days: ${{ inputs.aggregate-report-retention-days }}
+        if-no-files-found: ignore
+    - name: Append artifact to summary
+      if: always() && steps.upload-aggregate-report.outputs.artifact-url != ''
+      shell: bash
+      run: |
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "- [${{ inputs.aggregate-report-name }}](${{ steps.upload-aggregate-report.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"

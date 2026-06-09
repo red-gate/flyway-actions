@@ -1,0 +1,13 @@
+{
+  "individualResults": [
+    {
+      "timestamp": "2026-06-08T10:05:00",
+      "operation": "drift",
+      "database": "billing",
+      "driftDetected": false,
+      "onlyInSource": [],
+      "onlyInTarget": [],
+      "differences": []
+    }
+  ]
+}

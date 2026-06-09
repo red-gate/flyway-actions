@@ -1,0 +1,21 @@
+{
+  "individualResults": [
+    {
+      "timestamp": "2026-06-08T10:00:00",
+      "operation": "drift",
+      "database": "orders",
+      "driftDetected": true,
+      "onlyInSource": [],
+      "onlyInTarget": [
+        {
+          "objectType": "Table",
+          "name": "audit_log",
+          "schema": "dbo",
+          "definitionBefore": "",
+          "definitionAfter": "CREATE TABLE audit_log (id int)"
+        }
+      ],
+      "differences": []
+    }
+  ]
+}

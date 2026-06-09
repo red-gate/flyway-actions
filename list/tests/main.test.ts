@@ -17,6 +17,7 @@ describe("findActions", () => {
     const actions = findActions(REPO_ROOT);
 
     expect(actions).toEqual([
+      "migrations/aggregate-reports",
       "migrations/checks",
       "migrations/deploy",
       "migrations/generate",
