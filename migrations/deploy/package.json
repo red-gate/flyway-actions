@@ -23,7 +23,7 @@
     "@flyway-actions/shared": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
+    "@types/node": "25.9.3",
     "@vitest/coverage-v8": "4.1.8",
     "vite": "8.0.16",
     "vite-plugin-checker": "0.14.1",
