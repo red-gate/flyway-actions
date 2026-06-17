@@ -8,6 +8,7 @@
 
 [![CI](https://github.com/red-gate/flyway-actions/actions/workflows/ci.yml/badge.svg)](https://github.com/red-gate/flyway-actions/actions/workflows/ci.yml)
 [![End-to-End Tests](https://github.com/red-gate/flyway-actions/actions/workflows/end-to-end-test.yml/badge.svg)](https://github.com/red-gate/flyway-actions/actions/workflows/end-to-end-test.yml)
+[![License checks](https://github.com/red-gate/flyway-actions/actions/workflows/license-check.yml/badge.svg)](https://github.com/red-gate/flyway-actions/actions/workflows/license-check.yml)
 
 ---
 
