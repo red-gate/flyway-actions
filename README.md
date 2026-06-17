@@ -29,6 +29,8 @@ These actions can be used both for database deployment pipelines, and for valida
 | [`state/prepare`](state/prepare)                           | Generate deployment script and run pre-deployment checks    |
 | [`state/deploy`](state/deploy)                             | Deploy state-based changes to target database               |
 
+> **Note:** Use the same version across all of these actions in your workflows for compatability. Don't mix and match versions.
+
 ## Usage
 
 > **Tip:** You can generate a ready-to-run GitHub Actions workflow from Flyway Desktop's [Automated Deployment page](https://documentation.red-gate.com/fd/tutorial-generate-a-github-actions-deployment-workflow-with-flyway-desktop-342852947.html). See also [Automating deployment using a CI/CD tool](https://documentation.red-gate.com/fd/automating-deployment-using-a-ci-cd-tool-311660904.html).
