@@ -28,7 +28,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Retrieve secrets from Vault
         uses: hashicorp/vault-action@v4.0.0
         with:
@@ -120,7 +120,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Retrieve secrets from Vault
         uses: hashicorp/vault-action@v4.0.0
         with:
@@ -209,7 +209,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
@@ -264,7 +264,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Retrieve secrets from Vault
         uses: hashicorp/vault-action@v4.0.0
         with:
@@ -336,7 +336,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Retrieve secrets from Vault
         uses: hashicorp/vault-action@v4.0.0
         with:
