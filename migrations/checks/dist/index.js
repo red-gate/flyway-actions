@@ -1229,22 +1229,22 @@ var T = /* @__PURE__ */ p(((e) => {
 		}
 	};
 })), I = /* @__PURE__ */ p(((e, t) => {
-	var n = 0, r = 1e3, i = 499, a, o = Symbol("kFastTimer"), s = [], c = -2, l = -1, u = 0, d = 1;
-	function f() {
-		n += i;
-		let e = 0, t = s.length;
+	var n = 0, r = 1e3, i, a = Symbol("kFastTimer"), o = [], s = -2, c = -1, l = 0, u = 1;
+	function d() {
+		n += 499;
+		let e = 0, t = o.length;
 		for (; e < t;) {
-			let r = s[e];
-			r._state === u ? (r._idleStart = n - i, r._state = d) : r._state === d && n >= r._idleStart + r._idleTimeout && (r._state = l, r._idleStart = -1, r._onTimeout(r._timerArg)), r._state === l ? (r._state = c, --t !== 0 && (s[e] = s[t])) : ++e;
+			let r = o[e];
+			r._state === l ? (r._idleStart = n - 499, r._state = u) : r._state === u && n >= r._idleStart + r._idleTimeout && (r._state = c, r._idleStart = -1, r._onTimeout(r._timerArg)), r._state === c ? (r._state = s, --t !== 0 && (o[e] = o[t])) : ++e;
 		}
-		s.length = t, s.length !== 0 && p();
+		o.length = t, o.length !== 0 && f();
 	}
-	function p() {
-		a ? a.refresh() : (clearTimeout(a), a = setTimeout(f, i), a.unref && a.unref());
+	function f() {
+		i ? i.refresh() : (clearTimeout(i), i = setTimeout(d, 499), i.unref && i.unref());
 	}
-	var m = class {
-		[o] = !0;
-		_state = c;
+	var p = class {
+		[a] = !0;
+		_state = s;
 		_idleTimeout = -1;
 		_idleStart = -1;
 		_onTimeout;
@@ -1253,21 +1253,21 @@ var T = /* @__PURE__ */ p(((e) => {
 			this._onTimeout = e, this._idleTimeout = t, this._timerArg = n, this.refresh();
 		}
 		refresh() {
-			this._state === c && s.push(this), (!a || s.length === 1) && p(), this._state = u;
+			this._state === s && o.push(this), (!i || o.length === 1) && f(), this._state = l;
 		}
 		clear() {
-			this._state = l, this._idleStart = -1;
+			this._state = c, this._idleStart = -1;
 		}
 	};
 	t.exports = {
 		setTimeout(e, t, n) {
-			return t <= r ? setTimeout(e, t, n) : new m(e, t, n);
+			return t <= r ? setTimeout(e, t, n) : new p(e, t, n);
 		},
 		clearTimeout(e) {
-			e[o] ? e.clear() : clearTimeout(e);
+			e[a] ? e.clear() : clearTimeout(e);
 		},
 		setFastTimeout(e, t, n) {
-			return new m(e, t, n);
+			return new p(e, t, n);
 		},
 		clearFastTimeout(e) {
 			e.clear();
@@ -1276,12 +1276,12 @@ var T = /* @__PURE__ */ p(((e) => {
 			return n;
 		},
 		tick(e = 0) {
-			n += e - r + 1, f(), f();
+			n += e - r + 1, d(), d();
 		},
 		reset() {
-			n = 0, s.length = 0, clearTimeout(a), a = null;
+			n = 0, o.length = 0, clearTimeout(i), i = null;
 		},
-		kFastTimer: o
+		kFastTimer: a
 	};
 })), L = /* @__PURE__ */ p(((e, t) => {
 	var n = m("node:net"), r = m("node:assert"), i = j(), { InvalidArgumentError: a, ConnectTimeoutError: o } = O(), s = I();
