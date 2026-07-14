@@ -8,7 +8,12 @@ type FlywayVersionOutput = { edition?: string; version?: string };
 
 type JsonLogModel = { level?: "DEBUG" | "INFO" | "WARN" | "ERROR" | "NOTICE"; message?: string };
 
-type ErrorCode = "CHECK_BUILD_NO_PROVISIONER" | "CHECK_DRIFT_DETECTED" | "COMPARISON_DATABASE_NOT_SUPPORTED";
+type ErrorCode =
+  | "CHECK_BUILD_NO_PROVISIONER"
+  | "CHECK_DRIFT_DETECTED"
+  | "COMPARISON_DATABASE_NOT_SUPPORTED"
+  | "DOCKER_NOT_INSTALLED"
+  | "DOCKER_NOT_RUNNING";
 
 type ErrorOutput = { error?: { errorCode?: ErrorCode; message?: string } };
 

@@ -80,8 +80,11 @@ describe("getTargetEnvironmentArgs", () => {
 });
 
 describe("getBuildEnvironmentArgs", () => {
-  it("should return empty array when no build inputs", () => {
-    expect(getBuildEnvironmentArgs(baseInputs)).toEqual([]);
+  it("should default to a docker-provisioned build environment when no build inputs", () => {
+    const args = getBuildEnvironmentArgs(baseInputs);
+
+    expect(args).toContain("-check.buildEnvironment=default_build");
+    expect(args).toContain("-environments.default_build.provisioner=docker");
   });
 
   it("should include all build connection params", () => {

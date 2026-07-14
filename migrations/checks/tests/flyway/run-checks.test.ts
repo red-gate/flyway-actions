@@ -5,12 +5,14 @@ import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const error = vi.fn();
+const warning = vi.fn();
 const setOutput = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
   error,
+  warning,
   setOutput,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
@@ -50,7 +52,7 @@ describe("runChecks", () => {
 
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
-    expect(checkCalls).toHaveLength(3);
+    expect(checkCalls).toHaveLength(4);
 
     expect(checkCalls[0][1]).toContain("-dryrun");
     expect(checkCalls[0][1]).not.toContain("-code");
@@ -63,6 +65,8 @@ describe("runChecks", () => {
     expect(checkCalls[2][1]).toContain("-drift");
     expect(checkCalls[2][1]).not.toContain("-dryrun");
     expect(checkCalls[2][1]).not.toContain("-code");
+
+    expect(checkCalls[3][1]).toContain("-changes");
   });
 
   it("should make four exec calls when build url is provided", async () => {
@@ -125,7 +129,7 @@ describe("runChecks", () => {
 
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
-    expect(checkCalls).toHaveLength(3);
+    expect(checkCalls).toHaveLength(4);
   });
 
   it("should log friendly message on provisioner error when changes check fails and build-ok-to-erase is not set", async () => {

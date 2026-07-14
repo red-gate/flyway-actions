@@ -122,7 +122,9 @@ steps:
 
 ### With Build Database (for Deployment Changes Report)
 
-Provide a build database to enable the deployment changes report. The build database is a temporary database that Flyway uses to simulate the deployment.
+The deployment changes report needs a build database: a temporary database that Flyway uses to simulate the deployment. If you don't configure one, this action automatically provisions a disposable one using Docker, matching the target database's engine. This requires Docker to be available on the runner (GitHub-hosted runners have it by default) and Flyway Enterprise. If Docker isn't available, or provisioning fails for any other reason, the deployment changes report is skipped with a warning rather than failing the action.
+
+To use a database you manage yourself instead, provide one explicitly:
 
 ```yaml
 - uses: red-gate/flyway-actions/migrations/checks@v2
@@ -201,7 +203,7 @@ This action runs the following pre-deployment checks:
 
 ### Build Database
 
-A build database is required for the deployment changes report. If no build database is configured, this step will be skipped.
+A build database is required for the deployment changes report. If none of the inputs below are set, this action automatically provisions a disposable one using Docker (see [With Build Database](#with-build-database-for-deployment-changes-report) above); if that isn't possible, the report is skipped.
 
 | Input               | Description                                                                            | Required                                                                                                                              | Default |
 |---------------------|----------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|---------|

@@ -21,12 +21,16 @@ describe("runCheckChanges", () => {
     checkForChanges.mockResolvedValue({ exitCode: 0, result: { changedObjectCount: 0 } });
   });
 
-  it("should skip when no build inputs provided", async () => {
-    const result = await runCheckChanges({}, "enterprise");
+  it("should default to a Docker-provisioned build database when no build inputs provided", async () => {
+    await runCheckChanges({}, "enterprise");
 
-    expect(result).toBeUndefined();
-    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
-    expect(checkForChanges).not.toHaveBeenCalled();
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("defaulting to a disposable Docker-provisioned"));
+
+    const args = checkForChanges.mock.calls[0][0] as string[];
+
+    expect(args).toContain("-check.buildEnvironment=default_build");
+    expect(args).toContain("-environments.default_build.provisioner=docker");
+    expect(checkForChanges).toHaveBeenCalledWith(expect.any(Array), undefined, true);
   });
 
   it("should skip for community edition", async () => {

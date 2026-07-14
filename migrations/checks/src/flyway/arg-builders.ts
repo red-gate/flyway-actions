@@ -65,11 +65,12 @@ const getTargetEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[
 };
 
 const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
+
   if (!hasBuildInputs(inputs)) {
-    return [];
+    return [`-check.buildEnvironment=${environmentName}`, `-environments.${environmentName}.provisioner=docker`];
   }
 
-  const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
   const args: string[] = [];
 
   args.push(`-check.buildEnvironment=${environmentName}`);

@@ -19,6 +19,8 @@ type CheckForChangesResult = {
   };
 };
 
+const DOCKER_UNAVAILABLE_ERROR_CODES = new Set(["DOCKER_NOT_INSTALLED", "DOCKER_NOT_RUNNING"]);
+
 const checkForChanges = async (
   args: string[],
   workingDirectory?: string,
@@ -33,6 +35,12 @@ const checkForChanges = async (
       if (errorOutput?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED") {
         core.info(
           "Deployment changes report could not be generated because advanced comparison features are not supported for this database type.",
+        );
+        return { exitCode: 0 };
+      }
+      if (errorOutput?.error?.errorCode && DOCKER_UNAVAILABLE_ERROR_CODES.has(errorOutput.error.errorCode)) {
+        core.warning(
+          `Deployment changes report skipped: ${errorOutput.error.message ?? "Docker is not available on this runner."} Set "build-environment" or "build-url" to configure a build database explicitly.`,
         );
         return { exitCode: 0 };
       }

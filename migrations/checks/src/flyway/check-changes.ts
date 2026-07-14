@@ -11,13 +11,14 @@ const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdi
     );
     return undefined;
   }
-  if (inputs.skipDeploymentChangesReport && hasBuildInputs(inputs)) {
+  if (inputs.skipDeploymentChangesReport) {
     core.info('Skipping deployment changes report: "skip-deployment-changes-report" set to true');
     return undefined;
   }
   if (!hasBuildInputs(inputs)) {
-    core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
-    return undefined;
+    core.info(
+      'No "build-environment" or "build-url" provided: defaulting to a disposable Docker-provisioned build database matching the target database engine. Requires Docker to be available on the runner; the deployment changes report will be skipped if it is not.',
+    );
   }
   return [...getCheckCommandArgs(inputs), "-changes", ...getTargetArgs(inputs), ...getBuildEnvironmentArgs(inputs)];
 };

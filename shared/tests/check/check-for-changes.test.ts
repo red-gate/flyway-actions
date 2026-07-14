@@ -2,11 +2,13 @@ import { mockExec } from "../../src/test-utils.js";
 
 const info = vi.fn();
 const coreError = vi.fn();
+const coreWarning = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
   error: coreError,
+  warning: coreWarning,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
 }));
@@ -125,5 +127,37 @@ describe("checkForChanges", () => {
 
     expect(coreError).toHaveBeenCalledWith("No provisioner");
     expect(coreError).not.toHaveBeenCalledWith(expect.stringContaining("build-ok-to-erase"));
+  });
+
+  it.each(["DOCKER_NOT_INSTALLED", "DOCKER_NOT_RUNNING"])(
+    "should warn and return exitCode 0 for %s",
+    async (errorCode) => {
+      exec.mockImplementation(
+        mockExec({
+          stdout: { error: { errorCode, message: "Could not connect to the Docker daemon" } },
+          exitCode: 1,
+        }),
+      );
+
+      const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
+
+      expect(result).toEqual({ exitCode: 0 });
+      expect(coreWarning).toHaveBeenCalledWith(expect.stringContaining("Could not connect to the Docker daemon"));
+      expect(coreError).not.toHaveBeenCalled();
+    },
+  );
+
+  it("should not treat unrelated errors as Docker unavailability", async () => {
+    exec.mockImplementation(
+      mockExec({
+        stdout: { error: { errorCode: "FAULT", message: "Something went wrong" } },
+        exitCode: 1,
+      }),
+    );
+
+    const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
+
+    expect(result).toEqual({ exitCode: 1 });
+    expect(coreWarning).not.toHaveBeenCalled();
   });
 });
