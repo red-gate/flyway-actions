@@ -54,6 +54,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -119,6 +120,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -186,6 +188,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -250,6 +253,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -300,6 +304,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -348,6 +353,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -417,6 +423,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -465,6 +472,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -535,6 +543,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -603,6 +612,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -672,6 +682,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -729,6 +740,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -772,6 +784,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
@@ -838,6 +851,7 @@ jobs:
       - name: Setup Flyway
         uses: red-gate/setup-flyway@v3
         with:
+          version: 12.10.0
           edition: enterprise
           i-agree-to-the-eula: true
           email: ${{ env.REDGATE_EMAIL }}
