@@ -4551,7 +4551,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			this.#e = e, this.#t = n;
 		}
 		get #o() {
-			return this.#n.noProxy === void 0 ? this.#e !== this.#s : !1;
+			return this.#n.noProxy === void 0 && this.#e !== this.#s;
 		}
 		get #s() {
 			return process.env.no_proxy ?? process.env.NO_PROXY ?? "";
@@ -4774,7 +4774,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			return this.off(e, ...t);
 		}
 		push(e) {
-			return this[u] && e !== null ? (E(this[u], e), this[d] ? super.push(e) : !0) : super.push(e);
+			return this[u] && e !== null ? (E(this[u], e), !this[d] || super.push(e)) : super.push(e);
 		}
 		async text() {
 			return x(this, "text");
@@ -5103,7 +5103,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		}
 		onData(e) {
 			let { res: t } = this;
-			return t ? t.write(e) : !0;
+			return !t || t.write(e);
 		}
 		onComplete(e) {
 			let { res: t } = this;
@@ -5403,7 +5403,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 })), we = /* @__PURE__ */ p(((e, t) => {
 	var { MockNotMatchedError: n } = Se(), { kDispatches: r, kMockAgent: i, kOriginalDispatch: a, kOrigin: o, kGetNetConnect: s } = Ce(), { buildURL: c } = j(), { STATUS_CODES: l } = m("node:http"), { types: { isPromise: u } } = m("node:util");
 	function d(e, t) {
-		return typeof e == "string" ? e === t : e instanceof RegExp ? e.test(t) : typeof e == "function" ? e(t) === !0 : !1;
+		return typeof e == "string" ? e === t : e instanceof RegExp ? e.test(t) : typeof e == "function" && e(t) === !0;
 	}
 	function f(e) {
 		return Object.fromEntries(Object.entries(e).map(([e, t]) => [e.toLocaleLowerCase(), t]));
@@ -5435,7 +5435,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		return n.sort(), [...t, n.toString()].join("?");
 	}
 	function v(e, { path: t, method: n, body: r, headers: i }) {
-		let a = d(e.path, t), o = d(e.method, n), s = e.body === void 0 ? !0 : d(e.body, r), c = g(e, i);
+		let a = d(e.path, t), o = d(e.method, n), s = e.body === void 0 || d(e.body, r), c = g(e, i);
 		return a && o && s && c;
 	}
 	function y(e) {
@@ -5445,7 +5445,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		let r = t.query ? c(t.path, t.query) : t.path, i = typeof r == "string" ? _(r) : r, a = e.filter(({ consumed: e }) => !e).filter(({ path: e }) => d(_(e), i));
 		if (a.length === 0) throw new n(`Mock dispatch not matched for path '${i}'`);
 		if (a = a.filter(({ method: e }) => d(e, t.method)), a.length === 0) throw new n(`Mock dispatch not matched for method '${t.method}' on path '${i}'`);
-		if (a = a.filter(({ body: e }) => e === void 0 ? !0 : d(e, t.body)), a.length === 0) throw new n(`Mock dispatch not matched for body '${t.body}' on path '${i}'`);
+		if (a = a.filter(({ body: e }) => e === void 0 || d(e, t.body)), a.length === 0) throw new n(`Mock dispatch not matched for body '${t.body}' on path '${i}'`);
 		if (a = a.filter((e) => g(e, t.headers)), a.length === 0) throw new n(`Mock dispatch not matched for headers '${typeof t.headers == "object" ? JSON.stringify(t.headers) : t.headers}' on path '${i}'`);
 		return a[0];
 	}
@@ -5541,7 +5541,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 	}
 	function k(e, t) {
 		let n = new URL(t);
-		return e === !0 ? !0 : !!(Array.isArray(e) && e.some((e) => d(e, n.host)));
+		return e === !0 || !!(Array.isArray(e) && e.some((e) => d(e, n.host)));
 	}
 	function A(e) {
 		if (e) {
