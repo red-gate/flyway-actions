@@ -12,6 +12,7 @@ type FlywayMigrationsChecksInputs = {
   buildPassword?: string;
   buildSchemas?: string;
   buildOkToErase?: boolean;
+  buildDockerIAgreeToTheDbVendorsEula?: boolean;
   skipCodeReview?: boolean;
   skipDriftCheck?: boolean;
   skipDeploymentChangesReport?: boolean;

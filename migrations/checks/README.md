@@ -124,6 +124,8 @@ steps:
 
 The deployment changes report needs a build database: a temporary database that Flyway uses to simulate the deployment. If you don't configure one, and `target-url` points at a PostgreSQL, MySQL, SQL Server, or Oracle database, this action automatically provisions a disposable build database using Docker, matching the target engine. This requires Docker to be available on the runner (GitHub-hosted runners have it by default) and Flyway Enterprise. If Docker isn't installed or isn't running, the deployment changes report is skipped with a warning rather than failing the action. For other database engines, or when using `target-environment` instead of `target-url`, the report is skipped unless you configure a build database explicitly.
 
+SQL Server and Oracle Docker images require accepting the database vendor's EULA. Set `build-docker-i-agree-to-the-db-vendors-eula: true` to allow Flyway to provision these containers; without it, the deployment changes report is skipped with a warning explaining why.
+
 To use a database you manage yourself instead, provide one explicitly:
 
 ```yaml
@@ -213,6 +215,7 @@ A build database is required for the deployment changes report. If none of the i
 | `build-password`    | Database password for the build database                                               | No                                                                                                                                    |         |
 | `build-schemas`     | Comma-separated list of schemas for the build database                                 | No                                                                                                                                    |         |
 | `build-ok-to-erase` | Allow Flyway to erase the build database. This will delete all schema and data objects | Required if build database is configured but `build-environment` not set or build environment does not have a provisioner configured. | `false` |
+| `build-docker-i-agree-to-the-db-vendors-eula` | Accept the database vendor EULA required to auto-provision a SQL Server or Oracle Docker build database | No | `false` |
 
 ### Check Options
 

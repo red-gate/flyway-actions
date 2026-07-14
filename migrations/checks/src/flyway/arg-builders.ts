@@ -70,9 +70,17 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
   const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
 
   if (!hasBuildInputs(inputs)) {
-    return canAutoProvisionDocker(inputs)
-      ? [`-check.buildEnvironment=${environmentName}`, `-environments.${environmentName}.provisioner=docker`]
-      : [];
+    if (!canAutoProvisionDocker(inputs)) {
+      return [];
+    }
+    const dockerArgs = [
+      `-check.buildEnvironment=${environmentName}`,
+      `-environments.${environmentName}.provisioner=docker`,
+    ];
+    if (inputs.buildDockerIAgreeToTheDbVendorsEula) {
+      dockerArgs.push(`-environments.${environmentName}.iAgreeToTheDBVendorsEula=true`);
+    }
+    return dockerArgs;
   }
 
   const args: string[] = [];

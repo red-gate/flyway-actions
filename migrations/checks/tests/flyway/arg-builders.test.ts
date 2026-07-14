@@ -102,6 +102,26 @@ describe("getBuildEnvironmentArgs", () => {
     expect(getBuildEnvironmentArgs(baseInputs)).toEqual([]);
   });
 
+  it("should not include the EULA flag by default when auto-provisioning", () => {
+    const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, targetUrl: "jdbc:sqlserver://localhost/db" };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args.some((a) => a.startsWith("-environments.default_build.iAgreeToTheDBVendorsEula"))).toBe(false);
+  });
+
+  it("should include the EULA flag when auto-provisioning and buildDockerIAgreeToTheDbVendorsEula is true", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      targetUrl: "jdbc:sqlserver://localhost/db",
+      buildDockerIAgreeToTheDbVendorsEula: true,
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.iAgreeToTheDBVendorsEula=true");
+  });
+
   it("should include all build connection params", () => {
     const inputs: FlywayMigrationsChecksInputs = {
       ...baseInputs,

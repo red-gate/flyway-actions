@@ -130,6 +130,15 @@ describe("getInputs", () => {
     expect(getBooleanInput).toHaveBeenCalledWith("build-ok-to-erase");
   });
 
+  it("should return build-docker-i-agree-to-the-db-vendors-eula input", () => {
+    getBooleanInput.mockReturnValue(true);
+
+    const inputs = getInputs();
+
+    expect(inputs.buildDockerIAgreeToTheDbVendorsEula).toBe(true);
+    expect(getBooleanInput).toHaveBeenCalledWith("build-docker-i-agree-to-the-db-vendors-eula");
+  });
+
   it("should return pre-deployment report name when provided", () => {
     getInput.mockImplementation((name: string) => {
       if (name === "pre-deployment-report-name") {

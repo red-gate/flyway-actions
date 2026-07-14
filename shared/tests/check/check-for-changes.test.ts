@@ -147,6 +147,26 @@ describe("checkForChanges", () => {
     },
   );
 
+  it("should warn with a helpful message and return exitCode 0 for DOCKER_EULA_NOT_ACCEPTED", async () => {
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "DOCKER_EULA_NOT_ACCEPTED",
+            message: "SQL Server requires you to accept the database vendor's EULA",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
+
+    const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlserver://localhost/db"]);
+
+    expect(result).toEqual({ exitCode: 0 });
+    expect(coreWarning).toHaveBeenCalledWith(expect.stringContaining("build-docker-i-agree-to-the-db-vendors-eula"));
+    expect(coreError).not.toHaveBeenCalled();
+  });
+
   it("should not treat unrelated errors as Docker unavailability", async () => {
     exec.mockImplementation(
       mockExec({
