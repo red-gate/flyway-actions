@@ -120,6 +120,17 @@ describe("run", () => {
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
+    expect(getCheckCalls()).toHaveLength(3);
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should also run the changes report when no build inputs are given but the target engine is docker-provisionable", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:postgresql://localhost/db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
     expect(getCheckCalls()).toHaveLength(4);
     expect(setFailed).not.toHaveBeenCalled();
   });

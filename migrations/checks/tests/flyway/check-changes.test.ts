@@ -21,8 +21,8 @@ describe("runCheckChanges", () => {
     checkForChanges.mockResolvedValue({ exitCode: 0, result: { changedObjectCount: 0 } });
   });
 
-  it("should default to a Docker-provisioned build database when no build inputs provided", async () => {
-    await runCheckChanges({}, "enterprise");
+  it("should default to a Docker-provisioned build database when no build inputs provided and target engine is supported", async () => {
+    await runCheckChanges({ targetUrl: "jdbc:postgresql://localhost/db" }, "enterprise");
 
     expect(info).toHaveBeenCalledWith(expect.stringContaining("defaulting to a disposable Docker-provisioned"));
 
@@ -31,6 +31,22 @@ describe("runCheckChanges", () => {
     expect(args).toContain("-check.buildEnvironment=default_build");
     expect(args).toContain("-environments.default_build.provisioner=docker");
     expect(checkForChanges).toHaveBeenCalledWith(expect.any(Array), undefined, true);
+  });
+
+  it("should skip when no build inputs provided and target engine is not docker-provisionable", async () => {
+    const result = await runCheckChanges({ targetUrl: "jdbc:sqlite:test.db" }, "enterprise");
+
+    expect(result).toBeUndefined();
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
+    expect(checkForChanges).not.toHaveBeenCalled();
+  });
+
+  it("should skip when no build inputs and no target url are provided", async () => {
+    const result = await runCheckChanges({}, "enterprise");
+
+    expect(result).toBeUndefined();
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("Skipping deployment changes report"));
+    expect(checkForChanges).not.toHaveBeenCalled();
   });
 
   it("should skip for community edition", async () => {

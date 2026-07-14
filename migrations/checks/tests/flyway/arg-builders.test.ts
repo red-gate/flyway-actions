@@ -11,7 +11,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getTargetEnvironmentArgs, getCheckCommandArgs, getBuildEnvironmentArgs } =
+const { getTargetEnvironmentArgs, getCheckCommandArgs, getBuildEnvironmentArgs, canAutoProvisionDocker } =
   await import("../../src/flyway/arg-builders.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
@@ -80,11 +80,26 @@ describe("getTargetEnvironmentArgs", () => {
 });
 
 describe("getBuildEnvironmentArgs", () => {
-  it("should default to a docker-provisioned build environment when no build inputs", () => {
-    const args = getBuildEnvironmentArgs(baseInputs);
+  it("should default to a docker-provisioned build environment when no build inputs and target engine is supported", () => {
+    const inputs: FlywayMigrationsChecksInputs = {
+      ...baseInputs,
+      targetUrl: "jdbc:postgresql://localhost/db",
+    };
+
+    const args = getBuildEnvironmentArgs(inputs);
 
     expect(args).toContain("-check.buildEnvironment=default_build");
     expect(args).toContain("-environments.default_build.provisioner=docker");
+  });
+
+  it("should return empty array when no build inputs and target engine is not docker-provisionable", () => {
+    const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, targetUrl: "jdbc:sqlite:test.db" };
+
+    expect(getBuildEnvironmentArgs(inputs)).toEqual([]);
+  });
+
+  it("should return empty array when no build inputs and no target url", () => {
+    expect(getBuildEnvironmentArgs(baseInputs)).toEqual([]);
   });
 
   it("should include all build connection params", () => {
@@ -207,5 +222,24 @@ describe("getCheckCommandArgs", () => {
     const extraArgIndex = args.indexOf("-reportFilename=override-name");
 
     expect(extraArgIndex).toBeGreaterThan(reportNameIndex);
+  });
+});
+
+describe("canAutoProvisionDocker", () => {
+  it.each([
+    "jdbc:postgresql://localhost/db",
+    "jdbc:mysql://localhost/db",
+    "jdbc:sqlserver://localhost/db",
+    "jdbc:oracle:thin:@localhost/db",
+  ])("should return true for docker-provisionable url %s", (targetUrl) => {
+    expect(canAutoProvisionDocker({ ...baseInputs, targetUrl })).toBe(true);
+  });
+
+  it("should return false for a non-docker-provisionable engine such as sqlite", () => {
+    expect(canAutoProvisionDocker({ ...baseInputs, targetUrl: "jdbc:sqlite:test.db" })).toBe(false);
+  });
+
+  it("should return false when no target url is provided", () => {
+    expect(canAutoProvisionDocker(baseInputs)).toBe(false);
   });
 });

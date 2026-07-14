@@ -2,7 +2,13 @@ import type { FlywayMigrationsChecksInputs } from "../types.js";
 import type { FlywayEdition } from "@flyway-actions/shared/types";
 import * as core from "@actions/core";
 import { checkForChanges } from "@flyway-actions/shared/check-for-changes";
-import { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, hasBuildInputs } from "./arg-builders.js";
+import {
+  canAutoProvisionDocker,
+  getBuildEnvironmentArgs,
+  getCheckCommandArgs,
+  getTargetArgs,
+  hasBuildInputs,
+} from "./arg-builders.js";
 
 const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdition): string[] | undefined => {
   if (edition !== "enterprise") {
@@ -16,6 +22,10 @@ const getChangesArgs = (inputs: FlywayMigrationsChecksInputs, edition: FlywayEdi
     return undefined;
   }
   if (!hasBuildInputs(inputs)) {
+    if (!canAutoProvisionDocker(inputs)) {
+      core.info('Skipping deployment changes report: no "build-environment" or "build-url" provided');
+      return undefined;
+    }
     core.info(
       'No "build-environment" or "build-url" provided: defaulting to a disposable Docker-provisioned build database matching the target database engine. Requires Docker to be available on the runner; the deployment changes report will be skipped if it is not.',
     );
