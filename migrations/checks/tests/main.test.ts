@@ -7,6 +7,7 @@ const setOutput = vi.fn();
 const setSecret = vi.fn();
 const info = vi.fn();
 const error = vi.fn();
+const warning = vi.fn();
 const startGroup = vi.fn();
 const endGroup = vi.fn();
 const exec = vi.fn();
@@ -32,6 +33,7 @@ const setupMocks = () => {
     setSecret,
     info,
     error,
+    warning,
     startGroup,
     endGroup,
     summary,
@@ -119,6 +121,17 @@ describe("run", () => {
     await vi.dynamicImportSettled();
 
     expect(getCheckCalls()).toHaveLength(3);
+    expect(setFailed).not.toHaveBeenCalled();
+  });
+
+  it("should also run the changes report when no build inputs are given but the target engine is docker-provisionable", async () => {
+    setupChecksMock("Enterprise");
+    setupInputMock({ "target-url": "jdbc:postgresql://localhost/db" });
+
+    await import("../src/main.js");
+    await vi.dynamicImportSettled();
+
+    expect(getCheckCalls()).toHaveLength(4);
     expect(setFailed).not.toHaveBeenCalled();
   });
 

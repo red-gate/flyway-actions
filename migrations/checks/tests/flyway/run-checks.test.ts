@@ -5,12 +5,14 @@ import { mockExec } from "@flyway-actions/shared/test-utils";
 
 const info = vi.fn();
 const error = vi.fn();
+const warning = vi.fn();
 const setOutput = vi.fn();
 const exec = vi.fn();
 
 vi.doMock("@actions/core", () => ({
   info,
   error,
+  warning,
   setOutput,
   startGroup: vi.fn(),
   endGroup: vi.fn(),
@@ -74,6 +76,27 @@ describe("runChecks", () => {
 
     expect(checkCalls).toHaveLength(4);
     expect(checkCalls[3][1]).toContain("-changes");
+  });
+
+  it("should make four exec calls when target engine is docker-provisionable and no build inputs are given", async () => {
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks({ targetUrl: "jdbc:postgresql://localhost/db" }, "enterprise");
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    expect(checkCalls).toHaveLength(4);
+    expect(checkCalls[3][1]).toContain("-environments.default_build.provisioner=docker");
+  });
+
+  it("should not attempt the changes report when target engine is not docker-provisionable and no build inputs are given", async () => {
+    exec.mockImplementation(mockExec({ stdout: {} }));
+
+    await runChecks({ targetUrl: "jdbc:sqlite:test.db" }, "enterprise");
+
+    const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
+
+    expect(checkCalls).toHaveLength(3);
   });
 
   it("should only include build args in the changes invocation", async () => {

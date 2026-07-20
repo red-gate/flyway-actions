@@ -10543,54 +10543,54 @@ var dn = () => {
 }, Cn = (e) => Sn(e) ? { success: !0 } : {
 	success: !1,
 	message: `Flyway version ${e.trim() || "unknown"} is below the minimum required version ${yn}. Please upgrade Flyway.`
-}, wn = async (e, t, n) => {
+}, wn = /* @__PURE__ */ new Set(["DOCKER_NOT_INSTALLED", "DOCKER_NOT_RUNNING"]), Tn = async (e, t, n) => {
 	ln("Running deployment changes report");
 	try {
 		let r = await gn(e, t);
 		if (r.exitCode !== 0) {
 			let e = vn(r.stdout);
-			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (cn("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? on("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && on(e.error.message), { exitCode: r.exitCode });
+			return e?.error?.errorCode === "COMPARISON_DATABASE_NOT_SUPPORTED" ? (cn("Deployment changes report could not be generated because advanced comparison features are not supported for this database type."), { exitCode: 0 }) : e?.error?.errorCode === "DOCKER_EULA_NOT_ACCEPTED" ? (sn(`Deployment changes report skipped: ${e.error.message ?? "The database vendor's EULA has not been accepted."} Set "build-docker-i-agree-to-the-db-vendors-eula" to "true" to allow Flyway to provision a container for the build environment, or configure "build-environment"/"build-url" to use a database you manage yourself.`), { exitCode: 0 }) : e?.error?.errorCode && wn.has(e.error.errorCode) ? (sn(`Deployment changes report skipped: ${e.error.message ?? "Docker is not available on this runner."} Set "build-environment" or "build-url" to configure a build database explicitly.`), { exitCode: 0 }) : (e?.error?.errorCode === "CHECK_BUILD_NO_PROVISIONER" && n ? on("The build database needs to be erasable. Set the \"build-ok-to-erase\" input to \"true\" to allow Flyway to erase the build database. Note that this will drop all schema objects and data from the database.") : e?.error?.message && on(e.error.message), { exitCode: r.exitCode });
 		}
 		let i = vn(r.stdout);
 		return {
 			exitCode: r.exitCode,
 			result: {
 				reportPath: i?.htmlReport,
-				changedObjectCount: Tn(i)
+				changedObjectCount: En(i)
 			}
 		};
 	} finally {
 		un();
 	}
-}, Tn = (e) => {
+}, En = (e) => {
 	let t = e?.individualResults?.filter((e) => e.operation === "changes");
 	return t?.length ? t.reduce((e, t) => e + (t.onlyInSource?.length ?? 0) + (t.onlyInTarget?.length ?? 0) + (t.differences?.length ?? 0), 0) : 0;
-}, En = (e, t) => {
+}, Dn = (e, t) => {
 	let n = [];
 	e.targetEnvironment && n.push(`-${t}=${e.targetEnvironment}`);
 	let r = e.targetEnvironment && e.targetEnvironment !== "default" ? `-environments.${e.targetEnvironment}.` : "-";
 	return e.targetUrl && n.push(`${r}url=${e.targetUrl}`), e.targetUser && n.push(`${r}user=${e.targetUser}`), e.targetPassword && n.push(`${r}password=${e.targetPassword}`), e.targetSchemas && n.push(`${r}schemas=${e.targetSchemas}`), n;
-}, Dn = (e) => {
+}, On = (e) => {
 	let t = [
 		"prepare",
 		"-source=schemaModel",
-		...En(e, "target")
+		...Dn(e, "target")
 	];
 	e.targetEnvironment && t.push(`-environment=${e.targetEnvironment}`);
 	let n = e.generateUndo ? "deploy,undo" : "deploy";
 	return t.push(`-types=${n}`), e.deploymentScriptName && t.push(`-scriptFilename=deployments/${e.deploymentScriptName}.sql`), e.undoScriptName && t.push(`-undoFilename=deployments/${e.undoScriptName}.sql`), e.provisionMode && t.push(`-provisionMode=${e.provisionMode}`), e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
-}, On = (e) => {
-	let t = [...En(e, "environment")];
+}, kn = (e) => {
+	let t = [...Dn(e, "environment")];
 	return e.workingDirectory && t.push(`-workingDirectory=${e.workingDirectory}`), e.extraArgs && t.push(...mn(e.extraArgs)), t;
-}, kn = (e) => En(e, "environment"), An = (e) => [
+}, An = (e) => Dn(e, "environment"), jn = (e) => [
 	"check",
 	"-changes",
-	...kn(e),
+	...An(e),
 	"-changesSource=schemaModel",
 	...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
 	...e.extraArgs ? mn(e.extraArgs) : [],
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], jn = async (e, t) => {
+], Mn = async (e, t) => {
 	if (t !== "enterprise") {
 		cn(`Skipping deployment changes report: not available in ${t === "community" ? "Community" : "Teams"} edition`);
 		return;
@@ -10599,19 +10599,19 @@ var dn = () => {
 		cn("Skipping deployment changes report: \"skip-deployment-changes-report\" set to true");
 		return;
 	}
-	let { exitCode: n, result: r } = await wn(An(e), e.workingDirectory);
+	let { exitCode: n, result: r } = await Tn(jn(e), e.workingDirectory);
 	return r && rn("changed-object-count", r.changedObjectCount.toString()), {
 		exitCode: n,
 		result: r
 	};
-}, Mn = async (e, t) => {
+}, Nn = async (e, t) => {
 	ln("Running code review");
 	try {
 		let n = await gn(e, t);
 		if (n.exitCode !== 0) {
 			let e = vn(n.stdout);
 			e?.error?.message && on(e.error.message);
-			let t = Nn(e?.error?.results ?? []);
+			let t = Pn(e?.error?.results ?? []);
 			return {
 				exitCode: n.exitCode,
 				result: {
@@ -10621,7 +10621,7 @@ var dn = () => {
 				}
 			};
 		}
-		let r = vn(n.stdout), i = Nn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
+		let r = vn(n.stdout), i = Pn((r?.individualResults?.filter((e) => e.operation === "code"))?.flatMap((e) => e.results ?? []) ?? []);
 		return {
 			exitCode: n.exitCode,
 			result: {
@@ -10633,15 +10633,15 @@ var dn = () => {
 	} finally {
 		un();
 	}
-}, Nn = (e) => {
+}, Pn = (e) => {
 	let t = e.flatMap((e) => e.violations ?? []).map((e) => e.code).filter((e) => !!e);
 	return {
 		violationCount: t.length,
 		violationCodes: [...new Set(t)]
 	};
-}, Pn = (e, t) => {
-	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
 }, Fn = (e, t) => {
+	if (e) return f.isAbsolute(e) ? e : t ? f.join(t, e) : e;
+}, In = (e, t) => {
 	if (e.skipCodeReview) {
 		cn("Skipping code review: \"skip-code-review\" set to true");
 		return;
@@ -10649,7 +10649,7 @@ var dn = () => {
 	return [
 		"check",
 		"-code",
-		...kn(e),
+		...An(e),
 		...e.workingDirectory ? [`-workingDirectory=${e.workingDirectory}`] : [],
 		...e.extraArgs ? mn(e.extraArgs) : [],
 		...e.failOnCodeReview ? ["-check.code.failOnError=true"] : [],
@@ -10657,14 +10657,14 @@ var dn = () => {
 		"-check.scope=script",
 		`-check.scriptFilename=${t}`
 	];
-}, In = async (e, t) => {
-	let n = Fn(e, t);
+}, Ln = async (e, t) => {
+	let n = In(e, t);
 	if (!n) return;
-	let r = await Mn(n, e.workingDirectory);
+	let r = await Nn(n, e.workingDirectory);
 	rn("code-violation-count", r.result.violationCount.toString()), rn("code-violation-codes", r.result.violationCodes.join(","));
 	let i = r.result.sarifReportPath;
-	return rn("sarif-path", i ? Pn(i, e.workingDirectory) : ""), r;
-}, Ln = async (e, t) => {
+	return rn("sarif-path", i ? Fn(i, e.workingDirectory) : ""), r;
+}, Rn = async (e, t) => {
 	ln("Checking for drift");
 	try {
 		let n = await gn(e, t);
@@ -10703,34 +10703,34 @@ var dn = () => {
 	} finally {
 		un();
 	}
-}, Rn = (e) => [
+}, zn = (e) => [
 	"check",
 	"-drift",
 	"-check.failOnDrift=true",
-	...On(e),
+	...kn(e),
 	...e.preDeploymentReportName ? [`-reportFilename=${e.preDeploymentReportName}`] : []
-], zn = async (e) => {
-	let { exitCode: t, result: n } = await Ln(Rn(e), e.workingDirectory), r = Pn(n.reportPath, e.workingDirectory), i = Pn(n.driftResolutionFolder, e.workingDirectory);
+], Bn = async (e) => {
+	let { exitCode: t, result: n } = await Rn(zn(e), e.workingDirectory), r = Fn(n.reportPath, e.workingDirectory), i = Fn(n.driftResolutionFolder, e.workingDirectory);
 	return rn("exit-code", t.toString()), n.driftDetected !== void 0 && rn("drift-detected", n.driftDetected.toString()), r !== void 0 && rn("report-path", r), i !== void 0 && rn("drift-resolution-folder", i), {
 		exitCode: t,
 		result: n
 	};
-}, Bn = async (e) => {
+}, Vn = async (e) => {
 	ln("Running state-based prepare");
 	try {
-		let t = await gn(Dn(e), e.workingDirectory);
+		let t = await gn(On(e), e.workingDirectory);
 		if (t.exitCode !== 0) {
 			let e = vn(t.stdout);
-			throw e?.error?.message && on(e.error.message), Vn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
+			throw e?.error?.message && on(e.error.message), Hn(t.exitCode), Error(`Flyway prepare failed with exit code ${t.exitCode}`);
 		}
 		let n = vn(t.stdout);
-		return Vn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
+		return Hn(t.exitCode, n?.scriptFilename, n?.undoFilename), { scriptPath: n?.scriptFilename };
 	} finally {
 		un();
 	}
-}, Vn = (e, t, n) => {
+}, Hn = (e, t, n) => {
 	rn("exit-code", e.toString()), t && rn("script-path", t), n && rn("undo-script-path", n);
-}, Hn = () => {
+}, Un = () => {
 	let e = tn("target-environment") || void 0, t = tn("target-url") || void 0, n = tn("target-user") || void 0, r = tn("target-password") || void 0, i = tn("target-schemas") || void 0, a = nn("generate-undo"), o = nn("fail-on-drift"), s = nn("fail-on-code-review"), l = nn("skip-drift-check"), u = nn("skip-code-review"), d = nn("skip-deployment-changes-report"), f = tn("provision-mode") || void 0, p = tn("working-directory");
 	return {
 		targetEnvironment: e,
@@ -10751,12 +10751,12 @@ var dn = () => {
 		deploymentScriptName: tn("deployment-script-name") || `D__${e ?? "default"}_deployment`,
 		undoScriptName: tn("undo-script-name") || `DU__${e ?? "default"}_undo`
 	};
-}, Un = (e) => {
+}, Wn = (e) => {
 	e.targetPassword && en(e.targetPassword);
-}, Wn = (e, t) => {
+}, Gn = (e, t) => {
 	let n;
 	switch (!0) {
-		case Gn(e):
+		case Kn(e):
 			n = {
 				stem: e,
 				singularSuffix: "",
@@ -10791,7 +10791,7 @@ var dn = () => {
 		};
 	}
 	return t === void 0 ? `${n.stem}${n.pluralSuffix}` : `${t} ${n.stem}${t === 1 ? n.singularSuffix : n.pluralSuffix}`;
-}, Gn = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), Kn = (e) => e ? e.exitCode === 0 ? `Passed - ${Wn("violation", e.violationCount)}` : `Failed${e.violationCount > 0 ? ` - ${Wn("violation", e.violationCount)}` : ""}` : "Skipped", qn = (e) => e ? e.exitCode === 0 ? Wn("changed object", e.changedObjectCount) : "Failed" : "Skipped", Jn = async (e) => {
+}, Kn = (e) => /(^|[aeiou\s\W\d_])y$/i.test(e), qn = (e) => e ? e.exitCode === 0 ? `Passed - ${Gn("violation", e.violationCount)}` : `Failed${e.violationCount > 0 ? ` - ${Gn("violation", e.violationCount)}` : ""}` : "Skipped", Jn = (e) => e ? e.exitCode === 0 ? Gn("changed object", e.changedObjectCount) : "Failed" : "Skipped", Yn = async (e) => {
 	await Ct.addHeading("Flyway State Prepare", 2).addTable([
 		[{
 			data: "Check",
@@ -10801,8 +10801,8 @@ var dn = () => {
 			header: !0
 		}],
 		["Drift", e.driftStatus ?? "Skipped"],
-		["Code Review", Kn(e.code)],
-		["Deployment Changes", qn(e.changes)]
+		["Code Review", qn(e.code)],
+		["Deployment Changes", Jn(e.changes)]
 	]).write();
 };
 if (process.env.FLYWAY_INPUTS) for (let [e, t] of Object.entries(JSON.parse(process.env.FLYWAY_INPUTS))) t && (process.env[`INPUT_${e.toUpperCase()}`] = t);
@@ -10822,27 +10822,27 @@ await (async () => {
 			an(`State-based deployments require Flyway Enterprise edition (current edition: ${e.edition}).`);
 			return;
 		}
-		let n = Hn();
+		let n = Un();
 		if (!n.targetEnvironment && !n.targetUrl) {
 			an("Either \"target-environment\" or \"target-url\" must be provided for Flyway to connect to a database.");
 			return;
 		}
-		Un(n);
+		Wn(n);
 		let r;
 		if (n.skipDriftCheck) cn("Skipping drift check: \"skip-drift-check\" set to true");
 		else {
-			let { result: { driftDetected: e, driftCheckSkipped: t, comparisonSupported: i } } = await zn(n);
+			let { result: { driftDetected: e, driftCheckSkipped: t, comparisonSupported: i } } = await Bn(n);
 			if (e) {
 				if (r = "Drift detected", n.failOnDrift) {
-					await Jn({ driftStatus: r }), an("Drift detected. Aborting prepare.");
+					await Yn({ driftStatus: r }), an("Drift detected. Aborting prepare.");
 					return;
 				}
 				sn("Drift detected. Continuing because fail-on-drift is disabled.");
 			} else r = i ? t ? "Drift check not run - skipped because no snapshot in database (expected for initial deployment)" : "No drift" : "Drift check not run - drift analysis is not supported for this database type";
 		}
-		let i = await jn(n, e.edition), { scriptPath: a } = await Bn(n);
+		let i = await Mn(n, e.edition), { scriptPath: a } = await Vn(n);
 		if (!a) {
-			sn("No script path returned from prepare. Skipping code review."), await Jn({
+			sn("No script path returned from prepare. Skipping code review."), await Yn({
 				driftStatus: r,
 				changes: i?.result ? {
 					exitCode: i.exitCode,
@@ -10851,8 +10851,8 @@ await (async () => {
 			});
 			return;
 		}
-		let o = await In(n, a);
-		if (await Jn({
+		let o = await Ln(n, a);
+		if (await Yn({
 			driftStatus: r,
 			code: o ? {
 				exitCode: o.exitCode,

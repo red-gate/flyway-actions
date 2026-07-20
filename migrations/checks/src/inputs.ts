@@ -16,6 +16,7 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
   const buildPassword = core.getInput("build-password") || undefined;
   const buildSchemas = core.getInput("build-schemas") || undefined;
   const buildOkToErase = core.getBooleanInput("build-ok-to-erase");
+  const buildDockerIAgreeToTheDbVendorsEula = core.getBooleanInput("build-docker-i-agree-to-the-db-vendors-eula");
   const skipCodeReview = core.getBooleanInput("skip-code-review");
   const skipDriftCheck = core.getBooleanInput("skip-drift-check");
   const skipDeploymentChangesReport = core.getBooleanInput("skip-deployment-changes-report");
@@ -42,6 +43,7 @@ const getInputs = (): FlywayMigrationsChecksInputs => {
     buildPassword,
     buildSchemas,
     buildOkToErase,
+    buildDockerIAgreeToTheDbVendorsEula,
     skipCodeReview,
     skipDriftCheck,
     skipDeploymentChangesReport,

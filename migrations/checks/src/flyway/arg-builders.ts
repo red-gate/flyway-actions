@@ -3,6 +3,8 @@ import { parseExtraArgs } from "@flyway-actions/shared/flyway-runner";
 
 const DEFAULT_BUILD_ENVIRONMENT = "default_build";
 
+const DOCKER_PROVISIONABLE_URL_PREFIXES = ["jdbc:postgresql:", "jdbc:mysql:", "jdbc:sqlserver:", "jdbc:oracle:"];
+
 const getCheckCommandArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
   const args: string[] = ["check"];
 
@@ -65,11 +67,22 @@ const getTargetEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[
 };
 
 const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[] => {
+  const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
+
   if (!hasBuildInputs(inputs)) {
-    return [];
+    if (!canAutoProvisionDocker(inputs)) {
+      return [];
+    }
+    const dockerArgs = [
+      `-check.buildEnvironment=${environmentName}`,
+      `-environments.${environmentName}.provisioner=docker`,
+    ];
+    if (inputs.buildDockerIAgreeToTheDbVendorsEula) {
+      dockerArgs.push(`-environments.${environmentName}.iAgreeToTheDBVendorsEula=true`);
+    }
+    return dockerArgs;
   }
 
-  const environmentName = inputs.buildEnvironment ?? DEFAULT_BUILD_ENVIRONMENT;
   const args: string[] = [];
 
   args.push(`-check.buildEnvironment=${environmentName}`);
@@ -100,4 +113,16 @@ const getBuildEnvironmentArgs = (inputs: FlywayMigrationsChecksInputs): string[]
 const hasBuildInputs = (inputs: FlywayMigrationsChecksInputs): boolean =>
   !!(inputs.buildEnvironment || inputs.buildUrl);
 
-export { getBuildEnvironmentArgs, getCheckCommandArgs, getTargetArgs, getTargetEnvironmentArgs, hasBuildInputs };
+const canAutoProvisionDocker = (inputs: FlywayMigrationsChecksInputs): boolean => {
+  const url = inputs.targetUrl?.toLowerCase();
+  return !!url && DOCKER_PROVISIONABLE_URL_PREFIXES.some((prefix) => url.startsWith(prefix));
+};
+
+export {
+  canAutoProvisionDocker,
+  getBuildEnvironmentArgs,
+  getCheckCommandArgs,
+  getTargetArgs,
+  getTargetEnvironmentArgs,
+  hasBuildInputs,
+};

@@ -48,6 +48,10 @@ inputs:
     description: 'Allow Flyway to erase the build database. This will delete all schema and data objects'
     required: false
     default: 'false'
+  build-docker-i-agree-to-the-db-vendors-eula:
+    description: 'Accept the database vendor EULA required to auto-provision a SQL Server or Oracle Docker build database'
+    required: false
+    default: 'false'
   skip-code-review:
     description: 'Skip the code review check'
     required: false
