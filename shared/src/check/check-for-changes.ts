@@ -20,6 +20,7 @@ type CheckForChangesResult = {
 };
 
 const DOCKER_UNAVAILABLE_ERROR_CODES = new Set(["DOCKER_NOT_INSTALLED", "DOCKER_NOT_RUNNING"]);
+const DOCKER_UNSUPPORTED_ENGINE_MESSAGE = "for the `docker` provisioner";
 
 const checkForChanges = async (
   args: string[],
@@ -47,6 +48,15 @@ const checkForChanges = async (
       if (errorOutput?.error?.errorCode && DOCKER_UNAVAILABLE_ERROR_CODES.has(errorOutput.error.errorCode)) {
         core.warning(
           `Deployment changes report skipped: ${errorOutput.error.message ?? "Docker is not available on this runner."} Set "build-environment" or "build-url" to configure a build database explicitly.`,
+        );
+        return { exitCode: 0 };
+      }
+      if (
+        errorOutput?.error?.errorCode === "CONFIGURATION" &&
+        errorOutput.error.message?.includes(DOCKER_UNSUPPORTED_ENGINE_MESSAGE)
+      ) {
+        core.warning(
+          `Deployment changes report skipped: ${errorOutput.error.message}. Set "build-environment" or "build-url" to configure a build database explicitly.`,
         );
         return { exitCode: 0 };
       }

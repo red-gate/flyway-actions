@@ -11,7 +11,7 @@ vi.doMock("@actions/exec", () => ({
   exec,
 }));
 
-const { getTargetEnvironmentArgs, getCheckCommandArgs, getBuildEnvironmentArgs, canAutoProvisionDocker } =
+const { getTargetEnvironmentArgs, getCheckCommandArgs, getBuildEnvironmentArgs } =
   await import("../../src/flyway/arg-builders.js");
 
 const baseInputs: FlywayMigrationsChecksInputs = {};
@@ -80,7 +80,7 @@ describe("getTargetEnvironmentArgs", () => {
 });
 
 describe("getBuildEnvironmentArgs", () => {
-  it("should default to a docker-provisioned build environment when no build inputs and target engine is supported", () => {
+  it("should default to a docker-provisioned build environment when no build inputs are given", () => {
     const inputs: FlywayMigrationsChecksInputs = {
       ...baseInputs,
       targetUrl: "jdbc:postgresql://localhost/db",
@@ -92,14 +92,34 @@ describe("getBuildEnvironmentArgs", () => {
     expect(args).toContain("-environments.default_build.provisioner=docker");
   });
 
-  it("should return empty array when no build inputs and target engine is not docker-provisionable", () => {
+  it("should default to a docker-provisioned build environment even when the target engine can't be inferred from a raw url", () => {
     const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, targetUrl: "jdbc:sqlite:test.db" };
 
-    expect(getBuildEnvironmentArgs(inputs)).toEqual([]);
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.provisioner=docker");
   });
 
-  it("should return empty array when no build inputs and no target url", () => {
-    expect(getBuildEnvironmentArgs(baseInputs)).toEqual([]);
+  it("should default to a docker-provisioned build environment even when no target url is given", () => {
+    const args = getBuildEnvironmentArgs(baseInputs);
+
+    expect(args).toContain("-environments.default_build.provisioner=docker");
+  });
+
+  it("should point the docker resolver's sourceEnvironment at the named target environment", () => {
+    const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, targetEnvironment: "production" };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.resolvers.docker.sourceEnvironment=production");
+  });
+
+  it("should point the docker resolver's sourceEnvironment at the default environment when no target environment is given", () => {
+    const inputs: FlywayMigrationsChecksInputs = { ...baseInputs, targetUrl: "jdbc:postgresql://localhost/db" };
+
+    const args = getBuildEnvironmentArgs(inputs);
+
+    expect(args).toContain("-environments.default_build.resolvers.docker.sourceEnvironment=default");
   });
 
   it("should not include the EULA flag by default when auto-provisioning", () => {
@@ -107,10 +127,12 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args.some((a) => a.startsWith("-environments.default_build.iAgreeToTheDBVendorsEula"))).toBe(false);
+    expect(
+      args.some((a) => a.startsWith("-environments.default_build.resolvers.docker.iAgreeToTheDBVendorsEula")),
+    ).toBe(false);
   });
 
-  it("should include the EULA flag when auto-provisioning and buildDockerIAgreeToTheDbVendorsEula is true", () => {
+  it("should include the EULA flag under resolvers.docker when auto-provisioning and buildDockerIAgreeToTheDbVendorsEula is true", () => {
     const inputs: FlywayMigrationsChecksInputs = {
       ...baseInputs,
       targetUrl: "jdbc:sqlserver://localhost/db",
@@ -119,7 +141,7 @@ describe("getBuildEnvironmentArgs", () => {
 
     const args = getBuildEnvironmentArgs(inputs);
 
-    expect(args).toContain("-environments.default_build.iAgreeToTheDBVendorsEula=true");
+    expect(args).toContain("-environments.default_build.resolvers.docker.iAgreeToTheDBVendorsEula=true");
   });
 
   it("should include all build connection params", () => {
@@ -242,24 +264,5 @@ describe("getCheckCommandArgs", () => {
     const extraArgIndex = args.indexOf("-reportFilename=override-name");
 
     expect(extraArgIndex).toBeGreaterThan(reportNameIndex);
-  });
-});
-
-describe("canAutoProvisionDocker", () => {
-  it.each([
-    "jdbc:postgresql://localhost/db",
-    "jdbc:mysql://localhost/db",
-    "jdbc:sqlserver://localhost/db",
-    "jdbc:oracle:thin:@localhost/db",
-  ])("should return true for docker-provisionable url %s", (targetUrl) => {
-    expect(canAutoProvisionDocker({ ...baseInputs, targetUrl })).toBe(true);
-  });
-
-  it("should return false for a non-docker-provisionable engine such as sqlite", () => {
-    expect(canAutoProvisionDocker({ ...baseInputs, targetUrl: "jdbc:sqlite:test.db" })).toBe(false);
-  });
-
-  it("should return false when no target url is provided", () => {
-    expect(canAutoProvisionDocker(baseInputs)).toBe(false);
   });
 });

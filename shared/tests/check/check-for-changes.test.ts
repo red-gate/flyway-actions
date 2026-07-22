@@ -180,4 +180,42 @@ describe("checkForChanges", () => {
     expect(result).toEqual({ exitCode: 1 });
     expect(coreWarning).not.toHaveBeenCalled();
   });
+
+  it("should warn and return exitCode 0 when the target's engine is not supported by the docker provisioner", async () => {
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: {
+            errorCode: "CONFIGURATION",
+            message:
+              "Unsupported `databaseEngine` 'sqlite' for the `docker` provisioner. Supported engines are: postgresql, mysql, sqlserver, oracle.",
+          },
+        },
+        exitCode: 1,
+      }),
+    );
+
+    const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
+
+    expect(result).toEqual({ exitCode: 0 });
+    expect(coreWarning).toHaveBeenCalledWith(expect.stringContaining("Unsupported `databaseEngine` 'sqlite'"));
+    expect(coreError).not.toHaveBeenCalled();
+  });
+
+  it("should not swallow unrelated CONFIGURATION errors that don't mention the docker provisioner", async () => {
+    exec.mockImplementation(
+      mockExec({
+        stdout: {
+          error: { errorCode: "CONFIGURATION", message: "Could not resolve secret from Vault" },
+        },
+        exitCode: 1,
+      }),
+    );
+
+    const result = await checkForChanges(["check", "-changes", "-url=jdbc:sqlite:test.db"]);
+
+    expect(result).toEqual({ exitCode: 1 });
+    expect(coreWarning).not.toHaveBeenCalled();
+    expect(coreError).toHaveBeenCalledWith("Could not resolve secret from Vault");
+  });
 });
