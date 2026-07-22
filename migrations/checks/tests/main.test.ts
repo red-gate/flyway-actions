@@ -113,18 +113,18 @@ describe("run", () => {
     );
   });
 
-  it("should run each check as a separate invocation for enterprise", async () => {
+  it("should run each check as a separate invocation for enterprise, including the changes report when no build inputs are given", async () => {
     setupChecksMock("Enterprise");
     setupInputMock({ "target-url": "jdbc:sqlite:test.db" });
 
     await import("../src/main.js");
     await vi.dynamicImportSettled();
 
-    expect(getCheckCalls()).toHaveLength(3);
+    expect(getCheckCalls()).toHaveLength(4);
     expect(setFailed).not.toHaveBeenCalled();
   });
 
-  it("should also run the changes report when no build inputs are given but the target engine is docker-provisionable", async () => {
+  it("should also run the changes report when no build inputs are given and the target is a known-engine url", async () => {
     setupChecksMock("Enterprise");
     setupInputMock({ "target-url": "jdbc:postgresql://localhost/db" });
 

@@ -52,7 +52,7 @@ describe("runChecks", () => {
 
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
-    expect(checkCalls).toHaveLength(3);
+    expect(checkCalls).toHaveLength(4);
 
     expect(checkCalls[0][1]).toContain("-dryrun");
     expect(checkCalls[0][1]).not.toContain("-code");
@@ -78,7 +78,7 @@ describe("runChecks", () => {
     expect(checkCalls[3][1]).toContain("-changes");
   });
 
-  it("should make four exec calls when target engine is docker-provisionable and no build inputs are given", async () => {
+  it("should make four exec calls and auto-provision docker when no build inputs are given", async () => {
     exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ targetUrl: "jdbc:postgresql://localhost/db" }, "enterprise");
@@ -89,14 +89,15 @@ describe("runChecks", () => {
     expect(checkCalls[3][1]).toContain("-environments.default_build.provisioner=docker");
   });
 
-  it("should not attempt the changes report when target engine is not docker-provisionable and no build inputs are given", async () => {
+  it("should still attempt the changes report and auto-provision docker when the target engine can't be inferred from a raw url", async () => {
     exec.mockImplementation(mockExec({ stdout: {} }));
 
     await runChecks({ targetUrl: "jdbc:sqlite:test.db" }, "enterprise");
 
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
-    expect(checkCalls).toHaveLength(3);
+    expect(checkCalls).toHaveLength(4);
+    expect(checkCalls[3][1]).toContain("-environments.default_build.provisioner=docker");
   });
 
   it("should only include build args in the changes invocation", async () => {
@@ -148,7 +149,7 @@ describe("runChecks", () => {
 
     const checkCalls = (exec.mock.calls as [string, string[]][]).filter((call) => call[1]?.[0] === "check");
 
-    expect(checkCalls).toHaveLength(3);
+    expect(checkCalls).toHaveLength(4);
   });
 
   it("should log friendly message on provisioner error when changes check fails and build-ok-to-erase is not set", async () => {
