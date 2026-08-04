@@ -19,7 +19,7 @@
     "@actions/core": "3.0.1"
   },
   "devDependencies": {
-    "@types/node": "26.1.1",
+    "@types/node": "26.1.2",
     "@vitest/coverage-v8": "4.1.10",
     "vite": "8.1.5",
     "vite-plugin-checker": "0.14.5",
