@@ -20,9 +20,9 @@
   },
   "devDependencies": {
     "@types/node": "26.2.0",
-    "@vitest/coverage-v8": "4.1.10",
-    "vite": "8.2.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "vite": "8.2.2",
     "vite-plugin-checker": "0.14.5",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   }
 }
