@@ -2,22 +2,31 @@ version: 2
 
 updates:
   - package-ecosystem: github-actions
-    directory: '/'
+    directories:
+      - '/'
+      - 'migrations/*'
+      - 'state/*'
     schedule:
       interval: weekly
     groups:
       actions-all:
         applies-to: version-updates
         update-types:
+          - major
           - minor
           - patch
 
   - package-ecosystem: npm
-    directories:
-      - '**/*'
+    directory: '/'
     schedule:
       interval: weekly
     groups:
+      vitest:
+        applies-to: version-updates
+        patterns:
+          - vite
+          - vitest
+          - '@vitest/*'
       dev-dependencies:
         dependency-type: development
         applies-to: version-updates
