@@ -13,11 +13,16 @@ updates:
           - patch
 
   - package-ecosystem: npm
-    directories:
-      - '**/*'
+    directory: '/'
     schedule:
       interval: weekly
     groups:
+      vitest:
+        applies-to: version-updates
+        patterns:
+          - vite
+          - vitest
+          - '@vitest/*'
       dev-dependencies:
         dependency-type: development
         applies-to: version-updates
