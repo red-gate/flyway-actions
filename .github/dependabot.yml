@@ -2,13 +2,17 @@ version: 2
 
 updates:
   - package-ecosystem: github-actions
-    directory: '/'
+    directories:
+      - '/'
+      - 'migrations/*'
+      - 'state/*'
     schedule:
       interval: weekly
     groups:
       actions-all:
         applies-to: version-updates
         update-types:
+          - major
           - minor
           - patch
 
