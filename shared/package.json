@@ -24,7 +24,7 @@
     "@actions/exec": "3.0.0"
   },
   "devDependencies": {
-    "@types/node": "26.4.1",
+    "@types/node": "26.5.1",
     "vite": "8.3.0",
     "vitest": "5.0.0"
   }
