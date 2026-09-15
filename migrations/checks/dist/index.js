@@ -649,7 +649,7 @@ var T = /* @__PURE__ */ p(((e) => {
 		return e && !!(e.destroyed || e[r] || c.isDestroyed?.(e));
 	}
 	function ee(e, t) {
-		e == null || !C(e) || B(e) || (typeof e.destroy == "function" ? (Object.getPrototypeOf(e).constructor === s && (e.socket = null), e.destroy(t)) : t && queueMicrotask(() => {
+		e != null && C(e) && !B(e) && (typeof e.destroy == "function" ? (Object.getPrototypeOf(e).constructor === s && (e.socket = null), e.destroy(t)) : t && queueMicrotask(() => {
 			e.emit("error", t);
 		}), e.destroyed !== !0 && (e[r] = !0));
 	}
@@ -2306,9 +2306,7 @@ var T = /* @__PURE__ */ p(((e) => {
 		return v(e instanceof URL), e = new URL(e), e.protocol === "file:" || e.protocol === "about:" || e.protocol === "blank:" ? "no-referrer" : (e.username = "", e.password = "", e.hash = "", t && (e.pathname = "", e.search = ""), e);
 	}
 	function q(e) {
-		if (!(e instanceof URL)) return !1;
-		if (e.href === "about:blank" || e.href === "about:srcdoc" || e.protocol === "data:" || e.protocol === "file:") return !0;
-		return t(e.origin);
+		return e instanceof URL ? e.href === "about:blank" || e.href === "about:srcdoc" || e.protocol === "data:" || e.protocol === "file:" || t(e.origin) : !1;
 		function t(e) {
 			if (e == null || e === "null") return !1;
 			let t = new URL(e);
@@ -3148,7 +3146,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 			e !== this.timeoutValue || t & be ^ this.timeoutType & be ? (this.timeout &&= (a.clearTimeout(this.timeout), null), e && (t & be ? this.timeout = a.setFastTimeout(Te, e, new WeakRef(this)) : (this.timeout = setTimeout(Te, e, new WeakRef(this)), this.timeout.unref())), this.timeoutValue = e) : this.timeout && this.timeout.refresh && this.timeout.refresh(), this.timeoutType = t;
 		}
 		resume() {
-			this.socket.destroyed || !this.paused || (n(this.ptr != null), n($ == null), this.llhttp.llhttp_resume(this.ptr), n(this.timeoutType === Se), this.timeout && this.timeout.refresh && this.timeout.refresh(), this.paused = !1, this.execute(this.socket.read() || se), this.readMore());
+			!this.socket.destroyed && this.paused && (n(this.ptr != null), n($ == null), this.llhttp.llhttp_resume(this.ptr), n(this.timeoutType === Se), this.timeout && this.timeout.refresh && this.timeout.refresh(), this.paused = !1, this.execute(this.socket.read() || se), this.readMore());
 		}
 		readMore() {
 			for (; !this.paused && this.ptr;) {
@@ -3371,8 +3369,14 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 		let t = e[V];
 		if (t && !t.destroyed) {
 			if (e[T] === 0 ? !t[A] && t.unref && (t.unref(), t[A] = !0) : t[A] && t.ref && (t.ref(), t[A] = !1), e[C] === 0 && e[w] > 0 && t[fe]) {
-				if (t[ue] === 0) return Oe(e, t), t[x].readMore(), t.destroyed, void 0;
-				if (t[ue] === 1) return t[x].readMore(), t.destroyed, void 0;
+				if (t[ue] === 0) {
+					Oe(e, t), t[x].readMore(), t.destroyed;
+					return;
+				}
+				if (t[ue] === 1) {
+					t[x].readMore(), t.destroyed;
+					return;
+				}
 			}
 			if (e[C] === 0 && (t[x].readMore(), t.destroyed)) return;
 			if (e[T] === 0) t[x].timeoutType !== Ce && t[x].setTimeout(e[H], Ce);
@@ -5568,7 +5572,7 @@ Content-Type: ${c.type || "application/octet-stream"}\r\n\r\n`);
 	}
 	function k(e, t) {
 		let n = new URL(t);
-		return e === !0 || !!(Array.isArray(e) && e.some((e) => d(e, n.host)));
+		return !!(e === !0 || Array.isArray(e) && e.some((e) => d(e, n.host)));
 	}
 	function A(e) {
 		if (e) {
@@ -9392,7 +9396,7 @@ ${e.format(t)}
 			n.brandCheck(this, e);
 			let r = "WebSocket.send";
 			if (n.argumentLengthCheck(arguments, 1, r), t = n.converters.WebSocketSendData(t, r, "data"), _(this)) throw new DOMException("Sent before connected.", "InvalidStateError");
-			if (!(!v(this) || y(this))) {
+			if (v(this) && !y(this)) {
 				if (typeof t == "string") {
 					let e = Buffer.byteLength(t);
 					this.#t += e, this.#i.add(t, () => {
