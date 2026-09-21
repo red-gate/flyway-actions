@@ -24,6 +24,7 @@ export default defineConfig({
     target: "node24",
     outDir: "dist",
     emptyOutDir: true,
+    cssMinify: "esbuild",
   },
   resolve: { conditions: ["node"] },
   plugins: [checker({ typescript: { root: "." } })],
