@@ -1,6 +1,8 @@
 {
   "name": "@flyway-actions/shared",
   "version": "1.0.0",
+  "author": "Redgate",
+  "license": "MIT",
   "type": "module",
   "exports": {
     "./flyway-runner": "./src/flyway-runner.ts",
