@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.licenses/
 
 # Build output (dist is committed for actions)
 # dist/
@@ -35,4 +36,3 @@ coverage/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.pnp.*
