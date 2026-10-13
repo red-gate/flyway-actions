@@ -9,11 +9,11 @@
     "state/**"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach -A run build",
-    "test": "yarn workspaces foreach -A run test",
-    "lint": "yarn workspaces foreach -A run lint",
-    "format": "yarn workspaces foreach -A run format",
-    "format:check": "yarn workspaces foreach -A run format:check",
+    "build": "yarn workspaces foreach -A -p run build",
+    "test": "yarn workspaces foreach -A -p run test",
+    "lint": "yarn workspaces foreach -A -p run lint",
+    "format": "yarn workspaces foreach -A -p run format",
+    "format:check": "yarn workspaces foreach -A -p run format:check",
     "download-licenses": "license-checker-rseidelsohn --plainVertical --out third_party_licenses.txt --production --excludePrivatePackages --excludePackagesStartingWith @flyway-actions/"
   },
   "packageManager": "yarn@4.14.1",
