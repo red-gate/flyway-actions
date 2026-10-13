@@ -27,3 +27,5 @@ reviewed:
     - lightningcss-linux-x64-musl
     - lightningcss-win32-arm64-msvc
     - lightningcss-win32-x64-msvc
+    # These dependencies don't have resolvable licenses, but have been explicitly verified as allowed
+    - "@actions/http-client@4.0.1"
