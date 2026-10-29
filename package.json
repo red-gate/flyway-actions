@@ -28,12 +28,12 @@
     "@flyway-actions/state-prepare": "workspace:*"
   },
   "devDependencies": {
-    "@vitest/eslint-plugin": "1.6.27",
+    "@vitest/eslint-plugin": "1.6.28",
     "eslint": "10.13.0",
     "eslint-plugin-import": "2.32.0",
     "license-checker-rseidelsohn": "5.0.1",
     "prettier": "3.9.10",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.2"
+    "typescript-eslint": "8.72.0"
   }
 }
