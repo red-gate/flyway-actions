@@ -1,0 +1,80 @@
+name: Self-Hosted End-to-End Tests
+
+on:
+  schedule:
+    - cron: '0 3 * * 1-5'
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REDGATE_DISABLE_TELEMETRY: 'true'
+
+jobs:
+  migrations-community-without-node:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/runtime-deps:8.0-noble
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: community
+          i-agree-to-the-eula: true
+      - name: Expose host workspace path in container
+        shell: bash
+        run: |
+          host_workspace='${{ github.workspace }}'
+          mkdir -p "$(dirname "$host_workspace")"
+          ln -s "$GITHUB_WORKSPACE" "$host_workspace"
+      - name: Copy composite with runner.environment mocked as self-hosted
+        shell: bash
+        run: |
+          set -euo pipefail
+          original=migrations/deploy/action.yml
+          mocked_dir=node_modules/.self-hosted-mock/migrations/deploy
+          gate="if: runner.environment != 'github-hosted'"
+          mocked_gate="if: 'self-hosted' != 'github-hosted'"
+          if ! grep -qF "$gate" "$original"; then
+            echo "::error file=$original::Expected '$gate' in $original; the self-hosted mock no longer matches the composite"
+            exit 1
+          fi
+          mkdir -p "$(dirname "$mocked_dir")"
+          cp -R migrations/deploy "$mocked_dir"
+          sed -i "s/runner\.environment/'self-hosted'/g" "$mocked_dir/action.yml"
+          if ! grep -qF "$mocked_gate" "$mocked_dir/action.yml" || grep -qF 'runner.environment' "$mocked_dir/action.yml"; then
+            echo "::error::Mocking runner.environment in $mocked_dir/action.yml failed"
+            exit 1
+          fi
+          diff "$original" "$mocked_dir/action.yml" || true
+          test "$(diff "$original" "$mocked_dir/action.yml" | grep -c '^[<>]')" = "2"
+      - name: Assert Node.js is not on PATH
+        shell: bash
+        run: |
+          if command -v node; then
+            echo "::error::node is on PATH in the container; the test would not exercise setup-node"
+            exit 1
+          fi
+      - name: Run deploy
+        id: deploy
+        uses: ./node_modules/.self-hosted-mock/migrations/deploy
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          working-directory: sample-projects/sqlite
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
+          test "${{ steps.deploy.outputs.exit-code }}" = "0"
+          test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
