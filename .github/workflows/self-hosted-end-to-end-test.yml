@@ -43,14 +43,14 @@ jobs:
           original=migrations/deploy/action.yml
           mocked_dir=node_modules/.self-hosted-mock/migrations/deploy
           gate="if: runner.environment != 'github-hosted'"
-          mocked_gate="if: 'self-hosted' != 'github-hosted'"
+          mocked_gate="if: ('self-hosted') != 'github-hosted'"
           if ! grep -qF "$gate" "$original"; then
             echo "::error file=$original::Expected '$gate' in $original; the self-hosted mock no longer matches the composite"
             exit 1
           fi
           mkdir -p "$(dirname "$mocked_dir")"
           cp -R migrations/deploy "$mocked_dir"
-          sed -i "s/runner\.environment/'self-hosted'/g" "$mocked_dir/action.yml"
+          sed -i "s/runner\.environment/('self-hosted')/g" "$mocked_dir/action.yml"
           if ! grep -qF "$mocked_gate" "$mocked_dir/action.yml" || grep -qF 'runner.environment' "$mocked_dir/action.yml"; then
             echo "::error::Mocking runner.environment in $mocked_dir/action.yml failed"
             exit 1
