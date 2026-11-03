@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 3 * * 1-5'
   push:
-    branches: [main, self-hosted-e2e-green-proof]
+    branches: [main, self-hosted-e2e-lts-proof]
   pull_request:
     branches: [main]
   workflow_dispatch:
