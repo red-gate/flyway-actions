@@ -253,6 +253,34 @@ jobs:
           test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
           test "${{ steps.deploy.outputs.schema-version }}" = "3"
 
+  migrations-community-without-node:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/runtime-deps:8.0-noble
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Flyway
+        uses: red-gate/setup-flyway@v3
+        with:
+          edition: community
+          i-agree-to-the-eula: true
+      - name: Run deploy
+        id: deploy
+        uses: ./migrations/deploy
+        with:
+          target-url: jdbc:sqlite:database/no-drift.db
+          working-directory: sample-projects/sqlite
+      - name: Test outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Deploy exit code: ${{ steps.deploy.outputs.exit-code }}"
+          echo "Migrations applied: ${{ steps.deploy.outputs.migrations-applied }}"
+          test "${{ steps.deploy.outputs.exit-code }}" = "0"
+          test "${{ steps.deploy.outputs.migrations-applied }}" = "3"
+
   state-enterprise:
     strategy:
       matrix:

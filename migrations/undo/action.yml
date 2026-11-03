@@ -84,7 +84,6 @@ runs:
   using: 'composite'
   steps:
     - name: Check for Node.js
-      if: runner.environment != 'github-hosted'
       id: check-node
       run: |
         if ! command -v node &>/dev/null; then
