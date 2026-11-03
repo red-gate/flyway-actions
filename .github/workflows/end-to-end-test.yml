@@ -266,6 +266,12 @@ jobs:
         with:
           edition: community
           i-agree-to-the-eula: true
+      - name: Expose host workspace path in container
+        shell: bash
+        run: |
+          host_workspace='${{ github.workspace }}'
+          mkdir -p "$(dirname "$host_workspace")"
+          ln -s "$GITHUB_WORKSPACE" "$host_workspace"
       - name: Run deploy
         id: deploy
         uses: ./migrations/deploy
