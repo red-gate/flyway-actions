@@ -48,7 +48,7 @@ jobs:
           token: ${{ env.FLYWAY_TOKEN }}
       - name: Run checks
         id: checks
-        uses: ./migrations/checks
+        uses: $/migrations/checks
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           build-url: jdbc:sqlite:database/build.db
@@ -59,14 +59,14 @@ jobs:
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
-        uses: ./migrations/deploy
+        uses: $/migrations/deploy
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
           deployment-report-name: migrations-enterprise-deployment-report-${{ matrix.os }}
       - name: Run undo
         id: undo
-        uses: ./migrations/undo
+        uses: $/migrations/undo
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
@@ -140,7 +140,7 @@ jobs:
           token: ${{ env.FLYWAY_TOKEN }}
       - name: Run checks
         id: checks
-        uses: ./migrations/checks
+        uses: $/migrations/checks
         with:
           target-url: jdbc:h2:./database/h2-prod
           build-url: jdbc:h2:mem:build
@@ -151,13 +151,13 @@ jobs:
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
-        uses: ./migrations/deploy
+        uses: $/migrations/deploy
         with:
           target-url: jdbc:h2:./database/h2-prod
           working-directory: sample-projects/h2
       - name: Run undo
         id: undo
-        uses: ./migrations/undo
+        uses: $/migrations/undo
         with:
           target-url: jdbc:h2:./database/h2-prod
           working-directory: sample-projects/h2
@@ -223,7 +223,7 @@ jobs:
         run: pip install sqlfluff
       - name: Run checks
         id: checks
-        uses: ./migrations/checks
+        uses: $/migrations/checks
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           fail-on-code-review: 'false'
@@ -232,7 +232,7 @@ jobs:
           pre-deployment-report-retention-days: '1'
       - name: Run deploy
         id: deploy
-        uses: ./migrations/deploy
+        uses: $/migrations/deploy
         with:
           target-url: jdbc:sqlite:database/no-drift.db
           working-directory: sample-projects/sqlite
@@ -284,7 +284,7 @@ jobs:
           token: ${{ env.FLYWAY_TOKEN }}
       - name: Run state prepare
         id: prepare
-        uses: ./state/prepare
+        uses: $/state/prepare
         with:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
@@ -295,7 +295,7 @@ jobs:
           deployment-script-retention-days: '1'
       - name: Run state deploy
         id: deploy
-        uses: ./state/deploy
+        uses: $/state/deploy
         with:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
@@ -303,7 +303,7 @@ jobs:
           deployment-report-name: state-enterprise-deployment-report-${{ matrix.os }}
       - name: Run state deploy with undo script
         id: undo
-        uses: ./state/deploy
+        uses: $/state/deploy
         with:
           target-url: jdbc:sqlite:state-prepare-target.db
           working-directory: sample-projects/sqlite-state
@@ -356,7 +356,7 @@ jobs:
           token: ${{ env.FLYWAY_TOKEN }}
       - name: Run generate
         id: generate
-        uses: ./migrations/generate
+        uses: $/migrations/generate
         with:
           build-url: jdbc:sqlite:generate-build-${{ matrix.os }}.db
           working-directory: sample-projects/sqlite-generate
