@@ -87,7 +87,7 @@ runs:
       shell: bash
     - name: Install Node.js
       if: steps.check-node.outputs.node-not-found == 'true'
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@v7.1.0
       with:
         node-version: 'lts/krypton'
     - name: Run Flyway deploy
@@ -99,7 +99,7 @@ runs:
     - name: Upload deployment report
       id: upload-deployment-report
       if: inputs.skip-deployment-report-upload == 'false' && steps.deploy.outputs.report-path != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.deployment-report-name || format('flyway-{0}-deployment-report', inputs.target-environment) }}
         path: ${{ steps.deploy.outputs.report-path }}
@@ -109,7 +109,7 @@ runs:
     - name: Upload drift resolution scripts
       id: upload-drift-resolution-scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.deploy.outputs.drift-resolution-folder != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.drift-resolution-scripts-name || format('flyway-deploy-{0}-drift-resolution-scripts', inputs.target-environment) }}
         path: ${{ steps.deploy.outputs.drift-resolution-folder }}

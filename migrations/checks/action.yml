@@ -142,7 +142,7 @@ runs:
       shell: bash
     - name: Install Node.js
       if: steps.check-node.outputs.node-not-found == 'true'
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@v7.1.0
       with:
         node-version: 'lts/krypton'
     - name: Run Flyway checks
@@ -154,7 +154,7 @@ runs:
     - name: Upload pre-deployment report
       id: upload-pre-deployment-report
       if: inputs.skip-pre-deployment-report-upload == 'false' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.pre-deployment-report-name || format('flyway-{0}-pre-deployment-report', inputs.target-environment) }}
         path: ${{ steps.checks.outputs.report-path }}
@@ -164,7 +164,7 @@ runs:
     - name: Upload drift resolution scripts
       id: upload-drift-resolution-scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.checks.outputs.drift-resolution-folder != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.drift-resolution-scripts-name || format('flyway-checks-{0}-drift-resolution-scripts', inputs.target-environment) }}
         path: ${{ steps.checks.outputs.drift-resolution-folder }}
@@ -183,7 +183,7 @@ runs:
         fi
     - name: Upload SARIF to GitHub Code Scanning
       if: always() && inputs.skip-code-scanning-upload == 'false' && steps.checks.outputs.sarif-path != ''
-      uses: github/codeql-action/upload-sarif@v4
+      uses: github/codeql-action/upload-sarif@v4.39.3
       continue-on-error: true
       with:
         sarif_file: ${{ steps.checks.outputs.sarif-path }}

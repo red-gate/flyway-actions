@@ -136,7 +136,7 @@ runs:
       shell: bash
     - name: Install Node.js
       if: steps.check-node.outputs.node-not-found == 'true'
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@v7.1.0
       with:
         node-version: 'lts/krypton'
     - name: Run Flyway prepare
@@ -148,7 +148,7 @@ runs:
     - name: Upload pre-deployment report
       id: upload-pre-deployment-report
       if: inputs.skip-pre-deployment-report-upload == 'false' && steps.prepare.outputs.report-path != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.pre-deployment-report-name || format('flyway-{0}-pre-deployment-report', inputs.target-environment) }}
         path: ${{ steps.prepare.outputs.report-path }}
@@ -158,7 +158,7 @@ runs:
     - name: Upload drift resolution scripts
       id: upload-drift-resolution-scripts
       if: inputs.skip-drift-resolution-scripts-upload == 'false' && steps.prepare.outputs.drift-resolution-folder != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.drift-resolution-scripts-name || format('flyway-prepare-{0}-drift-resolution-scripts', inputs.target-environment) }}
         path: ${{ steps.prepare.outputs.drift-resolution-folder }}
@@ -167,7 +167,7 @@ runs:
     - name: Upload deployment script
       id: upload-deployment-script
       if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.script-path != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.deployment-script-name || format('D__{0}_deployment', inputs.target-environment) }}
         path: ${{ steps.prepare.outputs.script-path }}
@@ -176,7 +176,7 @@ runs:
     - name: Upload undo script
       id: upload-undo-script
       if: inputs.skip-deployment-script-upload == 'false' && steps.prepare.outputs.undo-script-path != '' && always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: ${{ inputs.undo-script-name || format('DU__{0}_undo', inputs.target-environment) }}
         path: ${{ steps.prepare.outputs.undo-script-path }}
@@ -202,7 +202,7 @@ runs:
         fi
     - name: Upload SARIF to GitHub Code Scanning
       if: always() && inputs.skip-code-scanning-upload == 'false' && steps.prepare.outputs.sarif-path != ''
-      uses: github/codeql-action/upload-sarif@v4
+      uses: github/codeql-action/upload-sarif@v4.39.3
       continue-on-error: true
       with:
         sarif_file: ${{ steps.prepare.outputs.sarif-path }}
