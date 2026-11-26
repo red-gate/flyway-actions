@@ -183,7 +183,7 @@ runs:
         fi
     - name: Upload SARIF to GitHub Code Scanning
       if: always() && inputs.skip-code-scanning-upload == 'false' && steps.checks.outputs.sarif-path != ''
-      uses: github/codeql-action/upload-sarif@v4.39.3
+      uses: github/codeql-action/upload-sarif@v4.39.4
       continue-on-error: true
       with:
         sarif_file: ${{ steps.checks.outputs.sarif-path }}
